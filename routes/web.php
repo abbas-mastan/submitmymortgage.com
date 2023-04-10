@@ -21,10 +21,10 @@ use Illuminate\Support\Facades\Route;
 //     dd('migrated!');
 // });
 
-Route::view('/terms-and-condition','terms-and-condition');
-Route::view('/privacy-policy','privacy-policy');
-Route::get('/', [AuthController::class, 'login']);
-Route::get('/login', [AuthController::class, 'login'])->name("login");
+Route::view('/terms-and-condition', 'terms-and-condition');
+Route::view('/privacy-policy', 'privacy-policy');
+Route::view('/', 'auth.login')->name("login");
+Route::view('/login', 'auth.login')->name("login");
 Route::post('/do-login', [AuthController::class, 'doLogin']);
 Route::get('/logout', [AuthController::class, 'logout']);
 Route::get('/register', [AuthController::class, 'register']);
@@ -40,10 +40,7 @@ Route::get(
 )
     ->middleware('guest')
     ->name('password.request');
-Route::post(
-    '/forgot-password',
-    [AuthController::class, 'sendForgotPasswordLink']
-)
+Route::post('/forgot-password', [AuthController::class, 'sendForgotPasswordLink'])
     ->middleware('guest')
     ->name('password.email');
 Route::get('/reset-password/{token}', [AuthController::class, 'resetPassword'])
@@ -59,7 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [HomeController::class, 'dashboard']);
     Route::get('/home', [HomeController::class, 'dashboard']);
     // Gmail attachments download and other routes
-    Route::get('/gmail/auth',[GmailController::class,'authenticate']);
+    Route::get('/gmail/auth', [GmailController::class, 'authenticate']);
     Route::get('/gmail/callback', [GmailController::class, 'callback']);
     Route::get('/gmail-inbox', [GmailController::class, 'getGmailInbox']);
     Route::get('/gmail/download/{messageId}/attachments/{attachmentId}/{attachmentIndexId}', [GmailController::class, 'downloadAttachment'])->name('download');
@@ -67,5 +64,3 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 //=====================Test Routes==================
 Route::get('/test', [TestController::class, 'test']);
-
-
