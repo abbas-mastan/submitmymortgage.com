@@ -1,0 +1,23 @@
+BEGIN:VCALENDAR
+PRODID:-//Session//EN
+VERSION:2.0
+CALSCALE:GREGORIAN
+METHOD:REQUEST
+BEGIN:VEVENT
+DTSTART:20230413T160000Z
+DTEND:20230413T164500Z
+DTSTAMP:20230405T071343Z
+ORGANIZER;CN=Session:mailto:rsvp-replies@hopin.to
+UID:3YETppuVMowdbwfCE2jjq__7c2744178f6c3f95f0911f169dfb62b1
+ATTENDEE;CN=abbasmastan2424@gmail.com:mailto:abbasmastan2424@gmail.com
+CREATED:20230405T071343Z
+DESCRIPTION:This webinar is taking place at: https://app.session.com/colossyan/Bridging-Language-Barriers-in-LD-A-Webinar-on-Video-Localization-with-Colossyan?t=T6i2PzeJ3SNnjABj9aQwLEBYsmBhY6bydOTs
+LAST-MODIFIED:20230405T071343Z
+LOCATION:https://app.session.com/colossyan/Bridging-Language-Barriers-in-LD-A-Webinar-on-Video-Localization-with-Colossyan?t=T6i2PzeJ3SNnjABj9aQwLEBYsmBhY6bydOTs
+SEQUENCE:0
+STATUS:CONFIRMED
+SUMMARY:Bridging Language Barriers in L&D with Colossyan
+TRANSP:TRANSPARENT
+CLASS:CONFIDENTIAL
+END:VEVENT
+END:VCALENDAR
