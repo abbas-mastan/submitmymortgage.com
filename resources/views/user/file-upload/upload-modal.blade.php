@@ -81,9 +81,11 @@ absolute bg-gray-500 bg-opacity-40
                 </div>
             </div>
             <br>
+            @if(count(\App\Models\Attachment::where('user_id', Auth::id())->get()) > 0)
             <div class="px-20 justify-evenly">
                 @include('gmail.attachments')
             </div>
+            @endif
             <!-- Modal footer -->
             <div id="start-upload-div" class="flex  items-center justify-center py-8  rounded-b dark:border-gray-600">
                 <button id="start-upload-btn" data-modal-toggle="default-modal" type="button"

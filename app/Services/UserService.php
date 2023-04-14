@@ -78,8 +78,7 @@ class UserService
     }
     //Return 1003 files
     public static function _1003() {
-        
-        
+                
         $data['files'] = Auth::user()->media()->where("category","Loan Application")->get();
         $data = array_merge($data, self::getUserDashboard());
         return $data;

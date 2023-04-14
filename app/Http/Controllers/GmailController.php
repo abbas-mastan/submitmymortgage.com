@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Info;
 use Illuminate\Http\Request;
+use App\Services\UserService;
 use App\Services\GmailService;
 use Illuminate\Support\Facades\Auth;
 
@@ -31,14 +33,17 @@ class GmailController extends Controller
         }
     }
 
-    public function getGmailInbox(Request $request,GmailService $gmailService)
+    public function getGmailInbox(Request $request, GmailService $gmailService)
     {
         try {
             if (!Auth::user()->accessToken) {
                 return redirect('/gmail/auth');
             }
-            $fullMessages = $gmailService->getGmailInbox($request);
-            return view('gmail.gmail-inbox', compact('fullMessages'));
+            if (Auth::user()->role != 'admin') {
+                $data = UserService::getUserDashboard();
+            }
+            $data['fullMessages'] = $gmailService->getGmailInbox($request);
+            return view('gmail.gmail-inbox', $data);
         } catch (\Exception $exeption) {
             $this->getErrorMessage($exeption);
             return redirect('/dashboard')->with($this->msg['msg_type'], $this->msg['msg_value']);

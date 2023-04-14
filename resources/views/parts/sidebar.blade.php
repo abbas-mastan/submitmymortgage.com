@@ -256,6 +256,21 @@
                             class="tracking-wide sm:block  capitalize {{ $miscellaneous ? 'text-themegreen' : 'text-white   opacity-60' }}">Miscellaneous</span>
                     </a>
                 </li>
+                <li class="-mt-3 hidden sm:block">
+                    <span class="border-l-4  border-l-white  border-opacity-20 h-14  vertical-line-m">
+                        &nbsp;
+                    </span>
+                </li>
+                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
+                    <span class="hidden sm:block border-4 border-themegreen  rounded-full text-xs  -ml-16">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                    <a class="truncate ml-4"
+                        href="{{ url(Auth::user()->accessToken ? '/gmail-inbox' : '/gmail/auth') }}">
+                        <span
+                            class="tracking-wide sm:block  capitalize text-themegreen text-white">{{ Auth::user()->accessToken ? 'Gmail Inbox' : 'Connect Mail' }}</span>
+                    </a>
+                </li>
                 <li class="my-1 sm:px-24 mt-5 sm:block   -ml-14">
                     <span class="tracking-wide text-2xl text-white text-left ">Loan Status</span>
                 </li>
