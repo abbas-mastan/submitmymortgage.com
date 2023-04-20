@@ -1,0 +1,273 @@
+@import './colors/colors';
+@import './btns/btns';
+@import './all/mixin';
+@import './all/fonts';
+
+// google font
+@import url('https://fonts.googleapis.com/css2?family=Lexend&display=swap');
+
+body {
+    font-family: 'Lexend', sans-serif;
+}
+// allbtns on body which will have equal sizes
+.body-btns{
+    width: 220px;
+}
+
+// main navbar
+#navbarSupportedContent {
+    .nav-item {
+        .nav-link {
+            color: $textColor;
+            @include transition;
+
+            &:hover {
+                color: $secondary;
+            }
+        }
+    }
+}
+
+// herosection
+.hero-section {
+    background: url('./../assets/hero.jpg') no-repeat;
+    background-size: cover;
+    background-position: center;
+
+    .hero-row {
+        padding: 150px 0 125px 0;
+
+        .hero-title {
+            font-size: 46px;
+            font-weight: 700;
+        }
+        .hero-paragraph{
+            margin-bottom: 75px;
+        }
+    }
+}
+
+// key-features
+.key-features {
+    margin: 150px 0;
+
+    .right-side {
+        .key-features-list {
+            line-height: 36px;
+            padding-left: 0;
+
+            li {
+                display: flex;
+                align-items: center;
+
+                .list-icon {
+                    margin-right: 20px;
+                }
+            }
+        }
+    }
+}
+
+// why choose us
+
+.why-choose-us {
+    background: $bgGrey;
+    padding: 65px 0 0 0;
+
+    .why-choose-us-top {
+        .why-choose-us-top-right {
+            margin-top: -125px;
+        }
+
+        p {
+            text-align: justify;
+        }
+    }
+}
+
+// see what our customers say
+.customers-review {
+    margin: 180px 0;
+    margin-bottom: 120px;
+
+    .reviews {
+        display: flex;
+        gap: 18px;
+        padding-right: 5px;
+        .owl-carousel{
+            .owl-stage-outer{
+                padding-top: 30px;
+                .each-review-card {
+                    position: relative;
+                    border: 1px solid $black;
+                    padding: 40px 30px 25px;
+                    width: 100%;
+                    text-align: justify;
+        
+                    .stars {
+                        position: absolute;
+                        font-size: 18px;
+                        top: -26px;
+                        left: 50%;
+                        background: $white;
+                        transform: translateX(-50%);
+                        padding: 10px;
+                        border-radius: 30px;
+                        box-shadow: 0 3px 3px 1px rgba(0, 0, 0, .1);
+                        color: $yellow;
+                    }
+                }
+            }
+            // owl-carousel-btns
+            .owl-nav,.owl-dots{
+                display: none;
+            }
+        }
+
+       
+    }
+
+}
+
+ // get mortgage approval faster!
+ .get-mortgage {
+    p{
+        text-align: justify;
+    }
+    .right {
+        position: relative;
+        padding: 0;
+        background: url('./../assets/business.jpg') no-repeat center;
+        background-size: cover;
+
+        &::after {
+            content: "";
+            background: linear-gradient(142deg, $white 26%, transparent 1%);
+            width: 100%;
+            position: absolute;
+            z-index: 1;
+            height: 100%;
+            top:-1px;
+            left: -1px;
+        }
+    }
+}
+
+
+ // main-footer
+ .main-footer {
+    margin: 110px 0 0 0;
+
+    .footer {
+        margin: 30px 0 10px 0;
+        font-weight: 300;
+        font-size: 14px;
+    }
+}
+// responsiveness
+// screen below 1399px
+@media screen and (max-width:1399px) {
+     // get mortgage approval faster!
+ .get-mortgage {
+
+    .right {
+        &::after {
+            background: linear-gradient(129deg, $white 25%, transparent 1%);
+        }
+        }
+    }
+}
+
+
+    // screen below 1199px
+@media screen and (max-width:1199px) {
+    // get mortgage approval faster!
+    .get-mortgage {
+        .left {
+            position: relative;
+            color: $white;
+            padding: 25px;
+            background-image:
+                linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('./../assets/business.jpg');
+            background-size: cover;
+            background-position: right;
+        }
+
+        .right {
+            display: none;
+        }
+    }
+
+}
+
+// screen below 991px
+@media screen and (max-width:991px) {
+
+    //  header
+    header {
+        height: 100px;
+
+        nav.navbar {
+            position: absolute;
+            width: 100%;
+            background: white;
+        }
+    }
+}
+
+// screen below 767px
+@media screen and (max-width:767px) {
+    
+    // key-features
+    .key-features {
+        margin: 70px 0 140px 0;
+    }
+    // see what our customers say
+    .customers-review {
+        margin:100px 0;
+
+        .reviews {
+            flex-direction: column;
+
+            .each-review-card {
+                margin-top: 15px;
+                width: 100% !important;
+            }
+        }
+
+    }
+
+}
+
+// screen below 
+    @media screen and (max-width:485px) {
+        .get-mortgage {
+            .left {
+                background-position: center;
+            }
+        }
+        header{
+            .navbar{
+                .navbar-brand{
+                    margin: 0;
+                    width: 140px;
+                }
+            }
+        }
+        // herosection
+.hero-section {
+    background:    linear-gradient(to right,rgba(255, 255, 255, 0.3) 100%, rgba(0, 0, 0, 0.2)), url('./../assets/hero-mobile.jpg');
+    
+    .hero-row {
+        padding: 150px 0 125px 0;
+
+        .hero-title {
+            font-size: 34px;
+            font-weight: 700;
+        }
+        .hero-paragraph{
+            text-align: justify;
+        }
+    }
+}
+    }

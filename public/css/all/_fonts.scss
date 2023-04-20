@@ -1,0 +1,10 @@
+.text-title{
+    font-size: 32px;
+    font-weight: 500;
+}
+// screen below 485px
+@media screen and (max-width:485px) {
+    .text-title{
+        font-size: 24px;
+    }
+}

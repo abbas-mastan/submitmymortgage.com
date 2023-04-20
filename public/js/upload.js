@@ -27,6 +27,7 @@ $('input[type="file"]').change(function (e) {
 $(document).ready(function () {
     $('#category').val(cat);
     $("#start-upload-btn").on("click", function () {
+        console.log('somehting');
         if ($('input[name="attachment[]"]').length > 0) {
             var checkedBoxes = $('input[name="attachment[]"]:checked');
             var checkedValues = checkedBoxes.map(function () {

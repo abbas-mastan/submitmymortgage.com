@@ -1,0 +1,43 @@
+@import './../colors/colors';
+.btn-primary{
+    --bs-btn-border-color:#{$primary};
+    --bs-btn-bg:#{$primary};
+    --bs-btn-hover-bg:#{$secondary};
+    --bs-btn-hover-border-color:#{$secondary};
+    border-radius: 0;
+}
+.btn-secondary{
+    --bs-btn-border-color:#{$secondary};
+    --bs-btn-bg:#{$secondary};
+    --bs-btn-hover-bg:#{$primary};
+    --bs-btn-hover-border-color:#{$primary};
+    border-radius: 0;
+}
+.btn-outline-primary{
+    --bs-btn-color:#{$black};
+    --bs-btn-border-color:#{$black};
+    --bs-btn-hover-bg:#{$primary};
+    --bs-btn-hover-border-color:#{$primary};
+    --bs-btn-active-bg:#{$primary};
+    --bs-btn-disabled-color:#{$primary};
+    --bs-btn-disabled-border-color:#{$primary};
+    img{
+     transition: all 0.2s;
+    }
+    &:hover{
+        img{
+            filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(185deg) brightness(104%) contrast(103%);
+        }
+    }
+    border-radius: 0;
+}
+
+// screen below 991px
+@media screen and (max-width:991px) {
+}
+// screen below 767px
+@media screen and (max-width:767px) {
+}
+// screen below 485px
+@media screen and (max-width:485px) {
+}

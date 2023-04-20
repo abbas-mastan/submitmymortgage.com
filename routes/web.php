@@ -23,11 +23,11 @@ use Illuminate\Support\Facades\Route;
 
 Route::view('/terms-and-condition', 'terms-and-condition');
 Route::view('/privacy-policy', 'privacy-policy');
-Route::view('/', 'auth.login')->name("login");
+Route::view('/', 'index')->name("index");
 Route::view('/login', 'auth.login')->name("login");
 Route::post('/do-login', [AuthController::class, 'doLogin']);
 Route::get('/logout', [AuthController::class, 'logout']);
-Route::get('/register', [AuthController::class, 'register']);
+Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/doRegister', [AuthController::class, 'doRegister']);
 //Email verification links
 Route::get('/email/verify', [AuthController::class, 'notifyEmailVerification'])->middleware('auth')->name('verification.notice');

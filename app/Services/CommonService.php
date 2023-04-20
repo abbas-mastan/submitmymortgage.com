@@ -19,7 +19,7 @@ class CommonService
             }
             $user->pic = $request->file('file')->store(getFileDirectory());
         }
-        if ($user->save()){
+        if ($user->save()) {
             return ['msg_type' => 'msg_success', 'msg_value' => $msg];
         }
         return ['msg_type' => 'msg_error', 'msg_value' => "Couldn't save the picture"];
@@ -43,10 +43,11 @@ class CommonService
                 $media->category = $request->input('category');
                 $media->user_id = $request->input('id') ?? $attachment->user_id;
                 $media->uploaded_by = $attachment->uploaded_by;
-                try{
+                try {
                     Storage::copy($attachment->file_path, getFileDirectory() . $uniqueName);
-                }catch(\Exception $e){
-                    return response()->json(['status'=>'File exists','filename'=>$attachment->file_name]);
+                } catch (\Exception $e) {
+                    return response()->json(['status' => "File exists", 'filename' => $e]);
+                    // return response()->json(['status'=>'File exists','filename'=>$attachment->file_name]);
                 }
                 $media->save();
             }

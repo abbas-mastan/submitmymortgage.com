@@ -1,6 +1,5 @@
 @extends('layouts.empty')
 @section('head')
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tw-elements/dist/css/index.min.css" />
     <style>
         input[type="password"]::-webkit-input-placeholder {
             font-size: 70%;
@@ -96,8 +95,8 @@
         </form>
         <footer style="margin-top:239px">
             <a href="/privacy-policy" class="border p-2 bg-gray-300">Privacy Policy</a>
-            <button data-te-toggle="modal" data-te-target="#exampleModalCenter" data-te-ripple-init data-te-ripple-color="light"
-                type="button" class="border p-1 bg-gray-300">Demo Video</a>
+            <button data-te-toggle="modal" data-te-target="#exampleModalCenter" data-te-ripple-init
+                data-te-ripple-color="light" type="button" class="border p-1 bg-gray-300">Demo Video</a>
         </footer>
         <!--Verically centered modal-->
         <div data-te-modal-init
@@ -137,5 +136,5 @@
 @endsection
 @section('foot')
     <script src="https://cdn.tailwindcss.com/3.2.4"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tw-elements/dist/js/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tw-elements@1.0.0-beta2/dist/js/tw-elements.umd.min.js"></script>
 @endsection

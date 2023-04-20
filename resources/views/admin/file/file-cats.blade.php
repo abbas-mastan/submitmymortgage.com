@@ -151,19 +151,4 @@
         }
     </script>
 
-
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/alfrcr/paginathing/dist/paginathing.min.js"></script>
-    <script type="text/javascript">
-        jQuery(document).ready(function($) {
-            const listElement = $('.list-group');
-            listElement.paginathing({
-                perPage: 10,
-                limitPagination: 5,
-                containerClass: '',
-                pageNumbers: true,
-                ulClass: 'inline-flex gap-2',
-            });
-        });
-    </script>
 @endsection
