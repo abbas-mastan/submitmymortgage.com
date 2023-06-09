@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Media;
-use App\Services\CommonService;
-use App\Services\UserService;
 use Illuminate\Http\Request;
+use App\Services\UserService;
+use App\Services\CommonService;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\ApplicationRequest;
 
 class UserController extends Controller
 {
@@ -70,7 +72,6 @@ class UserController extends Controller
     }
     public function purchaseAgreement(Request $request)
     {
-
         $data = UserService::purchaseAgreement($request);
         return view('user.files.purchase-agreement', $data);
     }
@@ -87,6 +88,7 @@ class UserController extends Controller
     }
     public function doInfo(Request $request)
     {
+        $this->validateFunction($request);
         $data = UserService::doInfo($request);
         return redirect('/dashboard')->with($data['msg_type'], $data['msg_value']); //view('user.info.basic-info',$data);
     }
@@ -116,8 +118,56 @@ class UserController extends Controller
     //Updates the category comments of a file category
     public function updateCatComments(Request $request)
     {
-
         $msg = UserService::updateCatComments($request);
         return back()->with($msg['msg_type'], $msg['msg_value']);
+    }
+
+    public function application(Request $request)
+    {
+        $data = UserService::application($request);
+        return view('user.loan.application', $data);
+    }
+
+    public function doApplication(ApplicationRequest $request)
+    {
+        $data = CommonService::doApplication($request);
+        return redirect('/dashboard')->with($data['msg_type'], $data['msg_value']);
+    }
+
+     #disconnect from google 
+     public function disconnectGoogle(Request $request)
+     {
+         User::where('id', Auth::id())->update(array('accessToken' => null));
+         return redirect('/dashboard')->with("msg_success","Google Disconnected Successfully.");
+     }
+
+    private function validateFunction($request)
+    {
+        return $request->validate([
+            'b_fname' => 'required',
+            'b_lname' => 'required',
+            'b_phone' => 'required',
+            'b_email' => 'required',
+            'b_address' => 'required',
+            'b_suite' => 'required',
+            'b_city' => 'required',
+            'b_state' => 'required',
+            'b_zip' => 'required',
+            // co borrwowers details 
+            'co_fname' => 'required',
+            'co_lname' => 'required',
+            'co_phone' => 'required',
+            'co_email' => 'required',
+            'co_address' => 'required',
+            'co_suite' => 'required',
+            'co_city' => 'required',
+            'co_state' => 'required',
+            'co_zip' => 'required',
+            'p_address' => 'required',
+            'p_suite' => 'required',
+            'p_city' => 'required',
+            'p_state' => 'required',
+            'p_zip' => 'required',
+        ]);
     }
 }

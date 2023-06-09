@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Services\UserService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 use Carbon\Carbon;
+use App\Models\User;
+use Illuminate\Http\Request;
+use App\Services\UserService;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class HomeController extends Controller
 {
@@ -19,36 +20,46 @@ class HomeController extends Controller
         $this->client->setAuthConfig('client.json');
         $this->client->addScope(\Google_Service_Gmail::GMAIL_READONLY);
     }
-    
-    //
-    public function index(Request $request) {
+
+    public function index(Request $request)
+    {
         $data['landingPage'] = true;
-        return view('home',$data);
+        return view('home', $data);
     }
-    public function dashboard(Request $request) {
-         if(Gate::allows('isAdmin'))
-         {
-             $data = $this->getAdminDashboard();
-         }
-         if(Gate::allows('isUser'))
-         {
-             $data = $this->getUserDashboard();
-         }
-         $data["authUrl"] = $this->client->createAuthUrl(); 
-         $data["active"] = "dashboard";
-         $data['carbon'] = Carbon::class;
-        return view('dashboard',$data);
+    public function dashboard(Request $request)
+    {
+        $data = match (true) {
+            Gate::allows('isAdmin') => $this->getAdminDashboard(),
+            Gate::allows('isUser') => $this->getUserDashboard(),
+            Gate::allows('isAssociate') => $this->getAssociateDashboard(),
+            default => []
+        };
+        $data["authUrl"] = $this->client->createAuthUrl();
+        $data["active"] = "dashboard";
+        $data['carbon'] = Carbon::class;
+        return view('dashboard', $data);
     }
-   
-    private function getAdminDashboard() {
-        $data['usersCount'] = User::where("role","user")->count();
-        $data['users'] = User::where("role","user")->get();
+
+    private function getAdminDashboard()
+    {
+        $data['usersCount'] = User::where("role", "Borrower")->count();
+        $data['users'] = User::where("role", "Borrower")->get();
         return $data;
     }
-    private function getUserDashboard() {
-        
+
+    private function getAssociateDashboard()
+    {
+        $user = Auth::user(); // Assuming you have authenticated the admin
+        // $data['usersCount'] = User::where("role", "Borrower")->count();
+        // $data['users'] = User::where('role', 'Borrower')->get();
+        $data['usersCount'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->count();
+        $data['users'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+
+        return $data;
+    }
+
+    private function getUserDashboard()
+    {
         return UserService::getUserDashboard();
     }
-    
-    
 }

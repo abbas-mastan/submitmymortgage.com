@@ -1,10 +1,11 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\GmailController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TestController;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GmailController;
 
 /*
 | --------------------------------------------------------------------------
@@ -16,10 +17,11 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-// Route::get('/migrate', function(){
-//     \Illuminate\Support\Facades\Artisan::call('migrate');
-//     dd('migrated!');
-// });
+Route::get('/migrate', function(){
+    Artisan::call('migrate',['--force'=>true]);
+    dd('migrated!');
+});
+
 
 Route::view('/terms-and-condition', 'terms-and-condition');
 Route::view('/privacy-policy', 'privacy-policy');
@@ -29,15 +31,13 @@ Route::post('/do-login', [AuthController::class, 'doLogin']);
 Route::get('/logout', [AuthController::class, 'logout']);
 Route::get('/register', [AuthController::class, 'register'])->name('register');
 Route::post('/doRegister', [AuthController::class, 'doRegister']);
+
 //Email verification links
 Route::get('/email/verify', [AuthController::class, 'notifyEmailVerification'])->middleware('auth')->name('verification.notice');
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'emailVerificationHandler'])->middleware(['auth', 'signed'])->name('verification.verify');
 Route::post('/email/verification-notification', [AuthController::class, 'emailVerificationResend'])->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 //Password reset routes
-Route::get(
-    '/forgot-password',
-    [AuthController::class, 'forgotPassword']
-)
+Route::get('/forgot-password',[AuthController::class, 'forgotPassword'])
     ->middleware('guest')
     ->name('password.request');
 Route::post('/forgot-password', [AuthController::class, 'sendForgotPasswordLink'])

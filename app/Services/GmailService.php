@@ -28,17 +28,15 @@ class GmailService
     public function callback($request)
     {
         $this->client->fetchAccessTokenWithAuthCode($request->code);
-        if (!Auth::user()->accessToken) {
             $user = \App\Models\User::find(Auth::id());
             $user->accessToken = $this->client->getAccessToken();
             $user->save();
-        }
     }
 
     public function getGmailInbox($request)
     {
         $this->client->setAccessToken(Auth::user()->accessToken);
-        if (!$this->client->getAccessToken()) {
+        if (!$this->client->getAccessToken() || $this->client->isAccessTokenExpired()) {
             return redirect('/gmail/auth');
         }
         $service = new Gmail($this->client);

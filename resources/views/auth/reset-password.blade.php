@@ -31,6 +31,14 @@
                 </div>
                 
             </div>
+            <div class="mt-3 mx-auto">
+                <div class=" text-left mr-12">
+                    <label for="passwordconfirmation" class="text-white text-md xl:text-xl opacity-70">Password</label>
+                </div>
+                <div class="mt-2">
+                    <input type="password" class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400" name="password_confirmation"  id="password" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
+                </div>    
+            </div>
             
                 
             <div class="mt-5 grid grid-cols-6">

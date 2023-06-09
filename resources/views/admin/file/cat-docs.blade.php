@@ -37,7 +37,7 @@
         @if( !empty($id) )
                 var userId = {{ $id }};
                 var cat = '{{ $cat }}';
-                var uploadUrl = '{{url(getAdminRoutePrefix()."/file-upload")}}';
+                var uploadUrl = '{{url(getRoutePrefix()."/file-upload")}}';
         @endif
 </script>
 <script src="{{asset('js/jquery-3.3.1.min.js')}}"></script>

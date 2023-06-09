@@ -103,7 +103,7 @@
                                           <span class="label label-success">{{ $message->getFrom()['email'] }}</span>
                                           @foreach ($attachments as $attachment)
                                               <a class="label label-primary"
-                                                  href="{{ url(getAdminRoutePrefix()) . '/download/attachment/' .  $message->getId().'/'.$attachment->getId() }}">{{ $attachment->getFilename() }}</a>
+                                                  href="{{ url(getRoutePrefix()) . '/download/attachment/' .  $message->getId().'/'.$attachment->getId() }}">{{ $attachment->getFilename() }}</a>
                                           @endforeach
                                       </span>
                                   </div>

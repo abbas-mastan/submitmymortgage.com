@@ -1,7 +1,8 @@
 <?php
 return[
+    'roles'=> ["Processor","Associate","Junior Associate","Borrower"],
     'file_category' => ["Credit Report","Bank Statements",
-    "Pay Stubs","Tax Returns","ID/Driver's License","Loan Application","Mortgage Statement","Evidence of Insurance","Purchase Agreement","Miscellaneous"],
+    "Pay Stubs","Tax Returns","ID/Driver's License","1003 Form","Mortgage Statement","Evidence of Insurance","Purchase Agreement","Miscellaneous","Loan Application"],
     'states' => [
         'AL'=>"Alabama",  
         'AK'=>"Alaska",  

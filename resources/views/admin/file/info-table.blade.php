@@ -87,7 +87,7 @@
                     1st Mortgage
                 </th>
                 <td id="mortage1" class=" pl-2 text-left tracking-wide border border-l-0 capitalize">
-                    $ {{ $info->mortage1 }}
+                    $ {{ $info->mortgage1 }}
                 </td>
                 <th class=" pl-2 text-left tracking-wide border border-l-0 capitalize">
                     Interest Rate
@@ -101,7 +101,7 @@
                     2nd Mortgage
                 </th>
                 <td id="mortage2" class=" pl-2 text-left tracking-wide border border-l-0 capitalize">
-                    $ {{ $info->mortage2 }}
+                    $ {{ $info->mortgage2 }}
                 </td>
                 <th class=" pl-2 text-left tracking-wide border border-l-0 capitalize">
                     Interest Rate

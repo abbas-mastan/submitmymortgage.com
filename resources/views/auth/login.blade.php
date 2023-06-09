@@ -7,8 +7,9 @@
     </style>
 @endsection
 @section('content')
+{{-- {{dd(session()->all())}}
+{{dump(session('url'))}} --}}
     <div class="mx-auto w-full sm:w-1/2 md:w-1/3 mt-28 mb-10">
-
         <div class="">
             <h1 class="xl:text-3xl text-2xl uppercase text-center font-bold text-white">
                 Welcome To <br> Submit My Mortgage
@@ -31,7 +32,6 @@
                         class=" text-md xl:text-lg rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                         name="email" id="username" placeholder="&nbsp;&nbsp;Username">
                 </div>
-
             </div>
             <div class="mt-3 mx-auto">
                 <div class=" text-left mr-12">
@@ -42,9 +42,7 @@
                         class="xl:text-xl   text-md rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                         name="password" id="password" placeholder="&nbsp;&nbsp;***********">
                 </div>
-
             </div>
-
             <div class="mt-5 grid grid-cols-6">
                 <div class="col-span-2 text-right mr-12">
                     &nbsp;
@@ -53,7 +51,6 @@
                     <input type="checkbox" class=" " name="remember" id="remember"> <label for="remember"
                         class="text-white text-md xl:text-xl opacity-70">Remember me</label>
                 </div>
-
             </div>
             <div class="mt-2 grid grid-cols-6">
                 <div class="col-span-2 text-right mr-12">
@@ -75,7 +72,6 @@
                         Sign In
                     </button>
                 </div>
-
             </div>
             <div class="mt-2  grid grid-cols-6">
                 <div class="col-span-2 text-right mr-12">
@@ -89,8 +85,6 @@
                         </button>
                     </a>
                 </div>
-
-
             </div>
         </form>
         <footer style="margin-top:239px">
@@ -122,7 +116,6 @@
                             </svg>
                         </button>
                     </div>
-
                     <!--Modal body-->
                     <div class="relative">
                         <video class="w-[100%]" width="650" height="550" controls autoplay>

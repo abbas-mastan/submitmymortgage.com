@@ -15,26 +15,61 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-        //
+
         DB::table('users')->insert([
             'id' => 1,
-            'name' => "Shaun Bina",
-            'email' =>  'u@u.com',
+            'name' => "Babar Ali",
+            'email' => 'admin@test.com',
             'password' => Hash::make('a'),
-            'role' => 'user',
-            'finance_type' => 'Purchase',
+            'role' => 'Admin',
             'pic' => 'img/profile-default.svg',
             'email_verified_at' => now(),
         ]);
+
         DB::table('users')->insert([
             'id' => 2,
-            'name' => "Babar Ali",
-            'email' => 'a@a.com',
+            'name' => "Processor Bina",
+            'email' =>  'processor@test.com',
             'password' => Hash::make('a'),
-            'role' => 'admin',
+            'role' => 'Processor',
+            'created_by' => 1,
             'pic' => 'img/profile-default.svg',
             'email_verified_at' => now(),
         ]);
-        
+
+        DB::table('users')->insert([
+            'id' => 3,
+            'name' => "Associate Bina",
+            'email' =>  'associate@test.com',
+            'password' => Hash::make('a'),
+            'role' => 'Associate',
+            'created_by' => 2,
+            'pic' => 'img/profile-default.svg',
+            'email_verified_at' => now(),
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 4,
+            'name' => "Junior Associate Bina",
+            'email' =>  'juniorassociate@test.com',
+            'password' => Hash::make('a'),
+            'role' => 'Junior Associate',
+            'created_by' => 3,
+            'pic' => 'img/profile-default.svg',
+            'email_verified_at' => now(),
+        ]);
+
+        DB::table('users')->insert([
+            'id' => 5,
+            'name' => "Shaun Bina",
+            'email' =>  'borrower@test.com',
+            'password' => Hash::make('a'),
+            'role' => 'Borrower',
+            'finance_type' => 'Purchase',
+            'loan_type' => 'Full Doc',
+            'created_by' => 4,
+            'pic' => 'img/profile-default.svg',
+            'email_verified_at' => now(),
+        ]);
     }
 }

@@ -15,7 +15,6 @@ class CreateInfosTable extends Migration
     public function up()
     {
         if(!Schema::hasTable('infos')){
-
             Schema::create('infos', function (Blueprint $table) {
                 $table->id();
             //Borrower's details
@@ -54,9 +53,9 @@ class CreateInfosTable extends Migration
             $table->integer('loan_amount')->nullable();
             //Refinance details
             $table->integer('mortage1')->nullable();
-            $table->float('integererest1',11,2)->nullable();
+            $table->float('interest1',11,2)->nullable();
             $table->integer('mortage2')->nullable();
-            $table->float('integererest2',11,2)->nullable();
+            $table->float('interest2',11,2)->nullable();
             $table->integer('value')->nullable();
             $table->string('cashout')->nullable();
             $table->integer('cashout_amount')->nullable();

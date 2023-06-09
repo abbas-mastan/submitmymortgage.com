@@ -68,7 +68,9 @@ class AuthController extends Controller
                 $user->forceFill([
                     'password' => Hash::make($password)
                 ])->setRememberToken(Str::random(60));
-
+                if (!$user->emaail_verified_at) {
+                    $user->email_verified_at = now();
+                }
                 $user->save();
 
                 event(new PasswordReset($user));
@@ -98,7 +100,6 @@ class AuthController extends Controller
     //Method to be called for notifying email verification
     public function notifyEmailVerification(Request  $request)
     {
-
         return Redirect::to('/login')->with("msg_info", 'Check your email for verification link');
     }
     //Method to be called for handling email verification

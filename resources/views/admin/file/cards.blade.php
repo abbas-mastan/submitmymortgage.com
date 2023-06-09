@@ -1,6 +1,6 @@
 <div class="w-full   my-2">
     <div class="w-full h-44 " >
-        <a href="{{url(getAdminRoutePrefix()."/files")}}">
+        <a href="{{url(getRoutePrefix()."/files")}}">
             <div class="flex h-32 bg-gradient-to-b from-gradientStart to-gradientEnd">
                 <div class="w-1/2 p-4 pl-8">
                     <span class="text-white text-lg block text-left">Files Uploaded</span>

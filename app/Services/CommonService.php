@@ -2,9 +2,10 @@
 
 namespace App\Services;
 
-use App\Models\{Media, Attachment};
-use Illuminate\Support\Facades\{Storage, Auth, File as FacadesFile};
+use Illuminate\Support\Arr;
 use Illuminate\Http\Request;
+use App\Models\{Media, Attachment,User,Application};
+use Illuminate\Support\Facades\{Storage, Auth, File as FacadesFile};
 
 class CommonService
 {
@@ -70,5 +71,36 @@ class CommonService
             }
         }
         return response()->json(['status' => "failure", 'msg' => "File uploading failed."]);
+    }
+    
+    public static function doApplication($request, $userId = null)
+    {
+        if(session('role') != "Borrower"){
+            $user = User::where('email',$request->email)->first();
+        }else{
+            $user = $userId ? User::find($userId) : auth()->user();
+        }
+        $data = $request->validated();
+        $isNewApplication = !$user->application()->exists();
+        
+        if ($data['employement_status'] == 'other') {
+            $data['employement_status'] = $request->employment_other_status;
+            $data = Arr::except($data, 'employment_other_status');
+        }
+        if ($data['property_type'] == 'other') {
+            $data['property_type'] = $request->property_type_other;
+            $data = Arr::except($data, 'property_type_other');
+        }
+        if (array_key_exists('property_type_other', $data)) {
+            $data = Arr::except($data, 'property_type_other');
+        }
+        if ($isNewApplication) {
+            $data['user_id'] = $user->id ?? Auth::id();
+        }
+        return [
+            'msg_type' => 'msg_success',
+            'msg_value' => $isNewApplication ? 'Application inserted successfully.' : 'Application updated successfully.',
+            'data' => $isNewApplication ? Application::create($data) : $user->application->update($data)
+        ];
     }
 }

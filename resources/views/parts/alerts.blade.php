@@ -1,6 +1,6 @@
 @isset($msg_error)
 <div class="p-4 my-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-    <span class="font-medium">Error!</span> {{$msg_error}}
+    <span class="font-medium">Error!</span>{{$msg_error}}
   </div>
 {{-- <div class="row" id="proBanner">
     <div class="col-12">

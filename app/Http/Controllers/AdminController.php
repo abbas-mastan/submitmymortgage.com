@@ -2,19 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\{User, Info, Application};
 use Illuminate\Http\Request;
-use App\Services\AdminService;
-use App\Services\CommonService;
+use App\Services\{AdminService, CommonService};
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\ApplicationRequest;
 
 class AdminController extends Controller
 {
 
-
-    //============================
-    //=============Teacher related methods
-    //============================
-    //Shows input for adding a teacher
     public function users(Request $request)
     {
         $data = AdminService::users($request);
@@ -24,29 +20,26 @@ class AdminController extends Controller
     //Shows input for adding a teacher
     public function addUser(Request $request, $id)
     {
-        if (session('role') === 'sadmin') {
-            abort(403, 'You don\'t have the permission to access this resource');
-        }
+        // if (session('role') === 'Processor') {
+        //     abort(403, 'You don\'t have the permission to access this resource');
+        // }
         $data = AdminService::addUser($request, $id);
         return view('admin.user.add-user', $data);
     }
 
-
     //Saves the record of a newly inserted teacher in database
     public function doUser(Request $request, $id)
     {
-        if (session('role') === 'sadmin') {
-            abort(403, 'You don\'t have the permission to access this resource');
-        }
+        // if (session('role') === 'Processor') {
+        //     abort(403, 'You don\'t have the permission to access this resource');
+        // }
         $msg = AdminService::doUser($request, $id);
         return redirect('/dashboard')->with($msg['msg_type'], $msg['msg_value']);
     }
 
-
     //Shows input for adding a new package
     public function deleteUser(Request $request, $id)
     {
-
         $msg = AdminService::deleteUser($request, $id);
         return redirect('/dashboard')->with($msg['msg_type'], $msg['msg_value']);
     }
@@ -67,15 +60,18 @@ class AdminController extends Controller
     public function files(Request $request, $id = -1)
     {
         $data = AdminService::files($request, $id);
-
         return view('admin.file.files', $data);
     }
     //Showing documents for a user in specified category
     public function docs(Request $request, $id, $cat)
     {
-        $data = AdminService::docs($request, $id, $cat);
-
-        return view('admin.file.single-cat-docs', $data);
+        if ($cat === "Loan Application") {
+            $id = User::find($id)->application()->first()->id;
+            return redirect(getAdminRoutePrefix() . '/application-show/' . $id);
+        } else {
+            $data = AdminService::docs($request, $id, $cat);
+            return view("admin.file.single-cat-docs", $data);
+        }
     }
     //Updates the status of  a files
     public function updateFileStatus(Request $request, $id)
@@ -109,7 +105,6 @@ class AdminController extends Controller
     {
         return CommonService::fileUpload($request);
     }
-
     //=====================================
     //==================Profile related methods
     //=====================================
@@ -133,7 +128,6 @@ class AdminController extends Controller
     //Showing the input for account related information
     public function account(Request $request)
     {
-
         $data = AdminService::account($request);
         return view('admin.account.account', $data);
     }
@@ -143,5 +137,68 @@ class AdminController extends Controller
     {
         $msg = AdminService::updatePass($request);
         return redirect('/dashboard')->with($msg['msg_type'], $msg['msg_value']);
+    }
+
+    public function applications()
+    {
+        $data = AdminService::applications();
+        return view('admin.applications.index', $data);
+    }
+    public function applicationShow(Application $application)
+    {
+        $data['application'] = $application;
+        return view('admin.applications.show', $data);
+    }
+    public function applicationEdit(Application $application)
+    {
+        $data['application'] = $application;
+        return view('admin.applications.show', $data);
+    }
+    public function applicationUpdate(ApplicationRequest $request, Application $application)
+    {
+        $msg = CommonService::doApplication($request, $application->user_id);
+        return redirect('/dashboard')->with($msg['msg_type'], $msg['msg_value']);
+    }
+    public function deleteApplication(Application $application)
+    {
+        $application->delete();
+        return redirect('/dashboard')->with("msg_success", "Application Deleted Successfully.");
+    }
+
+
+    public function allLeads()
+    {
+        $data = AdminService::allLeads();
+        return view('admin.leads.allleads', $data);
+    }
+    public function lead($id)
+    {
+        $data = AdminService::lead($id);
+        return view('admin.leads.singlelead', $data);
+    }
+    public function deleteLead(Info $info)
+    {
+        $msg = AdminService::deleteLead($info);
+        return back()->with($msg['msg_type'], $msg['msg_value']);
+    }
+
+    public function basicInfo()
+    {
+        $data['info'] = new Info();
+        return view('user.info.basic-info', $data);
+    }
+
+    public function allUsers()
+    {
+        $admin = Auth::user(); // Assuming you have authenticated the admin
+        $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor','Associate','Junior Associate','Borrower'])->with('createdUsers')->get();
+        return view('admin.user.all-users', $data);
+    }
+
+    #disconnect from google 
+    public function disconnectGoogle(Request $request)
+    {
+        User::where('id', Auth::id())->update(array('accessToken' => null));
+        return redirect('/dashboard')->with("msg_success", "Google Disconnected Successfully.");
     }
 }

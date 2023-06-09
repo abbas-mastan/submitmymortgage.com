@@ -27,7 +27,6 @@ $('input[type="file"]').change(function (e) {
 $(document).ready(function () {
     $('#category').val(cat);
     $("#start-upload-btn").on("click", function () {
-        console.log('somehting');
         if ($('input[name="attachment[]"]').length > 0) {
             var checkedBoxes = $('input[name="attachment[]"]:checked');
             var checkedValues = checkedBoxes.map(function () {
@@ -80,9 +79,7 @@ function uploadToPHPServer(checkedValues = null) {
         formData.append('attachment', $.map(checkedValues, function (value, index) { return [value]; }));
     }
     // var upload_url = 'https://your-domain.com/files-uploader/';
-    var upload_url = uploadUrl;
-
-
+    var upload_url = uploadUrl;       
     makeXMLHttpRequest(upload_url, formData, function (progress) {
         console.log(progress);
         if (progress !== 'upload-ended') {
@@ -95,10 +92,8 @@ function uploadToPHPServer(checkedValues = null) {
         $("#file-progress").toggleClass("hidden");
         $("#filename").text("");
         location.reload();
-
     });
 }
-
 function makeXMLHttpRequest(url, data, callback) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = function () {
@@ -118,27 +113,21 @@ function makeXMLHttpRequest(url, data, callback) {
     request.upload.onloadstart = function () {
         //callback('Upload started...');
     };
-
     request.upload.onprogress = function (event) {
         callback(Math.round(event.loaded / event.total * 100) + "%");
     };
-
     request.upload.onload = function () {
         // callback('progress-about-to-end');
     };
-
     request.upload.onload = function () {
         // callback('Getting File URL..');
     };
-
     request.upload.onerror = function (error) {
         // callback('Failed to upload to server');
     };
-
     request.upload.onabort = function (error) {
         // callback('Upload aborted.');
     };
-
     request.open('POST', url);
     request.send(data);
 }
@@ -146,10 +135,8 @@ function makeXMLHttpRequest(url, data, callback) {
 var file;
 function dropHandler(ev) {
     console.log('File(s) dropped');
-
     // Prevent default behavior (Prevent file from being opened)
     ev.preventDefault();
-
     if (ev.dataTransfer.items) {
         // Use DataTransferItemList interface to access the file(s)
         for (var i = 0; i < ev.dataTransfer.items.length; i++) {
@@ -172,7 +159,6 @@ function dropHandler(ev) {
     }
 }
 function dragOverHandler(ev) {
-
     ev.preventDefault();
 }
 

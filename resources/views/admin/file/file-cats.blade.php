@@ -22,10 +22,12 @@
             cursor: not-allowed;
             pointer-events: all !important;
         }
-        .page-item.pageNumbers{
+
+        .page-item.pageNumbers {
             display: none;
         }
-        nav{
+
+        nav {
             margin-top: 20px;
             text-align: center;
 
@@ -50,7 +52,7 @@
         @if (!empty($id))
             var userId = {{ $id }};
             var cat = '';
-            var uploadUrl = '{{ url(getAdminRoutePrefix() . '/file-upload') }}';
+            var uploadUrl = '{{ url(getRoutePrefix() . '/file-upload') }}';
         @endif
     </script>
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
@@ -102,7 +104,6 @@
                 purchasePrice = purchasePrice.replaceAll(" ", "");
                 purchaseDp = purchaseDp.replaceAll(" ", "");
                 loanAmount = loanAmount.replaceAll(" ", "");
-
                 $('#purchase-price').text("$ " + formatNumbers(purchasePrice));
                 $('#purchase-dp').text("$ " + formatNumbers(purchaseDp));
                 $('#loan-amount').text("$ " + formatNumbers(loanAmount));
@@ -111,33 +112,24 @@
                 let mortgage1 = $('#mortage1').html();
                 let mortgage2 = $('#mortage2').text();
                 let value = $('#value').text();
-
                 console.log($('#mortage1').text());
                 //Remove commas
                 mortgage1 = mortgage1.replaceAll(",", "");
                 mortgage2 = mortgage2.replaceAll(",", "");
                 value = value.replaceAll(",", "");
-
                 //Remove dollars sign
                 mortgage1 = mortgage1.replaceAll("$", "");
                 mortgage2 = mortgage2.replaceAll("$", "");
                 value = value.replaceAll("$", "");
-
                 //Remove spaces
                 mortgage1 = mortgage1.replaceAll(" ", "");
                 mortgage2 = mortgage2.replaceAll(" ", "");
                 value = value.replaceAll(" ", "");
-
-
                 $('#mortage1').text("$ " + formatNumbers(mortgage1));
                 $('#mortage2').text("$ " + formatNumbers(mortgage2));
                 $('#value').text("$ " + formatNumbers(value));
             @endif
-
-
-
         });
-
         function formatNumbers(number) {
             number += '';
             x = number.split(',');
@@ -150,5 +142,4 @@
             return x1 + x2;
         }
     </script>
-
 @endsection

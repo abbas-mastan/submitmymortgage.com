@@ -1,9 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\GmailController;
 /*
 |--------------------------------------------------------------------------
 | Teacher Routes
@@ -19,7 +17,6 @@ use App\Http\Controllers\GmailController;
 //    abort(403);
 //}
 Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(function () {
-
   //==============================
   //==========User related routes
   //==============================
@@ -38,11 +35,26 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
   Route::post('/update-cat-comments/{cat}', [AdminController::class, 'updateCatComments']);
   Route::get('/delete-file/{id}', [AdminController::class, 'deleteFile']);
   Route::post('/file-upload', [AdminController::class, 'fileUpload']);
+
+  Route::get('/applications', [AdminController::class, 'applications']);
+  Route::get('/application-show/{application}', [AdminController::class, 'applicationShow']);
+  Route::get('/application-edit/{application}', [AdminController::class, 'applicationEdit']);
+  Route::post('/application-update/{application}', [AdminController::class, 'applicationUpdate']);
+  Route::get('/application-delete/{application}', [AdminController::class, 'deleteApplication']);
+  
+  Route::get('/leads', [AdminController::class, 'allLeads']);
+  Route::get('/lead/{user}', [AdminController::class, 'lead']);
+  Route::get('/delete-lead/{info}', [AdminController::class, 'deleteLead']);
+  
+  Route::get('/basic-info', [AdminController::class, 'basicInfo']);
+  #all users 
+  Route::get('/all-users', [AdminController::class, 'allUsers']);
   //==============================
   //==========Profile related routes
   //==============================
   Route::get('/profile', [AdminController::class, 'profile']);
   Route::post('/do-profile', [AdminController::class, 'doProfile']);
+  Route::get('/disconnect-google', [AdminController::class, 'disconnectGoogle'])->name('disconnect.google');
 });
 Route::prefix(getAdminRoutePrefix())->group(function () {
   //==============================

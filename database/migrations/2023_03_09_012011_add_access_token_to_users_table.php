@@ -13,9 +13,11 @@ class AddAccessTokenToUsersTable extends Migration
      */
     public function up()
     {
+        if(!Schema::hasTable('users')){
         Schema::table('users', function (Blueprint $table) {
             $table->longText('accessToken')->nullable()->after('remember_token');
         });
+    }
     }
 
     /**

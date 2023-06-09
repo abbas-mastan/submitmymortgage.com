@@ -17,6 +17,10 @@
             @include('admin.dashboard.cards')
             @include('admin.dashboard.users')
         @endcan
+        @can('isAssociate')
+            @include('admin.dashboard.cards')
+            @include('admin.dashboard.users')
+        @endcan
         @can('isUser')
             @include('user.dashboard.cards')
         @endcan

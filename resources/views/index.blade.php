@@ -19,21 +19,50 @@
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <!-- custom css -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <style>
+        .modal-content {
+            width: 660px !important;
+            height: 424px !important;
+        }
+
+        @media only screen and (max-width: 768px) {
+            .modal-content {
+                margin: -80px !important;
+                width: 660px !important;
+                height: 424px !important;
+            }
+        }
+
+        @media only screen and (max-width: 425px) {
+            .modal-content {
+                margin: 0 !important;
+                width: 412px !important;
+                height: 231px !important;
+            }
+        }
+
+        @media only screen and (max-width: 375px) {
+            .modal-content {
+                position: relative;
+                width: 365px !important;
+                margin: -2px !important;
+            }
+        }
+    </style>
 </head>
 </head>
 
 <body>
     <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content" style="width: 660px;height: 424px;">
+            <div class="modal-content" style="">
                 <div class="modal-header border-0">
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                {{-- <video width="650" height="550" controls autoplay>
-                    <source src="video.mp4" type="video/mp4">
-                </video> --}}
-                <iframe class="embed-responsive-item" src="" id="video"
-                    allowscriptaccess="always" allow="autoplay"></iframe>
+                {{-- <iframe class="embed-responsive-item" src="" id="video" allowscriptaccess="always"
+                    allow="autoplay"></iframe> --}}
+                <video muted autoplay src="demo.mp4" type="video/mp4">
+                </video>
             </div>
         </div>
     </div>
@@ -240,7 +269,8 @@
                             approval
                             faster. Say goodbye to long wait times and hello to a hassle-free mortgage approval process
                             with us!</p>
-                        <a href="{{route('register')}}" class="btn btn-primary text-uppercase mt-4 body-btns">Get Started</a>
+                        <a href="{{ route('register') }}" class="btn btn-primary text-uppercase mt-4 body-btns">Get
+                            Started</a>
                     </div>
                     <!-- right side -->
                     <div class="col-xl-7 right"></div>
@@ -253,7 +283,11 @@
                     <!-- left side -->
                     <div class="col-xl-12 left">
                         <h2 class="text-title mb-4" id="disclosure">Disclosure</h2>
-                        <p class="mt-2">We value your privacy and take the protection of your information seriously. Our app complies with the Google API Services User Data Policy, including the Limited Use requirements for Restricted and Sensitive Scopes. For more information, please visit the <a href="https://developers.google.com/terms/api-services-user-data-policy">Google API Services User Data Policy</a>. </p>
+                        <p class="mt-2">We value your privacy and take the protection of your information seriously.
+                            Our app complies with the Google API Services User Data Policy, including the Limited Use
+                            requirements for Restricted and Sensitive Scopes. For more information, please visit the <a
+                                href="https://developers.google.com/terms/api-services-user-data-policy">Google API
+                                Services User Data Policy</a>. </p>
                     </div>
                     <!-- right side -->
                 </div>
@@ -270,7 +304,7 @@
                 <div class="col-12 footer">
                     <a href="/privacy-policy">Privacy Policy</a>
                     <br><br>
-                    <p>Copyright to www.submitmymortgage.com {{date('Y')}}. All Rights Reserved.</p>
+                    <p>Copyright to www.submitmymortgage.com {{ date('Y') }}. All Rights Reserved.</p>
                 </div>
             </div>
         </div>
@@ -316,8 +350,8 @@
             var $videoSrc;
             $('.video-btn').click(function() {
                 $videoSrc = $(this).data("src");
-                $('#video').attr('width','650');
-                $('#video').attr('height','560');
+                $('#video').attr('width', '650');
+                $('#video').attr('height', '560');
                 console.log($videoSrc);
             });
             // when the modal is opened autoplay it  

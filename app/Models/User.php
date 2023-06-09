@@ -12,11 +12,6 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'name',
         'email',
@@ -24,11 +19,6 @@ class User extends Authenticatable implements MustVerifyEmail
         'accessToken'
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
@@ -76,5 +66,18 @@ class User extends Authenticatable implements MustVerifyEmail
         if(count($names) > 1)
             return $names[2];
         return !empty($names[1]) ? $names[1] : "";
+    }
+
+    public function application()
+    {
+        return $this->hasOne(Application::class);
+    }
+    public function createdUsers()
+    {
+        return $this->hasMany(User::class,'created_by');
+    }
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class,'created_by');
     }
 }
