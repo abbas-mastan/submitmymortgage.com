@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Arr;
+use App\Models\{Application,Media,Attachment,User};
 use Illuminate\Http\Request;
-use App\Models\{Media, Attachment,User,Application};
-use Illuminate\Support\Facades\{Storage, Auth, File as FacadesFile};
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\{Storage,Auth};
 
 class CommonService
 {
@@ -72,17 +72,17 @@ class CommonService
         }
         return response()->json(['status' => "failure", 'msg' => "File uploading failed."]);
     }
-    
+
     public static function doApplication($request, $userId = null)
     {
-        if(session('role') != "Borrower"){
-            $user = User::where('email',$request->email)->first();
-        }else{
-            $user = $userId ? User::find($userId) : auth()->user();
+        if (session('role') != "Borrower") {
+            $user = User::where('email', $request->email)->first() ?? auth::user();
+        } else {
+            $user = $userId ? User::find($userId) : auth::user();
         }
         $data = $request->validated();
         $isNewApplication = !$user->application()->exists();
-        
+
         if ($data['employement_status'] == 'other') {
             $data['employement_status'] = $request->employment_other_status;
             $data = Arr::except($data, 'employment_other_status');
@@ -94,13 +94,60 @@ class CommonService
         if (array_key_exists('property_type_other', $data)) {
             $data = Arr::except($data, 'property_type_other');
         }
-        if ($isNewApplication) {
-            $data['user_id'] = $user->id ?? Auth::id();
+        $data['user_id'] = $user->id ?? Auth::id();
+        if ($request->has('user_id')) {
+            $data['user_id'] = $request->user_id;
         }
         return [
             'msg_type' => 'msg_success',
             'msg_value' => $isNewApplication ? 'Application inserted successfully.' : 'Application updated successfully.',
-            'data' => $isNewApplication ? Application::create($data) : $user->application->update($data)
+            'data' => session('role') == 'Borrower' ?
+            $isNewApplication ? Application::create($data) : $user->application->update($data)
+            : Application::create($data),
         ];
+    }
+
+    public static function updateApplicatinStatus($application, $status)
+    {
+        $application->status = $status == 'accept' ? 1 : 2;
+        $msg = $status == 'accept' ? "Deal completed." : "Deal rejected.";
+        $application->update();
+        return ['msg_value' => $msg, 'msg_type' => 'msg_success'];
+    }
+
+    public static function hideCategory($user, $cat)
+    {
+        $skippedCategories = json_decode($user->skipped_category, true) ?: [];
+        if (in_array($cat, $skippedCategories)) {
+            $msg = "\"$cat\" showed successfully";
+            $skippedCategories = array_values(array_diff($skippedCategories, [$cat]));
+        } else {
+            $msg = "\"$cat\" hidden successfully";
+            $skippedCategories[] = $cat;
+        }
+
+        $user->skipped_category = json_encode($skippedCategories);
+        $user->save();
+        return ['msg_value' => $msg, 'msg_type' => 'msg_success'];
+    }
+
+    public static function deleteCategory($user, $cat)
+    {
+        $user->media()->where('category', $cat)->get()->each(function ($file) {
+            Storage::delete($file->file_path);
+        });
+        $user->media()->where('category', $cat)->delete();
+        $user->categories()->where('name', $cat)->delete();
+        return ['msg_value' => "\"$cat\" category deleted!", 'msg_type' => 'msg_success'];
+
+    }
+    public static function applications()
+    {
+        if (session('role') == 'Admin') {
+            $data['applications'] = Application::all();
+        } else {
+            $data['applications'] = Auth::user()->createdUsers()->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        }
+        return $data;
     }
 }

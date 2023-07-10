@@ -40,7 +40,6 @@
                                     $email = trim($matches[1]);
                                 }
                             }
-                            
                         @endphp
                         <tr class="bg-gray-200">
                             <td class="p-2" colspan="2">{{ $email ?? '' }}</td>
@@ -68,13 +67,13 @@
     <script>
         $('nav > div a:first-child').each(function() {
             var href = $(this).attr('href');
-            var newurl = href.replace("/",'/gmail-inbox');
-            $(this).attr('href',newurl);
+            var newurl = href.replace("/", '/gmail-inbox');
+            $(this).attr('href', newurl);
         });
         $('nav > div a:last-child').each(function() {
             var href = $(this).attr('href');
-            var newurl = href.replace("/",'/gmail-inbox');
-            $(this).attr('href',newurl);
+            var newurl = href.replace("/", '/gmail-inbox');
+            $(this).attr('href', newurl);
         });
     </script>
 @endsection

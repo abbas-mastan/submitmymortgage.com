@@ -31,9 +31,22 @@
             <tbody>
                 @php
                     $count = 1;
+                    $categories = config('smm.file_category');
+                    if(Auth::user()->categories()->exists()){
+                        foreach (Auth::user()->categories()->get() as $cat) {
+                            $categories[] = $cat->name;
+                        }
+                    }
                 @endphp
-                @foreach (config('smm.file_category') as $cat)
-                    @if ((auth()->user()->finance_type === 'Purchase' && $cat === 'Purchase Agreement') || $cat === 'Credit Report')
+                @foreach ($categories as $cat)
+                    @if (
+                        (Auth::user()->role === 'Borrower' && Auth::user()->loan_type !== 'Private Loan' && $cat === 'Credit Report') ||
+                            (isset($user) && $user->loan_type === 'Private Loan' && ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
+                            (Auth::user()->role === 'Borrower' &&
+                                Auth::user()->loan_type === 'Private Loan' &&
+                                ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
+                            (!empty($user->skipped_category) && in_array($cat, json_decode($user->skipped_category))) ||
+                            (!empty(Auth::user()->skipped_category) && in_array($cat, json_decode(Auth::user()->skipped_category))))
                         @continue
                     @endif
                     <tr>
@@ -54,15 +67,15 @@
                         </td>
                         <td class=" pl-2 tracking-wide border capitalize">
                             <div class=" flex justify-center">
-                                @if($cat !== 'Loan Application')
-                                @if (fileCatSubmittedByClient($cat, $user->id))
-                                    <img src="{{ asset('icons/tick.svg') }}" alt="" class="w-6 h-6">
+                                @if ($cat !== 'Loan Application')
+                                    @if (fileCatSubmittedByClient($cat, $user->id))
+                                        <img src="{{ asset('icons/tick.svg') }}" alt="" class="w-6 h-6">
                                     @else
-                                    <img src="{{ asset('icons/cross.svg') }}" alt="" class="w-7 h-7">
+                                        <img src="{{ asset('icons/cross.svg') }}" alt="" class="w-7 h-7">
                                     @endif
-                                    @elseif($applicationsidebar)
+                                @elseif($applicationsidebar)
                                     <img src="{{ asset('icons/tick.svg') }}" alt="" class="w-6 h-6">
-                                    @else
+                                @else
                                     <img src="{{ asset('icons/cross.svg') }}" alt="" class="w-7 h-7">
                                 @endif
                             </div>

@@ -32,29 +32,6 @@
                         name="email" id="email" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email Address">
                 </div>
             </div>
-            {{-- @if (!$user->password > 0)
-                <div class="mt-3 mx-auto">
-                    <div class=" text-left mr-12">
-                        <label for="password" class="">Create Password</label>
-                    </div>
-                    <div class="mt-2">
-                        <input type="password"
-                            class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                            name="password" id="password" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
-                    </div>
-                </div>
-                <div class="mt-3 mx-auto">
-                    <div class=" text-left mr-12">
-                        <label for="password_confirmation" class="">Confirm Password</label>
-                    </div>
-                    <div class="mt-2">
-                        <input type="password"
-                            class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                            name="password_confirmation" id="password_confirmation"
-                            placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
-                    </div>
-                </div>
-            @endif --}}
             <div class="mt-3 mx-auto">
                 <div class=" text-left mr-12">
                     <label for="role" class="">User Type</label>
@@ -64,17 +41,16 @@
                         class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
                         <option value="">Choose a type</option>
                         @foreach (config('smm.roles') as $role)
-                            @if (!(Auth::user()->role == 'Processor' && $role == 'Processor'))
-                                @if (!(Auth::user()->role == 'Associate' && in_array($role, ['Associate', 'Processor'])))
-                                    @if (!(Auth::user()->role == 'Junior Associate' && in_array($role, ['Junior Associate', 'Associate', 'Processor'])))
-                                        <option {{ old('role', $user->role) == $role ? 'selected' : '' }}
-                                            value="{{ $role }}">
-                                            {{ $role }}</option>
-                                    @endif
-                                @endif
+                        {{-- the roles are showing depend on logged in user --}}
+                            @if (!((Auth::user()->role == 'Processor' && $role == 'Processor') ||
+                                    (Auth::user()->role == 'Associate' && in_array($role, ['Associate', 'Processor'])) ||
+                                    (Auth::user()->role == 'Junior Associate' && in_array($role, ['Junior Associate', 'Associate', 'Processor']))
+                                ))
+                                <option {{ old('role', $user->role) == $role ? 'selected' : '' }}
+                                    value="{{ $role }}">
+                                    {{ $role }}</option>
                             @endif
                         @endforeach
-                        {{-- <option value="sadmin">Secondary Admin</option> --}}
                     </select>
                 </div>
             </div>
@@ -112,16 +88,17 @@
                     </select>
                 </div>
             </div>
-            <div class="mt-3 mx-auto">
-                <div class=" text-left mr-12">
-                    <label for="file" class="">Profile Picture</label>
+            @isset($user->pic)
+                <div class="mt-3 mx-auto">
+                    <div class=" text-left mr-12">
+                        <label for="file" class="">Profile Picture</label>
+                    </div>
+                    <div class="mt-2">
+                        <img class="w-1/5" src="{{ asset($user->pic) }}" alt="">
+                        <input type="file" name="file" id="file" accept="image/*">
+                    </div>
                 </div>
-                <div class="mt-2">
-                    <img src="{{ $user->pic }}" alt="">
-                    <input type="file" name="file" id="file" accept="image/*">
-                </div>
-
-            </div>
+            @endisset
             <div class="mt-5 grid grid-cols-6">
                 <div class="col-span-2 text-right mr-12">
                     &nbsp;

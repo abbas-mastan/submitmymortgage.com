@@ -2,18 +2,16 @@
 
 namespace App\Services;
 
-use App\Models\Info;
-use App\Models\User;
-use App\Models\Media;
 use App\Models\Application;
-use Illuminate\Http\Request;
+use App\Models\Info;
+use App\Models\Media;
 use Illuminate\Support\Facades\Auth;
 
 class UserService
 {
 
     /**
-     * 
+     *
      */
     public function __construct()
     {
@@ -23,6 +21,9 @@ class UserService
     {
         $data['fileCount'] = Auth::user()->media()->count();
         $data['basicInfo'] = auth()->user()->info()->exists();
+        foreach (Auth::user()->categories()->get() as $cat) {
+            $data[$cat->name] = Auth::user()->media()->where("category", $cat->name)->exists();
+        }
         $data['report'] = Auth::user()->media()->where("category", "Credit Report")->exists();
         $data['bank'] = Auth::user()->media()->where("category", "Bank Statements")->exists();
         $data['pay'] = Auth::user()->media()->where("category", "Pay Stubs")->exists();
@@ -42,8 +43,6 @@ class UserService
     //Return credit report files
     public static function creditReport()
     {
-
-
         $data['files'] = Auth::user()->media()->where("category", "Credit Report")->get();
         $data = array_merge($data, self::getUserDashboard());
         return $data;
@@ -51,24 +50,18 @@ class UserService
     //Return credit report files
     public static function bankStatement()
     {
-
-
         $data['files'] = Auth::user()->media()->where("category", "Bank Statements")->get();
         $data = array_merge($data, self::getUserDashboard());
         return $data;
     } //Return credit report files
     public static function payStub()
     {
-
-
         $data['files'] = Auth::user()->media()->where("category", "Pay Stubs")->get();
         $data = array_merge($data, self::getUserDashboard());
         return $data;
     } //Return credit report files
     public static function taxReturn()
     {
-
-
         $data['files'] = Auth::user()->media()->where("category", "Tax Returns")->get();
         $data = array_merge($data, self::getUserDashboard());
         return $data;
@@ -76,8 +69,6 @@ class UserService
     //Return license/id files
     public static function idLicense()
     {
-
-
         $data['files'] = Auth::user()->media()->where("category", "ID/Driver's License")->get();
         $data = array_merge($data, self::getUserDashboard());
         return $data;
@@ -85,7 +76,6 @@ class UserService
     //Return 1003 files
     public static function _1003()
     {
-
         $data['files'] = Auth::user()->media()->where("category", "1003 Form")->get();
         $data = array_merge($data, self::getUserDashboard());
         return $data;
@@ -93,8 +83,6 @@ class UserService
     //Return 1003 files
     public static function mortgageStatement()
     {
-
-
         $data['files'] = Auth::user()->media()->where("category", "Mortgage Statement")->get();
         $data = array_merge($data, self::getUserDashboard());
         return $data;
@@ -102,8 +90,6 @@ class UserService
     //Return 1003 files
     public static function insuranceEvidence()
     {
-
-
         $data['files'] = Auth::user()->media()->where("category", "Evidence of Insurance")->get();
         $data = array_merge($data, self::getUserDashboard());
         return $data;
@@ -111,8 +97,6 @@ class UserService
     //Purchase Agreement files
     public static function purchaseAgreement()
     {
-
-
         $data['files'] = Auth::user()->media()->where("category", "Purchase Agreement")->get();
         $data = array_merge($data, self::getUserDashboard());
         return $data;
@@ -120,11 +104,14 @@ class UserService
     //Return 1003 files
     public static function miscellaneous()
     {
-
-
         $data['files'] = Auth::user()->media()->where("category", "Miscellaneous")->get();
         $data = array_merge($data, self::getUserDashboard());
         return $data;
+    }
+
+    public static function category()
+    {
+        return self::getUserDashboard();
     }
     //Return data for view for basic info
     public static function basicInfo($request)
@@ -139,13 +126,19 @@ class UserService
         return $data;
     }
 
-
-    public static function application($request)
+    public static function application($request, $id = -1)
     {
-        if (auth()->user()->application()->exists()) {
-            $data['application'] = auth()->user()->application;
+        if ($id == -1 && session('role') != 'Borrower') {
+            $data['id'] = $id;
+            $data['application'] = new Application;
         } else {
-            $data['application'] = new Application();
+            if (Auth::user()->application()->exists()) {
+                $data['id'] = $id;
+                $data['application'] = Auth::user()->application;
+            } else {
+                $data['id'] = $id;
+                $data['application'] = new Application();
+            }
         }
         $data = array_merge($data, self::getUserDashboard());
         return $data;
@@ -155,7 +148,7 @@ class UserService
     public static function doInfo($request)
     {
         if (auth()->user()->info()->exists()) {
-            $info = auth()->user()->info;
+            $info = session('role') != "Borrower" ? new Info : auth()->user()->info;
         } else {
             $info = new Info();
         }
@@ -189,7 +182,7 @@ class UserService
         $info->p_zip = $request->p_zip;
 
         //Purchase details
-        if (auth()->user()->finance_type == "Purchase") {
+        if (auth()->user()->finance_type == "Purchase" || $request->finance_type == "Purchase") {
             $info->purchase_type = $request->purchase_type;
             if ($request->company_name) {
                 $info->company_name = $request->company_name;
@@ -200,9 +193,8 @@ class UserService
             $info->loan_amount = $request->loan_amount;
         }
 
-
         //Refinance details
-        if (auth()->user()->finance_type == "Refinance") {
+        if (auth()->user()->finance_type == "Refinance" || $request->finanace == "Refinance") {
             $info->mortage1 = $request->mortage1;
             $info->interest1 = $request->interest1;
             $info->mortage2 = $request->mortage2;
@@ -239,7 +231,7 @@ class UserService
         $updated = Media::where('user_id', Auth::id())
             ->where('category', $request->cat)
             ->update([
-                "user_cat_comments" => $request->cat_comments
+                "user_cat_comments" => $request->cat_comments,
             ]);
         if ($updated) {
             return ['msg_type' => 'msg_success', 'msg_value' => 'Comments added.'];

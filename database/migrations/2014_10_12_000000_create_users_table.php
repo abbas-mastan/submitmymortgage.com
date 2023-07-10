@@ -26,6 +26,7 @@ class CreateUsersTable extends Migration
                 $table->longText('accessToken')->nullable();
                 $table->string('loan_type')->nullable();
                 $table->string('created_by')->nullable();
+                $table->json('skipped_category')->nullable();
                 $table->string('finance_type')->nullable();
                 $table->rememberToken();
                 $table->timestamps();

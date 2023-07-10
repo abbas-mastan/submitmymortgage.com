@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Media;
-use Illuminate\Http\Request;
-use App\Services\UserService;
-use App\Services\CommonService;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ApplicationRequest;
+use App\Models\User;
+use App\Services\CommonService;
+use App\Services\UserService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -25,7 +24,6 @@ class UserController extends Controller
     //Showing input for profile
     public function creditReport(Request $request)
     {
-
         $data = UserService::creditReport($request);
         return view('user.files.credit-report', $data);
     }
@@ -60,13 +58,12 @@ class UserController extends Controller
     }
     public function mortgageStatement(Request $request)
     {
-
         $data = UserService::mortgageStatement($request);
         return view('user.files.mortgage-statement', $data);
     }
+
     public function insuranceEvidence(Request $request)
     {
-
         $data = UserService::insuranceEvidence($request);
         return view('user.files.insurance-evidence', $data);
     }
@@ -75,9 +72,9 @@ class UserController extends Controller
         $data = UserService::purchaseAgreement($request);
         return view('user.files.purchase-agreement', $data);
     }
+
     public function miscellaneous(Request $request)
     {
-
         $data = UserService::miscellaneous($request);
         return view('user.files.miscellaneous', $data);
     }
@@ -134,12 +131,19 @@ class UserController extends Controller
         return redirect('/dashboard')->with($data['msg_type'], $data['msg_value']);
     }
 
-     #disconnect from google 
-     public function disconnectGoogle(Request $request)
-     {
-         User::where('id', Auth::id())->update(array('accessToken' => null));
-         return redirect('/dashboard')->with("msg_success","Google Disconnected Successfully.");
-     }
+    public function category($cat)
+    {
+        $data = UserService::category();
+        $data['cat'] = str_replace('-', ' ', $cat);
+        return view('user.files.single-cat', $data);
+    }
+
+    #disconnect from google
+    public function disconnectGoogle(Request $request)
+    {
+        User::where('id', Auth::id())->update(array('accessToken' => null));
+        return redirect('/dashboard')->with("msg_success", "Google Disconnected Successfully.");
+    }
 
     private function validateFunction($request)
     {
@@ -153,7 +157,7 @@ class UserController extends Controller
             'b_city' => 'required',
             'b_state' => 'required',
             'b_zip' => 'required',
-            // co borrwowers details 
+            // co borrwowers details
             'co_fname' => 'required',
             'co_lname' => 'required',
             'co_phone' => 'required',

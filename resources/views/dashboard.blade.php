@@ -1,12 +1,12 @@
 @extends('layouts.app')
 @section('head')
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
     <style>
         #file {
             display: none;
         }
-    </style>
+            </style>
 @endsection
 @section('content')
     @can('isUser')
@@ -29,7 +29,7 @@
 @section('foot')
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+   
     <script>
         $(document).ready(function() {
             $('#user-table').DataTable({
@@ -73,7 +73,6 @@
                 uploadToPHPServer();
             }
         });
-
         function uploadToPHPServer(checkedValues = null) {
             var formData = new FormData();
             if (file) {
@@ -110,7 +109,6 @@
                 location.reload();
             });
         }
-
         function makeXMLHttpRequest(url, data, callback) {
             var request = new XMLHttpRequest();
             request.onreadystatechange = function() {
@@ -149,7 +147,6 @@
             request.send(data);
         }
     </script>
-
     <script type="text/javascript">
         $(document).ready(function() {
             $('#user-table_wrapper').css('width', '100%');
@@ -179,7 +176,6 @@
     </script>
     <script>
         var file;
-
         function dropHandler(ev) {
             console.log('File(s) dropped');
             // Prevent default behavior (Prevent file from being opened)
@@ -205,7 +201,6 @@
                 }
             }
         }
-
         function dragOverHandler(ev) {
             ev.preventDefault();
         }

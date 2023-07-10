@@ -8,11 +8,6 @@
                     <span class="tracking-wide text-xl text-white ">Submit My <br class="xl:hidden"> Mortgage</span>
                 </a>
             </li>
-            {{-- <li class="pt-0 sm:px-24 ">
-                <a class="truncate flex flex-col items-center" href="{{ url('/dashboard') }}">
-                    <img src="{{ asset('img/logo.svg') }}" class="w-20 sm:mx-2 mx-4 block" />
-                </a>
-            </li> --}}
             @can('isAdmin')
                 <!-- Sidebar for Admin starts -->
                 <li class="mt-10 py-3 my-1 sm:px-24 flex flex-row">
@@ -28,29 +23,17 @@
                         &nbsp;
                     </span>
                 </li>
-                @if (session('role') === 'Processor')
-                    <li class="pb-3  sm:px-24 flex flex-row">
-                        <span class="hidden sm:block border-4 border-white border-opacity-20 rounded-full text-xs  -ml-16">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </span>
-                        <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/basic-info') }}">
-                            <span class="tracking-wide sm:block  capitalize text-white ">Basic Information</span>
-                        </a>
-                    </li>
 
-                    <li class="-mt-4 hidden sm:block">
-                        <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                            &nbsp;
-                        </span>
-                    </li>
+                @if (session('role') === 'Processor')
                     <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
                         <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         </span>
-                        <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/all-users') }}">
-                            <span class="tracking-wide sm:block  capitalize text-white">All Users</span>
+                        <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/application/-1') }}">
+                            <span class="tracking-wide sm:block  capitalize text-white">Loan Application</span>
                         </a>
                     </li>
+
                     <li class="-mt-4 hidden sm:block">
                         <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
                             &nbsp;
@@ -61,8 +44,34 @@
                     <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
+                    <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/all-users') }}">
+                        <span class="tracking-wide sm:block  capitalize text-white">All Users</span>
+                    </a>
+                </li>
+                <li class="-mt-4 hidden sm:block">
+                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
+                        &nbsp;
+                    </span>
+                </li>
+                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
+                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                    <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/leads') }}">
+                        <span class="tracking-wide sm:block  capitalize text-white">Contacts</span>
+                    </a>
+                </li>
+                <li class="-mt-4 hidden sm:block">
+                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
+                        &nbsp;
+                    </span>
+                </li>
+                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
+                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
                     <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/applications') }}">
-                        <span class="tracking-wide sm:block  capitalize text-white">Loan Applications</span>
+                        <span class="tracking-wide sm:block  capitalize text-white">Loan Pipeline</span>
                     </a>
                 </li>
                 <li class="-mt-4 hidden sm:block">
@@ -78,35 +87,6 @@
                         <span class="tracking-wide sm:block  capitalize text-white">Files Uploaded</span>
                     </a>
                 </li>
-
-                @if (session('role') === 'Admin')
-                    <li class="-mt-4 hidden sm:block">
-                        <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                            &nbsp;
-                        </span>
-                    </li>
-                    <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
-                        <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </span>
-                        <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/leads') }}">
-                            <span class="tracking-wide sm:block  capitalize text-white">Leads</span>
-                        </a>
-                    </li>
-                    <li class="-mt-4 hidden sm:block">
-                        <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                            &nbsp;
-                        </span>
-                    </li>
-                    <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
-                        <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </span>
-                        <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/all-users') }}">
-                            <span class="tracking-wide sm:block  capitalize text-white">All Users</span>
-                        </a>
-                    </li>
-                @endif
                 <li class="-mt-4 hidden sm:block">
                     <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
                         &nbsp;
@@ -148,11 +128,6 @@
                         @endif
                     </a>
                 </li>
-                {{-- <li class="-mt-3">
-                <span class="border-l-4 border-l-gray-400 h-14 ml-11">
-                    &nbsp;
-                </span>
-            </li> --}}
                 <!-- Sidebar for Admin ends -->
             @endcan
             @can('isAssociate')
@@ -169,24 +144,11 @@
                         &nbsp;
                     </span>
                 </li>
-                <li class="pb-3 my-1 sm:px-24 flex flex-row">
-                    <span class="hidden sm:block border-4 border-white border-opacity-20 rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/basic-info') }}">
-                        <span class="tracking-wide sm:block  capitalize text-white">Basic Information</span>
-                    </a>
-                </li>
-                <li class="-mt-4 hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
                 <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
                     <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
-                    <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/application') }}">
+                    <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/application/-1') }}">
                         <span class="tracking-wide sm:block  capitalize text-white">Loan Application</span>
                     </a>
                 </li>
@@ -201,6 +163,32 @@
                     </span>
                     <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/all-users') }}">
                         <span class="tracking-wide sm:block  capitalize text-white">All Users</span>
+                    </a>
+                </li>
+                <li class="-mt-4 hidden sm:block">
+                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
+                        &nbsp;
+                    </span>
+                </li>
+                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
+                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                    <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/applications') }}">
+                        <span class="tracking-wide sm:block  capitalize text-white">Loan Pipeline</span>
+                    </a>
+                </li>
+                <li class="-mt-4 hidden sm:block">
+                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
+                        &nbsp;
+                    </span>
+                </li>
+                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
+                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                    <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/leads') }}">
+                        <span class="tracking-wide sm:block  capitalize text-white">Contacts</span>
                     </a>
                 </li>
                 <li class="-mt-3 hidden sm:block">
@@ -245,219 +233,48 @@
                     </a>
                 </li>
             @endcan
-
-
             @can('isUser')
                 <!-- Sidebar for Admin starts -->
-                <li class="my-1 sm:px-24 mt-5 sm:block   -ml-14">
+                <li class="mb-5 my-1 sm:px-24 mt-5 sm:block -ml-14">
                     <span class="tracking-wide text-2xl text-white text-left ">Required Documents</span>
                 </li>
-                <li class="mt-3 pb-3 my-1 sm:px-24 flex flex-row">
-                    <span
-                        class="hidden sm:block border-4  {{ $basicInfo ? 'border-themegreen' : 'border-white border-opacity-20' }} rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getUserRoutePrefix() . '/basic-info') }}">
+                @php
+                    $categories = config('smm.file_category');
+                    $categories[] = 'Basic Info';
+                    if (Auth::user()->categories()->get()) {
+                        foreach (Auth::user()->categories()->get() as $key => $cat) {
+                            $categories[] = $cat->name;
+                        }
+                    }
+                @endphp
+                @foreach (array_reverse($categories) as $cat)
+                    @if (
+                        (Auth::user()->role === 'Borrower' && Auth::user()->loan_type !== 'Private Loan' && $cat === 'Credit Report') ||
+                            (isset($user) && $user->loan_type === 'Private Loan' && ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
+                            (Auth::user()->role === 'Borrower' &&
+                                Auth::user()->loan_type === 'Private Loan' &&
+                                ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
+                            (!empty($user->skipped_category) && in_array($cat, json_decode($user->skipped_category))) ||
+                            (!empty(Auth::user()->skipped_category) && in_array($cat, json_decode(Auth::user()->skipped_category))))
+                        @continue
+                    @endif
+                    <li class="py-3 sm:px-24 flex flex-row {{ $cat == 'Basic Info' ? 'mt-5' : '' }} mt-10 sm:-mt-3">
                         <span
-                            class="tracking-wide sm:block  capitalize {{ $basicInfo ? 'text-themegreen' : 'text-white   opacity-60' }}">Basic
-                            Information</span>
-                    </a>
-                </li>
-                {{-- <li class="-mt-3.5  hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14 vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="py-3 sm:px-24 flex flex-row mt-10 sm:-mt-3">
-                    <span class="hidden sm:block border-4 {{ $report ? "border-themegreen" : "border-white border-opacity-20" }}   rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getUserRoutePrefix().'/credit-report') }}">
-                        <span class="tracking-wide sm:block  capitalize  {{ $report ? "text-themegreen" : "text-white   opacity-60" }} ">Credit Report</span>
-                    </a>
-                </li> --}}
-                <li class="-mt-3 hidden sm:block">
-                    <span class="border-l-4  border-l-white   border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="py-3 sm:px-24 flex flex-row  mt-10 sm:-mt-3">
-                    <span
-                        class="hidden sm:block border-4  {{ $applicationsidebar ? 'border-themegreen' : 'border-white border-opacity-20' }} rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getUserRoutePrefix() . '/application') }}">
-                        <span
-                            class="tracking-wide sm:block  capitalize {{ $applicationsidebar ? 'text-themegreen' : 'text-white   opacity-60' }}">Loan
-                            Application</span>
-                    </a>
-                </li>
-                <li class="-mt-3 hidden sm:block">
-                    <span class="border-l-4  border-l-white   border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="py-3 sm:px-24 flex flex-row  mt-10 sm:-mt-3">
-                    <span
-                        class="hidden sm:block border-4  {{ $bank ? 'border-themegreen' : 'border-white border-opacity-20' }} rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getUserRoutePrefix() . '/bank-statement') }}">
-
-                        <span
-                            class="tracking-wide sm:block  capitalize {{ $bank ? 'text-themegreen' : 'text-white   opacity-60' }}">Bank
-                            Statements</span>
-                    </a>
-                </li>
-                @if (!Auth::user()->loan_type == 'Private Loan')
+                            class="hidden sm:block  border-4 {{ getVariable($cat) ? 'border-themegreen' : 'border-white border-opacity-20' }} rounded-full text-xs  -ml-16">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </span>
+                        <a class="truncate ml-4" href="{{ url(getUserRoutePrefix() . '/' . getCatLink($cat)) }}">
+                            <span
+                                class="tracking-wide sm:block  capitalize {{ getVariable($cat) ? 'text-themegreen' : 'text-white   opacity-60' }}">{{ $cat }}</span>
+                        </a>
+                    </li>
                     <li class="-mt-3 hidden sm:block">
                         <span class="border-l-4  border-l-white  border-opacity-20 h-14  vertical-line-m">
                             &nbsp;
                         </span>
                     </li>
-                    <li class="py-3 sm:px-24 flex flex-row  mt-10 sm:-mt-3">
-                        <span
-                            class="hidden sm:block border-4 {{ $pay ? 'border-themegreen' : 'border-white  border-opacity-20' }} rounded-full text-xs  -ml-16">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </span>
-                        <a class="truncate ml-4" href="{{ url(getUserRoutePrefix() . '/pay-stub') }}">
+                @endforeach
 
-                            <span
-                                class="tracking-wide sm:block  capitalize {{ $pay ? 'text-themegreen' : 'text-white   opacity-60' }}">Pay
-                                Stubs</span>
-                        </a>
-                    </li>
-
-                    <li class="-mt-3 hidden sm:block">
-                        <span class="border-l-4  border-l-white  border-opacity-20 h-14  vertical-line-m">
-                            &nbsp;
-                        </span>
-                    </li>
-                    <li class="py-3 sm:px-24 flex flex-row  mt-10 sm:-mt-3">
-                        <span
-                            class="hidden sm:block  border-4 {{ $tax ? 'border-themegreen' : 'border-white border-opacity-20' }} rounded-full text-xs  -ml-16">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </span>
-                        <a class="truncate ml-4" href="{{ url(getUserRoutePrefix() . '/tax-return') }}">
-
-                            <span
-                                class="tracking-wide sm:block  capitalize {{ $tax ? 'text-themegreen' : 'text-white   opacity-60' }}">Tax
-                                Returns</span>
-                        </a>
-                    </li>
-                @endif
-
-
-                <li class="-mt-3 hidden sm:block">
-                    <span class="border-l-4  border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="py-3 sm:px-24 flex flex-row  mt-10 sm:-mt-3">
-                    <span
-                        class="hidden sm:block  border-4 {{ $license ? 'border-themegreen' : 'border-white border-opacity-20' }} rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getUserRoutePrefix() . '/id-license') }}">
-
-                        <span
-                            class="tracking-wide sm:block  capitalize {{ $license ? 'text-themegreen' : 'text-white   opacity-60' }}">ID/Driver's
-                            License</span>
-                    </a>
-                </li>
-                <li class="-mt-3 hidden sm:block">
-                    <span class="border-l-4  border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="py-3 sm:px-24 flex flex-row  mt-10 sm:-mt-3">
-                    <span
-                        class="hidden sm:block  border-4 {{ $_1003 ? 'border-themegreen' : 'border-white border-opacity-20' }} rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getUserRoutePrefix() . '/1003') }}">
-
-                        <span
-                            class="tracking-wide sm:block  capitalize {{ $_1003 ? 'text-themegreen' : 'text-white   opacity-60' }}">1003
-                            Form</span>
-                    </a>
-                </li>
-                <li class="-mt-3 hidden sm:block">
-                    <span class="border-l-4  border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="py-3 sm:px-24 flex flex-row  mt-10 sm:-mt-3">
-                    <span
-                        class="hidden sm:block  border-4 {{ $statement ? 'border-themegreen' : 'border-white border-opacity-20' }} rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getUserRoutePrefix() . '/mortgage-statement') }}">
-
-                        <span
-                            class="tracking-wide sm:block  capitalize {{ $statement ? 'text-themegreen' : 'text-white   opacity-60' }}">Mortgage
-                            Statement</span>
-                    </a>
-                </li>
-                <li class="-mt-3 hidden sm:block">
-                    <span class="border-l-4  border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="py-3 sm:px-24 flex flex-row  mt-10 sm:-mt-3">
-                    <span
-                        class="hidden sm:block  border-4 {{ $evidence ? 'border-themegreen' : 'border-white border-opacity-20' }} rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getUserRoutePrefix() . '/insurance-evidence') }}">
-
-                        <span
-                            class="tracking-wide sm:block  {{ $evidence ? 'text-themegreen' : 'text-white   opacity-60' }}">Evidence
-                            of Insurance</span>
-                    </a>
-                </li>
-                @if (auth()->user()->finance_type === 'Purchase')
-                    <li class="-mt-3 hidden sm:block">
-                        <span class="border-l-4  border-l-white  border-opacity-20 h-14  vertical-line-m">
-                            &nbsp;
-                        </span>
-                    </li>
-
-                    <li class="py-3 sm:px-24 flex flex-row  mt-10 sm:-mt-3">
-                        <span
-                            class="hidden sm:block  border-4 {{ $purchaseAgreement ? 'border-themegreen' : 'border-white border-opacity-20' }} rounded-full text-xs  -ml-16">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </span>
-                        <a class="truncate ml-4" href="{{ url(getUserRoutePrefix() . '/purchase-agreement') }}">
-
-                            <span
-                                class="tracking-wide sm:block  capitalize {{ $purchaseAgreement ? 'text-themegreen' : 'text-white   opacity-60' }}">Purchase
-                                Agreement</span>
-                        </a>
-                    </li>
-                @endif
-
-                <li class="-mt-3 hidden sm:block">
-                    <span class="border-l-4  border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="py-3 sm:px-24 flex flex-row  mt-10 sm:-mt-3">
-                    <span
-                        class="hidden sm:block  border-4 {{ $miscellaneous ? 'border-themegreen' : 'border-white border-opacity-20' }} rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getUserRoutePrefix() . '/miscellaneous') }}">
-
-                        <span
-                            class="tracking-wide sm:block  capitalize {{ $miscellaneous ? 'text-themegreen' : 'text-white   opacity-60' }}">Miscellaneous</span>
-                    </a>
-                </li>
-                <li class="-mt-3 hidden sm:block">
-                    <span class="border-l-4  border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
                 <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
                     <span
                         class="hidden h-6 sm:block border-4 {{ Auth::user()->accessToken ? 'border-themegreen' : 'border-white border-opacity-20' }}  rounded-full text-xs  -ml-16">

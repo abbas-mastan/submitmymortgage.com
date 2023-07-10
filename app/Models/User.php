@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -42,12 +43,16 @@ class User extends Authenticatable implements MustVerifyEmail
     public function uploads()
     {
         return $this->hasMany(Media::class, "uploaded_by");
-    } 
+    }
     //Get info of this user
     public function info()
     {
         return $this->hasOne(Info::class);
-    } 
+    }
+    public function infos()
+    {
+        return $this->hasMany(Info::class);
+    }
     public function getFirstName()
     {
         $names = explode(" ", $this->name);
@@ -56,28 +61,37 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getMiddleName()
     {
         $names = explode(" ", $this->name);
-        if(count($names) > 1)
+        if (count($names) > 1)
             return $names[1];
         return "";
     }
     public function getLastName()
     {
         $names = explode(" ", $this->name);
-        if(count($names) > 1)
+        if (count($names) > 1)
             return $names[2];
         return !empty($names[1]) ? $names[1] : "";
     }
 
+    public function categories()
+    {
+        return $this->hasMany(UserCategory::class,'user_id');
+    }
+
     public function application()
     {
-        return $this->hasOne(Application::class);
+        return $this->hasOne(Application::class, 'user_id');
+    }
+    public function applications()
+    {
+        return $this->hasMany(Application::class, 'user_id');
     }
     public function createdUsers()
     {
-        return $this->hasMany(User::class,'created_by');
+        return $this->hasMany(User::class, 'created_by');
     }
     public function createdBy()
     {
-        return $this->belongsTo(User::class,'created_by');
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

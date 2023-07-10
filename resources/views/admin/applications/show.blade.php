@@ -63,7 +63,7 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-2 grid grid-cols-2 gap-8">
+        <div class="mt-2 grid grid-cols-2 gap-8">
                 <div class="">
                     <div class=" text-left mr-12">
                         <label for="email" class="">Email</label>

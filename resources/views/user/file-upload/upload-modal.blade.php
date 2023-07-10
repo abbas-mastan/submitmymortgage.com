@@ -1,8 +1,8 @@
 <div id="default-modal" aria-hidden="true"
     class="hidden w-full h-full overflow-x-hidden overflow-y-auto 
-absolute bg-gray-500 bg-opacity-40
+fixed bg-gray-500 bg-opacity-40
  z-50 justify-center items-center">
-    <div class="absolute left-1/3 top-1/4 w-full max-w-2xl px-4 h-full md:h-auto bg-white shadow relative">
+    <div class="fixed left-1/3 top-1/4 w-full max-w-2xl px-4 h-full md:h-auto bg-white shadow relative">
         <!-- Modal content -->
         <div class="">
             <!-- Modal header -->
@@ -19,17 +19,33 @@ absolute bg-gray-500 bg-opacity-40
             </div>
             <!-- Modal body -->
             <div class="flex justify-center items-center py-1 ">
+
                 <select required class="w-1/2 rounded-md" name="category" id="category">
                     <option value="">Choose document type</option>
-                    @foreach (config('smm.file_category') as $cat)
-                        @if (session('role') === 'user' && $cat === 'Credit Report')
-                            @php
-                                continue;
-                            @endphp
+                    @php
+                        $categories = config('smm.file_category');
+                        foreach (Auth::user()->categories()->get() as $category) {
+                            $categories[] = $category->name;
+                        }
+                        if(isset($user)){
+                            foreach ($user->categories()->get() as  $category) {
+                                $categories[] = $category->name;
+                            }
+                        }
+                    @endphp
+                    @foreach ($categories as $cat)
+                        @if (
+                            (Auth::user()->role === 'Borrower' && Auth::user()->loan_type !== 'Private Loan' && $cat === 'Credit Report') ||
+                                (isset($user) && $user->loan_type === 'Private Loan' && ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
+                                (Auth::user()->role === 'Borrower' &&
+                                    Auth::user()->loan_type === 'Private Loan' &&
+                                    ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
+                                (!empty($user->skipped_category) && in_array($cat, json_decode($user->skipped_category))) ||
+                                (!empty(Auth::user()->skipped_category) && in_array($cat, json_decode(Auth::user()->skipped_category))))
+                            @continue
                         @endif
                         <option value="{{ $cat }}">{{ $cat }}</option>
                     @endforeach
-
                 </select>
             </div>
             <div class="mx-auto mt-6 w-3/4 h-36 outline-red-300 outline-dashed outline-offset-8" id="drop_zone"
@@ -41,12 +57,11 @@ absolute bg-gray-500 bg-opacity-40
                     <p class=" text-center">
                         Drag your file here or <button
                             class="bg-transparent border-none outline-none
-                         font-bold text-gradientStart"
+                            font-bold text-gradientStart"
                             id="file-upload-btn">
                             browse
                         </button>
                         <input type="file" name="file" id="file" multiple>
-
                     </p>
                     <p class=" text-center"><span id='filename' class="text-blue-500"></span></p>
                 </div>
@@ -58,7 +73,6 @@ absolute bg-gray-500 bg-opacity-40
                 <div class="w-2/4 mt-3">
                     <div class="">
                         <span id="file-name-progress" class="float-left overflow-hidden">
-
                         </span>
                         <span id="file-name-percent" class="float-right">
                             0%
@@ -81,10 +95,10 @@ absolute bg-gray-500 bg-opacity-40
                 </div>
             </div>
             <br>
-            @if(count(\App\Models\Attachment::where('user_id', Auth::id())->get()) > 0)
-            <div class="px-20 justify-evenly">
-                @include('gmail.attachments')
-            </div>
+            @if (count(\App\Models\Attachment::where('user_id', Auth::id())->get()) > 0)
+                <div class="px-20 justify-evenly">
+                    @include('gmail.attachments')
+                </div>
             @endif
             <!-- Modal footer -->
             <div id="start-upload-div" class="flex  items-center justify-center py-8  rounded-b dark:border-gray-600">

@@ -1,8 +1,7 @@
-<table class="w-full" id="user-table">
-    {{-- <caption class="text-left font-bold mb-3">Existing Teachers:</caption> --}}
-    <thead class="bg-gray-300">
+<table id="user-table" class="display w-full">
+    <thead class="text-center bg-gray-300">
         <tr>
-            <th class=" pl-2 tracking-wide">
+            <th class="pl-2 tracking-wide">
                 S No.
             </th>
             <th class="">
@@ -22,20 +21,17 @@
             </th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="text-center">
+        @php
+            $serialNo = 1;
+        @endphp
         @foreach ($users as $processor)
-            @php
-                $associates = $processor
-                    ->createdUsers()
-                    ->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])
-                    ->with('createdUsers')
-                    ->get();
-            @endphp
             <tr>
-                <td class=" pl-2 tracking-wide border border-l-0">{{ $loop->iteration }}</td>
+                <td class=" pl-2 tracking-wide border border-l-0">{{ $serialNo }}</td>
                 <td class=" pl-2 tracking-wide border border-l-0">
-                    <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                        href="{{ url(getRoutePrefix() . '/file-cat/' . $processor->id) }}">
+                    <a title="{{ $processor->role == 'Borrower' ? 'Click to view files uploaded by this user' : '' }}"
+                        class="text-blue-500 inline"
+                        href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}">
                         {{ $processor->name }}
                     </a>
                     <a title="Edit this user" href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
@@ -55,7 +51,7 @@
                     @endif
                 </td>
                 <td class=" pl-2 tracking-wide border border-r-0">
-                    <a onclick="return confirm('Are you sure you want to delete this user?')" title="Delete this lead"
+                    <a class="delete" data="Delete" title="Delete this user"
                         href="{{ url(getRoutePrefix() . '/delete-user/' . $processor->id) }}">
                         <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                             <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
@@ -63,13 +59,22 @@
                     </a>
                 </td>
             </tr>
+            @php
+                $associates = $processor
+                    ->createdUsers()
+                    ->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])
+                    ->with('createdUsers')
+                    ->get();
+                $serialNo++;
+            @endphp
             @foreach ($associates as $associate)
                 <br>
                 <tr>
-                    <td class=" pl-2 tracking-wide border border-l-0"></td>
+                    <td class=" pl-2 tracking-wide border border-l-0">{{ $serialNo }}</td>
                     <td class=" pl-2 tracking-wide border border-l-0">
-                        <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                            href="{{ url(getRoutePrefix() . '/file-cat/' . $associate->id) }}">
+                        <a title="{{ $associate->role == 'Borrower' ? 'Click to view files uploaded by this user' : '' }}"
+                            class="text-blue-500 inline"
+                            href="{{ url(getRoutePrefix() . ($associate->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $associate->id) }}">
                             {{ $associate->name }}
                         </a>
                         <a title="Edit this user" href="{{ url(getRoutePrefix() . '/add-user/' . $associate->id) }}">
@@ -83,13 +88,11 @@
                         {{ $associate->role }}
                     </td>
                     <td class=" pl-2 tracking-wide border border-l-0">
-
                         {{ \App\Models\User::where('id', $associate->created_by)->first()->name }} |
                         {{ \App\Models\User::where('id', $associate->created_by)->first()->role }}
                     </td>
                     <td class=" pl-2 tracking-wide border border-r-0">
-                        <a onclick="return confirm('Are you sure you want to delete this user?')"
-                            title="Delete this lead"
+                        <a class="delete" data="Delete" title="Delete this lead"
                             href="{{ url(getRoutePrefix() . '/delete-user/' . $associate->id) }}">
                             <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                                 <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
@@ -103,22 +106,21 @@
                         ->whereIn('role', ['junior Associate', 'Borrower'])
                         ->with('createdUsers')
                         ->get();
+                    $serialNo++;
                 @endphp
                 @foreach ($juniorAssociates as $jassociate)
                     <tr>
-                        <td class=" pl-2 tracking-wide border border-l-0"></td>
+                        <td class=" pl-2 tracking-wide border border-l-0">{{ $serialNo }}</td>
                         <td class=" pl-2 tracking-wide border border-l-0">
-                            <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                href="{{ url(getRoutePrefix() . '/file-cat/' . $user->id) }}">
+                            <a title="{{ $processor->role == 'Borrower' ? 'Click to view files uploaded by this user' : '' }}"
+                                class="text-blue-500 inline"
+                                href="{{ url(getRoutePrefix() . ($jassociate->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $jassociate->id) }}">
                                 {{ $jassociate->name }}
                             </a>
                             <a title="Edit this user"
                                 href="{{ url(getRoutePrefix() . '/add-user/' . $jassociate->id) }}">
                                 <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
                             </a>
-                            {{-- <a title="Edit this user" href="{{ url(getAdminRoutePrefix() . '/add-user/' . $lead->user->id) }}">
-                        <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
-                    </a> --}}
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
                             {{ $jassociate->email }}
@@ -131,8 +133,7 @@
                             {{ \App\Models\User::where('id', $jassociate->created_by)->first()->role }}
                         </td>
                         <td class=" pl-2 tracking-wide border border-r-0">
-                            <a onclick="return confirm('Are you sure you want to delete this user?')"
-                                title="Delete this lead"
+                            <a class="delete" data="Delete" title="Delete this lead"
                                 href="{{ url(getRoutePrefix() . '/delete-user/' . $jassociate->id) }}">
                                 <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                                     <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
@@ -146,18 +147,20 @@
                             ->where('role', 'Borrower')
                             ->with('createdUsers')
                             ->get();
+                        $serialNo++;
                     @endphp
                     @foreach ($borrowers as $borrower)
                         <tr>
-                            <td class=" pl-2 tracking-wide border border-l-0"></td>
+                            <td class=" pl-2 tracking-wide border border-l-0">{{ $serialNo }}</td>
                             <td class=" pl-2 tracking-wide border border-l-0">
                                 <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                    {{-- href="{{ url(getAdminRoutePrefix() . '/lead/' . $user->id) }}" --}}>
+                                    href="{{ url(getRoutePrefix() . ($borrower->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $borrower->id) }}">
                                     {{ $borrower->name }}
                                 </a>
-                                {{-- <a title="Edit this user" href="{{ url(getAdminRoutePrefix() . '/add-user/' . $lead->user->id) }}">
-                        <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
-                    </a> --}}
+                                <a title="Edit this user"
+                                    href="{{ url(getAdminRoutePrefix() . '/add-user/' . $borrower->id) }}">
+                                    <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
+                                </a>
                             </td>
                             <td class=" pl-2 tracking-wide border border-l-0">
                                 {{ $borrower->email }}
@@ -170,7 +173,7 @@
                                 {{ \App\Models\User::where('id', $borrower->created_by)->first()->role }}
                             </td>
                             <td class=" pl-2 tracking-wide border border-r-0">
-                                <a onclick="return confirm('Are you sure you want to delete this user?')"
+                                <a class="delete" data="Delete"
                                     title="Delete this lead"
                                     href="{{ url(getRoutePrefix() . '/delete-user/' . $borrower->id) }}">
                                     <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
@@ -179,6 +182,9 @@
                                 </a>
                             </td>
                         </tr>
+                        @php
+                            $serialNo++;
+                        @endphp
                     @endforeach
                 @endforeach
             @endforeach

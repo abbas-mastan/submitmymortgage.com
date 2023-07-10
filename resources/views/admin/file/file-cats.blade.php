@@ -38,6 +38,20 @@
     @include('admin.file.cards')
     <div class="">
         @include('elems.upload-btn')
+        @isset($user)
+            @php
+                $name = explode(' ', $user->name);
+                $rearrangedName = count($name) > 1 ? $name[1] . ', ' . $name[0] : $user->name;
+            @endphp
+            <h2 class="text-center text-2xl -mt-3.5 mb-5 text-red-700">
+                {{ $rearrangedName }}
+            </h2>
+            @isset($info)
+                <h3 class="text-center text-xl -mt-3.5 mb-5 text-red-700">
+                    {{ $info->b_address . $info->b_city . ', ' . $info->b_state }}
+                </h3>
+            @endisset
+        @endisset
         @include('admin.file.info-table')
     </div>
     <div class="">
@@ -130,6 +144,7 @@
                 $('#value').text("$ " + formatNumbers(value));
             @endif
         });
+
         function formatNumbers(number) {
             number += '';
             x = number.split(',');

@@ -3,9 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Http\Request;
-use App\Services\UserService;
 use App\Services\GmailService;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class GmailController extends Controller
@@ -39,17 +38,21 @@ class GmailController extends Controller
             if (!Auth::user()->accessToken) {
                 return redirect('/gmail/auth');
             }
-            if (Auth::user()->role != 'Admin') {
-                $data = UserService::getUserDashboard();
+            foreach ($gmailService->getGmailInbox($request) as $message) {
+                if (method_exists($message,'getPayload')) {
+                    $data['fullMessages'] = $gmailService->getGmailInbox($request);
+                    return view('gmail.gmail-inbox', $data);
+                } else {
+                    return redirect('/gmail/auth');
+                }
             }
-            $data['fullMessages'] = $gmailService->getGmailInbox($request);
-            return view('gmail.gmail-inbox', $data);
+
         } catch (\Exception $exeption) {
-            $user = User::where('id',Auth::user()->id)->first();
+            $user = User::where('id', Auth::user()->id)->first();
             $user->accessToken = null;
             $user->update();
             $this->getErrorMessage($exeption);
-            return redirect('/dashboard')->with($this->msg['msg_type'], $this->msg['msg_value']);
+            return redirect('/gmail/auth')->with($this->msg['msg_type'], $this->msg['msg_value']);
         }
     }
 

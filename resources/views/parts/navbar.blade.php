@@ -43,9 +43,19 @@
             </a>
         </div>
         <div class=" mr-20 pt-3 ">
+            @if(session('reLogin'))
+            <form method="POST" action="{{url('/logout-from-this-user')}}">
+                @csrf
+                <input type="hidden" name="user_id" value="{{session('reLogin')}}">
+                <button title="login as this user" type="submit" class="bg-themered tracking-wide text-white font-semibold capitalize px-2 ">
+                    Logout from this user
+                </button>
+            </form>
+            @else
             <a href="{{ url('/logout') }}">
                 <button class="font-bold px-2 bg-red-600 text-white">Logout</button>
             </a>
+            @endif
 
         </div>
     </div>

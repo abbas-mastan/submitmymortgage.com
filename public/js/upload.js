@@ -131,7 +131,6 @@ function makeXMLHttpRequest(url, data, callback) {
     request.open('POST', url);
     request.send(data);
 }
-
 var file;
 function dropHandler(ev) {
     console.log('File(s) dropped');

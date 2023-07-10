@@ -1,19 +1,14 @@
 <table class="w-full mt-3">
-    <caption class="text-center font-bold mb-3">{{ $user->name }}</caption>
+    {{-- <caption class="text-center font-bold mb-3">{{ $user->name }}</caption> --}}
     <thead class="bg-gray-300">
         <tr>
-
             <th class="">
                 File Details
             </th>
-
-
         </tr>
     </thead>
     <tbody>
-
         <tr>
-
             <td class=" pl-2 tracking-wide border  border-l-0 border-r-0">
                 @foreach ($files as $file)
                     @if ($file->category === 'Credit Report')
@@ -37,7 +32,8 @@
                                         class="mt-0.5">
                                 </div>
                                 <form id="status-form"
-                                    action="{{ url(getRoutePrefix() . '/update-file-status/' . $file->id) }}" class="">
+                                    action="{{ url(getRoutePrefix() . '/update-file-status/' . $file->id) }}"
+                                    class="">
                                     @csrf
                                     <div class="font-bold">
                                         Status
@@ -76,7 +72,8 @@
                                 </form>
                             </td>
                             <td class="text-right" width="10%" rowspan="6">
-                                <a onclick="return confirm('Are you sure you want to delete this file?')"
+                                <a 
+                                class="delete" data="Delete"
                                     title="Delete this file"
                                     href="{{ url(getRoutePrefix() . '/delete-file/' . $file->id) }}">
                                     <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">

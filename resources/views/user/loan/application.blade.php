@@ -23,6 +23,9 @@
         </div>
         <form id="info-form" action="{{ url(getRoutePrefix() . '/do-application') }}" method="post" class="w-full">
             @csrf
+            @if ($id > 0)
+                <input type="hidden" name="user_id" value="{{ $id }}">
+            @endif
             <div class="mt-2 grid grid-cols-2 gap-8">
                 <div class="">
                     <div class=" text-left mr-12">
@@ -30,25 +33,14 @@
                             {{ session('role') == 'Borrower' ? 'Name' : 'Email' }}</label>
                     </div>
                     <div class="mt-2">
-                        @if (session('role') !== 'Borrower')
-                            <select name="email" id="email"
-                                class="w-full  rounded-md py-2 focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                                <option value="">Select Email</option>
-                                @foreach (auth()->user()->createdUsers()->where('role', 'Borrower')->with('createdUsers')->get() as $user)
-                                    <option value="{{ $user->email }}">{{ $user->email }}</option>
-                                @endforeach
-                            </select>
-                            
-                        @else
-                            <input value="{{ old('name', $application->name) }}" type="text"
-                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                                name="name" id="name" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Client's Name">
-                            @error('name')
-                                <span class="text-red-700">
-                                    {{ $message }}
-                                </span>
-                            @enderror
-                        @endif
+                        <input value="{{ old('email', $application->email) }}" type="email"
+                            class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            name="email" id="email" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email Address">
+                        @error('email')
+                            <span class="text-red-700">
+                                {{ $message }}
+                            </span>
+                        @enderror
                     </div>
                 </div>
                 <div class="">
@@ -74,25 +66,14 @@
                             class="">{{ session('role') === 'Borrower' ? 'Email' : 'Name' }}</label>
                     </div>
                     <div class="mt-2">
-                        @if (session('role') == 'Borrower')
-                            <input value="{{ old('email', $application->email) }}" type="email"
-                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                                name="email" id="email" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email Address">
-                            @error('email')
-                                <span class="text-red-700">
-                                    {{ $message }}
-                                </span>
-                            @enderror
-                        @else
-                            <input value="{{ old('name', $application->name) }}" type="text"
-                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                                name="name" id="name" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Client's Name">
-                            @error('name')
-                                <span class="text-red-700">
-                                    {{ $message }}
-                                </span>
-                            @enderror
-                        @endif
+                        <input value="{{ old('name', $application->name) }}" type="text"
+                            class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            name="name" id="name" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Client's Name">
+                        @error('name')
+                            <span class="text-red-700">
+                                {{ $message }}
+                            </span>
+                        @enderror
                     </div>
                 </div>
                 <div class="">
@@ -922,8 +903,6 @@ $val = $application->employement_status;
                 otherInput.disabled = true;
             }
         }
-
-
         if (document.getElementById('property_type_other').checked) {
             var otherInput = document.getElementById('property_type_other_input');
             otherInput.style.display = 'block';
@@ -944,8 +923,6 @@ $val = $application->employement_status;
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
     <script>
         $(document).ready(function() {
-
-
             $('[name="cashout"]').on('change', function() {
                 if ($(this).val() === 'Yes') {
                     $('#cashout-amount').removeClass('hidden');
@@ -960,18 +937,15 @@ $val = $application->employement_status;
                     $('#company-name').addClass('hidden');
                 }
             });
-
             let mortgage1 = $('#mortage1').val();
             let mortgage2 = $('#mortage2').val();
             let value = $('#value').val();
             let cashoutAmount = $('#cashout-amt').val();
-
             //Remove commas
             mortgage1 = mortgage1.replaceAll(",", "");
             mortgage2 = mortgage2.replaceAll(",", "");
             value = value.replaceAll(",", "");
             cashoutAmount = cashoutAmount.replaceAll(",", "");
-
             $('#mortage1').val(formatNumbers(mortgage1));
             $('#mortage2').val(formatNumbers(mortgage2));
             $('#value').val(formatNumbers(value));
@@ -980,27 +954,22 @@ $val = $application->employement_status;
                 value = $(this).val();
                 value = value.replaceAll(",", "")
                 $(this).val(formatNumbers(value));
-
             });
             $("#info-form").on("submit", function() {
                 let mortgage1 = $('#mortage1').val();
                 let mortgage2 = $('#mortage2').val();
                 let value = $('#value').val();
                 let cashoutAmount = $('#cashout-amt').val();
-
                 //Remove commas
                 mortgage1 = mortgage1.replaceAll(",", "");
                 mortgage2 = mortgage2.replaceAll(",", "");
                 value = value.replaceAll(",", "");
                 cashoutAmount = cashoutAmount.replaceAll(",", "");
-
                 $('#mortage1').val(mortgage1);
                 $('#mortage2').val(mortgage2);
                 $('#value').val(value);
                 $('#cashout-amt').val(cashoutAmount);
-
             });
-
         });
 
         function formatNumbers(number) {

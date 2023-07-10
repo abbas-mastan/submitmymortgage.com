@@ -6,8 +6,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Services\UserService;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\{Gate, Auth};
 
 class HomeController extends Controller
 {
@@ -42,8 +41,14 @@ class HomeController extends Controller
 
     private function getAdminDashboard()
     {
-        $data['usersCount'] = User::where("role", "Borrower")->count();
-        $data['users'] = User::where("role", "Borrower")->get();
+        if(session('role') == 'Admin'){
+            $data['users'] = User::whereNotIn("role", ["Admin"])->get();
+            $data['usersCount'] = User::whereNotIn("role", ["Admin"])->count();
+        }else{
+            $user = Auth::user();
+            $data['usersCount'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->count();
+            $data['users'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        }
         return $data;
     }
 

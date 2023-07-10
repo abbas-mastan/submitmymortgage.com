@@ -3,10 +3,9 @@
 namespace App\Services;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Password;
 use App\Models\{User, Media, Info, Application};
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\{Hash, Auth, Storage};
+use Illuminate\Support\Facades\{Hash, Auth, Storage, Password};
 
 class AdminService
 {
@@ -44,10 +43,11 @@ class AdminService
             }
         ]);
         $user = $isNewUser ? new User() : User::find($id);
-        $msg = $isNewUser ? "User added." : "User updated.";
+        $msg = $isNewUser ? "Registered. A verification link has been sent. You need to verify your email before login. Please, check your email."
+            : "User updated successfully";
         $user->fill($request->only(['email', 'name']));
-        $request->password != "" ? $user->password = Hash::make($request->password) : $user->password = bcrypt('password');
-        $user->role = $request->role ?? 'Borrower';
+        $user->password = $request->filled('password') ? Hash::make($request->password) : Hash::make('password');
+        $user->role = $request->input('role', 'Borrower');
 
         if ($request->file('file')) {
             if (!str_contains($user->pic, "default") && $id !== -1) {
@@ -60,14 +60,11 @@ class AdminService
             $user->finance_type = $request->finance_type;
             $user->loan_type = $request->loan_type;
         }
-        $user->created_by = optional(Auth::user())->id;
 
-        if (session('role') === 'Admin') {
-            $user->email_verified_at = now();
-        }
+        $user->created_by = $user->created_by ?? optional(Auth::user())->id;
+
         if ($user->save()) {
-            $msg = "Registered. A verification link has been sent. You need to verify your email before login. Please, check your email.";
-            if (session('role') != null) {
+            if (session('role') != null && $isNewUser) {
                 Password::sendResetLink(
                     $request->only('email')
                 );
@@ -126,10 +123,8 @@ class AdminService
             $data['id'] = $id;
             $data['info'] = User::find($id)->info;
         } else {
-            $users = User::where('role', 'user')
-                ->get();
+            $users = User::where('role', 'user')->get();
         }
-
         $filesIds = [];
         foreach ($users as $user) {
             # code...
@@ -149,16 +144,15 @@ class AdminService
     public static function docs($request, $id, $cat)
     {
         $cat = str_replace('-', '/', $cat);
-        $user = User::find($id);
-        $media = $user->media()->where('category', $cat)->get();
+        $data['user'] = User::find($id);
+        $media = $data['user']->media()->where('category', $cat)->get();
         $data['id'] = $id;
         $data['cat'] = $cat;
         $data['files'] = $media;
-        $data['filesCount'] = $user->media()->where('category', $cat)->count();
+        $data['filesCount'] = $data['user']->media()->where('category', $cat)->count();
         $data["active"] = "file";
         return $data;
     }
-
     //Saves the record of a newly inserted user in database
     public static function updateFileStatus($request, $id)
     {
@@ -212,15 +206,12 @@ class AdminService
         return ['msg_type' => 'msg_error', 'msg_value' => 'An error occured while deleting the file.'];
     }
 
-    public static function applications()
-    {
-        $data['applications'] = Application::all();
-        return $data;
-    }
-
     public static function allLeads()
     {
-        $data['leads'] = Info::all();
+        if (session('role') == 'Admin')
+            $data['leads'] = Info::all();
+        else
+            $data['leads'] = Auth::user()->createdUsers()->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         return $data;
     }
 

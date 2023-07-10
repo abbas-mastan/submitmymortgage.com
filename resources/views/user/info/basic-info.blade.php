@@ -6,7 +6,7 @@
                 Basic Information
             </h1>
         </div>
-        <form id="info-form" action="{{ url(getUserRoutePrefix() . '/do-info') }}" method="post" class="w-full">
+        <form id="info-form" action="{{ url(getRoutePrefix() . '/do-info') }}" method="post" class="w-full">
             @csrf
             <div class="">
                 <p class="text-lg font-bold -ml-8">Borrower's Info</p>
@@ -338,7 +338,7 @@
             <div class="my-5">
                 <hr class="">
             </div>
-            @can('isAdmin')
+            @if (session('role') != 'Borrower')
                 <div class="">
                     <p class="text-lg font-bold -ml-8">Finance Type</p>
                 </div>
@@ -352,22 +352,7 @@
                         <label for="Purchase">Purchase</label>
                     </div>
                 </div>
-            @endcan
-            @can('isAssociate')
-                <div class="">
-                    <p class="text-lg font-bold -ml-8">Finance Type</p>
-                </div>
-                <div class="mt-2 grid grid-cols-2 gap-8">
-                    <div>
-                        <input type="radio" name="finance_type" required id="Refinance" value="Refinance">
-                        <label for="Refinance">Refinance</label>
-                    </div>
-                    <div>
-                        <input type="radio" name="finance_type" required id="Purchase" value="Purchase">
-                        <label for="Purchase">Purchase</label>
-                    </div>
-                </div>
-            @endcan
+            @endif
             {{-- @if (auth()->user()->finance_type == 'Refinance') --}}
             <div class="finance-section @if (auth()->user()->finance_type != 'Refinance') hidden @endif">
                 <div class="mt-2 grid grid-cols-2 gap-8">
@@ -398,8 +383,8 @@
                             <span class="inline -ml-12 z-10 opacity-50">%</span>
                         </div>
                         @error('interest1')
-                        <span class="text-red-700">This field is required</span>
-                    @enderror
+                            <span class="text-red-700">This field is required</span>
+                        @enderror
                     </div>
                 </div>
                 <div class="mt-2 grid grid-cols-2 gap-8">
@@ -413,8 +398,8 @@
                                 class="inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                                 name="mortage2" id="mortage2" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;2nd Mortgage">
                             <span class="inline -ml-12 z-10 opacity-50">$</span>
-                            </div>
-                            @error('mortgage2')
+                        </div>
+                        @error('mortgage2')
                             <span class="text-red-700">This field is required</span>
                         @enderror
                     </div>
@@ -430,8 +415,8 @@
                             <span class="inline -ml-12 z-10 opacity-50">%</span>
                         </div>
                         @error('interest2')
-                        <span class="text-red-700">This field is required</span>
-                    @enderror
+                            <span class="text-red-700">This field is required</span>
+                        @enderror
                     </div>
                 </div>
                 <div class="mt-2 grid grid-cols-2 gap-8">
@@ -448,8 +433,8 @@
                             <span class="inline -ml-12 z-10 opacity-50">$</span>
                         </div>
                         @error('value')
-                        <span class="text-red-700">This field is required</span>
-                    @enderror
+                            <span class="text-red-700">This field is required</span>
+                        @enderror
                     </div>
                     <div class="">
 

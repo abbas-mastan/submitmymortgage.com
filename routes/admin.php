@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
 /*
 |--------------------------------------------------------------------------
@@ -36,19 +37,30 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
   Route::get('/delete-file/{id}', [AdminController::class, 'deleteFile']);
   Route::post('/file-upload', [AdminController::class, 'fileUpload']);
 
+  Route::get('/application/{id?}', [AdminController::class, 'application']);
   Route::get('/applications', [AdminController::class, 'applications']);
+  Route::post('/do-application', [AdminController::class, 'doApplication']);
+
   Route::get('/application-show/{application}', [AdminController::class, 'applicationShow']);
   Route::get('/application-edit/{application}', [AdminController::class, 'applicationEdit']);
   Route::post('/application-update/{application}', [AdminController::class, 'applicationUpdate']);
+  Route::get('/application-update-status/{application}/{status?}', [AdminController::class, 'applicationUpdateStatus']);
   Route::get('/application-delete/{application}', [AdminController::class, 'deleteApplication']);
-  
+
   Route::get('/leads', [AdminController::class, 'allLeads']);
   Route::get('/lead/{user}', [AdminController::class, 'lead']);
   Route::get('/delete-lead/{info}', [AdminController::class, 'deleteLead']);
-  
+
   Route::get('/basic-info', [AdminController::class, 'basicInfo']);
+  Route::post('/do-info', [UserController::class, 'doInfo']);
+
   #all users 
-  Route::get('/all-users', [AdminController::class, 'allUsers']);
+  Route::get('/all-users/{id?}', [AdminController::class, 'allUsers']);
+  Route::get('/hide-cat/{user}/{cat}', [AdminController::class, 'hideCategory'])->where('cat', '(.*)');
+  Route::post('/login-as-this-user', [AdminController::class, 'LoginAsThisUser']);
+  Route::post('/add-category/{user?}', [AdminController::class, 'addCategoryToUser']);
+  Route::get('/delete-category/{user?}/{cat}', [AdminController::class, 'deleteCategory']);
+
   //==============================
   //==========Profile related routes
   //==============================

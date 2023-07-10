@@ -12,8 +12,12 @@
 
 {{-- Intro Lines --}}
 @foreach ($introLines as $line)
+@if(Auth::check())
+You are recieiving this email to complete your registeration process by entering your password.
+@break
+@else
 {{ $line }}
-
+@endif
 @endforeach
 
 {{-- Action Button --}}
@@ -29,14 +33,19 @@
     }
 ?>
 @component('mail::button', ['url' => $actionUrl, 'color' => $color])
-{{ $actionText }}
+
+{{ Auth::check() ? 'Choose Password': $actionText }}
 @endcomponent
 @endisset
 
 {{-- Outro Lines --}}
 @foreach ($outroLines as $line)
-{{ $line }}
-
+@if(Auth::check())
+This Choose Password link will expire in 60 minutes.
+@break
+@else
+{{$line}}
+@endif
 @endforeach
 
 {{-- Salutation --}}
@@ -46,9 +55,11 @@
 @lang('Regards'),<br>
 {{ config('app.name') }}
 @endif
-
 {{-- Subcopy --}}
 @isset($actionText)
+@php
+    $actionText = Auth::check() ? "Choose Password" : $actionText;
+@endphp
 @slot('subcopy')
 @lang(
     "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\n".

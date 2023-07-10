@@ -66,7 +66,7 @@ class UserSeeder extends Seeder
             'password' => Hash::make('a'),
             'role' => 'Borrower',
             'finance_type' => 'Purchase',
-            'loan_type' => 'Full Doc',
+            'loan_type' => 'Private Loan',
             'created_by' => 4,
             'pic' => 'img/profile-default.svg',
             'email_verified_at' => now(),

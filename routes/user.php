@@ -9,7 +9,7 @@ Route::middleware(['auth', 'user', 'verified'])->prefix(getUserRoutePrefix())->g
     //==========Files related routes
     //==============================
     Route::post('/file-upload', [UserController::class, 'fileUpload']);
-    // Route::get('/credit-report', [UserController::class,'creditReport']);
+    Route::get('/credit-report', [UserController::class,'creditReport']);
     Route::get('/bank-statement', [UserController::class, 'bankStatement']);
     Route::get('/pay-stub', [UserController::class, 'payStub']);
     Route::get('/tax-return', [UserController::class, 'taxReturn']);
@@ -21,6 +21,9 @@ Route::middleware(['auth', 'user', 'verified'])->prefix(getUserRoutePrefix())->g
     Route::get('/purchase-agreement', [UserController::class, 'purchaseAgreement']);
     Route::get('/delete-file/{id}', [AdminController::class, 'deleteFile']);
     Route::get('/basic-info', [UserController::class, 'basicInfo']);
+
+    Route::get('/category/{cat}', [UserController::class, 'category']);
+
     Route::post('/do-info', [UserController::class, 'doInfo']);
     Route::get('/application-status', [UserController::class, 'applicationStatus']);
     Route::post('/update-cat-comments', [UserController::class, 'updateCatComments']);

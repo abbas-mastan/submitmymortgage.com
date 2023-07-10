@@ -1,8 +1,9 @@
 <?php
 
-use App\Models\{Media};
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use App\Models\{Media};
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 /* 
  * To change this license header, choose License Headers in Project Properties.
@@ -47,6 +48,91 @@ function getRoutePrefix()
             return getUserRoutePrefix();
             break;
     }
+}
+
+function getVariable($var)
+{
+    if ($var == 'Basic Info') {
+        return auth()
+            ->user()
+            ->info()
+            ->exists();
+    }
+    if ($var == 'Credit Report') {
+        return Auth::user()
+            ->media()
+            ->where('category', 'Credit Report')
+            ->exists();
+    }
+    if ($var == 'Bank Statements') {
+        return Auth::user()
+            ->media()
+            ->where('category', 'Bank Statements')
+            ->exists();
+    }
+    if ($var == 'Tax Returns') {
+        return Auth::user()
+            ->media()
+            ->where('category', 'Tax Returns')
+            ->exists();
+    }
+    if ($var == 'Pay Stubs') {
+        return Auth::user()
+            ->media()
+            ->where('category', 'Pay Stubs')
+            ->exists();
+    }
+    if ($var == "ID/Driver' License") {
+        return Auth::user()
+            ->media()
+            ->where('category', "ID/Driver's License")
+            ->exists();
+    }
+    if ($var == '1003 Form') {
+        return Auth::user()
+            ->media()
+            ->where('category', '1003 Form')
+            ->exists();
+    }
+    if ($var == 'Mortgage Statement') {
+        return Auth::user()
+            ->media()
+            ->where('category', 'Mortgage Statement')
+            ->exists();
+    }
+    if ($var == 'Evidence Of Insuranc') {
+        return Auth::user()
+            ->media()
+            ->where('category', 'Evidence of Insurance')
+            ->exists();
+    }
+    if ($var == 'Purchase Agreement') {
+        return Auth::user()
+            ->media()
+            ->where('category', 'Purchase Agreement')
+            ->exists();
+    }
+    if ($var == 'Miscellaneous') {
+        return  Auth::user()
+            ->media()
+            ->where('category', 'Miscellaneous')
+            ->exists();
+    }
+    if ($var == 'Loan Application') {
+        return auth()
+            ->user()
+            ->application()
+            ->exists();
+    }else{
+        return Auth::user()->media()->where('category',$var)->exists();
+    }
+}
+
+// applications index blade tables ids 
+function getTableId($key)
+{
+    $table = [0 => 'user-table', 1 => 'completed-table', 2 => 'incomplete-table'];
+    return $table[$key] ?? null;
 }
 
 //Returns path for directory
@@ -158,6 +244,9 @@ function getCatLink($cat)
         "Purchase Agreement" => "purchase-agreement",
         "Miscellaneous" => "miscellaneous",
         "Loan Application" => "application",
-        default => ""
+        "Credit Report" => "credit-report",
+        "Basic Info" => "basic-info",
+        // default => "category/".Str::of($cat)->slug('-'),
+        default => "category/".str_replace(' ','-',$cat),
     };
 }

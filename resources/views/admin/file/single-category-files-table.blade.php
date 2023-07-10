@@ -72,7 +72,7 @@
                                 </form>
                             </td>
                             <td class="text-right" width="10%" rowspan="6">
-                                <a onclick="return confirm('Are you sure you want to delete this file?')"
+                                <a data="Delete" class="delete" 
                                     title="Delete this file"
                                     href="{{ url(getRoutePrefix() . '/delete-file/' . $file->id) }}">
                                     <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
