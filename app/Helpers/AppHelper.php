@@ -131,7 +131,7 @@ function getVariable($var)
 // applications index blade tables ids 
 function getTableId($key)
 {
-    $table = [0 => 'user-table', 1 => 'completed-table', 2 => 'incomplete-table'];
+    $table = [0 => 'user-table', 1 => 'completed-table', 2 => 'incomplete-table' ,3 => 'deleted-table'];
     return $table[$key] ?? null;
 }
 

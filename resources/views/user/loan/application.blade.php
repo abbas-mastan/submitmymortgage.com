@@ -4,11 +4,9 @@
         input[type=text]:focus {
             margin-bottom: 2px;
         }
-
         textarea:focus {
             margin-bottom: 2px;
         }
-
         .text-red-700 {
             font-size: 14px;
         }

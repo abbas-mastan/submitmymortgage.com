@@ -99,6 +99,7 @@ function makeXMLHttpRequest(url, data, callback) {
     request.onreadystatechange = function () {
         if (request.readyState == 4 && request.status == 200) {
             var data = JSON.parse(request.responseText);
+            console.log(data);
             if (data.status === 'success') {
                 callback('upload-ended');
                 uploaded_path = data.url;

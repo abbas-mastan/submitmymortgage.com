@@ -27,21 +27,14 @@ fixed bg-gray-500 bg-opacity-40
                         foreach (Auth::user()->categories()->get() as $category) {
                             $categories[] = $category->name;
                         }
-                        if(isset($user)){
-                            foreach ($user->categories()->get() as  $category) {
+                        if (isset($user)) {
+                            foreach ($user->categories()->get() as $category) {
                                 $categories[] = $category->name;
                             }
                         }
                     @endphp
                     @foreach ($categories as $cat)
-                        @if (
-                            (Auth::user()->role === 'Borrower' && Auth::user()->loan_type !== 'Private Loan' && $cat === 'Credit Report') ||
-                                (isset($user) && $user->loan_type === 'Private Loan' && ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
-                                (Auth::user()->role === 'Borrower' &&
-                                    Auth::user()->loan_type === 'Private Loan' &&
-                                    ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
-                                (!empty($user->skipped_category) && in_array($cat, json_decode($user->skipped_category))) ||
-                                (!empty(Auth::user()->skipped_category) && in_array($cat, json_decode(Auth::user()->skipped_category))))
+                        @if (\App\Services\CommonService::filterCat($user ?? Auth::user(), $cat))
                             @continue
                         @endif
                         <option value="{{ $cat }}">{{ $cat }}</option>

@@ -3,9 +3,10 @@
         <a href="{{url("/dashboard")}}">
             <div class="flex h-32 bg-gradient-to-b from-gradientStart to-gradientEnd">
                 <div class="w-1/2 p-4 pl-8">
-                    <span class="text-white text-lg block text-left">Users</span>
+                    <span class="text-white text-lg block text-left">
+                    All Users</span>
                     <span class="text-white text-2xl block text-left font-bold mt-1">
-                        {{ $usersCount }} 
+                        {{-- {{ $usersCount }}  --}}
                     </span>
                 </div>
                 <div class="w-1/2 pt-7 pr-7"> 

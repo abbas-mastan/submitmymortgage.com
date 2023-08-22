@@ -2,14 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\UserCategory;
-use Illuminate\Http\Request;
-use App\Services\UserService;
-use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\ApplicationRequest;
-use App\Models\{User, Info, Application};
+use App\Models\Application;
+use App\Models\Info;
+use App\Models\User;
+use App\Models\UserCategory;
+use App\Services\AdminService;
+use App\Services\CommonService;
+use App\Services\UserService;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
-use App\Services\{AdminService, CommonService};
 
 class AdminController extends Controller
 {
@@ -20,12 +24,9 @@ class AdminController extends Controller
 
         return view('admin.user.users', $data);
     }
-    //Shows input for adding a teacher
+
     public function addUser(Request $request, $id)
     {
-        // if (session('role') === 'Processor') {
-        //     abort(403, 'You don\'t have the permission to access this resource');
-        // }
         $data = AdminService::addUser($request, $id);
         return view('admin.user.add-user', $data);
     }
@@ -33,9 +34,6 @@ class AdminController extends Controller
     //Saves the record of a newly inserted teacher in database
     public function doUser(Request $request, $id)
     {
-        // if (session('role') === 'Processor') {
-        //     abort(403, 'You don\'t have the permission to access this resource');
-        // }
         $msg = AdminService::doUser($request, $id);
         return redirect('/dashboard')->with($msg['msg_type'], $msg['msg_value']);
     }
@@ -46,7 +44,7 @@ class AdminController extends Controller
             abort(403, 'You are not allowed to this part of the world!');
         }
         $id = Auth::id();
-        $user  = User::where('id', $request->user_id)->where('role', '<>', 'Admin')->first();
+        $user = User::where('id', $request->user_id)->where('role', '<>', 'Admin')->first();
         Auth::login($user);
         $request->session()->regenerate();
         $request->session()->put('role', $user->role);
@@ -60,6 +58,7 @@ class AdminController extends Controller
         if (!$user) {
             abort(403, 'You are not allowed to this part of the world!');
         }
+
         Auth::login($user);
         $request->session()->forget('reLogin');
         $request->session()->regenerate();
@@ -67,11 +66,30 @@ class AdminController extends Controller
         return redirect()->intended(getAdminRoutePrefix() . '/all-users');
     }
 
-    //Shows input for adding a new package
     public function deleteUser(Request $request, $id)
     {
         $msg = AdminService::deleteUser($request, $id);
         return back()->with($msg['msg_type'], $msg['msg_value']);
+    }
+
+    public function restoreUser(User $user)
+    {
+        if (Auth::user()->role !== 'Admin') {
+            abort(403, 'you are not allowed to restore user');
+        }
+
+        $user->restore();
+        return back()->with('msg_success', 'User restored successfully');
+    }
+
+    public function deleteUserPermenant(User $user)
+    {
+        if (Auth::user()->role !== 'Admin') {
+            abort(403, 'you are not allowed to to permenantly delete user');
+        }
+
+        $user->forceDelete();
+        return back()->with('msg_success', 'User permenantly deleted successfully');
     }
     //============================
     //=============Files related methods
@@ -86,8 +104,7 @@ class AdminController extends Controller
         $data = AdminService::filesCat($request, $id);
         return view('admin.file.file-cats', $data);
     }
-    
-    
+
     public function files(Request $request, $id = -1)
     {
         $data = AdminService::files($request, $id);
@@ -105,7 +122,6 @@ class AdminController extends Controller
     //         return view("admin.file.single-cat-docs", $data);
     //     }
     // }
-
 
     public function doApplication(ApplicationRequest $request)
     {
@@ -143,7 +159,7 @@ class AdminController extends Controller
     public function updateCatComments(Request $request, $cat)
     {
         $request->validate([
-            'user_id' => 'required'
+            'user_id' => 'required',
         ]);
         $msg = AdminService::updateCatComments($request, $cat);
         return back()->with($msg['msg_type'], $msg['msg_value']);
@@ -225,11 +241,12 @@ class AdminController extends Controller
         $msg = CommonService::updateApplicatinStatus($application, $status);
         return back()->with($msg['msg_type'], $msg['msg_value']);
     }
-    public function deleteApplication(Application $application)
-    {
-        $application->delete();
-        return back()->with("msg_success", "Application Deleted Successfully.");
-    }
+
+    // public function deleteApplication(Application $application)
+    // {
+    //     $application->delete();
+    //     return back()->with("msg_success", "Application Deleted Successfully.");
+    // }
 
     public function allLeads()
     {
@@ -257,14 +274,15 @@ class AdminController extends Controller
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
         if ($admin->role == 'Admin') {
-            $data['users'] = User::where('email_verified_at', '!=', null)->where('role', '!=', 'Admin')->get();
+            $data['users'] = User::where('role', '!=', 'Admin')->get();
+            $data['trashed'] = User::onlyTrashed()->get();
         } else {
             $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         }
         return view('admin.user.all-users', $data);
     }
 
-    #disconnect from google 
+    #disconnect from google
     public function disconnectGoogle(Request $request)
     {
         User::where('id', Auth::id())->update(array('accessToken' => null));
@@ -298,5 +316,30 @@ class AdminController extends Controller
             'user_id' => $user->id,
         ]);
         return response()->json(['success' => 'Added new records.']);
+    }
+
+    public function uploadFilesView()
+    {
+        return view('admin.file.upload-files');
+    }
+    public function uploadFiles(Request $request)
+    {
+        $msg = CommonService::uploadFiles($request);
+        return back()->with($msg['msg_type'], $msg['msg_value']);
+
+    }
+
+    public function spreadsheet(Request $request)
+    {
+        $msg = CommonService::insertFromExcel($request);
+        return redirect(getRoutePrefix() . '/all-users')
+            ->with($msg['msg_type'], $msg['msg_value']);
+    }
+
+    public function exportContactsToExcel(Request $request): RedirectResponse
+    {
+        $msg = CommonService::exportContactsToExcel($request);
+        return redirect(getRoutePrefix() . '/leads')
+            ->with($msg['msg_type'], $msg['msg_value']);
     }
 }

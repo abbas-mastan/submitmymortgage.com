@@ -46,7 +46,6 @@ class GmailController extends Controller
                     return redirect('/gmail/auth');
                 }
             }
-
         } catch (\Exception $exeption) {
             $user = User::where('id', Auth::user()->id)->first();
             $user->accessToken = null;

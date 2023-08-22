@@ -32,6 +32,9 @@
             text-align: center;
 
         }
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
     </style>
 @endsection
 @section('content')

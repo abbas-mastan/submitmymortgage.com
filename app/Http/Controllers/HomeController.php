@@ -2,17 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
 use App\Models\User;
-use Illuminate\Http\Request;
 use App\Services\UserService;
-use Illuminate\Support\Facades\{Gate, Auth};
+use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 
 class HomeController extends Controller
 {
-
     private $client;
-
     public function __construct()
     {
         $this->client = new \Google\Client();
@@ -36,15 +35,19 @@ class HomeController extends Controller
         $data["authUrl"] = $this->client->createAuthUrl();
         $data["active"] = "dashboard";
         $data['carbon'] = Carbon::class;
+        if (Auth::user()->role !== 'Borrower') {
+            return redirect(getRoutePrefix() . '/applications');
+        }
+
         return view('dashboard', $data);
     }
 
     private function getAdminDashboard()
     {
-        if(session('role') == 'Admin'){
+        if (session('role') == 'Admin') {
             $data['users'] = User::whereNotIn("role", ["Admin"])->get();
             $data['usersCount'] = User::whereNotIn("role", ["Admin"])->count();
-        }else{
+        } else {
             $user = Auth::user();
             $data['usersCount'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->count();
             $data['users'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
@@ -55,8 +58,6 @@ class HomeController extends Controller
     private function getAssociateDashboard()
     {
         $user = Auth::user(); // Assuming you have authenticated the admin
-        // $data['usersCount'] = User::where("role", "Borrower")->count();
-        // $data['users'] = User::where('role', 'Borrower')->get();
         $data['usersCount'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->count();
         $data['users'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
 

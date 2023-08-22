@@ -61,6 +61,7 @@ class CreateInfosTable extends Migration
             $table->integer('cashout_amount')->nullable();
             $table->string('purpose')->nullable();
             $table->bigInteger('user_id');
+            $table->softDeletes();
             $table->timestamps();
         });
     }

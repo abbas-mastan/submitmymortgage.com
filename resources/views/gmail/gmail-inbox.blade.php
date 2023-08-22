@@ -18,6 +18,14 @@
             </a>
         </div>
     </div>
+    @if (Auth::user()->accessToken)
+        <div class="flex justify-left mt-2 mb-3">
+            <a href="{{ url(getRoutePrefix() . '/disconnect-google') }}"
+                class="tracking-wide rounded-lg text-white px-7 py-2 text-xl capitalize bg-gradient-to-b from-gradientStart to-gradientEnd">
+                Disconnect from Google
+            </a>
+        </div>
+    @endif
     <hr>
     <div class="w-full my-4">
         <table class="table-auto w-full">

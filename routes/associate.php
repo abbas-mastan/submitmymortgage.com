@@ -2,10 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AssociateController;
-
-
-
-
 Route::group(
   [
     'controller' => AssociateController::class,
@@ -51,5 +47,8 @@ Route::group(
 
     Route::post('/add-category/{user?}', 'addCategoryToUser');
     Route::post('/delete-category/{user?}/{cat}', 'deleteCategory');
+    Route::get('/upload-files','uploadFilesView');
+    Route::post('/upload-files','uploadFiles');
+    Route::post('/spreadsheet','spreadsheet');
   }
 );

@@ -1,63 +1,49 @@
 <table class="w-full overflow-x-scroll">
     <caption class="text-center font-bold mb-3">Category Wise Files Details</caption>
     <thead class="bg-gray-300">
+        @if(json_decode($user->skipped_category))
+        <div class="dropdown inline w-full">
+            <button class="bg-gray-300 justify-center w-fit text-gray-700 font-semibold py-2 px-4 rounded inline-flex items-center">
+                <span class="">Hidden Categories</span>
+                <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                    <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                </svg>
+            </button>
+            <ul class="dropdown-menu ml-1 w-fit hidden absolute text-gray-700 pt-1">
+                @foreach (json_decode($user->skipped_category) as $categ)
+                    <li class="flex rounded-t bg-gray-200 hover:bg-gray-400 py-2 px-4 block whitespace-no-wrap">
+                        {{ $categ }}
+                        <a data="Unhide" class="delete tooltip inline-flex"
+                            href="{{ url(getRoutePrefix() . '/hide-cat/' . $user->id . '/' . $categ) }}">
+                            <img src="{{ asset('icons/unhide.svg') }}" class="ml-3 w-6 " alt="Unhide image">
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+        @endif
         <tr>
-            <th class="pl-2 tracking-wide">
-                S No.
-            </th>
-            <th class="">
-                Documents
-            </th>
-            <th class="">
-                Count
-            </th>
-            <th class="">
-                Submitted by Client
-            </th>
-            <th class="">
-                Verified by Us
-            </th>
-            <th class="">
-                User's Comments
-            </th>
-            <th class="">
-                Your Comments
-            </th>
-            <th class="">
-                Action
-            </th>
+            @php
+                $header = ["S No.","Documents","Count","Submitted by Client","Verified by Us",
+                " User's Comments" , "Your Comments", " Action"];
+            @endphp
+            @foreach ($header as $item)
+                <th>{{$item}}</th>
+            @endforeach
         </tr>
     </thead>
     <tbody>
         @php
             $count = 1;
             $categories = config('smm.file_category');
-            if ($user->categories()->exists()) {
-                foreach (
-                    Auth::user()
-                        ->categories()
-                        ->get()
-                    as $cat
-                ) {
+            if (isset($user) && $user->categories()->exists()) {
+                foreach ($user->categories()->get() as $cat) {
                     $categories[] = $cat->name;
-                }
-                if (isset($user)) {
-                    foreach ($user->categories()->get() as $cat) {
-                        $categories[] = $cat->name;
-                    }
                 }
             }
         @endphp
         @foreach ($categories as $cat)
-            @if (
-                (Auth::user()->role === 'Borrower' && Auth::user()->loan_type !== 'Private Loan' && $cat == 'Credit Report') ||
-                    (isset($user) && $user->loan_type !== 'Private Loan' && $cat == 'Credit Report') ||
-                    (isset($user) && $user->loan_type === 'Private Loan' && ($cat === 'Pay Stubs' || $cat == 'Tax Returns')) ||
-                    (Auth::user()->role === 'Borrower' &&
-                        Auth::user()->loan_type === 'Private Loan' &&
-                        ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
-                    (!empty(Auth::user()->skipped_category) && in_array($cat, json_decode(Auth::user()->skipped_category))))
-                {{-- (!empty($user->skipped_category) && in_array($cat, json_decode($user->skipped_category)))  --}}
+            @if (\App\Services\CommonService::filterCat($user, $cat))
                 @continue
             @endif
             <tr>
@@ -140,10 +126,10 @@
                         </form>
                     @endif
                 </td>
-                
+
                 <td class="text-center tracking-wide border border-l-1">
                     <div class="flex justify-center">
-                    @if (!in_array($cat, config('smm.file_category')))
+                        @if (!in_array($cat, config('smm.file_category')))
                             <a class="delete tooltip" data="Delete"
                                 href="{{ url(getRoutePrefix() . '/delete-category/' . $user->id . '/' . $cat) }}">
                                 <img src="{{ asset('icons/trash.svg') }}" class="p-1 mr-2  bg-orange-600 w-6"
@@ -163,7 +149,7 @@
                         @endif
                     </div>
 
-                    </td>
+                </td>
 
             </tr>
             @php
@@ -180,3 +166,5 @@
         </button>
     </div>
 </div>
+@section('')
+@endsection

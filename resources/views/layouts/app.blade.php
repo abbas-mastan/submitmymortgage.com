@@ -1,11 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-
     @yield('meta')
     <title>Submit My Mortgage @yield('title')</title>
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('img/favicon.svg') }}">
@@ -52,6 +50,7 @@
             left: 100px;
         }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
     <script>
         var reConfig = {
@@ -62,7 +61,6 @@
     </script>
     @yield('head')
 </head>
-
 <body class="font-graphik" style="font-family: graphik, sans-serif !important">
     @include('user.file-upload.upload-modal')
     @include('user.file-upload.category-modal')
@@ -87,23 +85,28 @@
     @yield('foot')
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script>
-        let table = new DataTable('#user-table');
-        let table1 = new DataTable('#completed-table');
-        let table2 = new DataTable('#incomplete-table');
-        $('select[name="user-table_length"]').addClass('w-16');
-        $('select[name="user-table_length"]').addClass('mb-3');
-        $('select[name="completed-table_length"]').addClass('w-16');
-        $('select[name="completed-table_length"]').addClass('mb-3');
-        $('select[name="incomplete-table_length"]').addClass('w-16');
-        $('select[name="incomplete-table_length"]').addClass('mb-3');
+        ['user', 'completed', 'incomplete', 'deleted'].map((table) => {
+            new DataTable("#" + table + "-table");
+            $(`select[name="${table}-table_length"]`).addClass('w-16');
+            $(`select[name="${table}-table_length"]`).addClass('mb-3');
+        });
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {{-- tooltip logic starts here --}}
     <script>
         $(".tooltip").on('mouseenter', function() {
-            $(this).append(
-                '<div role="tooltip" class="mt-2 -ml-16 absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">'+$(this).attr('data')+' this category<div class="tooltip-arrow" data-popper-arrow></div></div>'
-            );
+            var tooltipText = $(this).attr('data');
+
+            if (tooltipText == 'Unhide') {
+                var unhideCss = "mt-5 w-full ";
+            } else {
+                var unhideCss = "w-auto";
+            }
+
+            $(this).append(`<div role="tooltip" class="${unhideCss} mt-5 w-full mt-2 -ml-16 absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                ${tooltipText} this category
+                <div class="tooltip-arrow" data-popper-arrow></div></div>`);
         }).on('mouseleave', function() {
             $(this).find('div[role="tooltip"]').remove();
         });
@@ -114,6 +117,8 @@
                     return 'Accepted!';
                 if (text == 'Reject')
                     return 'Rejected!';
+                if (text == 'restore')
+                    return 'Restored!';
                 if (text == 'Hide')
                     return 'Hidden!';
                 if (text == 'Unhide')
@@ -128,7 +133,10 @@
 
             if (textClass == 'Hide' || textClass == 'Unhide') {
                 middleSentenceOfModal = null;
-            } else {
+            } 
+            if (textClass == 'restore') {
+                middleSentenceOfModal = null;
+            }else {
                 var middleSentenceOfModal = "You won't be able to revert this!"
             }
             e.preventDefault();
@@ -152,6 +160,8 @@
             })
         });
     </script>
+    {{-- tooltip logic end here --}}
+
     <script type="text/javascript" src="https://cdn.jsdelivr.net/gh/alfrcr/paginathing/dist/paginathing.min.js"></script>
     <script type="text/javascript">
         jQuery(document).ready(function($) {
@@ -197,5 +207,4 @@
         });
     </script>
 </body>
-
 </html>

@@ -2,10 +2,19 @@
 
 namespace App\Services;
 
-use App\Models\{Application,Media,Attachment,User};
+use App\Models\Application;
+use App\Models\Attachment;
+use App\Models\Info;
+use App\Models\Media;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\{Storage,Auth};
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
 class CommonService
 {
@@ -47,7 +56,7 @@ class CommonService
                 try {
                     Storage::copy($attachment->file_path, getFileDirectory() . $uniqueName);
                 } catch (\Exception $e) {
-                    return response()->json(['status' => "File exists", 'filename' => $e]);
+                    return response()->json(['status' => "$e", 'filename' => $e]);
                     // return response()->json(['status'=>'File exists','filename'=>$attachment->file_name]);
                 }
                 $media->save();
@@ -82,13 +91,14 @@ class CommonService
         }
         $data = $request->validated();
         $isNewApplication = !$user->application()->exists();
-
-        if ($data['employement_status'] == 'other') {
-            $data['employement_status'] = $request->employment_other_status;
+        $status = $data['employement_status'];
+        $type = $data['property_type'];
+        if ($status == 'other') {
+            $status = $request->employment_other_status;
             $data = Arr::except($data, 'employment_other_status');
         }
-        if ($data['property_type'] == 'other') {
-            $data['property_type'] = $request->property_type_other;
+        if ($type == 'other') {
+            $type = $request->property_type_other;
             $data = Arr::except($data, 'property_type_other');
         }
         if (array_key_exists('property_type_other', $data)) {
@@ -101,16 +111,16 @@ class CommonService
         return [
             'msg_type' => 'msg_success',
             'msg_value' => $isNewApplication ? 'Application inserted successfully.' : 'Application updated successfully.',
-            'data' => session('role') == 'Borrower' ?
-            $isNewApplication ? Application::create($data) : $user->application->update($data)
+            'data' => session('role') == 'Borrower'
+            ? ($isNewApplication ? Application::create($data) : $user->application->update($data))
             : Application::create($data),
         ];
     }
 
     public static function updateApplicatinStatus($application, $status)
     {
-        $application->status = $status == 'accept' ? 1 : 2;
-        $msg = $status == 'accept' ? "Deal completed." : "Deal rejected.";
+        $application->status = $status == 'accept' ? 1 : ($status == 'delete' ? 3 : 2);
+        $msg = $status == 'accept' ? "Deal completed." : ($status == 'delete' ? "Deal deleted." : "Deal rejected.");
         $application->update();
         return ['msg_value' => $msg, 'msg_type' => 'msg_success'];
     }
@@ -143,11 +153,144 @@ class CommonService
     }
     public static function applications()
     {
-        if (session('role') == 'Admin') {
+        $data['role'] = Auth::user()->role;
+        $data['tables'] = ['Pending Applications', 'Completed Deals', 'Incomplete Deals', 'Deleted Deals'];
+        if ($data['role'] == 'Admin' || $data['role'] === 'Processor') {
             $data['applications'] = Application::all();
         } else {
+            $data['tables'] = array_diff($data['tables'], ['Deleted Deals']);
             $data['applications'] = Auth::user()->createdUsers()->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         }
         return $data;
+    }
+
+    public static function filterCat($user, $cat)
+    {
+        if ((isset($user) && $user->loan_type !== 'Private Loan' && $cat === 'Credit Report') ||
+            (isset($user) && $user->loan_type === 'Private Loan' && ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
+            (!empty($user->skipped_category) && in_array($cat, json_decode($user->skipped_category))) ||
+            ($user->role === 'Borrower' && $user->loan_type === 'Private Loan' && ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
+            ($user->role === 'Borrower' && $user->loan_type !== 'Private Loan' && $cat === 'Credit Report')) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    public static function uploadFiles($request)
+    {
+        $request->validate([
+            'file' => 'required',
+            'file.*' => 'mimes:png,jpg,jpeg,pdf,docx,doc',
+        ]);
+        foreach ($request->file('file') as $file) {
+            $filename = $file->getClientOriginalName();
+            $newAattachment = new Attachment();
+            $newAattachment->file_name = $filename;
+            $newAattachment->file_path = $file->store(getGmailFileDirectory());
+            $newAattachment->file_size = $file->getSize();
+            $newAattachment->file_extension = $file->getClientOriginalExtension();
+            $newAattachment->user_id = Auth::user()->id;
+            $newAattachment->uploaded_by = Auth::user()->id;
+            $newAattachment->save();
+        }
+        $msg = ['msg_type' => 'msg_success', 'msg_value' => 'Files Uploaded Successfully'];
+        return $msg;
+    }
+
+    public static function insertFromExcel(Request $request)
+    {
+        $request->validate([
+            'spreadsheet' => 'required|file|mimes:xlsx',
+        ]);
+        $spreadsheet = IOFactory::load($request->spreadsheet);
+        $excelSheet = $spreadsheet->getActiveSheet()->toArray(null, true, true, true);
+
+        $allowedRoles = ["Processor", "Associate", "Junior Associate", "Borrower"];
+        $allowedLoanTypes = ["Private Loan", "Full Doc", "Non QM"];
+        $commonRoles = ['Processor', 'Admin'];
+        $roleHierarchy = [
+            'Processor' => $commonRoles,
+            'Associate' => array_merge($commonRoles, ['Associate']),
+            'Junior Associate' => array_merge($commonRoles, ['Junior Associate']),
+        ];
+        foreach (array_slice($excelSheet, 1) as $index => $row) {
+            $financeType = ucfirst($row['E']) === "" ? null : ucfirst($row['E']);
+            $loanType = ucwords($row['F']) === "" ? null : ucwords($row['F']);
+            if ($row['B'] == null && $row['C'] == null) {
+                continue;
+            }
+            self::validateRow($row, $allowedRoles, $allowedLoanTypes, $index, $financeType, $loanType, $roleHierarchy);
+            $users[] = [
+                'name' => $row['B'],
+                'email' => $row['C'],
+                'password' => bcrypt($row['D']),
+                'role' => ucwords($row['G']),
+                'loan_type' => $loanType,
+                'finance_type' => $financeType,
+                'created_by' => Auth::id(),
+            ];
+        }
+
+        User::insert($users);
+        return ['msg_type' => 'msg_success', 'msg_value' => 'users data inserted successfully'];
+    }
+
+    private static function validateRow($row, $allowedRoles, $allowedLoanTypes, $index, $financeType, $loanType, $roleHierarchy)
+    {
+
+        if (!filter_var($row['C'], FILTER_VALIDATE_EMAIL)) {
+            self::getMessage($index, 'Email is not a valid.');
+        }
+        if (!in_array(ucwords($row['G']), $allowedRoles)
+            || ($financeType && !in_array($financeType, ["Purchase", "Refinance"]))
+            || ($loanType && !in_array($loanType, $allowedLoanTypes))) {
+            self::getMessage($index, 'data is incorrect. Please correct the data and try again');
+        }
+        if (array_key_exists(Auth::user()->role, $roleHierarchy)
+            && in_array(ucwords($row['G']), $roleHierarchy[Auth::user()->role])) {
+            self::getMessage($index, '. You can not create user with this role.');
+        }
+        $emailArray = User::withTrashed()->pluck('email')->toArray();
+        if (in_array($row['C'], $emailArray)) {
+            self::getMessage($index, 'Email is already Exists');
+        }
+    }
+
+    public static function getMessage($index, $message)
+    {
+        throw ValidationException::withMessages(["spreadsheet" => "Row no " . ($index + 1) . " $message"]);
+    }
+
+    public static function exportContactsToExcel($request)
+    {
+        $request->validate([
+            'contact' => 'required',
+        ]);
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $feilds = ['b_fname', 'b_lname', 'b_phone', 'b_email', 'b_address', 'b_suite', 'b_city', 'b_state', 'b_zip', 'co_fname', 'co_lname', 'co_phone', 'co_email', 'co_address', 'co_suite', 'co_city', 'co_state', 'co_zip', 'p_address', 'p_suite', 'p_city', 'p_state', 'p_zip', 'purchase_type', 'company_name', 'purchase_purpose', 'purchase_price', 'purchase_dp', 'loan_amount', 'mortage1', 'interest1', 'mortage2', 'interest2', 'value', 'cashout', 'cashout_amount', 'purpose'];
+        $headers = ['First Name', 'Last Name', 'Phone', 'Email', 'Address', 'Suite', 'City', 'State', 'Zip', 'Co-Borrower First Name', 'Co-Borrower Last Name', 'Co-Borrower Phone', 'Co-Borrower Email', 'Co-Borrower Address', 'Co-Borrower Suite', 'Co-Borrower City', 'Co-Borrower State', 'Co-Borrower Zip', 'Co-Borrower Address', 'Property Suite', 'Property City', 'Property State', 'Property Zip', 'Purchase Type', 'Company Name', 'Purchase Purpose', 'Purchase Price', 'Purchase Down Payment', 'Loan Amount',
+         'Mortage-1', 'interest1', 'mortage2', 'interest2', 'value', 'cashout', 'cashout_amount', 'purpose'];
+        $cell = "A";
+        foreach ($headers as $header) {
+            $sheet->setCellValue($cell . '1', $header);
+            $cell++;
+        }
+        $row = 2;
+        foreach ($request->contact as $contact) {
+            $cell = 'A';
+            $info = Info::find($contact);
+            foreach ($feilds as $field) {
+                $sheet->setCellValue($cell . $row, $info->$field);
+                $cell++;
+            }
+            $row++;
+        }
+        $writer = new Xls($spreadsheet);
+        $writer->save('contact.xlsx');
+        return ['msg_type' => 'msg_success', 'msg_value' => 'users data inserted successfully'];
+
     }
 }

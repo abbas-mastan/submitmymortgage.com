@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
-use Illuminate\Http\Request;
-use App\Models\{User, Media, Info, Application};
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\{Hash, Auth, Storage, Password};
+use App\Models\Info;
+use App\Models\Media;
+use App\Models\User;use Illuminate\Auth\Events\Registered;use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Storage;use Illuminate\Support\Str;
 
 class AdminService
 {
@@ -35,18 +38,20 @@ class AdminService
         $request->validate([
             'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
             'name' => "required",
-            'password' => 'sometimes|required',
+            'password' => $request->sendemail == null ? 'required|confirmed' : '',
             'role' =>
-            #This the custom Rule. Less than Admin Role Can't add User with the role === admin OR Processor
+            #This is the custom Rule. Less than Admin Role Can't add User with the role === admin OR Processor
             function ($attribute, $value, $fail) {
                 self::validateCurrentUser($attribute, $value, $fail);
-            }
+            },
         ]);
-        $user = $isNewUser ? new User() : User::find($id);
-        $msg = $isNewUser ? "Registered. A verification link has been sent. You need to verify your email before login. Please, check your email."
-            : "User updated successfully";
+
+        $user = $isNewUser ? new User() : User::findOrFail($id);
+        $msg = $isNewUser ? "Registered. A verification link has been sent. You need to verify your email before login. Please, check your email." : "User updated successfully";
+
         $user->fill($request->only(['email', 'name']));
-        $user->password = $request->filled('password') ? Hash::make($request->password) : Hash::make('password');
+        $user->password = $request->filled('password') ?
+        Hash::make($request->password) : $user->password = Hash::make(Str::random(8));
         $user->role = $request->input('role', 'Borrower');
 
         if ($request->file('file')) {
@@ -62,12 +67,11 @@ class AdminService
         }
 
         $user->created_by = $user->created_by ?? optional(Auth::user())->id;
+        $user->email_verified_at = !$request->sendemail ? now() : null;
 
-        if ($user->save()) {
+        if ($user->save() && $request->sendemail) {
             if (session('role') != null && $isNewUser) {
-                Password::sendResetLink(
-                    $request->only('email')
-                );
+                Password::sendResetLink($request->only('email'));
                 Password::RESET_LINK_SENT;
             } else {
                 event(new Registered($user));
@@ -78,13 +82,19 @@ class AdminService
 
     private static function validateCurrentUser($attribute, $value, $fail)
     {
-        $role = Session('role');
-        if ($role === 'Processor' && $value === 'Processor' || $value === 'admin')
+        $role = Auth::user()->role;
+        if ($role === 'Processor' && $value === 'Processor' || $value === 'admin') {
             $fail('The selected ' . $attribute . ' is invalid');
-        if ($role === 'Associate' && ($value === 'Associate' || $value === 'admin' || $value === 'Processor'))
+        }
+
+        if ($role === 'Associate' && ($value === 'Associate' || $value === 'admin' || $value === 'Processor')) {
             $fail('The selected ' . $attribute . ' is invalid');
-        if ($role === 'Junior Associate' && ($value === 'Junior Associate' || $value === 'admin' || $value === 'Processor' || $value === 'Associate'))
+        }
+
+        if ($role === 'Junior Associate' && ($value === 'Junior Associate' || $value === 'admin' || $value === 'Processor' || $value === 'Associate')) {
             $fail('The selected ' . $attribute . ' is invalid');
+        }
+
     }
 
     //Saves the record of a newly inserted user in database
@@ -172,7 +182,7 @@ class AdminService
         if (Media::where('user_id', $request->user_id)
             ->where('category', $request->category)
             ->update([
-                "status" => $request->status
+                "status" => $request->status,
             ])
         ) {
             return ['msg_type' => 'msg_success', 'msg_value' => 'Status updated.'];
@@ -187,7 +197,7 @@ class AdminService
         $updated = Media::where('user_id', $request->user_id)
             ->where('category', $cat)
             ->update([
-                "cat_comments" => $request->cat_comments
+                "cat_comments" => $request->cat_comments,
             ]);
         if ($updated) {
             return ['msg_type' => 'msg_success', 'msg_value' => 'Category comments saved.'];
@@ -208,10 +218,12 @@ class AdminService
 
     public static function allLeads()
     {
-        if (session('role') == 'Admin')
+        if (session('role') == 'Admin') {
             $data['leads'] = Info::all();
-        else
+        } else {
             $data['leads'] = Auth::user()->createdUsers()->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        }
+
         return $data;
     }
 

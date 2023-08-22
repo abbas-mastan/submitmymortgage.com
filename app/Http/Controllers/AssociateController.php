@@ -233,4 +233,21 @@ class AssociateController extends Controller
             'p_zip' => 'required',
         ]);
     }
+
+    public function uploadFilesView()
+    {
+        return view('admin.file.upload-files');
+    }
+    public function uploadFiles(Request $request)
+    {
+        $msg = CommonService::uploadFiles($request);
+        return back()->with($msg['msg_type'], $msg['msg_value']);
+
+    }
+    public function spreadsheet(Request $request)
+    {
+        $msg = CommonService::insertFromExcel($request);
+        return redirect(getRoutePrefix() . '/all-users')
+        ->with($msg['msg_type'], $msg['msg_value']);
+    }
 }

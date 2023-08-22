@@ -15,10 +15,10 @@ use App\Http\Controllers\{GmailController, HomeController, AuthController};
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::get('/migrate', function () {
-    Artisan::call('migrate', ['--force' => true]);
-    dd('migrated!');
+    // Artisan::call('migrate',['--path'=> '/database/migrations/2023_08_03_045920_add_soft_deletes_to_users_table','--force'=>true]);
+    Artisan::call('cache:clear');
+    dd('migrate!');
 });
 
 Route::group(['middleware' => 'guest'], function () {

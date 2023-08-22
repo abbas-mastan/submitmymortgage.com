@@ -32,21 +32,14 @@
                 @php
                     $count = 1;
                     $categories = config('smm.file_category');
-                    if(Auth::user()->categories()->exists()){
+                    if (Auth::user()->categories()->exists()) {
                         foreach (Auth::user()->categories()->get() as $cat) {
                             $categories[] = $cat->name;
                         }
                     }
                 @endphp
                 @foreach ($categories as $cat)
-                    @if (
-                        (Auth::user()->role === 'Borrower' && Auth::user()->loan_type !== 'Private Loan' && $cat === 'Credit Report') ||
-                            (isset($user) && $user->loan_type === 'Private Loan' && ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
-                            (Auth::user()->role === 'Borrower' &&
-                                Auth::user()->loan_type === 'Private Loan' &&
-                                ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
-                            (!empty($user->skipped_category) && in_array($cat, json_decode($user->skipped_category))) ||
-                            (!empty(Auth::user()->skipped_category) && in_array($cat, json_decode(Auth::user()->skipped_category))))
+                    @if (\App\Services\CommonService::filterCat($user ?? Auth::user(), $cat))
                         @continue
                     @endif
                     <tr>

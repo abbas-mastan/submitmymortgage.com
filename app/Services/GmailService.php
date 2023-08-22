@@ -45,7 +45,6 @@ class GmailService
         $messageIds = array_map(function ($message) {
             return $message->id;
         }, $messages->getMessages());
-
         $perPage = 10;
         $page = $request->input('page', 1);
         $offset = ($page - 1) * $perPage;

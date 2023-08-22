@@ -23,7 +23,6 @@
                         &nbsp;
                     </span>
                 </li>
-
                 @if (session('role') === 'Processor')
                     <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
                         <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
@@ -45,7 +44,7 @@
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
                     <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/all-users') }}">
-                        <span class="tracking-wide sm:block  capitalize text-white">All Users</span>
+                        <span class="tracking-wide sm:block  capitalize text-white">All Users </span>
                     </a>
                 </li>
                 <li class="-mt-4 hidden sm:block">
@@ -72,6 +71,19 @@
                     </span>
                     <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/applications') }}">
                         <span class="tracking-wide sm:block  capitalize text-white">Loan Pipeline</span>
+                    </a>
+                </li>
+                <li class="-mt-4 hidden sm:block">
+                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
+                        &nbsp;
+                    </span>
+                </li>
+                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
+                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                    <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/upload-files') }}">
+                        <span class="tracking-wide sm:block capitalize text-white">Upload Files</span>
                     </a>
                 </li>
                 <li class="-mt-4 hidden sm:block">
@@ -174,6 +186,19 @@
                     <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
+                    <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/upload-files') }}">
+                        <span class="tracking-wide sm:block capitalize text-white">Upload Files</span>
+                    </a>
+                </li>
+                <li class="-mt-4 hidden sm:block">
+                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
+                        &nbsp;
+                    </span>
+                </li>
+                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
+                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
                     <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/applications') }}">
                         <span class="tracking-wide sm:block  capitalize text-white">Loan Pipeline</span>
                     </a>
@@ -235,27 +260,34 @@
             @endcan
             @can('isUser')
                 <!-- Sidebar for Admin starts -->
+                <li class="my-1 sm:px-24 mt-5 sm:block   -ml-14">
+                    <span class="tracking-wide text-2xl text-white text-left ">Loan Status</span>
+                </li>
+                <li class="py-5 sm:px-24 flex flex-row justify-left ">
+                    <a class="-ml-16 truncate ml-4 text-md border-2 border-white rounded-md bg-white px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                        href="{{ url(getUserRoutePrefix() . '/application-status') }}">
+                        See My Loan Status
+                    </a>
+                </li>
                 <li class="mb-5 my-1 sm:px-24 mt-5 sm:block -ml-14">
                     <span class="tracking-wide text-2xl text-white text-left ">Required Documents</span>
                 </li>
                 @php
                     $categories = config('smm.file_category');
-                    $categories[] = 'Basic Info';
-                    if (Auth::user()->categories()->get()) {
-                        foreach (Auth::user()->categories()->get() as $key => $cat) {
+                    array_unshift($categories, 'Basic Info');
+                    if (
+                        Auth::user()
+                            ->categories()
+                            ->exists()
+                    ) {
+                        Auth::user()->load('categories');
+                        foreach (Auth::user()->categories as $cat) {
                             $categories[] = $cat->name;
                         }
                     }
                 @endphp
-                @foreach (array_reverse($categories) as $cat)
-                    @if (
-                        (Auth::user()->role === 'Borrower' && Auth::user()->loan_type !== 'Private Loan' && $cat === 'Credit Report') ||
-                            (isset($user) && $user->loan_type === 'Private Loan' && ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
-                            (Auth::user()->role === 'Borrower' &&
-                                Auth::user()->loan_type === 'Private Loan' &&
-                                ($cat === 'Pay Stubs' || $cat === 'Tax Returns')) ||
-                            (!empty($user->skipped_category) && in_array($cat, json_decode($user->skipped_category))) ||
-                            (!empty(Auth::user()->skipped_category) && in_array($cat, json_decode(Auth::user()->skipped_category))))
+                @foreach ($categories as $cat)
+                    @if (\App\Services\CommonService::filterCat($user ?? Auth::user(), $cat))
                         @continue
                     @endif
                     <li class="py-3 sm:px-24 flex flex-row {{ $cat == 'Basic Info' ? 'mt-5' : '' }} mt-10 sm:-mt-3">
@@ -309,15 +341,6 @@
                                 </svg>
                             </div>
                         @endif
-                    </a>
-                </li>
-                <li class="my-1 sm:px-24 mt-5 sm:block   -ml-14">
-                    <span class="tracking-wide text-2xl text-white text-left ">Loan Status</span>
-                </li>
-                <li class="py-5 sm:px-24 flex flex-row justify-left ">
-                    <a class="-ml-16 truncate ml-4 text-md border-2 border-white rounded-md bg-white px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                        href="{{ url(getUserRoutePrefix() . '/application-status') }}">
-                        See My Loan Status
                     </a>
                 </li>
                 <!-- Sidebar for user ends -->
