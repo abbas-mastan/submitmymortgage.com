@@ -227,7 +227,7 @@
                 </table>
                 <button type="submit" disabled
                     class="dark:bg-white submitButton bg-gray-200 
-                    cursor-help text-gray-500 shadow-md hover:shadow-none
+                    cursor-not-allowed text-gray-500 shadow-md hover:shadow-none
                     rounded-md px-3 py-2 hover:text-blue-500 ">
                     Export Selected
                 </button>

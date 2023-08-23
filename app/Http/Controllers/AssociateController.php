@@ -2,11 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{User,Info,Application,UserCategory};
-use Illuminate\Http\Request;
-use App\Services\{UserService,AdminService,CommonService};
 use App\Http\Requests\ApplicationRequest;
-use Illuminate\Support\Facades\{Validator,Auth};
+use App\Models\Application;
+use App\Models\Info;
+use App\Models\User;
+
+use App\Models\UserCategory;
+
+use App\Services\AdminService;
+use App\Services\CommonService;
+use App\Services\UserService;
+use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class AssociateController extends Controller
 {
@@ -62,7 +71,6 @@ class AssociateController extends Controller
         return view('admin.file.file-cats', $data);
     }
 
-
     public function docs(Request $request, $id, $cat)
     {
         if ($cat == "Loan Application") {
@@ -107,8 +115,6 @@ class AssociateController extends Controller
         $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         return view('admin.user.all-users', $data);
     }
-
-
 
     public function deleteUser(Request $request, $id)
     {
@@ -216,7 +222,7 @@ class AssociateController extends Controller
             'b_city' => 'required',
             'b_state' => 'required',
             'b_zip' => 'required',
-            // co borrwowers details 
+            // co borrwowers details
             'co_fname' => 'required',
             'co_lname' => 'required',
             'co_phone' => 'required',
@@ -248,6 +254,13 @@ class AssociateController extends Controller
     {
         $msg = CommonService::insertFromExcel($request);
         return redirect(getRoutePrefix() . '/all-users')
-        ->with($msg['msg_type'], $msg['msg_value']);
+            ->with($msg['msg_type'], $msg['msg_value']);
+    }
+
+    public function exportContactsToExcel(Request $request): RedirectResponse
+    {
+        $msg = CommonService::exportContactsToExcel($request);
+        return redirect(getRoutePrefix() . '/leads')
+            ->with($msg['msg_type'], $msg['msg_value']);
     }
 }
