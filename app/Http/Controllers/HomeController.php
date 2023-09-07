@@ -35,9 +35,9 @@ class HomeController extends Controller
         $data["authUrl"] = $this->client->createAuthUrl();
         $data["active"] = "dashboard";
         $data['carbon'] = Carbon::class;
-        if (Auth::user()->role !== 'Borrower') {
-            return redirect(getRoutePrefix() . '/applications');
-        }
+        // if (Auth::user()->role !== 'Borrower') {
+        //     return redirect(getRoutePrefix() . '/applications');
+        // }
 
         return view('dashboard', $data);
     }

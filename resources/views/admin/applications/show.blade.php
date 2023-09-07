@@ -858,7 +858,7 @@ $val = $application->employement_status;
                     </div>
                 </div>
             </div>
-            <div class="mt-2 grid grid-cols-5 gap-8">
+            <div class="mt-2  gap-8">
                 <div class="">
                     <div class=" text-left mr-12">
                         <label for="note" class="">Note</label>

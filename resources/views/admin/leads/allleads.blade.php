@@ -6,33 +6,28 @@
         #file {
             display: none;
         }
+
+        #deleted-table_length,
+        #user-table_length {
+            display: none;
+        }
     </style>
 @endsection
 @section('content')
+
     <div class="flex-wrap flex-shrink-0 w-full">
         @if (Auth::user()->role != 'Borrower')
-            <div class="w-full my-2">
-                <div class="w-full h-44 ">
-                    <div class="flex h-32 bg-gradient-to-b from-gradientStart to-gradientEnd">
-                        <div class="w-1/2 p-4 pl-8">
-                            <span class="text-white text-lg block text-left">Contacts</span>
-                            <span class="text-white text-2xl block text-left font-bold mt-1">
-                                {{ count($leads) }}
-                            </span>
-                        </div>
-                        <div class="w-1/2 pt-7 pr-7">
-                            <img src="{{ asset('icons/user.svg') }}" alt="" class="z-20 float-right mt-3 mr-4">
-                            <img src="{{ asset('icons/circle-big.svg') }}" alt=""
-                                class="z-10 opacity-10 float-right mt-1 -mr-11 w-20">
-                            <img src="{{ asset('icons/circle-small.svg') }}" alt=""
-                                class="z-0 opacity-10 float-right mt-16 -mr-12 w-12">
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <x-flex-card title="Contacts" titlecounts="{{ count($leads) }}" iconurl="{{ asset('icons/user.svg') }}" />
             <form method="POST" action="{{ url(getRoutePrefix() . '/export-contacts') }}">
                 @csrf
-                <table class="w-full" id="user-table">
+                @if (count($leads) > 0)
+                    <div class="absolute z-20 ml-[45px] pl-7 mb-3 leading-6">
+                        <input type="checkbox" name="select-all" id="selectall">
+                        <label class="leading-6" for="selectall">Select All</label>
+                    </div>
+                @endif
+
+                <table class="w-full pt-3" id="user-table">
                     @include('components.table-head')
                     <tbody>
                         @if (Auth::user()->role == 'Admin')
@@ -56,7 +51,8 @@
                                         <a data="Delete" class="delete"
                                             href="{{ url(getRoutePrefix() . '/delete-lead/' . $lead->id) }}">
                                             <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
-                                                <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
+                                                <img src="{{ asset('icons/trash.svg') }}" alt=""
+                                                    class="p-1 w-7">
                                             </button>
                                         </a>
                                     </td>
@@ -225,12 +221,15 @@
                         @endif
                     </tbody>
                 </table>
-                <button type="submit" disabled
-                    class="dark:bg-white submitButton bg-gray-200 
-                    cursor-help text-gray-500 shadow-md hover:shadow-none
+                @if (count($leads) > 0)
+                    <button type="submit"
+                        class="submitButton bg-gray-200 flex
+                    text-gray-500 shadow-md hover:shadow-none
                     rounded-md px-3 py-2 hover:text-blue-500 ">
-                    Export Selected
-                </button>
+                        Export Selected
+                        <img src="{{ asset('icons/download.svg') }}" class="ml-2" width="20px" alt="">
+                    </button>
+                @endif
             </form>
         @endif
     </div>
@@ -242,6 +241,18 @@
     <script>
         var checkboxes = $('.checkbox');
         var submitButton = $('.submitButton');
+        $('#selectall').click(function(e) {
+            if ($(this).is(':checked')) {
+                checkboxes.prop('checked', true);
+                submitButton.removeClass('cursor-not-allowed')
+                    .removeAttr('disabled');
+            } else {
+                checkboxes.prop('checked', false);
+                submitButton.addClass('cursor-not-allowed')
+                    .attr('disabled', true);
+            }
+        });
+
         checkboxes.click(function() {
             if (checkboxes.is(':checked')) {
                 submitButton.removeClass('cursor-not-allowed')
@@ -251,12 +262,13 @@
                     .attr('disabled', true);
             }
         });
-        $('.dataTables_length').append(checkbox);
-        $(document).ready(function() {
-            $('#user-table').DataTable({
-                pageLength: 30,
-                lengthMenu: [10, 20, 30, 50, 100, 200],
-            });
+        $('.newProject').click(function(e) {
+            e.preventDefault();
+            $('#newProjectModal').removeClass('hidden');
+        });
+        $('.closeModal').click(function(e) {
+            e.preventDefault();
+            $('#newProjectModal').addClass('hidden');
         });
     </script>
 @endsection

@@ -10,10 +10,10 @@ use App\Models\UserCategory;
 use App\Services\AdminService;
 use App\Services\CommonService;
 use App\Services\UserService;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\View\View;
 
 class AdminController extends Controller
 {
@@ -336,10 +336,72 @@ class AdminController extends Controller
             ->with($msg['msg_type'], $msg['msg_value']);
     }
 
-    public function exportContactsToExcel(Request $request): RedirectResponse
+    public function exportContactsToExcel(Request $request)
     {
         $msg = CommonService::exportContactsToExcel($request);
+        return $this->downloadXls();
         return redirect(getRoutePrefix() . '/leads')
             ->with($msg['msg_type'], $msg['msg_value']);
+    }
+
+    public function downloadXls()
+    {
+        $myFile = public_path("contact.xlsx");
+        $headers = ['Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+        $newName = 'contact.xlsx';
+        return response()->download($myFile, $newName, $headers);
+    }
+
+    public function projects($id = null): View
+    {
+        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
+        if ($admin->role == 'Admin') {
+            $data['users'] = User::where('role', '!=', 'Admin')->get();
+            $data['trashed'] = User::onlyTrashed()->get();
+        } else {
+            $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        }
+        return view('admin.newpages.projects',$data);
+    }
+
+    public function teams($id = null): View
+    {
+        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
+        if ($admin->role == 'Admin') {
+            $data['users'] = User::where('role', '!=', 'Admin')->get();
+            $data['trashed'] = User::onlyTrashed()->get();
+        } else {
+            $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        }
+        return view('admin.newpages.teams',$data);
+    }
+
+    public function newusers($id = null)
+    {
+        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
+        if ($admin->role == 'Admin') {
+            $data['users'] = User::where('role', '!=', 'Admin')->get();
+            $data['trashed'] = User::onlyTrashed()->get();
+        } else {
+            $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        }
+        return view('admin.newpages.users', $data);
+    }
+
+    public function contacts()
+    {
+        $data = AdminService::allLeads();
+        return view('admin.newpages.contacts', $data);
+    }
+
+
+    public function ProjectOverview(Request $request, $id = -1)
+    {
+        if ($request->ajax()) {
+            $data['attachments'] = \App\Models\Attachment::where('user_id', Auth::id())->paginate(2);
+            return $data;
+        }
+        $data = AdminService::filesCat($request, $id);
+        return view('admin.newpages.project-overview', $data);
     }
 }

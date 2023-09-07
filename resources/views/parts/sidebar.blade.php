@@ -112,7 +112,7 @@
                     <a class="truncate ml-4" style="{{ !Auth::user()->accessToken ? 'margin-top:-5px;' : '' }}"
                         href="{{ url(Auth::user()->accessToken ? '/gmail-inbox' : '/gmail/auth') }}">
                         @if (Auth::user()->accessToken)
-                            <span class="tracking-wide sm:block capitalize text-themegreen text-white"> Gmail Inbox</span>
+                            <span class="tracking-wide sm:block capitalize text-themegreen ">Gmail Inbox</span>
                         @else
                             <div class="px-4 inline-flex pt-1 bg-white shadow rounded-full">
                                 <span class="mt-1 mr-3">
@@ -229,7 +229,7 @@
                     <a class="truncate ml-4" style="{{ !Auth::user()->accessToken ? 'margin-top:-5px;' : '' }}"
                         href="{{ url(Auth::user()->accessToken ? '/gmail-inbox' : '/gmail/auth') }}">
                         @if (Auth::user()->accessToken)
-                            <span class="tracking-wide sm:block  capitalize text-themegreen text-white"> Gmail Inbox</span>
+                            <span class="tracking-wide sm:block  capitalize text-themegreen"> Gmail Inbox</span>
                         @else
                             <div class="px-4 inline-flex pt-1 bg-white shadow  rounded-full">
                                 <span class="mt-1 mr-3">
@@ -315,7 +315,7 @@
                     <a class="truncate ml-4" style="{{ !Auth::user()->accessToken ? 'margin-top:-5px;' : '' }}"
                         href="{{ url(Auth::user()->accessToken ? '/gmail-inbox' : '/gmail/auth') }}">
                         @if (Auth::user()->accessToken)
-                            <span class="tracking-wide sm:block  capitalize text-themegreen text-white"> Gmail Inbox</span>
+                            <span class="tracking-wide sm:block capitalize text-themegreen"> Gmail Inbox</span>
                         @else
                             <div class="px-4 inline-flex pt-1 bg-white shadow  rounded-full">
                                 <span class="mt-1 mr-3">

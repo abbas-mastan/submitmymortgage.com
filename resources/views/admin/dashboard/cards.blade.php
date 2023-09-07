@@ -15,10 +15,8 @@
                     <img src="{{ asset('icons/circle-small.svg') }}" alt="" class="z-0 opacity-10 float-right mt-16 -mr-12 w-12">
                 </div>
             </div>
-           
         </a>
     </div>
-    
 </div>
 
 

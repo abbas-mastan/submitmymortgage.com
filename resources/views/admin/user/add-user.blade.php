@@ -1,10 +1,17 @@
 @extends('layouts.app')
 @section('content')
     <div class="mx-auto w-3/4 mt-24">
+
         <div class="">
             <h1 class="text-xl uppercase text-center">
                 Create A New User
             </h1>
+        </div>
+        <div class="ml-1 mt-3 w-1/2 flex">
+            <a href="{{asset('users.xlsx')}}" download
+                class="block bg-gradient-to-b from-gradientStart to-gradientEnd capitalize flex rounded-md px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400 text-white">
+                Download xlsx example <img src="{{asset('icons/download.svg')}}" class="ml-2 color-white-500" width="20px" alt="">
+            </a>
         </div>
         <form class="w-7/8" action="{{ url(getRoutePrefix() . '/spreadsheet') }}" method="post" enctype="multipart/form-data">
             @csrf
@@ -196,6 +203,7 @@
         });
         // Trigger the change event on page load to initialize the display and required attribute
         role.dispatchEvent(new Event('change'));
+
         function showPrompt(form) {
             if (role.value == 'Processor') {
                 if (confirm('Are you sure you want to add a Processor?')) {

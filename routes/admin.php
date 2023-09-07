@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -23,6 +24,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
   //==========User related routes
   //==============================
   Route::get('/users', [AdminController::class, 'users']);
+  Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
   Route::get('/add-user/{userId}', [AdminController::class, 'addUser']);
   Route::post('/do-user/{userId}', [AdminController::class, 'doUser']);
   Route::get('/delete-user/{userId}', [AdminController::class, 'deleteUser']);
@@ -69,6 +71,17 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
   Route::get('/upload-files',[AdminController::class,'uploadFilesView']);
   Route::post('/upload-files',[AdminController::class,'uploadFiles']);
   Route::post('/export-contacts',[AdminController::class,'exportContactsToExcel']);
+
+
+  //=============================================
+  //=============> new Design Routes 
+  //=============================================
+  Route::get('projects',[AdminController::class,'projects']);
+  Route::get('teams',[AdminController::class,'teams']);
+  Route::get('new-users',[AdminController::class,'newusers']);
+  Route::get('contacts',[AdminController::class,'contacts']);
+  Route::get('project-overview/{id?}',[AdminController::class,'projectOverview']);
+
 });
 Route::prefix(getAdminRoutePrefix())->group(function () {
   //==============================

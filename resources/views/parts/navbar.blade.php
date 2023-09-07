@@ -4,7 +4,13 @@
             @can('isAdmin')
                 <div class="pl-20">
                     <span class="text-xl font-semibold">
-                        {{ session('role') === 'Processor' ? 'Processor ' : 'Admin ' }}Dashboard
+                        @if (request()->routeIs('dashboard'))
+                            {{ session('role') === 'Processor' ? 'Processor ' : 'Admin ' }}Dashboard
+                        @else
+                            <a href="{{ url(getRoutePrefix() . '/dashboard') }}">
+                                {{ session('role') === 'Processor' ? 'Processor ' : 'Admin ' }}Dashboard
+                            </a>
+                        @endif
                     </span>
                 </div>
             @endcan
@@ -31,7 +37,6 @@
                     <img class="rounded-full w-12 h-12" src="{{ asset(auth()->user()->pic) }}" alt=""
                         srcset="">
                 </a>
-
             </div>
             <div class="pt-3 ">
                 <span class="ml-3 capitalize">Welcome, {{ auth()->user()->getFirstName() }}</span>
@@ -43,18 +48,19 @@
             </a>
         </div>
         <div class=" mr-20 pt-3 ">
-            @if(session('reLogin'))
-            <form method="POST" action="{{url('/logout-from-this-user')}}">
-                @csrf
-                <input type="hidden" name="user_id" value="{{session('reLogin')}}">
-                <button title="login as this user" type="submit" class="bg-themered tracking-wide text-white font-semibold capitalize px-2 ">
-                    Logout from this user
-                </button>
-            </form>
+            @if (session('reLogin'))
+                <form method="POST" action="{{ url('/logout-from-this-user') }}">
+                    @csrf
+                    <input type="hidden" name="user_id" value="{{ session('reLogin') }}">
+                    <button title="login as this user" type="submit"
+                        class="bg-themered tracking-wide text-white font-semibold capitalize px-2 ">
+                        Logout from this user
+                    </button>
+                </form>
             @else
-            <a href="{{ url('/logout') }}">
-                <button class="font-bold px-2 bg-red-600 text-white">Logout</button>
-            </a>
+                <a href="{{ url('/logout') }}">
+                    <button class="font-bold px-2 bg-red-600 text-white">Logout</button>
+                </a>
             @endif
 
         </div>

@@ -216,23 +216,22 @@ class CommonService
             'Junior Associate' => array_merge($commonRoles, ['Junior Associate']),
         ];
         foreach (array_slice($excelSheet, 1) as $index => $row) {
-            $financeType = ucfirst($row['E']) === "" ? null : ucfirst($row['E']);
-            $loanType = ucwords($row['F']) === "" ? null : ucwords($row['F']);
-            if ($row['B'] == null && $row['C'] == null) {
+            $financeType = ucfirst($row['D']) === "" ? null : ucfirst($row['D']);
+            $loanType = ucwords($row['E']) === "" ? null : ucwords($row['E']);
+            if ($row['A'] == null && $row['B'] == null) {
                 continue;
             }
             self::validateRow($row, $allowedRoles, $allowedLoanTypes, $index, $financeType, $loanType, $roleHierarchy);
             $users[] = [
-                'name' => $row['B'],
-                'email' => $row['C'],
-                'password' => bcrypt($row['D']),
-                'role' => ucwords($row['G']),
+                'name' => $row['A'],
+                'email' => $row['B'],
+                'password' => bcrypt($row['C']),
+                'role' => ucwords($row['F']),
                 'loan_type' => $loanType,
                 'finance_type' => $financeType,
                 'created_by' => Auth::id(),
             ];
         }
-
         User::insert($users);
         return ['msg_type' => 'msg_success', 'msg_value' => 'users data inserted successfully'];
     }
@@ -240,20 +239,20 @@ class CommonService
     private static function validateRow($row, $allowedRoles, $allowedLoanTypes, $index, $financeType, $loanType, $roleHierarchy)
     {
 
-        if (!filter_var($row['C'], FILTER_VALIDATE_EMAIL)) {
-            self::getMessage($index, 'Email is not a valid.');
+        if (!filter_var($row['B'], FILTER_VALIDATE_EMAIL) || $row['B'] === 'email@email.com') {
+            self::getMessage($index, 'Email is not  valid.');
         }
-        if (!in_array(ucwords($row['G']), $allowedRoles)
+        if (!in_array(ucwords($row['F']), $allowedRoles)
             || ($financeType && !in_array($financeType, ["Purchase", "Refinance"]))
             || ($loanType && !in_array($loanType, $allowedLoanTypes))) {
             self::getMessage($index, 'data is incorrect. Please correct the data and try again');
         }
         if (array_key_exists(Auth::user()->role, $roleHierarchy)
-            && in_array(ucwords($row['G']), $roleHierarchy[Auth::user()->role])) {
+            && in_array(ucwords($row['F']), $roleHierarchy[Auth::user()->role])) {
             self::getMessage($index, '. You can not create user with this role.');
         }
         $emailArray = User::withTrashed()->pluck('email')->toArray();
-        if (in_array($row['C'], $emailArray)) {
+        if (in_array($row['B'], $emailArray)) {
             self::getMessage($index, 'Email is already Exists');
         }
     }
@@ -272,7 +271,7 @@ class CommonService
         $sheet = $spreadsheet->getActiveSheet();
         $feilds = ['b_fname', 'b_lname', 'b_phone', 'b_email', 'b_address', 'b_suite', 'b_city', 'b_state', 'b_zip', 'co_fname', 'co_lname', 'co_phone', 'co_email', 'co_address', 'co_suite', 'co_city', 'co_state', 'co_zip', 'p_address', 'p_suite', 'p_city', 'p_state', 'p_zip', 'purchase_type', 'company_name', 'purchase_purpose', 'purchase_price', 'purchase_dp', 'loan_amount', 'mortage1', 'interest1', 'mortage2', 'interest2', 'value', 'cashout', 'cashout_amount', 'purpose'];
         $headers = ['First Name', 'Last Name', 'Phone', 'Email', 'Address', 'Suite', 'City', 'State', 'Zip', 'Co-Borrower First Name', 'Co-Borrower Last Name', 'Co-Borrower Phone', 'Co-Borrower Email', 'Co-Borrower Address', 'Co-Borrower Suite', 'Co-Borrower City', 'Co-Borrower State', 'Co-Borrower Zip', 'Co-Borrower Address', 'Property Suite', 'Property City', 'Property State', 'Property Zip', 'Purchase Type', 'Company Name', 'Purchase Purpose', 'Purchase Price', 'Purchase Down Payment', 'Loan Amount',
-         'Mortage-1', 'interest1', 'mortage2', 'interest2', 'value', 'cashout', 'cashout_amount', 'purpose'];
+            'Mortage-1', 'interest1', 'mortage2', 'interest2', 'value', 'cashout', 'cashout_amount', 'purpose'];
         $cell = "A";
         foreach ($headers as $header) {
             $sheet->setCellValue($cell . '1', $header);
@@ -290,7 +289,7 @@ class CommonService
         }
         $writer = new Xls($spreadsheet);
         $writer->save('contact.xlsx');
-        return ['msg_type' => 'msg_success', 'msg_value' => 'users data inserted successfully'];
+        return ['msg_type' => 'msg_success', 'msg_value' => 'data exported successfully'];
 
     }
 }

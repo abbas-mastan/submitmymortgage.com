@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -17,7 +18,7 @@
             margin-left: 2.68rem;
         }
 
-        <style>#file {
+        #file {
             display: none;
         }
 
@@ -61,17 +62,18 @@
     </script>
     @yield('head')
 </head>
+
 <body class="font-graphik" style="font-family: graphik, sans-serif !important">
     @include('user.file-upload.upload-modal')
     @include('user.file-upload.category-modal')
     <div class="min-h-screen flex flex-col flex-grow ">
         <div class="w-full md:h-full flex flex-col sm:flex-row flex-wrap sm:flex-nowrap flex-grow">
             @include('parts.sidebar')
-            <main role="main" class="w-full bg-themebackground">
+            <main role="main" class="bg-themebackground sm:w-full">
                 <div class="w-full">
                     @include('parts.navbar')
                 </div>
-                <div class="w-full flex px-5  md:px-24">
+                <div class="flex px-5 md:px-24">
                     <div class="w-full">
                         @include('parts.alerts')
                         @yield('content')
@@ -133,10 +135,10 @@
 
             if (textClass == 'Hide' || textClass == 'Unhide') {
                 middleSentenceOfModal = null;
-            } 
+            }
             if (textClass == 'restore') {
                 middleSentenceOfModal = null;
-            }else {
+            } else {
                 var middleSentenceOfModal = "You won't be able to revert this!"
             }
             e.preventDefault();
@@ -205,6 +207,24 @@
                 }
             });
         });
+
+
+        $(document).on('mouseenter', '.loginBtn', function() {
+            if ($(this).attr('data') == 'restore') {
+                var data = $(this).attr('data');
+            }
+            if ($(this).attr('data') == 'Permanent Delete') {
+                var data = $(this).attr('data');
+            }
+            $(this).append(
+                `<div role="tooltip" class="w-40 mt-2 -ml-16 absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700">
+                        ${!data ? 'Login As This User': data+' this user'}
+                        <div class="tooltip-arrow" data-popper-arrow></div></div>`
+            );
+        }).on('mouseleave', '.loginBtn', function() {
+            $(this).find('div[role="tooltip"]').remove();
+        });
     </script>
 </body>
+
 </html>

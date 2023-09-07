@@ -24,7 +24,12 @@ fixed bg-gray-500 bg-opacity-40
                     <option value="">Choose document type</option>
                     @php
                         $categories = config('smm.file_category');
-                        foreach (Auth::user()->categories()->get() as $category) {
+                        foreach (
+                            Auth::user()
+                                ->categories()
+                                ->get()
+                            as $category
+                        ) {
                             $categories[] = $category->name;
                         }
                         if (isset($user)) {
