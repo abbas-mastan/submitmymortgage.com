@@ -12,7 +12,7 @@
     @can('isUser')
         @include('user.dashboard.upload')
     @endcan
-    <div class="flex flex-wrap justify-center w-full">
+    <div class="flex-wrap justify-center w-full">
         @can('isAdmin')
         @include('admin.dashboard.menu')
             {{-- @include('admin.dashboard.cards')

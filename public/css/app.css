@@ -874,6 +874,9 @@ select {
 .ml-auto {
   margin-left: auto;
 }
+.mr-1 {
+  margin-right: 0.25rem;
+}
 .mr-12 {
   margin-right: 3rem;
 }
@@ -1148,6 +1151,12 @@ select {
      -moz-user-select: all;
           user-select: all;
 }
+.list-inside {
+  list-style-position: inside;
+}
+.list-disc {
+  list-style-type: disc;
+}
 .list-none {
   list-style-type: none;
 }
@@ -1407,6 +1416,10 @@ select {
   --tw-bg-opacity: 1;
   background-color: rgb(153 27 27 / var(--tw-bg-opacity));
 }
+.bg-slate-300 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(203 213 225 / var(--tw-bg-opacity));
+}
 .bg-themebackground {
   --tw-bg-opacity: 1;
   background-color: rgb(245 245 245 / var(--tw-bg-opacity));
@@ -1510,6 +1523,10 @@ select {
   padding-left: 2rem;
   padding-right: 2rem;
 }
+.px-\[7px\] {
+  padding-left: 7px;
+  padding-right: 7px;
+}
 .py-0 {
   padding-top: 0px;
   padding-bottom: 0px;
@@ -1590,6 +1607,9 @@ select {
 }
 .pt-7 {
   padding-top: 1.75rem;
+}
+.pb-5 {
+  padding-bottom: 1.25rem;
 }
 .text-left {
   text-align: left;
@@ -2007,6 +2027,12 @@ select {
     color: rgb(229 229 229 / var(--tw-text-opacity));
   }
 }
+@media not all and (min-width: 768px) {
+
+  .max-md\:right-\[80px\] {
+    right: 80px;
+  }
+}
 @media (min-width: 576px) {
 
   .min-\[576px\]\:mx-auto {
@@ -2055,6 +2081,10 @@ select {
 
   .sm\:w-full {
     width: 100%;
+  }
+
+  .sm\:w-2\/3 {
+    width: 66.666667%;
   }
 
   .sm\:flex-row {
@@ -2112,6 +2142,10 @@ select {
 }
 @media (min-width: 768px) {
 
+  .md\:flex {
+    display: flex;
+  }
+
   .md\:h-auto {
     height: auto;
   }
@@ -2167,6 +2201,10 @@ select {
   }
 }
 @media (min-width: 1280px) {
+
+  .xl\:right-\[100px\] {
+    right: 100px;
+  }
 
   .xl\:hidden {
     display: none;

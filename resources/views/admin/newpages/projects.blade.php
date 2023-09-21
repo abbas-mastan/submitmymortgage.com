@@ -35,19 +35,20 @@
     <form action="#" class="projectForm" method="post">
 
         <x-form.input name="name" label="Borrower's Name" />
-        <x-form.input name="address" label="Borrower's Address" />
-        <x-form.input name="team" label="Team" />
+        <x-form.input name="email" label="Borrower's Email" />
         <div class="my-3 mt-1flex align-center">
             <input type="checkbox" name="involved" id="involved">
             <label class="ml-2 text-sm leading-normal text-gray-500" for="involved">I want the borrower
                 involved</label>
         </div>
+        <x-form.input name="address" label="Borrower's Address" />
+        <x-form.input name="team" label="Team" />
         <x-form.input name="associate" label="Associate" />
-        <x-form.input name="junior_associate" label="Jr Associate" />
+        <x-form.input name="junior_associate" label="Jr. Associate" />
         <div class="my-3">
-            <a href="#" class="text-red-800 font-bold">+ Add Jr Associate</a>
+            <a href="#" class="text-red-800 font-bold">+ Add Jr. Associate</a>
         </div>
-        <div class="my-3 flex justify-between">
+        <div class="my-3 flex justify-between mt-10">
             <span class="closeModal text-gray-600 cursor-pointer">Skip</span>
             <button type="submit" class="bg-red-800 text-white px-5 text-xs font-thin">Continue</button>
         </div>
@@ -185,8 +186,7 @@
 
     $(".projectForm").submit(function(e) {
         e.preventDefault();
-        var data = ['address', 'name', 'associate', 'team', 'junior_associate'];
-
+        var data = ['address','email', 'name', 'associate', 'team', 'junior_associate'];
         data.forEach(function(field) {
             var input = $("#" + field);
             var name = input.attr('name');

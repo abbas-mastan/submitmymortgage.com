@@ -49,11 +49,6 @@
 
         .serachinput {
             border-radius: 0px !important;
-            padding: 5px 3px;
-            background-image: url({{ asset('icons/bell.svg') }});
-            background-repeat: no-repeat;
-            display: flex;
-            justify-content: end;
         }
 
         #user-table_filter label {
@@ -91,6 +86,8 @@
     </div>
     <div class="">
         <label for="category">Sort By:</label>
+        <label class="absolute xl:right-[100px] max-md:right-[80px] mt-8 mr-1 z-10"><img width="20"
+                src="{{ asset('icons/search.svg') }}" alt=""></label>
         <div class="absolute z-10">
             <button class="bg-red-800 px-5 py-1  text-white flex newProject">Category</button>
         </div>
@@ -102,7 +99,7 @@
             </thead>
             <tbody>
                 <tr>
-                    <td class=" pl-2 tracking-wide border  border-l-0 border-r-0">
+                    <td class="tracking-wide  border-l-0 border-r-0">
                         @foreach ($files as $file)
                             @if ($file->category === 'Credit Report')
                                 @continue
@@ -112,7 +109,11 @@
                             @endphp
                             @foreach ($categories as $category)
                                 @if ($category === $file->category)
-                                    @component('components.accordion', ['title' => $category, 'color' => 'bg-red-800'])
+                                    @component('components.accordion', [
+                                        'title' => $category,
+                                        'color' => 'bg-red-800',
+                                        'count' =>  fileCatCount($file->category, $user->id),
+                                    ])
                                         <table class="w-full" id="table-{{ $file->id }}">
                                             <tr class="">
                                                 <th class="" width="30%">
@@ -248,14 +249,15 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
         $(document).ready(function() {
-            // $("input[type=search]").css("background", "#991b1b");
+            $("input[type=search]").css("background", "#991b1b");
             $("input[type=search]").attr("placeholder", "search");
             $("input[type=search]").addClass('serachinput');
             $("input[type=search]").addClass('bg-red-800');
-            $('#user-table').removeClass("no-footer");
+            $('#user-table').removeClass("no-footer dataTable");
 
-            // $("#user-table_filter").append("<img src="{{ asset('icons/search.svg') }}" />");
+
         });
+        // $("#user-table").before("<img src="{{ asset('icons/search.svg') }}" />");
 
         (function() {
             let textarea = document.querySelectorAll(".comments");

@@ -47,7 +47,13 @@ class AdminService
         ]);
 
         $user = $isNewUser ? new User() : User::findOrFail($id);
-        $msg = $isNewUser ? "Registered. A verification link has been sent. You need to verify your email before login. Please, check your email." : "User updated successfully";
+        if ($isNewUser && $request->sendmail) {
+            $msg = "Registered. A verification link has been sent. You need to verify your email before login. Please, check your email.";
+        } elseif ($isNewUser && !$request->sendmail) {
+            $msg = "User created successfully";
+        } else {
+            $msg = "User updated successfully";
+        }
 
         $user->fill($request->only(['email', 'name']));
         $user->password = $request->filled('password') ?

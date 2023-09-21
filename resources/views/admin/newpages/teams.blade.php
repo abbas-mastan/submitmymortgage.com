@@ -31,7 +31,7 @@
 
     <x-flex-card title="Teams" titlecounts="4" iconurl="{{ asset('icons/group.png') }}" />
     <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Team</button>
-    @component('components.accordion', ['title' => '4500 Woodman Avenue | Copeland Finance Group'])
+    {{-- @component('components.accordion', ['title' => 'Copeland Finance Group'])
         <table class="w-full display shadow-lg" id="incomplete-table">
             <thead class="hidden bg-gray-300">
                 <tr>
@@ -116,7 +116,7 @@
             </tbody>
         </table>
         <button class="bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</button>
-    @endcomponent
+    @endcomponent --}}
 @endsection
 @section('foot')
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
@@ -132,56 +132,90 @@
         });
 
         function showError(id, error = " field is required") {
-            $('#' + id).addClass('border-red-700');
+            $('#' + id).addClass('border-red-700 border-2');
             $('#' + id + "_error").text(id + error);
+            return false;
         }
 
         function removeError(id) {
-            $('#' + id).removeClass('border-red-700');
+            $('#' + id).removeClass('border-red-700 border-2');
             $('#' + id + '_error').text('');
+            return true;
         }
 
         $('.teamContinue').click(function(e) {
             e.preventDefault();
-            if ($('#name').val() === '') showError('name');
-            else {
-                removeError('name');
-                $('.modalTitle').text('Add an Associate');
-                $('.createTeam').addClass('hidden');
-                $('.associate').removeClass('hidden');
+            if ($('#new').hasClass('hidden')) {
+                if ($('#selecTeam').find(':checked').html() === "Select Team") {
+                    showError('team')
+                } else {
+                    $('#teamForm').attr('action',`{{ url(getAdminRoutePrefix() . '/teams')}}/${$('#selecTeam').find(':checked').val()}`)
+                    removeError('team');
+                    $('.modalTitle').text('Add an Associate');
+                    $('.createTeam').addClass('hidden');
+                    $('.associate').removeClass('hidden');
+                }
+            } else {
+                if ($('#name').val() === '') showError('name');
+                else if ($('#name').val().length < 8) showError('name', ' must be at least 8 characters');
+                else {
+                    removeError('name');
+                    $('.modalTitle').text('Add an Associate');
+                    $('.createTeam').addClass('hidden');
+                    $('.associate').removeClass('hidden');
+                }
             }
         });
 
         $('.associateContinue').click(function(e) {
             e.preventDefault();
-            if ($('#associateEmail').val() === '') showError('associateEmail');
-            else removeError('associateEmail');
-            if (!validateEmail($('#associateEmail'))) showError('associateEmail', ' is not valid');
-            else removeError('associateemail');
-            if ($('#associate').val() === '') showError('associate');
+            if ($('#associate').find(':selected').html() === "Select Associate Name") showError('associate');
             else removeError('associate');
-
-            if ($('#associateEmail').val() !== '' && $('#associate').val() !== '' && validateEmail($(
-                    '#associateEmail'))) {
+            if ($('#associate').find(':selected').html() !== "Select Associate Name") {
                 $('.modalTitle').text('Add an Jr Associate');
                 $('.associate').addClass('hidden');
-                $('.jrassociate').removeClass('hidden');
+                $('.jrAssociate').removeClass('hidden');
             }
         });
 
         $('.jrAssociateContinue').click(function(e) {
             e.preventDefault();
-            if ($('#jrassociate').val() === '') showError('jrassociate');
-            else removeError('jrassociate');
-            if ($('#jrAssociateEmail').val() === '') showError('jrAssociateEmail');
-            else {
-                removeError('jrAssociateEmail')
-                if (!validateEmail($('#jrAssociateEmail'))) showError('jrAssociateEmail', ' is not valid')
-                else removeError('jrAssociateEmail');
+            if ($('#jrAssociate').find(':selected').html() === "Select Jr. Associate Name") {
+                showError('jrAssociate');
+                return;
+            } else removeError('jrAssociate');
+
+            if ($('#jrAssociateManager').val() === '') {
+                showError('jrAssociateManager');
+                return;
+            } else {
+                removeError('jrAssociateManager');
             }
-            if ($('#jrAssociateManager').val() === '') showError('jrAssociateManager');
-            else removeError('jrAssociateManager');
+            $('#teamForm').submit();
         });
+
+        $(document).ready(function() {
+            if ($('#newInput').is(':checked')) {
+                $('#new').removeClass('hidden');
+                $('#existing').addClass('hidden');
+                $('#new input').removeAttr('disabled'); // Correct the selector and method
+                $('#existing select').attr('disabled', 'disabled'); // Correct the selector and method
+            }
+        });
+
+        function changeInputs() {
+            if ($('#newInput').is(':checked')) {
+                $('#new').removeClass('hidden');
+                $('#existing').addClass('hidden');
+                $('#new input').removeAttr('disabled'); // Correct the selector and method
+                $('#existing select').attr('disabled', 'disabled'); // Correct the selector and method
+            } else {
+                $('#new').addClass('hidden');
+                $('#existing').removeClass('hidden');
+                $('#existing select').removeAttr('disabled'); // Correct the selector and method
+                $('#new input').attr('disabled', 'disabled'); // Correct the selector and method
+            }
+        }
 
         $('.backToCreateTeam').click(function(e) {
             e.preventDefault();
@@ -193,13 +227,8 @@
             e.preventDefault();
             $('.modalTitle').text('Add an Associate');
             $('.associate').removeClass('hidden');
-            $('.jrassociate').addClass('hidden');
+            $('.jrAssociate').addClass('hidden');
         });
-
-        function validateEmail(email) {
-            var emailReg = /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/;
-            return emailReg.test(email.val());
-        }
 
         $(document).ready(function() {
             $('#user-table').DataTable({

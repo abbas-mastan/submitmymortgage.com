@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ApplicationRequest;
 use App\Models\Application;
 use App\Models\Info;
+use App\Models\Team;
 use App\Models\User;
 use App\Models\UserCategory;
 use App\Services\AdminService;
@@ -361,19 +362,7 @@ class AdminController extends Controller
         } else {
             $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         }
-        return view('admin.newpages.projects',$data);
-    }
-
-    public function teams($id = null): View
-    {
-        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-        if ($admin->role == 'Admin') {
-            $data['users'] = User::where('role', '!=', 'Admin')->get();
-            $data['trashed'] = User::onlyTrashed()->get();
-        } else {
-            $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
-        }
-        return view('admin.newpages.teams',$data);
+        return view('admin.newpages.projects', $data);
     }
 
     public function newusers($id = null)
@@ -394,7 +383,6 @@ class AdminController extends Controller
         return view('admin.newpages.contacts', $data);
     }
 
-
     public function ProjectOverview(Request $request, $id = -1)
     {
         if ($request->ajax()) {
@@ -404,4 +392,54 @@ class AdminController extends Controller
         $data = AdminService::filesCat($request, $id);
         return view('admin.newpages.project-overview', $data);
     }
+    public function teams($id = null): View
+    {
+        $user = User::find(Auth::id()); // Replace 1 with the user ID you want to retrieve data for
+
+// Retrieve the user's teams along with pivot values
+        $teams = $user->teams();
+
+        dd($teams);
+        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
+        if ($admin->role == 'Admin') {
+            $data['teams'] = Team::get(['name', 'id']);
+            $data['users'] =
+            User::where('role', '!=', 'Admin')
+                ->whereIn('role', ['Associate', 'Junior Associate'])
+                ->get(['id', 'email', 'name', 'role']);
+        } else {
+            $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        }
+        return view('admin.newpages.teams', $data);
+    }
+    public function storeteam(Request $request, $id = 0)
+    {
+        $teamData = $request->validate([
+            'name' => 'required',
+            'associate' => 'required|exists:users,id',
+            'jrAssociate' => 'required|exists:users,id',
+            'jrAssociateManager' => 'required',
+        ]);
+        if ($id) {
+            $team = Team::find($id);
+        } else {
+            $team = Team::create([
+                'name' => $teamData['name'],
+            ]);
+        }
+        // Create a new team associated with the currently authenticated user
+
+        $associateId = $teamData['associate'];
+        // Attach associate and jrAssociate users to the team with pivot data
+        $team->users()->attach([
+            $associateId => [
+                'associate' => $teamData['associate'],
+                'jrAssociate' => $teamData['jrAssociate'],
+                'jrAssociateManager' => $teamData['jrAssociateManager'],
+            ],
+        ]);
+
+        return back()->with('success', 'Team created successfully');
+    }
+
 }

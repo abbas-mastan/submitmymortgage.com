@@ -19,7 +19,6 @@
             display: none !important;
         }
 
-
         #completed-table_wrapper,
         #deleted-table_wrapper,
         #user-table_wrapper {
@@ -42,15 +41,36 @@
             @csrf
             <x-form.input name="name" label="User's Name" />
             <x-form.input name="email" label="User's Email" />
-            <x-form.input name="role" label="User's Role" />
-            <x-form.input name="team" label="User's Team" />
-            <x-form.input name="lead" label="Jr Associate's Lead Associate" class="mb-10" />
-            <div class="my-3 flex justify-end">
+            <div class="my-3">
+                <label for="role" class="text-sm text-dark-500 leading-6 font-bold"> User's Role
+                </label>
+                @php
+                    $role = Auth::user()->role;
+                @endphp
+                <select
+                    class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
+                    ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
+                    sm:text-sm sm:leading-6"
+                    name="role" id="role">
+                    <option value="Select Role">Select Role</option>
+                    @if ($role === 'Admin')
+                        <option value="Processor">Processor</option>
+                    @endif
+                    @if ($role === 'Processor' || $role === 'Admin')
+                        <option value="Associcate">Associate</option>
+                    @endif
+                    <option value="JrAssociate">Jr.Associate</option>
+                    <option value="Borrower">Borrower</option>
+                </select>
+                <span class="text-red-700" id="role_error"></span>
+            </div>
+            <x-form.input name="team" label="User's Team" class="team hidden" />
+            <x-form.input name="lead" label="Jr Associate's Lead Associate" class="lead mb-10 hidden" />
+            <div class="my-3 flex justify-end submitButton">
                 <button type="submit" class="bg-red-800 text-white px-8 py-1 text-xs font-thin ">Continue</button>
             </div>
         </form>
     @endcomponent
-
     <x-flex-card title="Verified Users" id="verified" titlecounts="0" iconurl="{{ asset('icons/group.png') }}" />
     <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New User</button>
     @component('components.accordion', ['title' => 'Verified Users'])
@@ -151,10 +171,37 @@
             $('#newProjectModal').addClass('hidden');
         });
 
+        $('.submitButton').addClass('mt-10');
+
+        $('select').change(function(e) {
+            e.preventDefault();
+            if ($(this).val() === 'Processor' || $(this).val() === 'Select Role') {
+                $('.team').addClass('hidden');
+            } else {
+                $('.team').removeClass('hidden');
+            }
+            if ($(this).val() === 'JrAssociate') {
+                $('.lead').removeClass('hidden');
+            } else {
+                $('.lead').addClass('hidden');
+            }
+        });
+        var role = $('#role').find(':selected').html();
+        var roleError = document.getElementById("role_error");
+
         $(".userform").submit(function(e) {
             e.preventDefault();
-            var data = ['email', 'name', 'role', 'team', 'lead'];
 
+            if ($('#role').find(':selected').html() === "Select Role") {
+                roleError.innerHTML = "Please select a role.";
+                $("#role").addClass('border-red-700 border-2');
+            }
+            if ($('#role').find(':selected').html() !== "Select Role") {
+                roleError.innerHTML = '';
+                $('#role').removeClass('border-red-700 border-2');
+            }
+
+            var data = ['email', 'name', 'team', 'lead'];
             data.forEach(function(field) {
                 var input = $("#" + field);
                 var name = input.attr('name');
@@ -167,7 +214,6 @@
                     errorElement.text(''); // Clear the error message if the input is not empty
                 }
             });
-
             if (data['email'].val() !== '') {
                 if (!validateEmail(data['email'])) {
                     data['email'].addClass('border-red-700 border-2');
@@ -201,11 +247,6 @@
             }).on('mouseleave', '.loginBtn', function() {
                 $(this).find('div[role="tooltip"]').remove();
             });
-
-            // $('#user-table').DataTable({
-            //     pageLength: 30,
-            //     lengthMenu: [10, 20, 30, 50, 100, 200],
-            // });
         });
         $('#unverified').html($('.unverifiedSerial:last').html());
         $('#verified').html($('.verifiedSerial:last').html());

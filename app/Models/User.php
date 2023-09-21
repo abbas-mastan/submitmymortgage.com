@@ -11,13 +11,13 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable,SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     protected $fillable = [
         'name',
         'email',
         'password',
-        'accessToken'
+        'accessToken',
     ];
 
     protected $hidden = [
@@ -61,26 +61,31 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getMiddleName()
     {
         $names = explode(" ", $this->name);
-        if (count($names) > 1)
+        if (count($names) > 1) {
             return $names[1];
+        }
+
         return "";
     }
     public function getLastName()
     {
         $names = explode(" ", $this->name);
-        if (count($names) > 1)
+        if (count($names) > 1) {
             return $names[2];
+        }
+
         return !empty($names[1]) ? $names[1] : "";
     }
     public function categories()
     {
-        return $this->hasMany(UserCategory::class,'user_id');
+        return $this->hasMany(UserCategory::class, 'user_id');
     }
 
     public function application()
     {
         return $this->hasOne(Application::class, 'user_id');
     }
+
     public function applications()
     {
         return $this->hasMany(Application::class, 'user_id');
@@ -92,5 +97,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function teams()
+    {
+        return $this->belongsToMany(Team::class,'team_user')
+            ->withPivot(['associate', 'jrAssociate', 'jrAssociateManager']);
     }
 }
