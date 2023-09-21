@@ -221,10 +221,16 @@
                         @endif
                     </tbody>
                 </table>
+<<<<<<< HEAD
                 @if (count($leads) > 0)
                     <button type="submit"
                         class="submitButton bg-gray-200 flex
                     text-gray-500 shadow-md hover:shadow-none
+=======
+                <button type="submit" disabled
+                    class="dark:bg-white submitButton bg-gray-200 
+                    cursor-not-allowed text-gray-500 shadow-md hover:shadow-none
+>>>>>>> be851ec0c38b5abbf3713a7074d35fac9b77561e
                     rounded-md px-3 py-2 hover:text-blue-500 ">
                         Export Selected
                         <img src="{{ asset('icons/download.svg') }}" class="ml-2" width="20px" alt="">
