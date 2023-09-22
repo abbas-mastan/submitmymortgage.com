@@ -27,24 +27,80 @@
     </style>
 @endsection
 @section('content')
-
     @extends('parts.modal-background')
 @section('modal-content')
     <div>
     @section('modal-title', 'Create New Project')
     <form action="#" class="projectForm" method="post">
-
-        <x-form.input name="name" label="Borrower's Name" />
-        <x-form.input name="email" label="Borrower's Email" />
+        <div>
+            <input type="radio" name="team" id="newInput" onclick="changeInputs()">
+            <label for="newInput">Add New</label>
+            <input class="ml-2" type="radio" name="team" id="existingInput" onclick="changeInputs()">
+            <label for="existingInput">Existing Team</label>
+        </div>
+        <div id="new">
+            <x-form.input name="name" label="Borrower's Name" />
+            <x-form.input name="email" label="Borrower's Email" />
+        </div>
+        <div id="existing" class="hidden my-3">
+            <label for="User" class="mt-3 text-sm text-dark-500 leading-6 font-bold">
+                Select User
+            </label>
+            <select
+                class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
+            ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
+            sm:text-sm sm:leading-6"
+                name="name" id="selecUser">
+                <option>Select User</option>
+                @foreach ($borrowers as $borrower)
+                    <option value="{{ $borrower->id }}">{{ $borrower->name }}</option>
+                @endforeach
+            </select>
+            <span class="text-red-700" id="name_error"></span>
+        </div>
         <div class="my-3 mt-1flex align-center">
             <input type="checkbox" name="involved" id="involved">
             <label class="ml-2 text-sm leading-normal text-gray-500" for="involved">I want the borrower
                 involved</label>
         </div>
         <x-form.input name="address" label="Borrower's Address" />
-        <x-form.input name="team" label="Team" />
-        <x-form.input name="associate" label="Associate" />
-        <x-form.input name="junior_associate" label="Jr. Associate" />
+        <div class="my-3">
+            <label for="selecTeam" class="mt-3 text-sm text-dark-500 leading-6 font-bold">
+                Select Team
+            </label>
+            <select
+                class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
+            ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
+            sm:text-sm sm:leading-6"
+                name="name" id="selecTeam">
+                <option>Select Team</option>
+                @foreach ($teams as $team)
+                    <option value="{{ $team->id }}">{{ $team->name }}</option>
+                @endforeach
+            </select>
+            <span class="text-red-700" id="team_error"></span>
+        </div>
+        <div class="my-3">
+            <label for="selecassociate" class="mt-3 text-sm text-dark-500 leading-6 font-bold">
+                Select Associate
+            </label>
+            <select
+                class="w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+                name="associate" id="selecassociate">
+                <!-- Options for associates will be populated dynamically using jQuery -->
+            </select>
+        </div>
+
+        <div class="my-3">
+            <label for="selectJuniorAssociate" class="mt-3 text-sm text-dark-500 leading-6 font-bold">
+                Jr.Associate
+            </label>
+            <select
+                class="w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 sm:text-sm sm:leading-6"
+                name="juniorAssociate" id="selectJuniorAssociate">
+                <!-- Options for junior associates will be populated dynamically using jQuery -->
+            </select>
+        </div>
         <div class="my-3">
             <a href="#" class="text-red-800 font-bold">+ Add Jr. Associate</a>
         </div>
@@ -55,12 +111,9 @@
     </form>
 </div>
 @endsection
-
 <x-flex-card title="Projects" titlecounts="17" iconurl="{{ asset('icons/user.svg') }}" />
-
 <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Project</button>
-
-<div class="flex flex-wrap w-full  ">
+{{-- <div class="flex flex-wrap w-full  ">
 <div class="grid divide-y divide-neutral-200 w-full mt-8">
     <div class="py-2">
         <details class="group">
@@ -169,12 +222,60 @@
         </details>
     </div>
 </div>
-</div>
+</div> --}}
 @endsection
 @section('foot')
 <script src="{{ asset('js/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
+    $(document).ready(function() {
+        $("#selecTeam").change(function() {
+
+
+            // Use Ajax to retrieve the associated users for the selected team
+            $.ajax({
+                url: `{{ getAdminRoutePrefix() }}/getUsersByTeam/${$(this).val()}`, // Replace with the actual URL for retrieving users by team
+                type: 'GET',
+                success: function(data) {
+                    // Clear existing options in the "selecassociate" and "selectJuniorAssociate" selects
+                    $("#selecassociate").empty();
+                    $("#selectJuniorAssociate").empty();
+                    // Add the retrieved users to the "selecassociate" and "selectJuniorAssociate" selects
+                    
+                    $.each(data, function(index, user) {
+                        console.log("Processing user: " + user.name + ", Role: " + user.role);
+                        if (user.role === 'Associate') {
+                            $("#selecassociate").append('<option value="' + user
+                                .id + '">' + user.name + '</option>');
+                        } else if (user.role === 'Junior Associate') {
+                            $("#selectJuniorAssociate").append('<option value="' +
+                                user.id + '">' + user.name + '</option>');
+                        }
+                    });
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+            });
+        });
+    });
+</script>
+
+<script>
+    function changeInputs() {
+        if ($('#newInput').is(':checked')) {
+            $('#new').removeClass('hidden');
+            $('#existing').addClass('hidden');
+            $('#name').removeAttr('disabled'); // Correct the selector and method
+            $('#selecUser').attr('disabled', 'disabled'); // Correct the selector and method
+        } else {
+            $('#new').addClass('hidden');
+            $('#existing').removeClass('hidden');
+            $('#selecUser').removeAttr('disabled'); // Correct the selector and method
+            $('#name').attr('disabled', 'disabled'); // Correct the selector and method
+        }
+    }
+
     $('.newProject').click(function(e) {
         e.preventDefault();
         $('#newProjectModal').removeClass('hidden');
@@ -186,7 +287,7 @@
 
     $(".projectForm").submit(function(e) {
         e.preventDefault();
-        var data = ['address','email', 'name', 'associate', 'team', 'junior_associate'];
+        var data = ['address', 'email', 'name', 'associate', 'team', 'junior_associate'];
         data.forEach(function(field) {
             var input = $("#" + field);
             var name = input.attr('name');

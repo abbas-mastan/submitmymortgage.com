@@ -101,7 +101,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function teams()
     {
-        return $this->belongsToMany(Team::class,'team_user')
+        return $this->belongsToMany(Team::class)
             ->withPivot(['associate', 'jrAssociate', 'jrAssociateManager']);
     }
 }
