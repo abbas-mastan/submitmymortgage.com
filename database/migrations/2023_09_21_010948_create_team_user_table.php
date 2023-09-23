@@ -16,8 +16,8 @@ class CreateTeamUserTable extends Migration
         Schema::create('team_user', function (Blueprint $table) {
             $table->foreignId('team_id')->constrained('teams');
             $table->foreignId('user_id')->constrained('users');
-            $table->string('associate')->nullable();
-            $table->string('jrAssociate')->nullable();
+            $table->unsignedBigInteger('associate')->nullable();
+            $table->unsignedBigInteger('jrAssociate')->nullable();
             $table->string('jrAssociateManager')->nullable();
             $table->timestamps();
         });

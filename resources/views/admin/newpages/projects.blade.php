@@ -32,12 +32,12 @@
     <div>
     @section('modal-title', 'Create New Project')
     <form action="#" class="projectForm" method="post">
-        <div>
+        {{-- <div>
             <input type="radio" name="team" id="newInput" onclick="changeInputs()">
             <label for="newInput">Add New</label>
             <input class="ml-2" type="radio" name="team" id="existingInput" onclick="changeInputs()">
             <label for="existingInput">Existing Team</label>
-        </div>
+        </div> --}}
         <div id="new">
             <x-form.input name="name" label="Borrower's Name" />
             <x-form.input name="email" label="Borrower's Email" />

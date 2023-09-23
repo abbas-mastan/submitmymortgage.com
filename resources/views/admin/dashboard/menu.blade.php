@@ -1,4 +1,4 @@
-<div class="md:flex justify-evenly align-center">
+<div class="flex justify-evenly gap-8 align-center">
     <div class="sm:w-2/3 w-full">
         <div class="flex flex-col sm:flex-row justify-between w-full gap-8 mt-8">
             <a href="{{ url(getRoutePrefix() . '/projects') }}" class="flex justify-center align-center flex-col">

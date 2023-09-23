@@ -16,4 +16,5 @@ class Team extends Model
             ->withPivot(['associate', 'jrAssociate', 'jrAssociateManager'])
             ->withTimestamps();
     }
+
 }

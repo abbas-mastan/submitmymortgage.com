@@ -32,6 +32,11 @@
     <x-flex-card title="Teams" titlecounts="4" iconurl="{{ asset('icons/group.png') }}" />
     <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Team</button>
     @foreach ($teams as $team)
+    {{-- @php
+        echo '<pre>';
+            print_r($team->users);
+        echo '</pre>';
+    @endphp --}}
         @component('components.accordion', ['title' => $team->name])
             <table class="w-full display shadow-lg" id="{{ str_replace(' ', '', $team->name) }}-table">
                 <thead class="hidden bg-gray-300">
@@ -60,7 +65,7 @@
                     @php
                         $serialNumber = 1;
                     @endphp
-                    @foreach (\App\Models\Team::find($team->id)->users as $key => $user)
+                    @foreach ($team->users as $key => $user)
                         <tr class="border-none">
                             <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
                                 {{ $serialNumber }}

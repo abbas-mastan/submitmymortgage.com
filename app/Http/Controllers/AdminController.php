@@ -402,6 +402,7 @@ class AdminController extends Controller
     public function teams($id = null): View
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
+        
         if ($admin->role == 'Admin') {
             $data['teams'] = Team::all();
             $data['users'] =
@@ -434,7 +435,7 @@ class AdminController extends Controller
         $associateId = $teamData['associate'];
         // Attach associate and jrAssociate users to the team with pivot data
         $team->users()->attach([
-            $associateId => [
+            Auth::id()=> [
                 'associate' => $teamData['associate'],
                 'jrAssociate' => $teamData['jrAssociate'],
                 'jrAssociateManager' => $teamData['jrAssociateManager'],
