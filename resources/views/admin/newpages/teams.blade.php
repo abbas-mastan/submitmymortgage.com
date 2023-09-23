@@ -32,11 +32,6 @@
     <x-flex-card title="Teams" titlecounts="4" iconurl="{{ asset('icons/group.png') }}" />
     <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Team</button>
     @foreach ($teams as $team)
-    {{-- @php
-        echo '<pre>';
-            print_r($team->users);
-        echo '</pre>';
-    @endphp --}}
         @component('components.accordion', ['title' => $team->name])
             <table class="w-full display shadow-lg" id="{{ str_replace(' ', '', $team->name) }}-table">
                 <thead class="hidden bg-gray-300">
@@ -66,6 +61,10 @@
                         $serialNumber = 1;
                     @endphp
                     @foreach ($team->users as $key => $user)
+                        @php
+                            $associates = \App\Models\User::where('id', $user->pivot->associates)->get();
+                        @endphp
+                    @foreach ($associates as $key => $associate)
                         <tr class="border-none">
                             <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
                                 {{ $serialNumber }}
@@ -73,23 +72,23 @@
                             <td class=" pl-2 tracking-wide border border-l-0">
                                 <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
                                     {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}>
-                                    {{ $user->name }}
+                                    {{ $associate->name }}
                                 </a>
-                                <a title="Edit this user" href="{{ url(getRoutePrefix() . '/add-user/' . $user->id) }}">
+                                <a title="Edit this user" href="{{ url(getRoutePrefix() . '/add-user/' . $associate->id) }}">
                                     <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
                                 </a>
                             </td>
                             <td class=" pl-2 tracking-wide border border-l-0">
-                                {{ $user->email }}
+                                {{ $associate->email }}
                             </td>
                             <td class=" pl-2 tracking-wide border border-l-0">
-                                {{ $user->role }}
+                                {{ $associate->role }}
                             </td>
                             <td class=" pl-2 tracking-wide border border-l-0">
-                                @if ($user->created_by)
-                                    {{ \App\Models\User::where('id', $user->created_by)->first()->name }}
+                                @if ($associate->created_by)
+                                    {{ \App\Models\User::where('id', $associate->created_by)->first()->name }}
                                     |
-                                    {{ \App\Models\User::where('id', $user->created_by)->first()->role }}
+                                    {{ \App\Models\User::where('id', $associate->created_by)->first()->role }}
                                 @endif
                             </td>
                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
@@ -103,7 +102,7 @@
                                 @if (session('role') == 'Admin')
                                     <form method="POST" action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
                                         @csrf
-                                        <input type="hidden" name="user_id" value="{{ $user->id }}">
+                                        <input type="hidden" name="user_id" value="{{ $associate->id }}">
                                         <span class="loginBtn">
                                             <button type="submit"
                                                 class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
@@ -115,8 +114,9 @@
                             </td>
                         </tr>
                         @php
-                            $serialNumber++;
+                            $serialNumber ++;
                         @endphp
+                    @endforeach
                     @endforeach
                 </tbody>
             </table>
@@ -169,7 +169,7 @@
                 } else {
                     $('#teamForm').attr('action',
                         `{{ url(getAdminRoutePrefix() . '/teams') }}/${$('#selecTeam').find(':checked').val()}`
-                        )
+                    )
                     removeError('team');
                     $('.modalTitle').text('Add an Associate');
                     $('.createTeam').addClass('hidden');

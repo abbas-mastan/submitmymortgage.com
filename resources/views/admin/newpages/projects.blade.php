@@ -31,49 +31,59 @@
 @section('modal-content')
     <div>
     @section('modal-title', 'Create New Project')
-    <form action="#" class="projectForm" method="post">
-        {{-- <div>
-            <input type="radio" name="team" id="newInput" onclick="changeInputs()">
-            <label for="newInput">Add New</label>
-            <input class="ml-2" type="radio" name="team" id="existingInput" onclick="changeInputs()">
-            <label for="existingInput">Existing Team</label>
-        </div> --}}
-        <div id="new">
-            <x-form.input name="name" label="Borrower's Name" />
-            <x-form.input name="email" label="Borrower's Email" />
+    <form class="projectForm" method="post">
+        @csrf
+        <x-form.input name="borrowername" label="Borrower's Name" />
+        <x-form.input name="borroweremail" label="Borrower's Email" />
+        <x-form.input name="borroweraddress" label="Borrower's Address" />
+        <div class="my-3 mt-1flex align-center">
+            <input type="checkbox" value="1" name="sendemail" id="involved">
+            <label class="ml-2 text-sm leading-normal text-gray-500" for="involved">I want the borrower
+                involved</label>
         </div>
-        <div id="existing" class="hidden my-3">
-            <label for="User" class="mt-3 text-sm text-dark-500 leading-6 font-bold">
-                Select User
+        <div class="my-3">
+            <label for="financetype" class="mt-3 text-sm text-dark-500 leading-6 font-bold">
+                Finance Type
             </label>
             <select
                 class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
             sm:text-sm sm:leading-6"
-                name="name" id="selecUser">
-                <option>Select User</option>
-                @foreach ($borrowers as $borrower)
-                    <option value="{{ $borrower->id }}">{{ $borrower->name }}</option>
+                name="financetype" id="financetype">
+                <option value="">Select Finance Type</option>
+                @foreach (['Purchase', 'Refinance'] as $finance)
+                    <option value="{{ $finance }}">{{ $finance }}</option>
                 @endforeach
             </select>
-            <span class="text-red-700" id="name_error"></span>
+            <span class="text-red-700" id="financetype_error"></span>
         </div>
-        <div class="my-3 mt-1flex align-center">
-            <input type="checkbox" name="involved" id="involved">
-            <label class="ml-2 text-sm leading-normal text-gray-500" for="involved">I want the borrower
-                involved</label>
-        </div>
-        <x-form.input name="address" label="Borrower's Address" />
         <div class="my-3">
-            <label for="selecTeam" class="mt-3 text-sm text-dark-500 leading-6 font-bold">
+            <label for="loantype" class="mt-3 text-sm text-dark-500 leading-6 font-bold">
+                Loan Type
+            </label>
+            <select
+                class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
+            ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
+            sm:text-sm sm:leading-6"
+                name="loantype" id="loantype">
+                <option value="">Select Loan Type</option>
+                @foreach (['Private Loan', 'Full Doc', 'Non QM'] as $loan)
+                    <option value="{{ $loan }}">{{ $loan }}</option>
+                @endforeach
+            </select>
+            <span class="text-red-700" id="loantype_error"></span>
+        </div>
+
+        <div class="my-3">
+            <label for="team" class="mt-3 text-sm text-dark-500 leading-6 font-bold">
                 Select Team
             </label>
             <select
                 class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
             sm:text-sm sm:leading-6"
-                name="name" id="selecTeam">
-                <option>Select Team</option>
+                name="team" id="team">
+                <option value="">Select Team</option>
                 @foreach ($teams as $team)
                     <option value="{{ $team->id }}">{{ $team->name }}</option>
                 @endforeach
@@ -89,6 +99,7 @@
                 name="associate" id="selecassociate">
                 <!-- Options for associates will be populated dynamically using jQuery -->
             </select>
+            <span class="text-red-700" id="associate_error"></span>
         </div>
 
         <div class="my-3">
@@ -100,6 +111,7 @@
                 name="juniorAssociate" id="selectJuniorAssociate">
                 <!-- Options for junior associates will be populated dynamically using jQuery -->
             </select>
+            <span class="text-red-700" id="juniorAssociate_error"></span>
         </div>
         <div class="my-3">
             <a href="#" class="text-red-800 font-bold">+ Add Jr. Associate</a>
@@ -229,10 +241,7 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
     $(document).ready(function() {
-        $("#selecTeam").change(function() {
-
-
-            // Use Ajax to retrieve the associated users for the selected team
+        $("#team").change(function() {
             $.ajax({
                 url: `{{ getAdminRoutePrefix() }}/getUsersByTeam/${$(this).val()}`, // Replace with the actual URL for retrieving users by team
                 type: 'GET',
@@ -240,19 +249,36 @@
                     // Clear existing options in the "selecassociate" and "selectJuniorAssociate" selects
                     $("#selecassociate").empty();
                     $("#selectJuniorAssociate").empty();
-                    // Add the retrieved users to the "selecassociate" and "selectJuniorAssociate" selects
-                    
-                    $.each(data, function(index, user) {
-                        console.log("Processing user: " + user.name + ", Role: " + user.role);
-                        if (user.role === 'Associate') {
-                            $("#selecassociate").append('<option value="' + user
-                                .id + '">' + user.name + '</option>');
-                        } else if (user.role === 'Junior Associate') {
-                            $("#selectJuniorAssociate").append('<option value="' +
-                                user.id + '">' + user.name + '</option>');
+
+                    // Process the data to categorize roles
+                    var associates = [];
+                    var juniorAssociates = [];
+
+                    $.each(data, function(index, associate) {
+                        if (associate.role === 'Associate') {
+                            associates.push(associate.name);
+                        } else if (associate.role === 'Junior Associate') {
+                            juniorAssociates.push(associate.name);
                         }
                     });
+
+                    // Populate the "selecassociate" select with Associate options
+                    $('#selecassociate').append(
+                        '<option value="">Select Associate</option>');
+                    $.each(associates, function(index, name) {
+                        $("#selecassociate").append('<option value="' + name +
+                            '">' + name + '</option>');
+                    });
+
+                    // Populate the "selectJuniorAssociate" select with Junior Associate options
+                    $('#selectJuniorAssociate').append(
+                        '<option value="">Select Jr.Associate</option>');
+                    $.each(juniorAssociates, function(index, name) {
+                        $("#selectJuniorAssociate").append('<option value="' +
+                            name + '">' + name + '</option>');
+                    });
                 },
+
                 error: function(error) {
                     console.log(error);
                 }
@@ -262,20 +288,40 @@
 </script>
 
 <script>
-    function changeInputs() {
-        if ($('#newInput').is(':checked')) {
-            $('#new').removeClass('hidden');
-            $('#existing').addClass('hidden');
-            $('#name').removeAttr('disabled'); // Correct the selector and method
-            $('#selecUser').attr('disabled', 'disabled'); // Correct the selector and method
-        } else {
-            $('#new').addClass('hidden');
-            $('#existing').removeClass('hidden');
-            $('#selecUser').removeAttr('disabled'); // Correct the selector and method
-            $('#name').attr('disabled', 'disabled'); // Correct the selector and method
-        }
-    }
+    $('.projectForm').submit(function(e) {
+        e.preventDefault();
+        var errors = ['borroweraddress', 'borroweremail', 'borrowername', 'borroweraddress', 'financetype',
+            'loantype',
+            'team', 'associate', 'juniorAssociate'
+        ];
 
+        $.each(errors, function(index, error) {
+            var field = `#${error}_error`;
+            $(field).text('');
+        });
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            type: "post",
+            url: "{{ url(getAdminRoutePrefix() . '/store-project') }}",
+
+            data: $(this).serialize(),
+            success: function(response) {
+                console.log(response);
+                $.each(response.error, function(index, error) {
+                    var fieldId = `#${error.field}_error`;
+                    var errorMessage = error.message;
+                    $(fieldId).text(errorMessage);
+                });
+            }
+        });
+    });
+</script>
+
+<script>
     $('.newProject').click(function(e) {
         e.preventDefault();
         $('#newProjectModal').removeClass('hidden');
@@ -283,23 +329,6 @@
     $('.closeModal').click(function(e) {
         e.preventDefault();
         $('#newProjectModal').addClass('hidden');
-    });
-
-    $(".projectForm").submit(function(e) {
-        e.preventDefault();
-        var data = ['address', 'email', 'name', 'associate', 'team', 'junior_associate'];
-        data.forEach(function(field) {
-            var input = $("#" + field);
-            var name = input.attr('name');
-            var errorElement = $("#" + name + "_error");
-            if (input.val() === '') {
-                input.addClass('border-red-700 border-2');
-                errorElement.text(name + ' field is required');
-            } else {
-                input.removeClass('border-red-700 border-2');
-                errorElement.text(''); // Clear the error message if the input is not empty
-            }
-        });
     });
 
     $(document).ready(function() {
@@ -317,11 +346,6 @@
             );
         }).on('mouseleave', '.loginBtn', function() {
             $(this).find('div[role="tooltip"]').remove();
-        });
-
-        $('#user-table').DataTable({
-            pageLength: 30,
-            lengthMenu: [10, 20, 30, 50, 100, 200],
         });
     });
     $('#unverified').html($('.unverifiedSerial:last').html());

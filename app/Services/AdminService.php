@@ -4,11 +4,14 @@ namespace App\Services;
 
 use App\Models\Info;
 use App\Models\Media;
-use App\Models\User;use Illuminate\Auth\Events\Registered;use Illuminate\Http\Request;
+use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Storage;use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class AdminService
 {

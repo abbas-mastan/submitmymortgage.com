@@ -13,7 +13,7 @@ class Team extends Model
     public function users()
     {
         return $this->belongsToMany(User::class)
-            ->withPivot(['associate', 'jrAssociate', 'jrAssociateManager'])
+            ->withPivot(['associates', 'jrAssociateManager'])
             ->withTimestamps();
     }
 

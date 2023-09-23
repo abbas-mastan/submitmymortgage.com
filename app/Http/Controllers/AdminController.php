@@ -11,9 +11,13 @@ use App\Models\UserCategory;
 use App\Services\AdminService;
 use App\Services\CommonService;
 use App\Services\UserService;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class AdminController extends Controller
@@ -366,10 +370,80 @@ class AdminController extends Controller
         return view('admin.newpages.projects', $data);
     }
 
+    public function storeProject(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'borroweraddress' => 'required',
+            'borroweremail' => 'required|unique:users,email',
+            'borrowername' => 'required',
+            'borroweraddress' => 'required',
+            'financetype' => 'required',
+            'loantype' => 'required',
+            'team' => 'required',
+            'associate' => 'required',
+            'juniorAssociate' => 'required',
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->toArray();
+            $response = ['error' => []];
+            foreach ($errors as $field => $error) {
+                foreach ($error as $message) {
+                    $response['error'][] = [
+                        'field' => $field,
+                        'message' => $message,
+                    ];
+                }
+            }
+            return response()->json($response);
+        } else {
+            $user = new User();
+            $user->name = $request->borroweraddress;
+            $user->email = $request->borroweremail;
+            $user->finance_type = $request->financetype;
+            $user->loan_type = $request->loantype;
+            $user->email_verified_at = !$request->sendemail ? now() : null;
+            $user->password = Hash::make('password');
+            $user->role = 'Borrower';
+            $user->save();
+            if ($request->sendemail) {
+                Password::sendResetLink($request->only('email'));
+                Password::RESET_LINK_SENT;
+            } else {
+                event(new Registered($user));
+            }
+            return response()->json('success', 200);
+            
+            // $project = Project::create([
+            //     'name' => $request->name,
+            //     'borrower_id' => $request->$user->id,
+            //     'team_id' => $request->team,
+            //     'team_id' => $request->team,
+            // ]);
+
+        }
+    }
+
     public function getUsersByTeam($id)
     {
-        $teams = Team::find($id);
-        return response()->json($teams->users, 200);
+        $team = Team::find($id);
+        $associates = [];
+
+        if (!$team) {
+            return response()->json([], 404); // Team not found
+        }
+
+        // Retrieve associates and store them in the $associates array
+        foreach ($team->users as $user) {
+            $associate = User::find($user->pivot->associates);
+            $associates[] = [
+                'role' => $associate->role,
+                'name' => $associate->name,
+                'id' => $associate->id,
+            ];
+        }
+
+        // Pass the $associates array to a Blade view
+        return response()->json($associates, 200);
     }
 
     public function newusers($id = null)
@@ -401,8 +475,8 @@ class AdminController extends Controller
     }
     public function teams($id = null): View
     {
+
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-        
         if ($admin->role == 'Admin') {
             $data['teams'] = Team::all();
             $data['users'] =
@@ -417,6 +491,7 @@ class AdminController extends Controller
 
     public function storeteam(Request $request, $id = 0)
     {
+
         $teamData = $request->validate([
             'name' => 'required',
             'associate' => 'required|exists:users,id',
@@ -432,12 +507,18 @@ class AdminController extends Controller
         }
         // Create a new team associated with the currently authenticated user
 
-        $associateId = $teamData['associate'];
         // Attach associate and jrAssociate users to the team with pivot data
         $team->users()->attach([
-            Auth::id()=> [
-                'associate' => $teamData['associate'],
-                'jrAssociate' => $teamData['jrAssociate'],
+            Auth::id() => [
+                'associates' => $teamData['associate'],
+                'jrAssociateManager' => $teamData['jrAssociateManager'],
+            ],
+        ]);
+
+        // Attach the jrAssociate user as a new record
+        $team->users()->attach([
+            Auth::id() => [
+                'associates' => $teamData['jrAssociate'],
                 'jrAssociateManager' => $teamData['jrAssociateManager'],
             ],
         ]);
