@@ -33,6 +33,30 @@
             </div>
         </div>
 
+        <div class="processor hidden">
+            <div class="my-3">
+                <label for="processor" class="text-sm text-dark-500 leading-6 font-bold"> Processor Name
+                </label>
+                <select
+                    class="mb-5 w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
+                ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
+                sm:text-sm sm:leading-6"
+                    name="processor" id="processor">
+                    <option>Select Processor</option>
+                    @foreach ($users as $user)
+                        @if ($user->role !== 'Processor')
+                            @continue
+                        @endif
+                        <option value="{{ $user->id }}">{{ $user->name }}</option>
+                    @endforeach
+                </select>
+                <span class="text-red-700" id="processor_error"></span>
+            </div>
+            <div class="my-3 flex justify-between">
+                <span class="bg-gray-400 px-8 py-1 text-white cursor-pointer capitalize backToCreateTeam">back</span>
+                <button class="bg-red-800 text-white px-8 py-1 text-xs font-thin processorContinue">Continue</button>
+            </div>
+        </div>
         <div class="associate hidden">
             <div class="my-3">
                 <label for="associate" class="text-sm text-dark-500 leading-6 font-bold"> Associate Name
@@ -42,18 +66,11 @@
                 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                 sm:text-sm sm:leading-6"
                     name="associate" id="associate">
-                    <option>Select Associate Name</option>
-                    @foreach ($users as $user)
-                        @if ($user->role !== 'Associate')
-                            @continue
-                        @endif
-                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                    @endforeach
                 </select>
                 <span class="text-red-700" id="associate_error"></span>
             </div>
             <div class="my-3 flex justify-between">
-                <span class="bg-gray-400 px-8 py-1 text-white cursor-pointer capitalize backToCreateTeam">back</span>
+                <span class="bg-gray-400 px-8 py-1 text-white cursor-pointer capitalize backToCreateProcessor">back</span>
                 <button class="bg-red-800 text-white px-8 py-1 text-xs font-thin associateContinue">Continue</button>
             </div>
         </div>
@@ -65,13 +82,7 @@
                 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                 sm:text-sm sm:leading-6"
                     name="jrAssociate" id="jrAssociate">
-                    <option>Select Jr. Associate Name</option>
-                    @foreach ($users as $user)
-                        @if ($user->role !== 'Junior Associate')
-                            @continue
-                        @endif
-                        <option value="{{ $user->id }}">{{ $user->name }}</option>
-                    @endforeach
+                    
                 </select>
                 <span class="text-red-700" id="jrAssociate_error"></span>
             </div>

@@ -17,7 +17,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class AdminController extends Controller
@@ -412,7 +411,7 @@ class AdminController extends Controller
                 event(new Registered($user));
             }
             return response()->json('success', 200);
-            
+
             // $project = Project::create([
             //     'name' => $request->name,
             //     'borrower_id' => $request->$user->id,
@@ -481,7 +480,7 @@ class AdminController extends Controller
             $data['teams'] = Team::all();
             $data['users'] =
             User::where('role', '!=', 'Admin')
-                ->whereIn('role', ['Associate', 'Junior Associate'])
+                ->whereIn('role', ['Associate', 'Processor', 'Junior Associate'])
                 ->get(['id', 'email', 'name', 'role']);
         } else {
             $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
@@ -494,6 +493,8 @@ class AdminController extends Controller
 
         $teamData = $request->validate([
             'name' => 'required',
+            'processor' => 'required|exists:users,id',
+            'associate' => 'required|exists:users,id',
             'associate' => 'required|exists:users,id',
             'jrAssociate' => 'required|exists:users,id',
             'jrAssociateManager' => 'required',
@@ -524,6 +525,34 @@ class AdminController extends Controller
         ]);
 
         return back()->with('success', 'Team created successfully');
+    }
+
+    public function getUsersByProcessor($id, $teamid = 0)
+    {
+
+        $team = Team::find($teamid);
+        if ($teamid > 0) {
+            foreach ($team->users as $user) {
+                $associate = User::find($user->pivot->associates);
+                if ($associate->id == $id) {
+                    return response()->json('processorerror', 200);
+                }
+            }
+        }
+        $admin = User::find($id);
+        if ($admin->role === 'Processor') {
+            $users = $admin->createdUsers()->whereIn('role', ['Associate', 'Junior Associate'])->with('createdUsers')->get();
+        } else {
+            $users = $admin->createdUsers()->whereIn('role', 'Junior Associate')->with('createdUsers')->get();
+        }
+        foreach ($users as $user) {
+            $associates[] = [
+                'role' => $user->role,
+                'id' => $user->id,
+                'name' => $user->name,
+            ];
+        }
+        return response()->json($associates, 200);
     }
 
 }

@@ -64,59 +64,60 @@
                         @php
                             $associates = \App\Models\User::where('id', $user->pivot->associates)->get();
                         @endphp
-                    @foreach ($associates as $key => $associate)
-                        <tr class="border-none">
-                            <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
-                                {{ $serialNumber }}
-                            </td>
-                            <td class=" pl-2 tracking-wide border border-l-0">
-                                <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                    {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}>
-                                    {{ $associate->name }}
-                                </a>
-                                <a title="Edit this user" href="{{ url(getRoutePrefix() . '/add-user/' . $associate->id) }}">
-                                    <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
-                                </a>
-                            </td>
-                            <td class=" pl-2 tracking-wide border border-l-0">
-                                {{ $associate->email }}
-                            </td>
-                            <td class=" pl-2 tracking-wide border border-l-0">
-                                {{ $associate->role }}
-                            </td>
-                            <td class=" pl-2 tracking-wide border border-l-0">
-                                @if ($associate->created_by)
-                                    {{ \App\Models\User::where('id', $associate->created_by)->first()->name }}
-                                    |
-                                    {{ \App\Models\User::where('id', $associate->created_by)->first()->role }}
-                                @endif
-                            </td>
-                            <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                {{-- <a data="Delete" disabaled class="delete"
+                        @foreach ($associates as $key => $associate)
+                            <tr class="border-none">
+                                <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
+                                    {{ $serialNumber }}
+                                </td>
+                                <td class=" pl-2 tracking-wide border border-l-0">
+                                    <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
+                                        {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}>
+                                        {{ $associate->name }}
+                                    </a>
+                                    <a title="Edit this user"
+                                        href="{{ url(getRoutePrefix() . '/add-user/' . $associate->id) }}">
+                                        <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
+                                    </a>
+                                </td>
+                                <td class=" pl-2 tracking-wide border border-l-0">
+                                    {{ $associate->email }}
+                                </td>
+                                <td class=" pl-2 tracking-wide border border-l-0">
+                                    {{ $associate->role }}
+                                </td>
+                                <td class=" pl-2 tracking-wide border border-l-0">
+                                    @if ($associate->created_by)
+                                        {{ \App\Models\User::where('id', $associate->created_by)->first()->name }}
+                                        |
+                                        {{ \App\Models\User::where('id', $associate->created_by)->first()->role }}
+                                    @endif
+                                </td>
+                                <td class="flex pl-2 justify-center tracking-wide border border-r-0">
+                                    {{-- <a data="Delete" disabaled class="delete"
                                     href="{{ url(getRoutePrefix() . '/delete-user/' . $user->id) }}"
                                     >
                                     <button class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
                                         <img src="{{ asset('icons/trash.svg') }}" alt="">
                                     </button>
                                 </a> --}}
-                                @if (session('role') == 'Admin')
-                                    <form method="POST" action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
-                                        @csrf
-                                        <input type="hidden" name="user_id" value="{{ $associate->id }}">
-                                        <span class="loginBtn">
-                                            <button type="submit"
-                                                class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
-                                                <img src="{{ asset('icons/user.svg') }}" alt="">
-                                            </button>
-                                        </span>
-                                    </form>
-                                @endif
-                            </td>
-                        </tr>
-                        @php
-                            $serialNumber ++;
-                        @endphp
-                    @endforeach
+                                    @if (session('role') == 'Admin')
+                                        <form method="POST" action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                            @csrf
+                                            <input type="hidden" name="user_id" value="{{ $associate->id }}">
+                                            <span class="loginBtn">
+                                                <button type="submit"
+                                                    class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
+                                                    <img src="{{ asset('icons/user.svg') }}" alt="">
+                                                </button>
+                                            </span>
+                                        </form>
+                                    @endif
+                                </td>
+                            </tr>
+                            @php
+                                $serialNumber++;
+                            @endphp
+                        @endforeach
                     @endforeach
                 </tbody>
             </table>
@@ -140,6 +141,68 @@
         </script>
     @endforeach
     <script>
+        var teamid = 0;
+        $('.teamContinue').click(function(e) {
+            if ($('#new').hasClass('hidden')) {
+                if ($('#selecTeam').find(':checked').html() !== "Select Team") {
+                    teamid = $('#selecTeam').find(':checked').val()
+                }
+            }
+        });
+        $(document).ready(function() {
+            $("#processor,#associate").change(function() {
+                $.ajax({
+                    url: `{{ getAdminRoutePrefix() }}/getUsersByProcessor/${$(this).val()}/${teamid}`, // Replace with the actual URL for retrieving users by team
+                    type: 'GET',
+                    success: function(data) {
+
+                        if (data == 'processorerror') {
+                            $('#processor').removeClass('mb-5');
+                            $('.processorContinue').attr('disabled', 'disabled');
+                            $('#processor_error').text('this is processor is already exists');
+                        } else {
+                            $(this).removeClass('mb-5');
+                            $("#associate").empty();
+                            $("#jrAssociate").empty();
+
+                            // // Process the data to categorize roles
+                            var associates = [];
+                            var juniorAssociates = [];
+
+                            $.each(data, function(index, associate) {
+                                if (associate.role === 'Associate') {
+                                    associates.push(associate);
+                                } else if (associate.role === 'Junior Associate') {
+                                    juniorAssociates.push(associate);
+                                }
+                            });
+
+                            // Populate the "associate" select with Associate options
+                            $('#associate').append(
+                            '<option value="">Select Associate asdf</option>');
+                            $.each(associates, function(index, associate) {
+                                $("#associate").append('<option value="' + associate
+                                    .id + '">' + associate.name + '</option>');
+                            });
+
+                            // Populate the "jrAssociate" select with Junior Associate options
+                            $('#jrAssociate').append(
+                                '<option value="">Select Jr. Associate</option>');
+                            $.each(juniorAssociates, function(index, associate) {
+                                $("#jrAssociate").append('<option value="' + associate
+                                    .id + '">' + associate.name + '</option>');
+                            });
+                        }
+                    },
+
+                    error: function(error) {
+                        console.log(error);
+                    }
+                });
+            });
+        });
+
+
         $('.newProject').click(function(e) {
             e.preventDefault();
             $('#newProjectModal').removeClass('hidden');
@@ -160,7 +223,6 @@
             $('#' + id + '_error').text('');
             return true;
         }
-
         $('.teamContinue').click(function(e) {
             e.preventDefault();
             if ($('#new').hasClass('hidden')) {
@@ -170,28 +232,51 @@
                     $('#teamForm').attr('action',
                         `{{ url(getAdminRoutePrefix() . '/teams') }}/${$('#selecTeam').find(':checked').val()}`
                     )
-                    removeError('team');
-                    $('.modalTitle').text('Add an Associate');
+                    removeError('name');
+                    $('.modalTitle').text('Add an Processor');
                     $('.createTeam').addClass('hidden');
-                    $('.associate').removeClass('hidden');
+                    $('.processor').removeClass('hidden');
                 }
             } else {
                 if ($('#name').val() === '') showError('name');
                 else if ($('#name').val().length < 8) showError('name', ' must be at least 8 characters');
                 else {
                     removeError('name');
-                    $('.modalTitle').text('Add an Associate');
+                    $('.modalTitle').text('Add an Processor');
+
                     $('.createTeam').addClass('hidden');
-                    $('.associate').removeClass('hidden');
+                    $('.processor').removeClass('hidden');
                 }
+            }
+        });
+
+        $('.processorContinue').click(function(e) {
+            e.preventDefault();
+            if ($('#processor').find(':selected').html() === "Select Processor") {
+                showError('processor');
+                $('select[name=processor]').removeClass('mb-5');
+            } else {
+                $('select[name=processor]').addClass('mb-5');
+                removeError('processor');
+            }
+            if ($('#processor').find(':selected').html() !== "Select Processor") {
+                $('.modalTitle').text('Add an Associate');
+                $('.processor').addClass('hidden');
+                $('.associate').removeClass('hidden');
             }
         });
 
         $('.associateContinue').click(function(e) {
             e.preventDefault();
-            if ($('#associate').find(':selected').html() === "Select Associate Name") showError('associate');
-            else removeError('associate');
-            if ($('#associate').find(':selected').html() !== "Select Associate Name") {
+            if ($('#associate').find(':selected').html() === "Select Associate") {
+                $('select[name=associate]').removeClass('mb-5');
+                showError('associate');
+            } else {
+
+                $('select[name=associate]').addClass('mb-5');
+                removeError('associate');
+            }
+            if ($('#associate').find(':selected').html() !== "Select Associate") {
                 $('.modalTitle').text('Add an Jr Associate');
                 $('.associate').addClass('hidden');
                 $('.jrAssociate').removeClass('hidden');
@@ -200,7 +285,7 @@
 
         $('.jrAssociateContinue').click(function(e) {
             e.preventDefault();
-            if ($('#jrAssociate').find(':selected').html() === "Select Jr. Associate Name") {
+            if ($('#jrAssociate').find(':selected').html() === "Select Jr. Associate") {
                 showError('jrAssociate');
                 return;
             } else removeError('jrAssociate');
@@ -241,6 +326,12 @@
             e.preventDefault();
             $('.modalTitle').text('Create New Team');
             $('.createTeam').removeClass('hidden');
+            $('.processor').addClass('hidden');
+        });
+        $('.backToCreateProcessor').click(function(e) {
+            e.preventDefault();
+            $('.modalTitle').text('Create New Processor');
+            $('.processor').removeClass('hidden');
             $('.associate').addClass('hidden');
         });
         $('.backToCreateAssociate').click(function(e) {
