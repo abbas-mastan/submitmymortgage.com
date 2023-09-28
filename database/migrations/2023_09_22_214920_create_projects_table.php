@@ -17,10 +17,9 @@ class CreateProjectsTable extends Migration
             $table->id();
             $table->string('name');
             $table->foreignId('team_id')->constrained('teams');
-            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('created_by')->constrained('users');
             $table->foreignId('borrower_id')->constrained('users');
-            $table->foreignId('associate_id')->constrained('users');
-            $table->foreignId('jrassociate_id')->constrained('users');
+            $table->json('managers');
             $table->timestamps();
         });
     }

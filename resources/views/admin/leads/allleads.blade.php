@@ -51,8 +51,7 @@
                                         <a data="Delete" class="delete"
                                             href="{{ url(getRoutePrefix() . '/delete-lead/' . $lead->id) }}">
                                             <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
-                                                <img src="{{ asset('icons/trash.svg') }}" alt=""
-                                                    class="p-1 w-7">
+                                                <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
                                             </button>
                                         </a>
                                     </td>
@@ -221,16 +220,11 @@
                         @endif
                     </tbody>
                 </table>
-<<<<<<< HEAD
+
                 @if (count($leads) > 0)
-                    <button type="submit"
-                        class="submitButton bg-gray-200 flex
-                    text-gray-500 shadow-md hover:shadow-none
-=======
-                <button type="submit" disabled
-                    class="dark:bg-white submitButton bg-gray-200 
+                    <button type="submit" disabled
+                        class="dark:bg-white submitButton bg-gray-200 
                     cursor-not-allowed text-gray-500 shadow-md hover:shadow-none
->>>>>>> be851ec0c38b5abbf3713a7074d35fac9b77561e
                     rounded-md px-3 py-2 hover:text-blue-500 ">
                         Export Selected
                         <img src="{{ asset('icons/download.svg') }}" class="ml-2" width="20px" alt="">
