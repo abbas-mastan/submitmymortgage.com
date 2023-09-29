@@ -138,9 +138,6 @@
                     <span class="text-red-700" id="juniorAssociate_error"></span>
                 </div>
 
-                <div class="my-3">
-                    <a href="#" class="text-red-800 font-bold">+ Add Jr. Associate</a>
-                </div>
                 <div class="my-3 flex justify-between mt-10">
                     <span class="bg-gray-400 px-8 py-1 text-white cursor-pointer capitalize backTotype">back</span>
                     <button type="submit"

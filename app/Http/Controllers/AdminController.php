@@ -361,7 +361,7 @@ class AdminController extends Controller
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
         if ($admin->role == 'Admin') {
-            $data['projects']= Project::all();
+            $data['projects'] = Project::all();
             $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
             $data['teams'] = Team::all();
             $data['trashed'] = User::onlyTrashed()->get();
@@ -412,15 +412,15 @@ class AdminController extends Controller
             } else {
                 event(new Registered($user));
             }
-            
-            $project = Project::create([
+
+            Project::create([
                 'name' => $request->borroweraddress,
                 'borrower_id' => $user->id,
                 'team_id' => $request->team,
                 'created_by' => Auth::id(),
                 'managers' => [$request->associate, $request->juniorAssociate, $request->processor],
             ]);
-            
+
             return response()->json('success', 200);
         }
     }

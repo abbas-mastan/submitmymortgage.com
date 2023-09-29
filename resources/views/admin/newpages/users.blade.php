@@ -71,7 +71,7 @@
             </div>
         </form>
     @endcomponent
-    <x-flex-card title="Verified Users" id="verified" titlecounts="0" iconurl="{{ asset('icons/group.png') }}" />
+    <x-flex-card title="Verified Users" id="verified" titlecounts="0" iconurl="{{ asset('icons/Users.svg') }}" />
     <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New User</button>
     @component('components.accordion', ['title' => 'Verified Users'])
         <table class="w-full display" id="completed-table">

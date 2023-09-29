@@ -8,8 +8,8 @@
                         {{$titlecounts}}
                     </span>
                 </div>
-                <div class="w-1/2 pt-7 pr-7">
-                    <img src="{{ $iconurl }}" alt="" class="z-20 w-[70px] float-right mt-3 mr-4">
+                <div class="w-1/2 flex justify-end align-center pr-7">
+                    <img src="{{ $iconurl }}" alt="" class="z-20 w-[70px] float-right mr-4">
                 </div>
             </div>
         </span>

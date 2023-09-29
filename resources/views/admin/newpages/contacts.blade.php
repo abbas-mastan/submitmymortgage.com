@@ -16,7 +16,7 @@
 @section('content')
     <div class="flex-wrap flex-shrink-0 w-full">
         @if (Auth::user()->role != 'Borrower')
-            <x-flex-card title="Contacts" titlecounts="{{ count($leads) }}" iconurl="{{ asset('icons/user.svg') }}" />
+            <x-flex-card title="Contacts" titlecounts="{{ count($leads) }}" iconurl="{{ asset('icons/Marketing.svg') }}" />
             <button class="absolute z-10 py-2 text-white bg-red-800 px-8 newProject">
                 Add New Contact
             </button>
@@ -63,7 +63,7 @@
                                     {{ $lead->loan_amount }}
                                 </td>
                                 <td class=" pl-2 tracking-wide border border-l-0">
-                                    {{ $lead->user->application->loan_type ?? null}}
+                                    {{ $lead->user->application->loan_type ?? null }}
                                 </td>
                                 <td class=" pl-2 tracking-wide border border-r-0">
                                     <a data="Delete" class="delete"

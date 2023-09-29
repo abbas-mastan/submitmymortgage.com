@@ -28,7 +28,7 @@
                     <img class="object-contain  sm:w-[100%] h-12" src="{{ asset('icons/Marketing.svg') }}"
                         alt="">
                 </div>
-                <p class="text-center font-bold">Marketing</p>
+                <p class="text-center font-bold">Contacts</p>
             </a>
         </div>
         <div

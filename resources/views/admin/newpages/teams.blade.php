@@ -28,7 +28,7 @@
 @endsection
 @section('content')
     @include('parts.modal-form')
-    <x-flex-card title="Teams" titlecounts="{{count($teams)}}" iconurl="{{ asset('icons/group.png') }}" />
+    <x-flex-card title="Teams" titlecounts="{{ count($teams) }}" iconurl="{{ asset('icons/Teams.svg') }}" />
     <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Team</button>
     @foreach ($teams as $team)
         @component('components.accordion', ['title' => $team->name])
@@ -125,5 +125,5 @@
     @endforeach
 @endsection
 @section('foot')
-   @include('parts.js.teams-script')
+    @include('parts.js.teams-script')
 @endsection

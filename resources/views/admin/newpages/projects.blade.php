@@ -28,8 +28,8 @@
 @endsection
 @section('content')
     @include('parts.project-modal-form')
-    <x-flex-card title="Projects" titlecounts="{{ count($projects) }}" iconurl="{{ asset('icons/user.svg') }}" />
-    <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Project</button>
+    <x-flex-card title="Deals" titlecounts="{{ count($projects) }}" iconurl="{{ asset('icons/Deals.svg') }}" />
+    <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Deal</button>
     @forelse ($projects as $project)
         <div class="flex flex-wrap w-full  ">
             <div class="grid divide-y divide-neutral-200 w-full mt-8">
