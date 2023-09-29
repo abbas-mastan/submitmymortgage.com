@@ -398,7 +398,7 @@ class AdminController extends Controller
             return response()->json($response);
         } else {
             $user = new User();
-            $user->name = $request->borroweraddress;
+            $user->name = $request->borrowername;
             $user->email = $request->borroweremail;
             $user->finance_type = $request->financetype;
             $user->loan_type = $request->loantype;
@@ -414,11 +414,11 @@ class AdminController extends Controller
             }
             
             $project = Project::create([
-                'name' => $request->name,
+                'name' => $request->borroweraddress,
                 'borrower_id' => $user->id,
                 'team_id' => $request->team,
                 'created_by' => Auth::id(),
-                'managers' => json_decode($request->associate,$request->juniorAssociate,$request->processor),
+                'managers' => [$request->associate, $request->juniorAssociate, $request->processor],
             ]);
             
             return response()->json('success', 200);

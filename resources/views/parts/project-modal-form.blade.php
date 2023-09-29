@@ -82,7 +82,7 @@
                                  sm:text-sm sm:leading-6"
                                 id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
                                 Select Processor
-                                <img class="w-[10px] mt-2" src="{{ asset('icons/chewron.svg') }}" alt="">
+                                <img style="width: 10px;" class="mt-2" src="{{ asset('icons/chewron.svg') }}" alt="">
                             </button>
                         </div>
                         <!-- Dropdown panel -->
@@ -103,7 +103,7 @@
                                  sm:text-sm sm:leading-6"
                                 id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
                                 Select Associate
-                                <img class="w-[10px] mt-2" src="{{ asset('icons/chewron.svg') }}" alt="">
+                                <img style="width: 10px;" class="w-[10px] mt-2" src="{{ asset('icons/chewron.svg') }}" alt="">
                             </button>
                         </div>
                         <!-- Dropdown panel -->
@@ -126,7 +126,7 @@
                                  sm:text-sm sm:leading-6"
                                 id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
                                 Select Jr.Associate
-                                <img class="w-[10px] mt-2" src="{{ asset('icons/chewron.svg') }}" alt="">
+                                <img style="width: 10px;" class="w-[10px] mt-2" src="{{ asset('icons/chewron.svg') }}" alt="">
                             </button>
                         </div>
                         <!-- Dropdown panel -->

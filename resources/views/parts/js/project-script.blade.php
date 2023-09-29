@@ -1,6 +1,20 @@
 <script src="{{ asset('js/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+
+@foreach ($projects as $project)
+    <script>
+        new DataTable("#{{ str_replace(' ', '', $project->name) }}-table");
+        $("#{{ str_replace(' ', '', $project->name) }}-table_length").css('display', 'none');
+        $("#{{ str_replace(' ', '', $project->name) }}-table_filter").css('display', 'none');
+        $("#{{ str_replace(' ', '', $project->name) }}-table_wrapper").css('box-shadow', '0px 0px 11px 0px gray');
+        $(`select[name="{{ $project->name }}-table_length"]`).addClass('w-16');
+        $(`select[name="{{ $project->name }}-table_length"]`).addClass('mb-3');
+    </script>
+@endforeach
 <script>
+
+    
     $('.newProject, .closeModal').click(function(e) {
         e.preventDefault();
         $('#newProjectModal').toggleClass('hidden');
