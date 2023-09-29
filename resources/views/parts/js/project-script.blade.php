@@ -13,8 +13,18 @@
     </script>
 @endforeach
 <script>
+    $('#borroweremail').attr('disabed', 'disabled');
+    $("#sendemail").change(function(e) {
+        e.preventDefault();
+        $('.email').toggleClass('hidden');
+        if ($('.email').hasClass('hidden')) {
+            $('#borroweremail').attr('disabled', 'disabled');
+        } else {
+            $('#borroweremail').removeAttr('disabled');
+        }
 
-    
+    });
+
     $('.newProject, .closeModal').click(function(e) {
         e.preventDefault();
         $('#newProjectModal').toggleClass('hidden');
@@ -24,7 +34,11 @@
         e.preventDefault();
 
         $('#borrowername_error').text($('#borrowername').val() === '' ? 'This field is required' : '');
-        $('#borroweremail_error').text($('#borroweremail').val() === '' ? 'This field is required' : '');
+        if ($('.email').hasClass('hidden')) {
+            $('#borroweremail_error').text('');
+        } else {
+            $('#borroweremail_error').text($('#borroweremail').val() === '' ? 'This field is required' : '');
+        }
         $('#borroweraddress_error').text($('#borroweraddress').val() === '' ? 'This field is required' : '');
 
         if ($('#borrowername_error').text() === '' && $('#borroweremail_error').text() === '' && $(

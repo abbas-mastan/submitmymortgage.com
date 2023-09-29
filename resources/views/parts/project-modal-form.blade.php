@@ -3,14 +3,14 @@
         <form class="projectForm" method="post">
             @csrf
             <div class="namepart">
-                <x-form.input name="borrowername" label="Borrower's Name" />
-                <x-form.input name="borroweremail" label="Borrower's Email" />
-                <x-form.input name="borroweraddress" label="Borrower's Address" />
+                <x-form.input name="borrowername"  label="Borrower's Name" />
                 <div class="my-3 mt-1flex align-center">
-                    <input type="checkbox" value="1" name="sendemail" id="involved">
-                    <label class="ml-2 text-sm leading-normal text-gray-500" for="involved">I want the borrower
+                    <input type="checkbox" value="1" name="sendemail" id="sendemail">
+                    <label class="ml-2 text-sm leading-normal text-gray-500" for="sendemail">I want the borrower
                         involved</label>
                 </div>
+                <x-form.input name="borroweremail" attribute="disabled" class="email hidden" label="Borrower's Email" />
+                <x-form.input name="borroweraddress" label="Borrower's Address" />
                 <div class="my-3 flex justify-end mt-5">
                     <button class="bg-red-800 text-white px-8 py-2 text-xs font-thin nameContinue">Continue</button>
                 </div>
@@ -147,3 +147,4 @@
         </form>
     </div>
 @endcomponent
+    
