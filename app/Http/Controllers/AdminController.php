@@ -2,24 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Factory;
+use App\Http\Requests\ApplicationRequest;
+use App\Models\Application;
+use App\Models\Contact;
 use App\Models\Info;
+use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
-use App\Models\Project;
-use Illuminate\View\View;
-use App\Models\Application;
 use App\Models\UserCategory;
-use Illuminate\Http\Request;
-use App\Services\UserService;
 use App\Services\AdminService;
 use App\Services\CommonService;
+use App\Services\UserService;
+use Faker\Factory;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Password;
-use App\Http\Requests\ApplicationRequest;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\View\View;
 
 class AdminController extends Controller
 {
@@ -367,6 +365,9 @@ class AdminController extends Controller
             $data['teams'] = Team::all();
             $data['trashed'] = User::onlyTrashed()->get();
         } else {
+            $data['teams'] = Team::all();
+            $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
+            $data['projects'] = Project::where('created_by', $admin->id)->get();
             $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         }
         return view('admin.newpages.projects', $data);
@@ -376,8 +377,8 @@ class AdminController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'borroweraddress' => 'required',
-            'borroweremail' => 'sometimes:required|unique:users,email',
-            'borrowername' => 'required',
+            'email' => 'sometimes:required|unique:users,email',
+            'name' => 'required',
             'borroweraddress' => 'required',
             'financetype' => 'required',
             'loantype' => 'required',
@@ -398,26 +399,14 @@ class AdminController extends Controller
             }
             return response()->json($response);
         } else {
-           $faker = Factory::create();   
-            $user = new User();
-            $user->name = $request->borrowername;
-            $user->email = $request->borroweremail ?? $faker->unique()->safeEmail;
-            $user->finance_type = $request->financetype;
-            $user->loan_type = $request->loantype;
-            $user->email_verified_at = !$request->sendemail ? now() : null;
-            $user->password = Hash::make('password');
-            $user->role = 'Borrower';
-            $user->save();
-            if ($request->sendemail) {
-                Password::sendResetLink($request->only('email'));
-                Password::RESET_LINK_SENT;
-            } else {
-                event(new Registered($user));
-            }
-
+            $faker = Factory::create();
+            $request->merge(['email' => $request->email ?? $faker->unique()->safeEmail,
+                'role' => 'Borrower',
+            ]);
+            $user = AdminService::doUser($request, -1);
             Project::create([
                 'name' => $request->borroweraddress,
-                'borrower_id' => $user->id,
+                'borrower_id' => $user,
                 'team_id' => $request->team,
                 'created_by' => Auth::id(),
                 'managers' => [$request->associate, $request->juniorAssociate, $request->processor],
@@ -464,8 +453,27 @@ class AdminController extends Controller
 
     public function contacts()
     {
-        $data = AdminService::allLeads();
+        $data['contacts'] = Contact::where('user_id', Auth::id())->get();
         return view('admin.newpages.contacts', $data);
+    }
+
+    public function doContact(Request $request)
+    {
+        // dd($request);
+        $contact = $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'loanamount' => 'required',
+            'loantype' => 'required',
+        ]);
+        Contact::create([
+            'name' => $contact['name'],
+            'email' => $contact['email'],
+            'loanamount' => $contact['loanamount'],
+            'loantype' => $contact['loantype'],
+            'user_id' => Auth::id(),
+        ]);
+        return back()->with('success', 'Contact created successfully');
     }
 
     public function ProjectOverview(Request $request, $id = -1)
@@ -488,6 +496,11 @@ class AdminController extends Controller
                 ->whereIn('role', ['Associate', 'Processor', 'Junior Associate'])
                 ->get(['id', 'email', 'name', 'role']);
         } else {
+            $userId = Auth::id();
+            $data['teams'] = Team::whereHas('users', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })->get();
+
             $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         }
         return view('admin.newpages.teams', $data);

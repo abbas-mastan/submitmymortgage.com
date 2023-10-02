@@ -29,7 +29,9 @@
 @section('content')
     @include('parts.modal-form')
     <x-flex-card title="Teams" titlecounts="{{ count($teams) }}" iconurl="{{ asset('icons/Teams.svg') }}" />
-    <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Team</button>
+    @can('isAdmin')
+        <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Team</button>
+    @endcan
     @foreach ($teams as $team)
         @component('components.accordion', ['title' => $team->name])
             <table class="w-full display shadow-lg" id="{{ str_replace(' ', '', $team->name) }}-table">
@@ -73,10 +75,12 @@
                                         {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}>
                                         {{ $associate->name }}
                                     </a>
-                                    <a title="Edit this user"
-                                        href="{{ url(getRoutePrefix() . '/add-user/' . $associate->id) }}">
-                                        <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
-                                    </a>
+                                    @if (Auth::user()->role === 'Admiin')
+                                        <a title="Edit this user"
+                                            href="{{ url(getRoutePrefix() . '/add-user/' . $associate->id) }}">
+                                            <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
+                                        </a>
+                                    @endif
                                 </td>
                                 <td class=" pl-2 tracking-wide border border-l-0">
                                     {{ $associate->email }}

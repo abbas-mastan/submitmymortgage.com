@@ -53,21 +53,35 @@
                     <div class="processorDropdown hidden absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
                         role="listbox" aria-labelledby="multiselect-toggle" id="multiselect-dropdown">
                         <!-- Checkboxes for options -->
-                        @foreach ($users as $user)
-                            @if ($user->role !== 'Processor')
-                                @continue
-                            @endif
-                            <input type="hidden" name="count" class="processorcount" value="{{ $loop->index }}">
+                        @if (Auth::user()->role === 'Admin')
+                            @foreach ($users as $user)
+                                @if ($user->role !== 'Processor')
+                                    @continue
+                                @endif
+                                <input type="hidden" name="count" class="processorcount" value="{{ $loop->index }}">
+                                <div class="py-1">
+                                    <label
+                                        class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                                        role="option">
+                                        <input type="checkbox" name="processor[]"
+                                            class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="{{ $user->id }}">
+                                        {{ $user->name }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        @else
+                            <input type="hidden" name="count" class="processorcount" value="1">
                             <div class="py-1">
                                 <label
                                     class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                                     role="option">
                                     <input type="checkbox" name="processor[]"
-                                        class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="{{ $user->id }}">
-                                    {{ $user->name }}
+                                        class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="{{ Auth::id() }}">
+                                    {{ Auth::user()->name }}
                                 </label>
                             </div>
-                        @endforeach
+                        @endif
+
                     </div>
                 </div>
                 <span class="text-red-700" id="processor_error"></span>

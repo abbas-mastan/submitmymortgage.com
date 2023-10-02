@@ -73,7 +73,7 @@
                 <div class="w-full">
                     @include('parts.navbar')
                 </div>
-                <div class="flex px-5 md:px-24">
+                <div class="flex px-5" style="padding-right:80px;padding-left:80px">
                     <div class="w-full">
                         @include('parts.alerts')
                         @yield('content')

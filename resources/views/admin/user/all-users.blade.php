@@ -39,7 +39,7 @@
 @section('content')
     @component('components.modal-background', ['title' => 'Add a User'])
 
-    <x-flex-card title="Verified Users" id="verified" titlecounts="0" iconurl="{{ asset('icons/group.png') }}" />
+    <x-flex-card title="Verified Users" id="verified" titlecounts="0" iconurl="{{ asset('icons/Users.svg') }}" />
         <table class="w-full display" id="completed-table">
             <thead class="bg-gray-300">
                 <tr>
@@ -124,7 +124,7 @@
         </table>
     {{-- @endcomponent --}}
 
-    <x-flex-card title="Unverified Users" id="unverified" titlecounts="" iconurl="{{ asset('icons/group.png') }}" />
+    <x-flex-card title="Unverified Users" id="unverified" titlecounts="" iconurl="{{ asset('icons/Users.svg') }}" />
     {{-- @component('components.accordion', ['title' => 'Unverified Users']) --}}
         <table class="w-full display" id="user-table">
             <thead class="bg-gray-300">
@@ -189,7 +189,7 @@
 
                                     </button>
                                 </a>
-                                @if (session('role') == 'Admin')
+                                {{-- @if (session('role') == 'Admin')
                                     <form method="POST" action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
                                         @csrf
                                         <input type="hidden" name="user_id" value="{{ $processor->id }}">
@@ -200,7 +200,7 @@
                                             </button>
                                         </span>
                                     </form>
-                                @endif
+                                @endif --}}
                             </td>
                         </tr>
                         @php
@@ -213,7 +213,7 @@
     {{-- @endcomponent --}}
 
     @if (Auth::user()->role === 'Admin')
-        <x-flex-card title="Deleted Users" id="deleted" titlecounts="0" iconurl="{{ asset('icons/group.png') }}" />
+        <x-flex-card title="Deleted Users" id="deleted" titlecounts="0" iconurl="{{ asset('icons/Users.svg') }}" />
         {{-- @component('components.accordion', ['title' => 'Deleted Users']) --}}
             <table class="w-full display my-5" id="deleted-table">
                 <thead class="bg-gray-300">

@@ -48,6 +48,10 @@ class HomeController extends Controller
             $data['users'] = User::whereNotIn("role", ["Admin"])->get();
             $data['usersCount'] = User::whereNotIn("role", ["Admin"])->count();
         } else {
+            $userId = Auth::id();
+            $data['teams'] = Team::whereHas('users', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })->get();
             $user = Auth::user();
             $data['usersCount'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->count();
             $data['users'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();

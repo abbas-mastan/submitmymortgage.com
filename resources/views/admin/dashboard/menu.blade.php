@@ -15,6 +15,8 @@
                 </div>
                 <p class="text-center font-bold">Teams</p>
             </a>
+            @if (Auth::user()->role !== 'Borrower')
+                
             <a href="{{ url(getRoutePrefix() . '/new-users') }}" class="flex justify-center align-center flex-col">
                 <div
                     class="h-16 flex align-center justify-center rounded px-7 py-2 bg-gradient-to-b from-gradientStart to-gradientEnd">
@@ -22,6 +24,8 @@
                 </div>
                 <p class="text-center font-bold">Users</p>
             </a>
+            @endif
+
             <a href="{{ url(getRoutePrefix() . '/contacts') }}" class="flex justify-center align-center flex-col">
                 <div
                     class="h-16 w-auto flex justify-center align-center rounded px-7 py-2 bg-gradient-to-b from-gradientStart to-gradientEnd">
@@ -48,7 +52,7 @@
             </div>
         </div>
     </div>
-    <div class="px-5 py-3 mt-5 shadow-lg rounded-xl md:w-1/4 w-full mt-8 bg-white">
+    <div class="px-5 py-3 mt-5 shadow-lg rounded-xl md:w-1/3 w-full mt-8 bg-white">
         <ul>
             @foreach ([1, 2, 3, 4] as $message)
                 <li class="mb-5 list-disc list-inside">

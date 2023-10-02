@@ -38,17 +38,19 @@ class AdminService
     public static function doUser(Request $request, $id)
     {
         $isNewUser = ($id == -1);
-        $request->validate([
-            'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
-            'name' => "required",
-            'password' => $request->sendemail == null ? 'required|confirmed' : '',
-            'role' =>
-            #This is the custom Rule. Less than Admin Role Can't add User with the role === admin OR Processor
-            function ($attribute, $value, $fail) {
-                self::validateCurrentUser($attribute, $value, $fail);
-            },
-        ]);
-
+        if(!$request->ajax()){
+            $request->validate([
+                'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
+                'name' => "required",
+                'password' => $request->sendemail == null ? 'required|confirmed' : '',
+                'role' =>
+                #This is the custom Rule. Less than Admin Role Can't add User with the role === admin OR Processor
+                function ($attribute, $value, $fail) {
+                    self::validateCurrentUser($attribute, $value, $fail);
+                },
+            ]);
+        }
+            
         $user = $isNewUser ? new User() : User::findOrFail($id);
         if ($isNewUser && $request->sendmail) {
             $msg = "Registered. A verification link has been sent. You need to verify your email before login. Please, check your email.";
@@ -85,6 +87,9 @@ class AdminService
             } else {
                 event(new Registered($user));
             }
+        }
+        if($request->ajax()){
+            return $user->id;
         }
         return ['msg_type' => 'msg_success', 'msg_value' => $msg];
     }

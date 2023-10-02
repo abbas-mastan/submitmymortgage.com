@@ -14,9 +14,10 @@
     </style>
 @endsection
 @section('content')
+    @include('parts.contact-modal-form')
     <div class="flex-wrap flex-shrink-0 w-full">
         @if (Auth::user()->role != 'Borrower')
-            <x-flex-card title="Contacts" titlecounts="{{ count($leads) }}" iconurl="{{ asset('icons/Marketing.svg') }}" />
+            <x-flex-card title="Contacts" titlecounts="{{ count($contacts) }}" iconurl="{{ asset('icons/Marketing.svg') }}" />
             <button class="absolute z-10 py-2 text-white bg-red-800 px-8 newProject">
                 Add New Contact
             </button>
@@ -45,194 +46,35 @@
                 </thead>
                 <tbody>
                     @if (Auth::user()->role == 'Admin')
-                        @foreach ($leads as $lead)
+                        @foreach ($contacts as $lead)
                             <tr class="text-center">
                                 <td class=" pl-2 tracking-wide border border-l-0">
                                     {{ date('d/m/y', strtotime($lead->created_at)) }}
                                 </td>
                                 <td class=" pl-2 tracking-wide border border-l-0">
                                     <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                        href="{{ url(getRoutePrefix() . '/lead/' . $lead->user->id) }}">
-                                        {{ $lead->user->name }}
+                                        href="{{ url(getRoutePrefix() . '/lead/' . $lead->id) }}">
+                                        {{ $lead->name }}
                                     </a>
                                 </td>
                                 <td class=" pl-2 tracking-wide border border-l-0">
-                                    {{ $lead->user->email }}
+                                    {{ $lead->email }}
                                 </td>
                                 <td class=" pl-2 tracking-wide border border-l-0">
-                                    {{ $lead->loan_amount }}
+                                    {{ $lead->loanamount }}
                                 </td>
                                 <td class=" pl-2 tracking-wide border border-l-0">
-                                    {{ $lead->user->application->loan_type ?? null }}
+                                    {{ $lead->loantype }}
                                 </td>
                                 <td class=" pl-2 tracking-wide border border-r-0">
-                                    <a data="Delete" class="delete"
+                                    {{-- <a data="Delete" class="delete"
                                         href="{{ url(getRoutePrefix() . '/delete-lead/' . $lead->id) }}">
                                         <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                                             <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
                                         </button>
-                                    </a>
+                                    </a> --}}
                                 </td>
                             </tr>
-                        @endforeach
-                    @endif
-                    @if (Auth::user()->role == 'Processor' || Auth::user()->role == 'Associate' || Auth::user()->role == 'Junior Associate')
-                        @php $serialNo = 1; @endphp
-                        @foreach ($leads as $processor)
-                            @if ($processor->infos)
-                                @foreach ($processor->infos as $info)
-                                    <tr>
-                                        <td class=" pl-2 tracking-wide border border-l-0">
-                                            <input class="mr-4 checkbox" type="checkbox" name="contact[]"
-                                                value="{{ $lead->id }}">
-                                            {{ $info->create_at }}
-                                        </td>
-                                        <td class=" pl-2 tracking-wide border border-l-0">
-                                            <a title="Click to view files uploaded by this user"
-                                                class="text-blue-500 inline"
-                                                href="{{ url(getRoutePrefix() . '/lead/' . $info->user_id) }}">
-                                                {{ $info->b_fname }}
-                                            </a>
-                                        </td>
-                                        <td class=" pl-2 tracking-wide border border-l-0">
-                                            {{ $processor->email }}
-                                        </td>
-                                        <td class="text-center pl-2 tracking-wide border border-r-0">
-                                            <a data="Delete" class="delete" title="Delete this user"
-                                                href="{{ url(getRoutePrefix() . '/delete-lead/' . $info->id) }}">
-                                                <button class="bg-black  tracking-wide font-semibold capitalize text-xl">
-                                                    <img src="{{ asset('icons/trash.svg') }}" alt=""
-                                                        class="p-1 w-7">
-                                                </button>
-                                            </a>
-                                        </td>
-                                    </tr>
-                                    @php $serialNo++; @endphp
-                                @endforeach
-                            @endif
-                            @php
-                                $associates = $processor
-                                    ->createdUsers()
-                                    ->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])
-                                    ->with('createdUsers')
-                                    ->get();
-                            @endphp
-                            @foreach ($associates as $associate)
-                                @if ($associate->infos)
-                                    @foreach ($associate->infos as $info)
-                                        <tr>
-                                            <td class=" pl-2 tracking-wide border border-l-0"> <input class="mr-4 checkbox"
-                                                    type="checkbox" name="contact[]"
-                                                    value="{{ $lead->id }}">{{ $serialNo }}</td>
-                                            <td class=" pl-2 tracking-wide border border-l-0">
-                                                <a title="Click to view files uploaded by this user"
-                                                    class="text-blue-500 inline"
-                                                    href="{{ url(getRoutePrefix() . '/lead/' . $info->user_id) }}">
-                                                    {{ $info->b_fname }}
-                                                </a>
-                                            </td>
-                                            <td class=" pl-2 tracking-wide border border-l-0">
-                                                {{ $associate->email }}
-                                            </td>
-                                            <td class="text-center pl-2 tracking-wide border border-r-0">
-                                                <a class="delete" data="Delete" title="Delete this user"
-                                                    href="{{ url(getRoutePrefix() . '/delete-lead/' . $info->id) }}">
-                                                    <button
-                                                        class="bg-black  tracking-wide font-semibold capitalize text-xl">
-                                                        <img src="{{ asset('icons/trash.svg') }}" alt=""
-                                                            class="p-1 w-7">
-                                                    </button>
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        @php $serialNo++; @endphp
-                                    @endforeach
-                                @endif
-                                @php
-                                    $juniorAssociates = $associate
-                                        ->createdUsers()
-                                        ->whereIn('role', ['junior Associate', 'Borrower'])
-                                        ->with('createdUsers')
-                                        ->get();
-                                @endphp
-                                @foreach ($juniorAssociates as $jassociate)
-                                    @if ($jassociate->infos)
-                                        @forelse($jassociate->infos as $info)
-                                            <tr>
-                                                <td class=" pl-2 tracking-wide border border-l-0"> <input
-                                                        class="mr-4 checkbox" type="checkbox" name="contact[]"
-                                                        value="{{ $lead->id }}">{{ $serialNo }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    <a title="Click to view files uploaded by this user"
-                                                        class="text-blue-500 inline"
-                                                        href="{{ url(getRoutePrefix() . '/lead/' . $info->user_id) }}">
-                                                        {{ $info->b_fname }}
-                                                    </a>
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $jassociate->email }}
-                                                </td>
-                                                <td class="text-center pl-2 tracking-wide border border-r-0">
-                                                    <a data="Delete" class="delete" title="Delete this user"
-                                                        href="{{ url(getRoutePrefix() . '/delete-lead/' . $info->id) }}">
-                                                        <button
-                                                            class="bg-black  tracking-wide font-semibold capitalize text-xl">
-                                                            <img src="{{ asset('icons/trash.svg') }}" alt=""
-                                                                class="p-1 w-7">
-                                                        </button>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            @php $serialNo++; @endphp
-                                        @empty
-                                            <tr>
-                                                <td>no data available</td>
-                                            </tr>
-                                        @endforelse
-                                    @endif
-                                    @php
-                                        $borrowers = $jassociate
-                                            ->createdUsers()
-                                            ->where('role', 'Borrower')
-                                            ->with('createdUsers')
-                                            ->get();
-                                    @endphp
-                                    @foreach ($borrowers as $borrower)
-                                        @if ($borrower->infos)
-                                            @foreach ($borrower->infos as $info)
-                                                <tr>
-                                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                                        <input class="mr-4 checkbox" type="checkbox" name="contact[]"
-                                                            value="{{ $lead->id }}">{{ $serialNo }}
-                                                    </td>
-                                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                                        <a title="Click to view files uploaded by this user"
-                                                            class="text-blue-500 inline"
-                                                            href="{{ url(getRoutePrefix() . '/lead/' . $info->user_id) }}">
-                                                            {{ $info->b_fname }}
-                                                        </a>
-                                                    </td>
-                                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                                        {{ $borrower->email }}
-                                                    </td>
-                                                    <td class="text-center pl-2 tracking-wide border border-r-0">
-                                                        <a data="Delete" class="delete" title="Delete this user"
-                                                            href="{{ url(getRoutePrefix() . '/delete-lead/' . $info->id) }}">
-                                                            <button
-                                                                class="bg-black  tracking-wide font-semibold capitalize text-xl">
-                                                                <img src="{{ asset('icons/trash.svg') }}" alt=""
-                                                                    class="p-1 w-7">
-                                                            </button>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                @php $serialNo++; @endphp
-                                            @endforeach
-                                        @endif
-                                    @endforeach
-                                @endforeach
-                            @endforeach
                         @endforeach
                     @endif
                 </tbody>
@@ -245,6 +87,35 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <script>
+        $('.newProject, .closeModal').click(function(e) {
+            e.preventDefault();
+            $('#newProjectModal').toggleClass('hidden');
+        });
+
+        $('.contactForm').submit(function(e) {
+            e.preventDefault();
+            var hasErrors = false;
+            // Loop through the input field names
+            ['name', 'email', 'loanamount', 'loantype'].forEach(inputName => {
+                var input = $(this).find('input[name=' + inputName + ']');
+                var errorSelector = '#' + inputName + '_error';
+
+                if (input.val() === '') {
+                    // Show an error message
+                    $(errorSelector).text(inputName + " field is required");
+                    hasErrors = true; // Set the flag to true
+                } else {
+                    // Clear the error message
+                    $(errorSelector).text('');
+                }
+            });
+
+            // If there are no errors, allow the form to submit
+            if (!hasErrors) {
+                this.submit(); // Submit the form
+            }
+        });
+
         var checkboxes = $('.checkbox');
         var submitButton = $('.submitButton');
         $('#selectall').click(function(e) {

@@ -4,18 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationRequest;
 use App\Models\Application;
+use App\Models\Contact;
 use App\Models\Info;
+use App\Models\Project;
+use App\Models\Team;
 use App\Models\User;
-
 use App\Models\UserCategory;
-
 use App\Services\AdminService;
 use App\Services\CommonService;
 use App\Services\UserService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\View\View;
 
 class AssociateController extends Controller
 {
@@ -262,5 +264,71 @@ class AssociateController extends Controller
         $msg = CommonService::exportContactsToExcel($request);
         return redirect(getRoutePrefix() . '/leads')
             ->with($msg['msg_type'], $msg['msg_value']);
+    }
+
+    public function projects($id = null): View
+    {
+        $admin = Auth::user();
+        $userId = Auth::id();
+        $data['teams'] = Team::whereHas('users', function ($query) use ($userId) {
+            $query->where('associates', $userId);
+        })->get();
+
+        $data['projects'] = Project::where('created_by', $admin->id)->get();
+        $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        return view('admin.newpages.projects', $data);
+    }
+
+    public function newusers($id = null)
+    {
+        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
+        $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        return view('admin.newpages.users', $data);
+    }
+    public function contacts()
+    {
+        $data['contacts'] = Contact::where('user_id', Auth::id())->get();
+        return view('admin.newpages.contacts', $data);
+    }
+
+    public function doContact(Request $request)
+    {
+        // dd($request);
+        $contact = $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'loanamount' => 'required',
+            'loantype' => 'required',
+        ]);
+        Contact::create([
+            'name' => $contact['name'],
+            'email' => $contact['email'],
+            'loanamount' => $contact['loanamount'],
+            'loantype' => $contact['loantype'],
+            'user_id' => Auth::id(),
+        ]);
+        return back()->with('success', 'Contact created successfully');
+    }
+
+    public function ProjectOverview(Request $request, $id = -1)
+    {
+        if ($request->ajax()) {
+            $data['attachments'] = \App\Models\Attachment::where('user_id', Auth::id())->paginate(2);
+            return $data;
+        }
+        $data = AdminService::filesCat($request, $id);
+        return view('admin.newpages.project-overview', $data);
+    }
+    public function teams($id = null): View
+    {
+
+        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
+        $userId = Auth::id();
+        $data['teams'] = Team::whereHas('users', function ($query) use ($userId) {
+            $query->where('associates', $userId);
+        })->get();
+
+        $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        return view('admin.newpages.teams', $data);
     }
 }

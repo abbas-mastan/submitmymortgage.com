@@ -48,6 +48,20 @@ Route::group(
         Route::post('/upload-files', 'uploadFiles');
         Route::post('/spreadsheet', 'spreadsheet');
         Route::post('/export-contacts', 'exportContactsToExcel');
+
+        //=============================================
+        //=============> new Design Routes
+        //=============================================
+        Route::get('projects', 'projects');
+        Route::post('store-project', 'storeProject');
+        Route::get('/getUsersByTeam/{id}', 'getUsersByTeam');
+        Route::get('/getUsersByProcessor/{id}/{teamid}', 'getUsersByProcessor');
+        Route::get('teams', 'teams');
+        Route::post('teams/{id?}', 'storeteam');
+        Route::get('new-users', 'newusers');
+        Route::get('contacts', 'contacts');
+        Route::post('/do-contact', 'doContact');
+        Route::get('project-overview/{id?}', 'projectOverview');
+
     }
 );
- 

@@ -84,6 +84,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
   Route::post('teams/{id?}',[AdminController::class,'storeteam']);
   Route::get('new-users',[AdminController::class,'newusers']);
   Route::get('contacts',[AdminController::class,'contacts']);
+  Route::post('/do-contact',[AdminController::class,'doContact']);
   Route::get('project-overview/{id?}',[AdminController::class,'projectOverview']);
 
 });

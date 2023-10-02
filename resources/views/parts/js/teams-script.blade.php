@@ -14,7 +14,6 @@
 @endforeach
 <script>
     var teamsData = {!! json_encode($teams) !!};
-
     $('.newProject, .closeModal').click(function(e) {
         e.preventDefault();
         $('#newProjectModal').toggleClass('hidden');

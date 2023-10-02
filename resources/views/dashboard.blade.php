@@ -15,12 +15,13 @@
     <div class="flex-wrap justify-center w-full">
         @can('isAdmin')
         @include('admin.dashboard.menu')
-            {{-- @include('admin.dashboard.cards')
-            @include('admin.dashboard.users') --}}
+        {{-- @include('admin.dashboard.cards')
+        @include('admin.dashboard.users') --}}
         @endcan
         @can('isAssociate')
-            @include('admin.dashboard.cards')
-            @include('admin.dashboard.users')
+        @include('admin.dashboard.menu')
+            {{-- @include('admin.dashboard.cards')
+            @include('admin.dashboard.users') --}}
         @endcan
         @can('isUser')
             @include('user.dashboard.cards')
