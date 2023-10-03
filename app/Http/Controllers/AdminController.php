@@ -365,9 +365,20 @@ class AdminController extends Controller
             $data['teams'] = Team::all();
             $data['trashed'] = User::onlyTrashed()->get();
         } else {
-            $data['teams'] = Team::all();
+            $userId = Auth::id();
+            $data['teams'] = Team::whereHas('users', function ($query) use ($userId) {
+                $query->where('user_id', Auth::id());
+            })->get();
+
             $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
             $data['projects'] = Project::where('created_by', $admin->id)->get();
+
+            foreach (Project::all() as $project) {
+                if (in_array($userId, $project->managers[2])) {
+                    $data['projects']->push($project);
+                }
+            }
+
             $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         }
         return view('admin.newpages.projects', $data);

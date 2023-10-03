@@ -40,7 +40,7 @@
             bg-gradient-to-b from-gradientStart to-gradientEnd">
             <div class="text-white flex flex-col justify-center">
                 <h3 class="">Teams</h3>
-                <h2 class="text-center text-2xl">{{count(\App\Models\Team::all())}}</h2>
+                <h2 class="text-center text-2xl">{{count($teams)}}</h2>
             </div>
             <div class="text-white flex flex-col justify-center">
                 <h3 class="text-center">Opened <br class="lg:hidden block"> Deals</h3>

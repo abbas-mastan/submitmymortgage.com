@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Team;
 use App\Models\User;
 use App\Services\UserService;
 use Carbon\Carbon;
@@ -47,10 +48,11 @@ class HomeController extends Controller
         if (session('role') == 'Admin') {
             $data['users'] = User::whereNotIn("role", ["Admin"])->get();
             $data['usersCount'] = User::whereNotIn("role", ["Admin"])->count();
+            $data['teams'] = Team::all();
         } else {
             $userId = Auth::id();
             $data['teams'] = Team::whereHas('users', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
+                $query->where('user_id', Auth::id());
             })->get();
             $user = Auth::user();
             $data['usersCount'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->count();
@@ -62,6 +64,10 @@ class HomeController extends Controller
     private function getAssociateDashboard()
     {
         $user = Auth::user(); // Assuming you have authenticated the admin
+        $userId = Auth::id();
+        $data['teams'] = Team::whereHas('users', function ($query) use ($userId) {
+            $query->where('associates', $userId);
+        })->get();
         $data['usersCount'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->count();
         $data['users'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
 

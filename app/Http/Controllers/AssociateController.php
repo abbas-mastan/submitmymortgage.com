@@ -274,7 +274,18 @@ class AssociateController extends Controller
             $query->where('associates', $userId);
         })->get();
 
+        $data['teams'] = Team::whereHas('users', function ($query) use ($userId) {
+            $query->where('user_id', Auth::id());
+        })->get();
+
+        $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
         $data['projects'] = Project::where('created_by', $admin->id)->get();
+
+        foreach (Project::all() as $project) {
+            if (in_array($userId, $project->managers[Auth::user()->role === 'Associate' ? 0 : 1])) {
+                $data['projects']->push($project);
+            }
+        }
         $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         return view('admin.newpages.projects', $data);
     }

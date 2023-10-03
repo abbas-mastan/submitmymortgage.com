@@ -6,7 +6,7 @@
         #file {
             display: none;
         }
-            </style>
+    </style>
 @endsection
 @section('content')
     @can('isUser')
@@ -14,16 +14,17 @@
     @endcan
     <div class="flex-wrap justify-center w-full">
         @can('isAdmin')
-        @include('admin.dashboard.menu')
-        {{-- @include('admin.dashboard.cards')
+            @include('admin.dashboard.menu')
+            {{-- @include('admin.dashboard.cards')
         @include('admin.dashboard.users') --}}
         @endcan
         @can('isAssociate')
-        @include('admin.dashboard.menu')
+            @include('admin.dashboard.menu')
             {{-- @include('admin.dashboard.cards')
-            @include('admin.dashboard.users') --}}
+        @include('admin.dashboard.users') --}}
         @endcan
         @can('isUser')
+            @include('admin.dashboard.menu')
             @include('user.dashboard.cards')
         @endcan
     </div>
@@ -31,7 +32,7 @@
 @section('foot')
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-   
+
     <script>
         $(document).ready(function() {
             $('#user-table').DataTable({
@@ -75,6 +76,7 @@
                 uploadToPHPServer();
             }
         });
+
         function uploadToPHPServer(checkedValues = null) {
             var formData = new FormData();
             if (file) {
@@ -111,6 +113,7 @@
                 location.reload();
             });
         }
+
         function makeXMLHttpRequest(url, data, callback) {
             var request = new XMLHttpRequest();
             request.onreadystatechange = function() {
@@ -178,6 +181,7 @@
     </script>
     <script>
         var file;
+
         function dropHandler(ev) {
             console.log('File(s) dropped');
             // Prevent default behavior (Prevent file from being opened)
@@ -203,6 +207,7 @@
                 }
             }
         }
+
         function dragOverHandler(ev) {
             ev.preventDefault();
         }

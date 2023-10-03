@@ -45,7 +45,6 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @if (Auth::user()->role == 'Admin')
                         @foreach ($contacts as $lead)
                             <tr class="text-center">
                                 <td class=" pl-2 tracking-wide border border-l-0">
@@ -61,7 +60,7 @@
                                     {{ $lead->email }}
                                 </td>
                                 <td class=" pl-2 tracking-wide border border-l-0">
-                                    {{ $lead->loanamount }}
+                                    ${{ $lead->loanamount }}
                                 </td>
                                 <td class=" pl-2 tracking-wide border border-l-0">
                                     {{ $lead->loantype }}
@@ -76,7 +75,6 @@
                                 </td>
                             </tr>
                         @endforeach
-                    @endif
                 </tbody>
             </table>
         @endif
