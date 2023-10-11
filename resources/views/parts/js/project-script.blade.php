@@ -19,8 +19,6 @@
             e.preventDefault();
             $('#newProjectModal').toggleClass('hidden');
         });
-    </script>
-    <script>
         $('#email').attr('disabed', 'disabled');
         $("#sendemail").change(function(e) {
             e.preventDefault();
@@ -29,6 +27,16 @@
                 $('#email').attr('disabled', 'disabled');
             } else {
                 $('#email').removeAttr('disabled');
+            }
+        });
+
+        $("#addprocessor").change(function(e) {
+            e.preventDefault();
+            $('.processor').toggleClass('hidden');
+            if ($('.processor').hasClass('hidden')) {
+                $('#processor').attr('disabled', 'disabled');
+            } else {
+                $('#processor').removeAttr('disabled');
             }
         });
 
@@ -48,7 +56,6 @@
                 $('.typepart').removeClass('hidden');
             }
         });
-
 
         $('.typeContinue').click(function(e) {
             e.preventDefault();
@@ -99,10 +106,9 @@
                     type: 'GET',
                     success: function(data) {
                         // Clear existing options in the "selecassociate" and "selectJuniorAssociate" selects
-                        console.log(data);
-                        $("#processorDropdown").empty();
-                        $("#associateDropdown").empty();
-                        $("#jrAssociateDropdown").empty();
+                        $(".processorDropdown").empty();
+                        $(".associateDropdown").empty();
+                        $(".jrAssociateDropdown").empty();
                         // Process the data to categorize roles
                         var associates = [];
                         var juniorAssociates = [];

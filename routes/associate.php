@@ -60,7 +60,8 @@ Route::group(
         Route::post('teams/{id?}', 'storeteam');
         Route::get('new-users', 'newusers');
         Route::get('contacts', 'contacts');
-        Route::post('/do-contact', 'doContact');
+        Route::get('delete-contact/{contact}', 'deleteContact');
+        Route::post('/do-contact/{id?}', 'doContact');
         Route::get('project-overview/{id?}', 'projectOverview');
 
     }

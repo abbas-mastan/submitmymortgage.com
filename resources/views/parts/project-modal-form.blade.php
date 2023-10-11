@@ -1,9 +1,9 @@
-@component('components.modal-background', ['title' => 'Create New Project'])
+@component('components.modal-background', ['title' => 'Create New Deal'])
     <div>
         <form class="projectForm" method="post">
             @csrf
             <div class="namepart">
-                <x-form.input name="name"  label="Borrower's Name" />
+                <x-form.input name="name" label="Borrower's Name" />
                 <div class="my-3 mt-1flex align-center">
                     <input type="checkbox" value="1" name="sendemail" id="sendemail">
                     <label class="ml-2 text-sm leading-normal text-gray-500" for="sendemail">I want the borrower
@@ -54,6 +54,7 @@
                     <button class="bg-red-800 text-white px-8 py-1 text-xs font-thin typeContinue">Continue</button>
                 </div>
             </div>
+
             <div class="teampart hidden">
                 <div class="my-3">
                     <label for="team" class="mt-3 text-sm text-dark-500 leading-6 font-bold">
@@ -71,8 +72,11 @@
                     </select>
                     <span class="text-red-700" id="team_error"></span>
                 </div>
-
-                <div class="my-3">
+                <div>
+                    <input type="checkbox" name="addprocessor" id="addprocessor">
+                    <label class="text-normal" for="addprocessor">Add Processor</label>
+                </div>
+                <div class="my-3 processor hidden">
                     <div class="relative text-left">
                         <label for="Processor" class="text-sm text-dark-500 leading-6 font-bold">Select Processor</label>
                         <div class="">
@@ -82,7 +86,8 @@
                                  sm:text-sm sm:leading-6"
                                 id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
                                 Select Processor
-                                <img style="width: 10px;" class="mt-2" src="{{ asset('icons/chewron.svg') }}" alt="">
+                                <img style="width: 10px;" class="mt-2" src="{{ asset('icons/chewron.svg') }}"
+                                    alt="">
                             </button>
                         </div>
                         <!-- Dropdown panel -->
@@ -103,7 +108,8 @@
                                  sm:text-sm sm:leading-6"
                                 id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
                                 Select Associate
-                                <img style="width: 10px;" class="w-[10px] mt-2" src="{{ asset('icons/chewron.svg') }}" alt="">
+                                <img style="width: 10px;" class="w-[10px] mt-2" src="{{ asset('icons/chewron.svg') }}"
+                                    alt="">
                             </button>
                         </div>
                         <!-- Dropdown panel -->
@@ -126,7 +132,8 @@
                                  sm:text-sm sm:leading-6"
                                 id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
                                 Select Jr.Associate
-                                <img style="width: 10px;" class="w-[10px] mt-2" src="{{ asset('icons/chewron.svg') }}" alt="">
+                                <img style="width: 10px;" class="w-[10px] mt-2" src="{{ asset('icons/chewron.svg') }}"
+                                    alt="">
                             </button>
                         </div>
                         <!-- Dropdown panel -->
@@ -147,4 +154,3 @@
         </form>
     </div>
 @endcomponent
-    

@@ -18,7 +18,7 @@ class CreateContactsTable extends Migration
             $table->foreignId('user_id')->constrained('users');
             $table->string('name');
             $table->string('email')->unique();
-            $table->float('loanamount');
+            $table->integer('loanamount');
             $table->string('loantype');
             $table->timestamps();
         });

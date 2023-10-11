@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationRequest;
+use App\Models\Contact;
+use App\Models\Project;
 use App\Models\User;
 use App\Services\CommonService;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
@@ -174,4 +177,5 @@ class UserController extends Controller
             'p_zip' => 'required',
         ]);
     }
+
 }

@@ -10,6 +10,7 @@ use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\UserCategory;
+use App\Notifications\FileUploadNotification;
 use App\Services\AdminService;
 use App\Services\CommonService;
 use App\Services\UserService;
@@ -378,7 +379,6 @@ class AdminController extends Controller
                     $data['projects']->push($project);
                 }
             }
-
             $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         }
         return view('admin.newpages.projects', $data);
@@ -394,8 +394,9 @@ class AdminController extends Controller
             'financetype' => 'required',
             'loantype' => 'required',
             'team' => 'required',
+            'processor' => 'sometimes:required',
             'associate' => 'required',
-            'juniorAssociate' => 'required',
+            'juniorAssociate' => 'sometimes:required',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
@@ -468,25 +469,30 @@ class AdminController extends Controller
         return view('admin.newpages.contacts', $data);
     }
 
-    public function doContact(Request $request)
+    public function doContact(Request $request, $id = 0)
     {
         // dd($request);
-        $contact = $request->validate([
+        $req = $request->validate([
             'name' => 'required',
             'email' => 'required',
             'loanamount' => 'required',
             'loantype' => 'required',
         ]);
-        Contact::create([
-            'name' => $contact['name'],
-            'email' => $contact['email'],
-            'loanamount' => $contact['loanamount'],
-            'loantype' => $contact['loantype'],
-            'user_id' => Auth::id(),
-        ]);
-        return back()->with('success', 'Contact created successfully');
+        $contact = $id ? Contact::find($id) : new Contact();
+        $contact->name = $req['name'];
+        $contact->email = $req['email'];
+        $contact->loanamount = $req['loanamount'];
+        $contact->loantype = $req['loantype'];
+        $contact->user_id = Auth::id();
+        $contact->save();
+        return back()->with('success', 'Contact ' . ($id ? 'updated' : 'created') . ' successfully');
     }
 
+    public function deleteContact(Contact $contact)
+    {
+        $contact->delete();
+        return back()->with(['success', 'contact deleted successfully']);
+    }
     public function ProjectOverview(Request $request, $id = -1)
     {
         if ($request->ajax()) {
@@ -602,6 +608,25 @@ class AdminController extends Controller
         }
         return response()->json($associates, 200);
 
+    }
+
+    public function savepdf(Request $request)
+    {
+        return response()->json($request->all(), 200);
+    }
+
+    public function notify()
+    {
+        $filepath = 'asoasdfasdfasdf';
+        $admin = User::where('role', 'Admin')->first();
+        $admin->notify(new FileUploadNotification($filepath));
+        dd('done');
+    }
+
+    public function markAsRead($id)
+    {
+        Auth::user()->notifications->where('id',$id)->markAsRead();
+        return back();
     }
 
 }

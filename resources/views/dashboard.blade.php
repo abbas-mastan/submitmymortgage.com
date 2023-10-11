@@ -6,6 +6,26 @@
         #file {
             display: none;
         }
+
+        .menu::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        /* Track */
+        .menu::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        .menu::-webkit-scrollbar-thumb {
+            background: #848484;
+            border-radius: 5px;
+        }
+
+        /* Handle on hover */
+        .menu::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 @endsection
 @section('content')
@@ -24,7 +44,7 @@
         @include('admin.dashboard.users') --}}
         @endcan
         @can('isUser')
-            @include('admin.dashboard.menu')
+            {{-- @include('admin.dashboard.menu') --}}
             @include('user.dashboard.cards')
         @endcan
     </div>

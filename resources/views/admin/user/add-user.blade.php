@@ -8,12 +8,14 @@
             </h1>
         </div>
         <div class="ml-1 mt-3 w-1/2 flex">
-            <a href="{{asset('users.xlsx')}}" download
+            <a href="{{ asset('users.xlsx') }}" download
                 class="block bg-gradient-to-b from-gradientStart to-gradientEnd capitalize flex rounded-md px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400 text-white">
-                Download xlsx example <img src="{{asset('icons/download.svg')}}" class="ml-2 color-white-500" width="20px" alt="">
+                Download xlsx example <img src="{{ asset('icons/download.svg') }}" class="ml-2 color-white-500" width="20px"
+                    alt="">
             </a>
         </div>
-        <form class="w-7/8" action="{{ url(getRoutePrefix() . '/spreadsheet') }}" method="post" enctype="multipart/form-data">
+        <form class="w-7/8" action="{{ url(getRoutePrefix() . '/spreadsheet') }}" method="post"
+            enctype="multipart/form-data">
             @csrf
             <div class="mt-10 mx-auto">
                 <div class=" text-left mr-12">
@@ -114,10 +116,13 @@
                     </select>
                 </div>
             </div>
-            <div class="mt-3 text-left mr-12">
-                <input type="checkbox" {{ old('sendemail') == 'on' ? 'checked' : '' }} name="sendemail" id="sendemail">
-                <label for="sendemail">Send Welcome Email</label>
-            </div>
+            @if (empty($user->id))
+                <div class="mt-3 text-left mr-12">
+                    <input type="checkbox" {{ old('sendemail') == 'on' ? 'checked' : '' }} name="sendemail"
+                        id="sendemail">
+                    <label for="sendemail">Send Welcome Email</label>
+                </div>
+            @endif
             @if (!$user->password > 0)
                 <span id="passwordParent">
                     <div class="mt-3 mx-auto">

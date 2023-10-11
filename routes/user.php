@@ -1,15 +1,15 @@
 <?php
 
 use App\Http\Controllers\AdminController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'user', 'verified'])->prefix(getUserRoutePrefix())->group(function () {
     //==============================
     //==========Files related routes
     //==============================
     Route::post('/file-upload', [UserController::class, 'fileUpload']);
-    Route::get('/credit-report', [UserController::class,'creditReport']);
+    Route::get('/credit-report', [UserController::class, 'creditReport']);
     Route::get('/bank-statement', [UserController::class, 'bankStatement']);
     Route::get('/pay-stub', [UserController::class, 'payStub']);
     Route::get('/tax-return', [UserController::class, 'taxReturn']);
@@ -29,7 +29,7 @@ Route::middleware(['auth', 'user', 'verified'])->prefix(getUserRoutePrefix())->g
     Route::post('/update-cat-comments', [UserController::class, 'updateCatComments']);
 
     Route::get('/application', [UserController::class, 'application']);
-    Route::post('/do-application',[UserController::class, 'doApplication']);
+    Route::post('/do-application', [UserController::class, 'doApplication']);
     //==============================
     //==========Profile related routes
     //==============================
@@ -39,6 +39,11 @@ Route::middleware(['auth', 'user', 'verified'])->prefix(getUserRoutePrefix())->g
     Route::post('/do-user/-1', [UserController::class, 'doUser']);
     //Meeting related routes
     //  Route::get('/start-meeting/{meetingId}', [MeetingController::class,'startMeeting']);
+
+    Route::get('projects', [UserController::class, 'projects']);
+    Route::get('contacts', [UserController::class, 'contacts']);
+    Route::post('/do-contact', [UserController::class, 'doContact']);
+
 });
 //================================
 //===========Publically accessible course purchasing routes

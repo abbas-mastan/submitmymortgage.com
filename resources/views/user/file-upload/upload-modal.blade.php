@@ -39,7 +39,7 @@ fixed bg-gray-500 bg-opacity-40
                         }
                     @endphp
                     @foreach ($categories as $cat)
-                        @if (\App\Services\CommonService::filterCat($user ?? Auth::user(), $cat))
+                        @if (\App\Services\CommonService::filterCat($user ?? Auth::user(), $cat) || $cat === 'Loan Application')
                             @continue
                         @endif
                         <option value="{{ $cat }}">{{ $cat }}</option>

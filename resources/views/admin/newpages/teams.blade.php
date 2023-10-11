@@ -124,7 +124,6 @@
                     @endforeach
                 </tbody>
             </table>
-            <button class="bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</button>
         @endcomponent
     @endforeach
 @endsection

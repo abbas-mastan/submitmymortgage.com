@@ -18,10 +18,6 @@
             margin-left: 2.68rem;
         }
 
-        #file {
-            display: none;
-        }
-
         .page-item.active {
             background-color: rgb(70, 120, 228);
             color: white;
@@ -49,6 +45,10 @@
 
         .swal2-show {
             left: 100px;
+        }
+
+        .textcolor{
+            color: #963437;
         }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
