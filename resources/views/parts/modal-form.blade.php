@@ -45,7 +45,9 @@
                             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                              sm:text-sm sm:leading-6"
                             id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
-                            Select Processor
+                            <span class="processorButtonText">
+                                Select Processor
+                            </span>
                             <img class="w-4 mt-1" src="{{ asset('icons/chewron.svg') }}" alt="">
                         </button>
                     </div>
@@ -97,11 +99,13 @@
                 </label>
                 <div class="">
                     <button type="button"
-                        class="associateButton  h-8 pt-1 flex justify-between align-center w-full shadow-none px-2 py-0.5 bg-gray-100 border-1
+                        class="associateButton h-8 pt-1 flex justify-between align-center w-full shadow-none px-2 py-0.5 bg-gray-100 border-1
                         ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                          sm:text-sm sm:leading-6"
                         id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
-                        Select Associate
+                        <span class="associateButtonText">
+                            Select Associate
+                        </span>
                         <img class="w-4 mt-1" src="{{ asset('icons/chewron.svg') }}" alt="">
                     </button>
                 </div>
@@ -127,7 +131,9 @@
                         ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                          sm:text-sm sm:leading-6"
                         id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
-                        Select Jr.Associate
+                        <span class="jrAssociateButtonText">
+                            Select Jr.Associate
+                        </span>
                         <img class="w-4 mt-1" src="{{ asset('icons/chewron.svg') }}" alt="">
                     </button>
                 </div>

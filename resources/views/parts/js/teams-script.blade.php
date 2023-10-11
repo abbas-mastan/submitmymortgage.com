@@ -13,6 +13,21 @@
     </script>
 @endforeach
 <script>
+    $.each(['associate', 'processor', 'jrAssociate'], function(indexInArray, input) {
+        $(document).on('change', "input[name='" + input + "[]']", function(e) {
+            e.preventDefault();
+            var indexInArray = $("input[name='" + input + "[]']:checked").length;
+            var buttonText = '.' + input + 'ButtonText';
+            if (indexInArray > 0) {
+                $(buttonText).text(indexInArray + " " + input + (indexInArray > 1 ?
+                    "s" : "") + " are selected");
+            } else {
+                $(buttonText).text("Select " + input);
+            }
+        });
+    });
+
+
     var teamsData = {!! json_encode($teams) !!};
     $('.newProject, .closeModal').click(function(e) {
         e.preventDefault();
@@ -32,6 +47,20 @@
         $('.processorDropdown').addClass('overflow-y-auto h-56');
     }
 
+    $(document).ready(function() {
+        // Function to close all dropdowns
+        function closeDropdowns() {
+            $('.associateDropdown, .jrAssociateDropdown, .processorDropdown').addClass('hidden');
+        }
+        // Click event listener for the document
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.associateButton, .jrAssociateButton, .processorButton').length &&
+                !$(e.target).closest('.associateDropdown, .jrAssociateDropdown, .processorDropdown')
+                .length) {
+                closeDropdowns();
+            }
+        });
+    });
     $.each(['processor', 'associate', 'jrAssociate'], function(index, btnclass) {
         var selector = '.' + btnclass;
         $(selector + 'Button').click(function(e) {
@@ -92,7 +121,7 @@
             return;
         } else {
             $('#processor_error').text('');
-
+            $(".associateDropdown").empty();
             $(document).ready(function() {
                 $.ajax({
                     url: `{{ getAdminRoutePrefix() }}/getUsersByProcessor/${selectedProcessorValues}/${teamid}`, // Replace with the actual URL for retrieving users by team
@@ -118,7 +147,7 @@
                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                                 role="option">
                                 <input type="checkbox" name="associate[]"
-                                    class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
+                                    class="associateinput form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
                                 ${associate.name }
                             </label>
                         </div>`);
@@ -149,6 +178,7 @@
             return;
         } else {
             $('#associate_error').text('');
+            $(".jrAssociateDropdown").empty();
             $(document).ready(function() {
                 $.ajax({
                     url: `{{ getAdminRoutePrefix() }}/getUsersByProcessor/${selectedAssociateValues}/${teamid}`, // Replace with the actual URL for retrieving users by team
@@ -206,8 +236,6 @@
         $('#' + id + '_error').text('');
         return true;
     }
-
-
 
     $('.jrAssociateContinue').click(function(e) {
         e.preventDefault();

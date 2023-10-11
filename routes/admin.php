@@ -80,6 +80,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::get('/getUsersByTeam/{id}', [AdminController::class, 'getUsersByTeam']);
     Route::get('/getUsersByProcessor/{id}/{teamid}', [AdminController::class, 'getUsersByProcessor']);
     Route::get('teams', [AdminController::class, 'teams']);
+    Route::get('delete-user-from-team/{team}/{user}', [AdminController::class, 'deleteTeamMember']);
     Route::post('teams/{id?}', [AdminController::class, 'storeteam']);
     Route::get('new-users', [AdminController::class, 'newusers']);
     Route::get('contacts', [AdminController::class, 'contacts']);
@@ -87,8 +88,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::get('/delete-contact/{contact}', [AdminController::class, 'deleteContact']);
     Route::post('/do-contact/{id?}', [AdminController::class, 'doContact']);
     Route::get('project-overview/{id?}', [AdminController::class, 'projectOverview']);
-
-    Route::get('/notify', [AdminController::class, 'notify']);
+    
     Route::get('/mark-as-read/{id}', [AdminController::class, 'markAsRead']);
 
 });

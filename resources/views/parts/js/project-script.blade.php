@@ -15,6 +15,46 @@
 @endforeach
 @can('isAdmin')
     <script>
+        $.each(['associate', 'processor', 'juniorAssociate'], function(indexInArray, input) {
+            $(document).on('change', "input[name='" + input + "[]']", function(e) {
+                e.preventDefault();
+                var indexInArray = $("input[name='" + input + "[]']:checked").length;
+                var buttonText = '.' + input + 'ButtonText';
+                if (indexInArray > 0) {
+                    $(buttonText).text(indexInArray + " " + input + (indexInArray > 1 ?
+                        "s" : "") + " are selected");
+                } else {
+                    $(buttonText).text("Select " + input);
+                }
+            });
+        });
+
+
+        $(document).ready(function() {
+            // Function to close all dropdowns
+            function closeDropdowns() {
+                $('.associateDropdown, .jrAssociateDropdown, .processorDropdown').addClass('hidden');
+            }
+
+            // Click event listener for the document
+            $(document).on('click', function(e) {
+                if (!$(e.target).closest('.associateButton, .jrAssociateButton, .processorButton').length &&
+                    !$(e.target).closest('.associateDropdown, .jrAssociateDropdown, .processorDropdown')
+                    .length) {
+                    closeDropdowns();
+                }
+            });
+
+            $.each(['processor', 'associate', 'jrAssociate'], function(index, btnclass) {
+                var selector = '.' + btnclass;
+                $(selector + 'Button').click(function(e) {
+                    e.preventDefault();
+                    $(selector + 'Dropdown').toggleClass('hidden');
+                });
+            });
+        });
+
+
         $('.newProject, .closeModal').click(function(e) {
             e.preventDefault();
             $('#newProjectModal').toggleClass('hidden');
@@ -81,34 +121,17 @@
             $('.typepart').removeClass('hidden');
         });
 
-
-
-        $('.associateButton').click(function(e) {
-            e.preventDefault();
-            $('.associateDropdown').toggleClass('hidden');
-        });
-
-        $('.jrAssociateButton').click(function(e) {
-            e.preventDefault();
-            $('.jrAssociateDropdown').toggleClass('hidden');
-        });
-        $('.processorButton').click(function(e) {
-            e.preventDefault();
-            $('.processorDropdown').toggleClass('hidden');
-        });
-
-
-
         $(document).ready(function() {
             $("#team").change(function() {
+                $(".processorDropdown").empty();
+                $(".associateDropdown").empty();
+                $(".jrAssociateDropdown").empty();
                 $.ajax({
                     url: `{{ getAdminRoutePrefix() }}/getUsersByTeam/${$(this).val()}`, // Replace with the actual URL for retrieving users by team
                     type: 'GET',
                     success: function(data) {
                         // Clear existing options in the "selecassociate" and "selectJuniorAssociate" selects
-                        $(".processorDropdown").empty();
-                        $(".associateDropdown").empty();
-                        $(".jrAssociateDropdown").empty();
+
                         // Process the data to categorize roles
                         var associates = [];
                         var juniorAssociates = [];

@@ -8,18 +8,18 @@ use Illuminate\Notifications\Notification;
 class FileUploadNotification extends Notification
 {
     use Queueable;
-    public $filetype;
     public $user;
+    public $message;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($filetype,$user)
+    public function __construct($user, $message)
     {
-        $this->filetype = $filetype;
         $this->user = $user;
+        $this->message = $message;
     }
 
     /**
@@ -35,9 +35,9 @@ class FileUploadNotification extends Notification
     public function toArray($notifiable)
     {
         return [
-            'filetype' => $this->filetype,
-            'user_name'=>$this->user->name,
-            'user_id'=>$this->user->id,
+            'user_name' => $this->user->name,
+            'user_id' => $this->user->id,
+            'message' => $this->message
         ];
     }
 }

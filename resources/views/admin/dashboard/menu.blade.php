@@ -82,12 +82,13 @@
                             With <span class="textcolor">{{ \App\Models\Team::find($project->team_id)->name }}
                         @endif
                         </span>
-                        Uploaded {{ $message->data['filetype'] }}
+                        {{ $message->data['message'] }}
                         @if ($project)
                             for
                             <span class="textcolor">
-                                {{ $project->name }} 
+                                {{ $project->name }}
                             </span>
+                            Group
                         @endif
                         <a href="{{ url(getRoutePrefix() . "/mark-as-read/$message->id") }}">
                             @if (!$message->read_at)

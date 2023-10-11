@@ -65,7 +65,7 @@
             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
             sm:text-sm sm:leading-6"
                         name="team" id="team">
-                        <option value="">Select Team</option>
+                        <option value="" disabled selected>Select Team</option>
                         @foreach ($teams as $team)
                             <option value="{{ $team->id }}">{{ $team->name }}</option>
                         @endforeach
@@ -85,7 +85,9 @@
                                 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                                  sm:text-sm sm:leading-6"
                                 id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
-                                Select Processor
+                                <span class="processorButtonText">
+                                    Select Processor
+                                </span>
                                 <img style="width: 10px;" class="mt-2" src="{{ asset('icons/chewron.svg') }}"
                                     alt="">
                             </button>
@@ -107,7 +109,10 @@
                                 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                                  sm:text-sm sm:leading-6"
                                 id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
+                                <span class="associateButtonText">
+
                                 Select Associate
+                                </span>
                                 <img style="width: 10px;" class="w-[10px] mt-2" src="{{ asset('icons/chewron.svg') }}"
                                     alt="">
                             </button>
@@ -121,8 +126,8 @@
                     <span class="text-red-700" id="associate_error"></span>
                 </div>
 
-                <div class="my-3">
-                    <div class="relative text-left">
+                <div class="my-3" bis_skin_checked="1">
+                    <div class="relative text-left" bis_skin_checked="1">
                         <label for="jrAssociate" class="text-sm text-dark-500 leading-6 font-bold">Select
                             Jr.Associate</label>
                         <div class="">
@@ -131,7 +136,10 @@
                                 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                                  sm:text-sm sm:leading-6"
                                 id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
+                                <span class="juniorAssociateButtonText">
+
                                 Select Jr.Associate
+                                </span>
                                 <img style="width: 10px;" class="w-[10px] mt-2" src="{{ asset('icons/chewron.svg') }}"
                                     alt="">
                             </button>

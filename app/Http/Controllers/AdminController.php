@@ -423,7 +423,10 @@ class AdminController extends Controller
                 'created_by' => Auth::id(),
                 'managers' => [$request->associate, $request->juniorAssociate, $request->processor],
             ]);
-
+            $message = "Created new Project by name : $request->borroweraddress";
+            $admin = User::where('role', 'Admin')->first();
+            $user = User::find(Auth::id());
+            $admin->notify(new FileUploadNotification($user,$message));
             return response()->json('success', 200);
         }
     }
@@ -568,7 +571,17 @@ class AdminController extends Controller
                 ],
             ]);
         }
+        $message = "Created new team by name : $request->name";
+        $admin = User::where('role', 'Admin')->first();
+        $user = User::find(Auth::id());
+        $admin->notify(new FileUploadNotification($user, $message));
         return back()->with('success', 'Team created successfully');
+    }
+
+    public function deleteTeamMember(Team $team, User $user)
+    {
+        $team->users()->wherePivot('associates', $user->id)->detach();
+        return back()->with("success", "$user->name deleted from $team->name successfully");
     }
 
     public function getUsersByProcessor($id, $teamid = 0)
@@ -614,18 +627,9 @@ class AdminController extends Controller
     {
         return response()->json($request->all(), 200);
     }
-
-    public function notify()
-    {
-        $filepath = 'asoasdfasdfasdf';
-        $admin = User::where('role', 'Admin')->first();
-        $admin->notify(new FileUploadNotification($filepath));
-        dd('done');
-    }
-
     public function markAsRead($id)
     {
-        Auth::user()->notifications->where('id',$id)->markAsRead();
+        Auth::user()->notifications->where('id', $id)->markAsRead();
         return back();
     }
 
