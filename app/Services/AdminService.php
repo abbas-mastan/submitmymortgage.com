@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Info;
 use App\Models\Media;
 use App\Models\User;
+use App\Notifications\FileUploadNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -38,7 +39,7 @@ class AdminService
     public static function doUser(Request $request, $id)
     {
         $isNewUser = ($id == -1);
-        if(!$request->ajax()){
+        if (!$request->ajax()) {
             $request->validate([
                 'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
                 'name' => "required",
@@ -50,7 +51,7 @@ class AdminService
                 },
             ]);
         }
-            
+
         $user = $isNewUser ? new User() : User::findOrFail($id);
         if ($isNewUser && $request->sendmail) {
             $msg = "Registered. A verification link has been sent. You need to verify your email before login. Please, check your email.";
@@ -88,7 +89,7 @@ class AdminService
                 event(new Registered($user));
             }
         }
-        if($request->ajax()){
+        if ($request->ajax()) {
             return $user->id;
         }
         return ['msg_type' => 'msg_success', 'msg_value' => $msg];
@@ -214,6 +215,19 @@ class AdminService
                 "cat_comments" => $request->cat_comments,
             ]);
         if ($updated) {
+            $message = "commented on $cat category";
+            $admin = User::where('role', 'Admin')->first();
+            $project = \App\Models\Project::where('borrower_id', $request->user_id)->first();
+            if ($project) {
+                $allIds = array_merge(...array_filter($project->managers));
+                array_push($allIds,$admin->id);
+                foreach ($allIds as $userid) {
+                    $user = User::find($userid);
+                    $user->notify(new FileUploadNotification(User::find($request->user_id), $message));
+                }
+            } else {
+                $admin->notify(new FileUploadNotification(User::find($request->user_id), $message));
+            }
             return ['msg_type' => 'msg_success', 'msg_value' => 'Category comments saved.'];
         }
         return ['msg_type' => 'msg_error', 'msg_value' => 'Couldn\'t save category comments.'];

@@ -423,10 +423,10 @@ class AdminController extends Controller
                 'created_by' => Auth::id(),
                 'managers' => [$request->associate, $request->juniorAssociate, $request->processor],
             ]);
-            $message = "Created new Project by name : $request->borroweraddress";
+            $message = "Created new Deal by name : $request->borroweraddress";
             $admin = User::where('role', 'Admin')->first();
             $user = User::find(Auth::id());
-            $admin->notify(new FileUploadNotification($user,$message));
+            $admin->notify(new FileUploadNotification($user, $message));
             return response()->json('success', 200);
         }
     }

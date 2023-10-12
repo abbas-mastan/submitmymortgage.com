@@ -88,12 +88,12 @@
         <label for="category">Sort By:</label>
         <label class="absolute xl:right-[100px] max-md:right-[80px] mt-8 mr-1 z-10"><img width="20"
                 src="{{ asset('icons/search.svg') }}" alt=""></label>
-        <div class="absolute z-10">
+        <div class="flex justify-between">
             <button class="bg-red-800 px-5 py-1  text-white flex newProject">Category</button>
+            <input type="text" class="bg-red-800 px-5 py-1  text-white flex newProject">
         </div>
 
-        {{-- @include('admin.file.cat-table') --}}
-        <table class="w-full mt-3" id="user-table">
+        {{-- <table class="w-full mt-3" id="user-table">
             <thead class="hidden">
                 <th>sno</th>
             </thead>
@@ -101,138 +101,252 @@
                 <tr>
                     <td class="tracking-wide  border-l-0 border-r-0">
                         @foreach ($files as $file)
-                            @if ($file->category === 'Credit Report')
-                                @continue
-                            @endif
-                            @php
-                                $categories = config('smm.file_category');
-                            @endphp
-                            @foreach ($categories as $category)
+                            @if ($file->category !== 'Credit Report')
+                                @foreach (config('smm.file_category') as $category)
                                 @if ($category === $file->category)
-                                    @component('components.accordion', [
-                                        'title' => $category,
-                                        'color' => 'bg-red-800',
-                                        'count' =>  fileCatCount($file->category, $user->id),
-                                    ])
-                                        <table class="w-full" id="table-{{ $file->id }}">
-                                            <tr class="">
-                                                <th class="" width="30%">
-                                                    File Name
-                                                </th>
-                                                <td class="" width="30%">
-                                                    <a href="{{ asset($file->file_path) }}" class="hover:text-blue-500 inline">
-                                                        {{ $file->file_name }}
-                                                    </a>
-                                                </td>
-                                                <td class="" width="30%" rowspan="6">
-                                                    <div class="flex space-x-4">
-                                                        <label for="status-verified{{ $file->id }}" class="font-bold">Sent
-                                                            By
-                                                            Client</label>
-                                                        <input type="checkbox"
-                                                            {{ $file->uploaded_by === $file->user_id ? 'checked' : '' }}
-                                                            class="mt-0.5">
-                                                    </div>
-                                                    <form id="status-form"
-                                                        action="{{ url(getRoutePrefix() . '/update-file-status/' . $file->id) }}"
-                                                        class="">
-                                                        @csrf
-                                                        <div class="font-bold">
-                                                            Status
-                                                        </div>
-                                                        <div class="">
-                                                            <div class="flex space-x-2">
-                                                                <input {{ $file->status === 'Verified' ? 'checked' : '' }}
-                                                                    type="radio" id="status-verified{{ $file->id }}"
-                                                                    name="status" class="" value="Verified">
-                                                                <label for="status-verified{{ $file->id }}"
-                                                                    class="">Verified</label>
-                                                            </div>
-                                                            <div class="flex space-x-2">
-                                                                <input
-                                                                    {{ $file->status === 'Not Verified' || $file->status === null ? 'checked' : '' }}
-                                                                    type="radio" id="status-notverified{{ $file->id }}"
-                                                                    name="status" class="" value="Not Verified">
-                                                                <label for="status-notverified{{ $file->id }}"
-                                                                    class="">Not
-                                                                    Verified</label>
-                                                            </div>
-                                                        </div>
-                                                        <div class="font-bold">
-                                                            Comments
-                                                        </div>
-                                                        <div class="w-full">
-                                                            <div class="flex space-x-2">
-                                                                <textarea class="rounded comments" name="comments" id="" cols="30" rows="1">{{ $file->comments }}</textarea>
-                                                            </div>
-                                                            <div class=" my-0.5">
-                                                                <button title="Update status of this file" type="submit"
-                                                                    class="bg-gradient-to-b from-gradientStart to-gradientEnd capitalize rounded-md px-3 py-0.5  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400 text-white">
-                                                                    Update
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </form>
-                                                </td>
-                                                <td class="text-right" width="10%" rowspan="6">
-                                                    <a class="delete" data="Delete" title="Delete this file"
-                                                        href="{{ url(getRoutePrefix() . '/delete-file/' . $file->id) }}">
-                                                        <button
-                                                            class="bg-themered  tracking-wide font-semibold capitalize text-xl">
-                                                            <img src="{{ asset('icons/trash.svg') }}" alt=""
-                                                                class="p-1 w-7">
-                                                        </button>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <tr class="">
-                                                <th class="">
-                                                    Category
-                                                </th>
-                                                <td class="">
-                                                    <div class="px-3 py-1 bg-yellow-500 w-fit rounded-2xl">
-                                                        <a href="{{ url(getRoutePrefix() . '/docs/' . $user->id . '/' . str_replace('/', '-', $file->category)) }}"
-                                                            class="hover:text-blue-700">
-                                                            {{ $file->category }}
+                                        @component('components.accordion', [
+    'title' => $category,
+    'color' => 'bg-red-800',
+    'count' => fileCatCount($file->category, $user->id),
+])
+                                            <table class="w-full" id="table-{{ $file->id }}">
+                                                <tr class="">
+                                                    <th class="" width="30%">
+                                                        File Name
+                                                    </th>
+                                                    <td class="" width="30%">
+                                                        <a href="{{ asset($file->file_path) }}"
+                                                            class="hover:text-blue-500 inline">
+                                                            {{ $file->file_name }}
                                                         </a>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                            <tr class="">
-                                                <th class="">
-                                                    Upload Date
-                                                </th>
-                                                <td class="">
-                                                    {{ convertDBDateUSFormat($file->created_at) }}
-                                                </td>
-                                            </tr>
-                                            <tr class="">
-                                                <th class="">
-                                                    Uploaded by
-                                                </th>
-                                                <td class="">
-                                                    {{ $file->uploadedBy ? $file->uploadedBy->name : '' }}
-                                                </td>
-                                            </tr>
-                                            <tr class="">
-                                                <th class="">
-                                                    User ID
-                                                </th>
-                                                <td class="">
-                                                    {{-- {{ $file->user->email }} --}}
-                                                    {{ $file->uploadedBy ? $file->uploadedBy->email : '' }}
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    @endcomponent
-                                @endif
-                            @endforeach
+                                                    </td>
+                                                    <td class="" width="30%" rowspan="6">
+                                                        <div class="flex space-x-4">
+                                                            <label for="status-verified{{ $file->id }}"
+                                                                class="font-bold">Sent
+                                                                By
+                                                                Client</label>
+                                                            <input type="checkbox"
+                                                                {{ $file->uploaded_by === $file->user_id ? 'checked' : '' }}
+                                                                class="mt-0.5">
+                                                        </div>
+                                                        <form id="status-form"
+                                                            action="{{ url(getRoutePrefix() . '/update-file-status/' . $file->id) }}"
+                                                            class="">
+                                                            @csrf
+                                                            <div class="font-bold">
+                                                                Status
+                                                            </div>
+                                                            <div class="">
+                                                                <div class="flex space-x-2">
+                                                                    <input {{ $file->status === 'Verified' ? 'checked' : '' }}
+                                                                        type="radio" id="status-verified{{ $file->id }}"
+                                                                        name="status" class="" value="Verified">
+                                                                    <label for="status-verified{{ $file->id }}"
+                                                                        class="">Verified</label>
+                                                                </div>
+                                                                <div class="flex space-x-2">
+                                                                    <input
+                                                                        {{ $file->status === 'Not Verified' || $file->status === null ? 'checked' : '' }}
+                                                                        type="radio"
+                                                                        id="status-notverified{{ $file->id }}"
+                                                                        name="status" class="" value="Not Verified">
+                                                                    <label for="status-notverified{{ $file->id }}"
+                                                                        class="">Not
+                                                                        Verified</label>
+                                                                </div>
+                                                            </div>
+                                                            <div class="font-bold">
+                                                                Comments
+                                                            </div>
+                                                            <div class="w-full">
+                                                                <div class="flex space-x-2">
+                                                                    <textarea class="rounded comments" name="comments" id="" cols="30" rows="1">{{ $file->comments }}</textarea>
+                                                                </div>
+                                                                <div class=" my-0.5">
+                                                                    <button title="Update status of this file" type="submit"
+                                                                        class="bg-gradient-to-b from-gradientStart to-gradientEnd capitalize rounded-md px-3 py-0.5  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400 text-white">
+                                                                        Update
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </td>
+                                                    <td class="text-right" width="10%" rowspan="6">
+                                                        <a class="delete" data="Delete" title="Delete this file"
+                                                            href="{{ url(getRoutePrefix() . '/delete-file/' . $file->id) }}">
+                                                            <button
+                                                                class="bg-themered  tracking-wide font-semibold capitalize text-xl">
+                                                                <img src="{{ asset('icons/trash.svg') }}" alt=""
+                                                                    class="p-1 w-7">
+                                                            </button>
+                                                        </a>
+                                                    </td>
+                                                </tr>
+                                                <tr class="">
+                                                    <th class="">
+                                                        Category
+                                                    </th>
+                                                    <td class="">
+                                                        <div class="px-3 py-1 bg-yellow-500 w-fit rounded-2xl">
+                                                            <a href="{{ url(getRoutePrefix() . '/docs/' . $user->id . '/' . str_replace('/', '-', $file->category)) }}"
+                                                                class="hover:text-blue-700">
+                                                                {{ $file->category }}
+                                                            </a>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr class="">
+                                                    <th class="">
+                                                        Upload Date
+                                                    </th>
+                                                    <td class="">
+                                                        {{ convertDBDateUSFormat($file->created_at) }}
+                                                    </td>
+                                                </tr>
+                                                <tr class="">
+                                                    <th class="">
+                                                        Uploaded by
+                                                    </th>
+                                                    <td class="">
+                                                        {{ $file->uploadedBy ? $file->uploadedBy->name : '' }}
+                                                    </td>
+                                                </tr>
+                                                <tr class="">
+                                                    <th class="">
+                                                        User ID
+                                                    </th>
+                                                    <td class="">
+                                                        {{-- {{ $file->user->email }} --}}
+        {{-- {{ $file->uploadedBy ? $file->uploadedBy->email : '' }}
+                                                    </td>
+                                                </tr>
+                                            </table>
+                                        @endcomponent
+                                    @endif
+                                @endforeach
+                            @endif
                         @endforeach
                     </td>
                 </tr>
             </tbody>
-        </table>
+        </table> --}}
 
+        @foreach (config('smm.file_category') as $category)
+            @if (fileCatCount($category, $user->id) > 0 && $category !== 'Credit Report')
+                @component('components.accordion', [
+                    'title' => $category,
+                    'color' => 'bg-red-800',
+                    'count' => fileCatCount($category, $user->id),
+                ])
+                    @foreach ($files as $file)
+                        @if ($file->category === $category)
+                            <table class="w-full mt-3">
+                                <thead class="bg-gray-300">
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <tr @class(['mb-5', 'bg-gray-200' => $loop->odd])>
+                                        <td class="text-center" width="30%">
+                                            <div class="font-bold mb-2">File Name</div>
+                                            <div class="font-bold mb-2">Category</div>
+                                            <div class="font-bold mb-2">Upload Date</div>
+                                            <div class="font-bold mb-2">Uploaded By</div>
+                                            <div class="font-bold mb-2">User ID</div>
+                                        </td>
+                                        <td width="30%">
+                                            <!-- File Name -->
+                                            <div class="mb-2">
+                                                <a href="{{ asset($file->file_path) }}" class="hover:text-blue-500 inline">
+                                                    {{ $file->file_name }}
+                                                </a>
+                                            </div>
+                                            <!-- Category -->
+                                            <div class="mb-2 px-3 py-1 bg-yellow-500 w-fit rounded-2xl">
+                                                <a href="{{ url(getRoutePrefix() . '/docs/' . $user->id . '/' . str_replace('/', '-', $file->category)) }}"
+                                                    class="hover:text-blue-700">
+                                                    {{ $file->category }}
+                                                </a>
+                                            </div>
+                                            <!-- Upload Date -->
+                                            <div class="mb-2"> {{ convertDBDateUSFormat($file->created_at) }}</div>
+                                            <!-- Uploaded By -->
+                                            <div class="mb-2">{{ $file->uploadedBy ? $file->uploadedBy->name : '' }}</div>
+                                            <!-- User ID -->
+                                            <div class="mb-2">{{ $file->uploadedBy ? $file->uploadedBy->email : '' }}
+                                            </div>
+                                        </td>
+                                        <td width="30%">
+                                            <!-- Sent By Client -->
+                                            <div class="flex space-x-4">
+                                                <label for="status-verified{{ $file->id }}" class="font-bold">Sent By
+                                                    Client</label>
+                                                <input type="checkbox"
+                                                    {{ $file->uploaded_by === $file->user_id ? 'checked' : '' }}
+                                                    class="mt-0.5">
+                                            </div>
+                                            <!-- Status and Comments -->
+                                            <div class="">
+                                                <form id="status-form"
+                                                    action="{{ url(getRoutePrefix() . '/update-file-status/' . $file->id) }}"
+                                                    class="">
+                                                    @csrf
+                                                    <div class="font-bold">Status</div>
+                                                    <div class="">
+                                                        <div class="flex space-x-2">
+                                                            <input {{ $file->status === 'Verified' ? 'checked' : '' }}
+                                                                type="radio" id="status-verified{{ $file->id }}"
+                                                                name="status" class="" value="Verified">
+                                                            <label for="status-verified{{ $file->id }}"
+                                                                class="">Verified</label>
+                                                        </div>
+                                                        <div class="flex space-x-2">
+                                                            <input
+                                                                {{ $file->status === 'Not Verified' || $file->status === null ? 'checked' : '' }}
+                                                                type="radio" id="status-notverified{{ $file->id }}"
+                                                                name="status" class="" value="Not Verified">
+                                                            <label for="status-notverified{{ $file->id }}"
+                                                                class="">Not
+                                                                Verified</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="font-bold">Comments</div>
+                                                    <div class="w-full">
+                                                        <div class="flex space-x-2">
+                                                            <textarea class="rounded comments" name="comments" id="" cols="30" rows="1">{{ $file->comments }}</textarea>
+                                                        </div>
+                                                        <div class="my-0.5">
+                                                            <button title="Update status of this file" type="submit"
+                                                                class="bg-gradient-to-b from-gradientStart to-gradientEnd capitalize rounded-md px-3 py-0.5 focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400 text-white">
+                                                                Update
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <a class="delete" data="Delete" title="Delete this file"
+                                                href="{{ url(getRoutePrefix() . '/delete-file/' . $file->id) }}">
+                                                <button class="bg-themered tracking-wide font-semibold capitalize text-xl">
+                                                    <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
+                                                </button>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        @endif
+                    @endforeach
+                @endcomponent
+            @endif
+        @endforeach
     </div>
 @endsection
 @section('foot')
