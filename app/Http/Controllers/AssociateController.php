@@ -3,20 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationRequest;
-use App\Models\Application;
-use App\Models\Contact;
-use App\Models\Info;
-use App\Models\Project;
-use App\Models\Team;
-use App\Models\User;
-use App\Models\UserCategory;
-use App\Services\AdminService;
-use App\Services\CommonService;
-use App\Services\UserService;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use App\Models\{UserCategory,User,Team,Project,Info,Application,Contact};
+use App\Services\{UserService,CommonService,AdminService};
+use Illuminate\Http\Request,RedirectResponse;
+use Illuminate\Support\Facades\{Auth,Validator};
 use Illuminate\View\View;
 
 class AssociateController extends Controller
@@ -346,5 +336,10 @@ class AssociateController extends Controller
 
         $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         return view('admin.newpages.teams', $data);
+    }
+
+    public static function markAsRead($id)
+    {
+        Auth::user()->notifications->where('id', $id)->markAsRead();
     }
 }

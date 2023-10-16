@@ -82,12 +82,14 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::get('teams', [AdminController::class, 'teams']);
     Route::get('delete-user-from-team/{team}/{user}', [AdminController::class, 'deleteTeamMember']);
     Route::post('teams/{id?}', [AdminController::class, 'storeteam']);
+    Route::get('delete-team/{team}', [AdminController::class, 'deleteTeam']);
     Route::get('new-users', [AdminController::class, 'newusers']);
     Route::get('contacts', [AdminController::class, 'contacts']);
     Route::post('savepdf', [AdminController::class, 'savepdf']);
     Route::get('/delete-contact/{contact}', [AdminController::class, 'deleteContact']);
     Route::post('/do-contact/{id?}', [AdminController::class, 'doContact']);
     Route::get('project-overview/{id?}', [AdminController::class, 'projectOverview']);
+    Route::get('project/{type}/{project}', [AdminController::class, 'changeProjectStatus']);
     
     Route::get('/mark-as-read/{id}', [AdminController::class, 'markAsRead']);
 

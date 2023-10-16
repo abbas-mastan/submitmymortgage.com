@@ -36,7 +36,8 @@
     @if (Auth::user()->role !== 'Borrower')
         @include('parts.project-modal-form')
     @endif
-    <x-flex-card title="Deals" titlecounts="{{ count($projects) }}" iconurl="{{ asset('icons/Deals.svg') }}" />
+    <x-flex-card title="Deals" titlecounts="{{ count($enableTeams
+        +$disableTeams) }}" iconurl="{{ asset('icons/Deals.svg') }}" />
     @can('isAdmin')
         <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Deal</button>
     @endcan

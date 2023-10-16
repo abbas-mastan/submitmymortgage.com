@@ -874,9 +874,6 @@ select {
 .ml-auto {
   margin-left: auto;
 }
-.mr-1 {
-  margin-right: 0.25rem;
-}
 .mr-12 {
   margin-right: 3rem;
 }
@@ -1322,6 +1319,14 @@ select {
 .border-4 {
   border-width: 4px;
 }
+.border-y-2 {
+  border-top-width: 2px;
+  border-bottom-width: 2px;
+}
+.border-y-4 {
+  border-top-width: 4px;
+  border-bottom-width: 4px;
+}
 .border-l {
   border-left-width: 1px;
 }
@@ -1336,6 +1341,12 @@ select {
 }
 .border-t-0 {
   border-top-width: 0px;
+}
+.border-b {
+  border-bottom-width: 1px;
+}
+.border-t {
+  border-top-width: 1px;
 }
 .border-none {
   border-style: none;
@@ -1367,6 +1378,10 @@ select {
 .border-white {
   --tw-border-opacity: 1;
   border-color: rgb(255 255 255 / var(--tw-border-opacity));
+}
+.border-amber-950 {
+  --tw-border-opacity: 1;
+  border-color: rgb(69 26 3 / var(--tw-border-opacity));
 }
 .border-l-white {
   --tw-border-opacity: 1;
@@ -2059,12 +2074,6 @@ select {
     color: rgb(229 229 229 / var(--tw-text-opacity));
   }
 }
-@media not all and (min-width: 768px) {
-
-  .max-md\:right-\[80px\] {
-    right: 80px;
-  }
-}
 @media (min-width: 576px) {
 
   .min-\[576px\]\:mx-auto {
@@ -2224,10 +2233,6 @@ select {
   }
 }
 @media (min-width: 1280px) {
-
-  .xl\:right-\[100px\] {
-    right: 100px;
-  }
 
   .xl\:hidden {
     display: none;

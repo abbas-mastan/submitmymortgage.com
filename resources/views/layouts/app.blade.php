@@ -47,7 +47,7 @@
             left: 100px;
         }
 
-        .textcolor{
+        .textcolor {
             color: #963437;
         }
     </style>
@@ -123,6 +123,10 @@
                     return 'Restored!';
                 if (text == 'Hide')
                     return 'Hidden!';
+                if (text == 'Enable')
+                    return 'Enabled!';
+                if (text == 'Disable')
+                    return 'Disabled!';
                 if (text == 'Unhide')
                     return 'Showed!';
                 else
@@ -133,10 +137,8 @@
                 var titleText = 'Are you sure to ' + textClass.toLowerCase() + ' it?';
             }
 
-            if (textClass == 'Hide' || textClass == 'Unhide') {
-                middleSentenceOfModal = null;
-            }
-            if (textClass == 'restore') {
+            if (textClass == 'Hide' || textClass == 'Unhide' || textClass == 'Disable' || textClass == 'Enable' ||
+                textClass == 'restore') {
                 middleSentenceOfModal = null;
             } else {
                 var middleSentenceOfModal = "You won't be able to revert this!"
@@ -155,7 +157,9 @@
                     location.href = $(this).attr('href');
                     Swal.fire(
                         getPopupText(textClass),
-                        'Your file has been ' + getPopupText(textClass) + ' .',
+                        'Your' + (textClass == 'Disable' || textClass == 'Enable' ? ' team ' :
+                        ' file ') +
+                        ' has been ' + getPopupText(textClass) + ' .',
                         'success'
                     )
                 }

@@ -4,8 +4,8 @@ namespace App\Services;
 
 use App\Models\Info;
 use App\Models\Media;
+use App\Models\Team;
 use App\Models\User;
-use App\Notifications\FileUploadNotification;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -215,19 +215,7 @@ class AdminService
                 "cat_comments" => $request->cat_comments,
             ]);
         if ($updated) {
-            $message = "commented on $cat category";
-            $admin = User::where('role', 'Admin')->first();
-            $project = \App\Models\Project::where('borrower_id', $request->user_id)->first();
-            if ($project) {
-                $allIds = array_merge(...array_filter($project->managers));
-                array_push($allIds,$admin->id);
-                foreach ($allIds as $userid) {
-                    $user = User::find($userid);
-                    $user->notify(new FileUploadNotification(User::find($request->user_id), $message));
-                }
-            } else {
-                $admin->notify(new FileUploadNotification(User::find($request->user_id), $message));
-            }
+            CommonService::storeNotification("commented on $cat category", $request->user_id);
             return ['msg_type' => 'msg_success', 'msg_value' => 'Category comments saved.'];
         }
         return ['msg_type' => 'msg_error', 'msg_value' => 'Couldn\'t save category comments.'];
@@ -268,4 +256,87 @@ class AdminService
         $info->delete();
         return ['msg_type' => 'msg_success', 'msg_value' => 'Lead deleted.'];
     }
+
+    public static function StoreTeam($request, $id)
+    {
+        $teamData = $request->validate([
+            'name' => 'required',
+            'processor' => 'required|exists:users,id',
+            'associate' => 'required|exists:users,id',
+            'jrAssociate' => 'required|exists:users,id',
+            'jrAssociateManager' => 'required',
+        ]);
+
+        if ($id) {
+            $team = Team::find($id);
+        } else {
+            $team = Team::create([
+                'name' => $teamData['name'],
+            ]);
+        }
+
+        foreach ($teamData['processor'] as $processorId) {
+            $team->users()->attach([
+                Auth::id() => [
+                    'associates' => $processorId,
+                    'jrAssociateManager' => $teamData['jrAssociateManager'],
+                ],
+            ]);
+        }
+
+        // Attach multiple associates
+        foreach ($teamData['associate'] as $associateId) {
+            $team->users()->attach([
+                Auth::id() => [
+                    'associates' => $associateId,
+                    'jrAssociateManager' => $teamData['jrAssociateManager'],
+                ],
+            ]);
+        }
+
+        // Attach multiple jrassociates
+        foreach ($teamData['jrAssociate'] as $jrAssociateId) {
+            $team->users()->attach([
+                Auth::id() => [
+                    'associates' => $jrAssociateId,
+                    'jrAssociateManager' => $teamData['jrAssociateManager'],
+                ],
+            ]);
+        }
+        CommonService::storeNotification("Created new team by name : $request->name", Auth::id());
+    }
+
+    public static function getUsersByProcessor($id, $teamid)
+    {
+        $idArray = explode(',', $id);
+        $associates = [];
+        foreach ($idArray as $id) {
+            $team = Team::find($teamid);
+            if ($teamid > 0) {
+                foreach ($team->users as $user) {
+                    $associate = User::find($user->pivot->associates);
+                    if ($associate->id == $id) {
+                        return response()->json('processorerror', 403);
+                    }
+                }
+            }
+            $admin = User::find($id);
+            if ($admin) {
+                if ($admin->role === 'Processor') {
+                    $users = $admin->createdUsers()->where('role', 'Associate')->with('createdUsers')->get();
+                } else {
+                    $users = $admin->createdUsers()->where('role', 'Junior Associate')->with('createdUsers')->get();
+                }
+                foreach ($users as $user) {
+                    $associates[] = [
+                        'role' => $user->role,
+                        'id' => $user->id,
+                        'name' => $user->name,
+                    ];
+                }
+            }
+        }
+        return $associates;
+    }
+
 }

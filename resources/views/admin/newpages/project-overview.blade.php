@@ -59,26 +59,76 @@
         #user-table_filter {
             color: white;
         }
+
+        .serachlabel {
+            position: relative;
+        }
+
+        .svg {
+            fill: white;
+        }
     </style>
 @endsection
 @section('content')
     @include('admin.file.cards')
     <div class="">
         @include('elems.upload-btn')
-        @isset($user)
-            @php
-                $name = explode(' ', $user->name);
-                $rearrangedName = count($name) > 1 ? $name[1] . ', ' . $name[0] : $user->name;
-            @endphp
-            <h2 class="text-center text-2xl -mt-3.5 mb-5 text-red-700">
-                {{ $rearrangedName }}
-            </h2>
-            @isset($info)
-                <h3 class="text-center text-xl -mt-3.5 mb-5 text-red-700">
-                    {{ $info->b_address . $info->b_city . ', ' . $info->b_state }}
-                </h3>
-            @endisset
-        @endisset
+        <div class="flex justify-between">
+            <div class="flex align-center">
+                <Button class="bg-red-800 px-5 py-2 text-white flex">
+                    <img class="w-7 mr-2" src="{{ asset('icons/share.png') }}" alt="">
+                    <span class="pt-1">
+                        Share Upload Link
+                    </span>
+                </Button>
+            </div>
+            <div>
+                @isset($user)
+                    @php
+                        $name = explode(' ', $user->name);
+                        $rearrangedName = count($name) > 1 ? $name[1] . ', ' . $name[0] : $user->name;
+                    @endphp
+                    <h2 class="text-center text-2xl -mt-3.5 mb-5 text-red-700">
+                        {{ $rearrangedName }}
+                    </h2>
+                    @isset($info)
+                        <h3 class="text-center text-xl -mt-3.5 mb-5 text-red-700">
+                            {{ $info->b_address . $info->b_city . ', ' . $info->b_state }}
+                        </h3>
+                    @endisset
+                @endisset
+            </div>
+            <div class="inline-block">
+                <div class="relative dropdownButton">
+                    <button class=" bg-red-800 px-5 py-2 text-white flex" id="menu-button" aria-expanded="true"
+                        aria-haspopup="true">Move To
+                        <svg class="ml-2 w-4 mt-1" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 185.344 185.344" xml:space="preserve">
+                            <g>
+                                <g>
+                                    <path style="fill:#ffffff;"
+                                        d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
+                                                                        c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
+                                                                        c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                </g>
+                            </g>
+                        </svg>
+                    </button>
+                    <div class="dropdownMenu hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
+                        <div class="py-1">
+                            @php
+                                $application = \App\Models\Project::where('borrower_id',$user->id)->first();
+                            @endphp
+                            <a href="{{url(getRoutePrefix().'/project/disable/'.$application->id)}}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
+                                id="menu-item-0">Disable Team</a>
+                            <a href="{{url(getRoutePrefix().'/project/close/'.$application->id)}}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
+                                id="menu-item-1">Close Deal</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         @include('admin.file.info-table')
     </div>
     <div class="">
@@ -86,152 +136,14 @@
     </div>
     <div class="">
         <label for="category">Sort By:</label>
-        <label class="absolute xl:right-[100px] max-md:right-[80px] mt-8 mr-1 z-10"><img width="20"
-                src="{{ asset('icons/search.svg') }}" alt=""></label>
         <div class="flex justify-between">
-            <button class="bg-red-800 px-5 py-1  text-white flex newProject">Category</button>
-            <input type="text" class="bg-red-800 px-5 py-1  text-white flex newProject">
+            <button class="bg-red-800 px-5 py-1 text-white flex newProject">Category</button>
+            <label class="serachlabel flex justify-end" for="" class="">
+                <input type="text" id="myInput" placeholder="search"
+                    class="serachinput bg-red-800 px-5 py-1  text-white flex">
+                <img class="absolute z-10 top-1/4 mr-2" width="20" src="{{ asset('icons/search.svg') }}" alt="">
+            </label>
         </div>
-
-        {{-- <table class="w-full mt-3" id="user-table">
-            <thead class="hidden">
-                <th>sno</th>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="tracking-wide  border-l-0 border-r-0">
-                        @foreach ($files as $file)
-                            @if ($file->category !== 'Credit Report')
-                                @foreach (config('smm.file_category') as $category)
-                                @if ($category === $file->category)
-                                        @component('components.accordion', [
-    'title' => $category,
-    'color' => 'bg-red-800',
-    'count' => fileCatCount($file->category, $user->id),
-])
-                                            <table class="w-full" id="table-{{ $file->id }}">
-                                                <tr class="">
-                                                    <th class="" width="30%">
-                                                        File Name
-                                                    </th>
-                                                    <td class="" width="30%">
-                                                        <a href="{{ asset($file->file_path) }}"
-                                                            class="hover:text-blue-500 inline">
-                                                            {{ $file->file_name }}
-                                                        </a>
-                                                    </td>
-                                                    <td class="" width="30%" rowspan="6">
-                                                        <div class="flex space-x-4">
-                                                            <label for="status-verified{{ $file->id }}"
-                                                                class="font-bold">Sent
-                                                                By
-                                                                Client</label>
-                                                            <input type="checkbox"
-                                                                {{ $file->uploaded_by === $file->user_id ? 'checked' : '' }}
-                                                                class="mt-0.5">
-                                                        </div>
-                                                        <form id="status-form"
-                                                            action="{{ url(getRoutePrefix() . '/update-file-status/' . $file->id) }}"
-                                                            class="">
-                                                            @csrf
-                                                            <div class="font-bold">
-                                                                Status
-                                                            </div>
-                                                            <div class="">
-                                                                <div class="flex space-x-2">
-                                                                    <input {{ $file->status === 'Verified' ? 'checked' : '' }}
-                                                                        type="radio" id="status-verified{{ $file->id }}"
-                                                                        name="status" class="" value="Verified">
-                                                                    <label for="status-verified{{ $file->id }}"
-                                                                        class="">Verified</label>
-                                                                </div>
-                                                                <div class="flex space-x-2">
-                                                                    <input
-                                                                        {{ $file->status === 'Not Verified' || $file->status === null ? 'checked' : '' }}
-                                                                        type="radio"
-                                                                        id="status-notverified{{ $file->id }}"
-                                                                        name="status" class="" value="Not Verified">
-                                                                    <label for="status-notverified{{ $file->id }}"
-                                                                        class="">Not
-                                                                        Verified</label>
-                                                                </div>
-                                                            </div>
-                                                            <div class="font-bold">
-                                                                Comments
-                                                            </div>
-                                                            <div class="w-full">
-                                                                <div class="flex space-x-2">
-                                                                    <textarea class="rounded comments" name="comments" id="" cols="30" rows="1">{{ $file->comments }}</textarea>
-                                                                </div>
-                                                                <div class=" my-0.5">
-                                                                    <button title="Update status of this file" type="submit"
-                                                                        class="bg-gradient-to-b from-gradientStart to-gradientEnd capitalize rounded-md px-3 py-0.5  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400 text-white">
-                                                                        Update
-                                                                    </button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </td>
-                                                    <td class="text-right" width="10%" rowspan="6">
-                                                        <a class="delete" data="Delete" title="Delete this file"
-                                                            href="{{ url(getRoutePrefix() . '/delete-file/' . $file->id) }}">
-                                                            <button
-                                                                class="bg-themered  tracking-wide font-semibold capitalize text-xl">
-                                                                <img src="{{ asset('icons/trash.svg') }}" alt=""
-                                                                    class="p-1 w-7">
-                                                            </button>
-                                                        </a>
-                                                    </td>
-                                                </tr>
-                                                <tr class="">
-                                                    <th class="">
-                                                        Category
-                                                    </th>
-                                                    <td class="">
-                                                        <div class="px-3 py-1 bg-yellow-500 w-fit rounded-2xl">
-                                                            <a href="{{ url(getRoutePrefix() . '/docs/' . $user->id . '/' . str_replace('/', '-', $file->category)) }}"
-                                                                class="hover:text-blue-700">
-                                                                {{ $file->category }}
-                                                            </a>
-                                                        </div>
-                                                    </td>
-                                                </tr>
-                                                <tr class="">
-                                                    <th class="">
-                                                        Upload Date
-                                                    </th>
-                                                    <td class="">
-                                                        {{ convertDBDateUSFormat($file->created_at) }}
-                                                    </td>
-                                                </tr>
-                                                <tr class="">
-                                                    <th class="">
-                                                        Uploaded by
-                                                    </th>
-                                                    <td class="">
-                                                        {{ $file->uploadedBy ? $file->uploadedBy->name : '' }}
-                                                    </td>
-                                                </tr>
-                                                <tr class="">
-                                                    <th class="">
-                                                        User ID
-                                                    </th>
-                                                    <td class="">
-                                                        {{-- {{ $file->user->email }} --}}
-        {{-- {{ $file->uploadedBy ? $file->uploadedBy->email : '' }}
-                                                    </td>
-                                                </tr>
-                                            </table>
-                                        @endcomponent
-                                    @endif
-                                @endforeach
-                            @endif
-                        @endforeach
-                    </td>
-                </tr>
-            </tbody>
-        </table> --}}
-
         @foreach (config('smm.file_category') as $category)
             @if (fileCatCount($category, $user->id) > 0 && $category !== 'Credit Report')
                 @component('components.accordion', [
@@ -241,17 +153,8 @@
                 ])
                     @foreach ($files as $file)
                         @if ($file->category === $category)
-                            <table class="w-full mt-3">
-                                <thead class="bg-gray-300">
-                                    <tr>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-
+                            <table class="w-full">
+                                <tbody class="tablebody">
                                     <tr @class(['mb-5', 'bg-gray-200' => $loop->odd])>
                                         <td class="text-center" width="30%">
                                             <div class="font-bold mb-2">File Name</div>
@@ -335,7 +238,8 @@
                                             <a class="delete" data="Delete" title="Delete this file"
                                                 href="{{ url(getRoutePrefix() . '/delete-file/' . $file->id) }}">
                                                 <button class="bg-themered tracking-wide font-semibold capitalize text-xl">
-                                                    <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
+                                                    <img src="{{ asset('icons/trash.svg') }}" alt=""
+                                                        class="p-1 w-7">
                                                 </button>
                                             </a>
                                         </td>
@@ -368,11 +272,31 @@
             $("input[type=search]").addClass('serachinput');
             $("input[type=search]").addClass('bg-red-800');
             $('#user-table').removeClass("no-footer dataTable");
-
-
         });
-        // $("#user-table").before("<img src="{{ asset('icons/search.svg') }}" />");
+        $(document).on("click", function(e) {
+            if (!$(e.target).closest(".dropdownContainer").length) {
+                // Clicked outside of the .dropdownContainer
+                $('.dropdownMenu').addClass('hidden');
+            }
+        });
 
+        $(".dropdownButton").click(function(e) {
+            e.stopPropagation(); // Prevent the document click event from firing
+            $('.dropdownMenu').toggleClass('hidden'); // Toggle visibility
+        });
+
+        $(document).ready(function() {
+         
+
+
+
+            $("#myInput").on("keyup", function() {
+                var value = $(this).val().toLowerCase();
+                $(".tablebody tr").filter(function() {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
         (function() {
             let textarea = document.querySelectorAll(".comments");
             for (let i = 0; i < textarea.length; i++) {

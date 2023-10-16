@@ -123,8 +123,8 @@
                     <label for="sendemail">Send Welcome Email</label>
                 </div>
             @endif
-            @if (!$user->password > 0)
-                <span id="passwordParent">
+            @if (empty($user->password))
+            <span id="passwordParent">
                     <div class="mt-3 mx-auto">
                         <div class=" text-left mr-12">
                             <label for="password" class="">Create Password</label>

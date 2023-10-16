@@ -2,7 +2,7 @@
     <form action="{{ url(getAdminRoutePrefix() . '/teams') }}" id="teamForm" method="post">
         @csrf
         <div class="createTeam">
-            @if (count($teams) > 0)
+            @if (count($enableTeams) > 0)
                 <div>
                     <input type="radio" name="team" id="newInput" onclick="changeInputs()">
                     <label for="newInput">Add New</label>
@@ -20,7 +20,7 @@
                 sm:text-sm sm:leading-6"
                     name="name" id="selecTeam">
                     <option>Select Team</option>
-                    @foreach ($teams as $team)
+                    @foreach ($enableTeams as $team)
                         <option value="{{ $team->id }}">{{ $team->name }}</option>
                     @endforeach
                 </select>

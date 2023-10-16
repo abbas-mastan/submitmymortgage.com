@@ -2,19 +2,13 @@
 
 namespace App\Services;
 
-use App\Models\Application;
-use App\Models\Attachment;
-use App\Models\Info;
-use App\Models\Media;
-use App\Models\User;
+use App\Models\{Application,Attachment,Info,Media,User};
 use App\Notifications\FileUploadNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\{Auth,Storage};
 use Illuminate\Validation\ValidationException;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\{IOFactory,Spreadsheet};
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
 class CommonService
@@ -35,7 +29,6 @@ class CommonService
         }
         return ['msg_type' => 'msg_error', 'msg_value' => "Couldn't save the picture"];
     }
-
     //Uploads a file
     public static function fileUpload(Request $request)
     {
@@ -57,13 +50,9 @@ class CommonService
                 $media->uploaded_by = $attachment->uploaded_by;
                 try {
                     Storage::copy($attachment->file_path, getFileDirectory() . $uniqueName);
-                    $message = "Uploaded $request->category";
-                    $admin = User::where('role', 'Admin')->first();
-                    $user = User::find($request->id ?? $attachment->user_id);
-                    $admin->notify(new FileUploadNotification($user, $message));
+                    self::storeNotification("Uploaded $request->category", $request->id ?? $attachment->user_id);
                 } catch (\Exception $e) {
                     return response()->json(['status' => "$e", 'filename' => $e]);
-                    // return response()->json(['status'=>'File exists','filename'=>$attachment->file_name]);
                 }
                 $media->save();
             }
@@ -79,13 +68,10 @@ class CommonService
             $media->file_type = $request->file('file')->getClientMimeType();
             $media->file_extension = $request->file('file')->getClientOriginalExtension();
             $media->category = $request->input('category');
-            $media->user_id = $request->input('id') ?? Auth::user()->id;
+            $media->user_id = $request->input('id') ?? Auth::id();
             $media->uploaded_by = Auth::user()->id;
             if ($media->save()) {
-                $message = "Uploaded $request->category";
-                $admin = User::where('role', 'Admin')->first();
-                $user = User::find($request->id ?? Auth::id());
-                $admin->notify(new FileUploadNotification($user, $message));
+                self::storeNotification("Uploaded $request->category", $request->id ?? Auth::id());
                 return response()->json(['status' => "success", 'msg' => "File uploaded."]);
             }
         }
@@ -95,7 +81,7 @@ class CommonService
     public static function doApplication($request, $userId = null)
     {
         if (session('role') != "Borrower") {
-            $user = User::where('email', $request->email)->first() ?? auth::user();
+            $user = User::find($userId) ?? auth::user();
         } else {
             $user = $userId ? User::find($userId) : auth::user();
         }
@@ -118,6 +104,8 @@ class CommonService
         if ($request->has('user_id')) {
             $data['user_id'] = $request->user_id;
         }
+        self::storeNotification(($isNewApplication ? 'Inserted ':'Updated '). "Loan Application", $user->id ?? Auth::id());
+
         return [
             'msg_type' => 'msg_success',
             'msg_value' => $isNewApplication ? 'Application inserted successfully.' : 'Application updated successfully.',
@@ -302,4 +290,29 @@ class CommonService
         return ['msg_type' => 'msg_success', 'msg_value' => 'data exported successfully'];
 
     }
+
+    public static function storeNotification($message, $userid)
+    {
+
+        $project = \App\Models\Project::where('borrower_id', $userid)->first();
+        if ($project) {
+            $allIds = array_merge(...array_filter($project->managers));
+            array_push($allIds, User::where('role', 'Admin')->first()->id);
+            foreach ($allIds as $Admin) {
+                $notifyThisUser = User::find($Admin);
+                $user = User::find($userid);
+                $notifyThisUser->notify(new FileUploadNotification($user, $message));
+            }
+        } else {
+            $admin = User::where('role','Admin')->first();
+            $user = User::find($userid);
+            $admin->notify(new FileUploadNotification($user, $message));
+        }
+    }
+
+    public static function markAsRead($id)
+    {
+        Auth::user()->notifications->where('id', $id)->markAsRead();
+    }
+
 }

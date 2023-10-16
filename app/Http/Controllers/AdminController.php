@@ -3,21 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationRequest;
-use App\Models\Application;
-use App\Models\Contact;
-use App\Models\Info;
-use App\Models\Project;
-use App\Models\Team;
-use App\Models\User;
-use App\Models\UserCategory;
+use App\Models\{UserCategory,User,Team,Info,Contact,Application,Project};
 use App\Notifications\FileUploadNotification;
-use App\Services\AdminService;
-use App\Services\CommonService;
-use App\Services\UserService;
+use App\Services\{UserService,CommonService,AdminService};
 use Faker\Factory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\{Validator,Auth};
 use Illuminate\View\View;
 
 class AdminController extends Controller
@@ -363,7 +354,7 @@ class AdminController extends Controller
         if ($admin->role == 'Admin') {
             $data['projects'] = Project::all();
             $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
-            $data['teams'] = Team::all();
+            $data['teams'] = Team::where('disable',false)->get();
             $data['trashed'] = User::onlyTrashed()->get();
         } else {
             $userId = Auth::id();
@@ -511,6 +502,8 @@ class AdminController extends Controller
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
         if ($admin->role == 'Admin') {
             $data['teams'] = Team::all();
+            $data['enableTeams'] = Team::where('disable',false)->get();
+            $data['disableTeams'] = Team::where('disable',true)->get();
             $data['users'] =
             User::where('role', '!=', 'Admin')
                 ->whereIn('role', ['Associate', 'Processor', 'Junior Associate'])
@@ -528,109 +521,38 @@ class AdminController extends Controller
 
     public function storeteam(Request $request, $id = 0)
     {
-        $teamData = $request->validate([
-            'name' => 'required',
-            'processor' => 'required|exists:users,id',
-            'associate' => 'required|exists:users,id',
-            'jrAssociate' => 'required|exists:users,id',
-            'jrAssociateManager' => 'required',
-        ]);
-        if ($id) {
-            $team = Team::find($id);
-        } else {
-            $team = Team::create([
-                'name' => $teamData['name'],
-            ]);
-        }
-
-        foreach ($teamData['processor'] as $processorId) {
-            $team->users()->attach([
-                Auth::id() => [
-                    'associates' => $processorId,
-                    'jrAssociateManager' => $teamData['jrAssociateManager'],
-                ],
-            ]);
-        }
-
-        // Attach multiple associates
-        foreach ($teamData['associate'] as $associateId) {
-            $team->users()->attach([
-                Auth::id() => [
-                    'associates' => $associateId,
-                    'jrAssociateManager' => $teamData['jrAssociateManager'],
-                ],
-            ]);
-        }
-
-        // Attach multiple jrassociates
-        foreach ($teamData['jrAssociate'] as $jrAssociateId) {
-            $team->users()->attach([
-                Auth::id() => [
-                    'associates' => $jrAssociateId,
-                    'jrAssociateManager' => $teamData['jrAssociateManager'],
-                ],
-            ]);
-        }
-        $message = "Created new team by name : $request->name";
-        $admin = User::where('role', 'Admin')->first();
-        $user = User::find(Auth::id());
-        $admin->notify(new FileUploadNotification($user, $message));
-        return back()->with('success', 'Team created successfully');
+        AdminService::StoreTeam($request, $id);
+        return back()->with('msg_success', 'Team created successfully');
     }
 
     public function deleteTeamMember(Team $team, User $user)
     {
         $team->users()->wherePivot('associates', $user->id)->detach();
-        return back()->with("success", "$user->name deleted from $team->name successfully");
+        return back()->with("msg_success", "$user->name deleted from $team->name successfully");
+    }
+
+    public function deleteTeam(Team $team)
+    {
+        if ($team->disable) $team->update(['disable' => false]);
+        else $team->update(['disable' => true]);
+        return back()->with('msg_success', " \"$team->name\" team has been " . ($team->disable ? "Disabled" : "Enabled") . "  Successfully");
     }
 
     public function getUsersByProcessor($id, $teamid = 0)
     {
-
-        $idArray = explode(',', $id);
-
-        $associates = [];
-
-        foreach ($idArray as $id) {
-            $team = Team::find($teamid);
-            if ($teamid > 0) {
-                foreach ($team->users as $user) {
-                    $associate = User::find($user->pivot->associates);
-                    if ($associate->id == $id) {
-                        return response()->json('processorerror', 200);
-                    }
-                }
-            }
-            $admin = User::find($id);
-
-            if ($admin) {
-                if ($admin->role === 'Processor') {
-                    $users = $admin->createdUsers()->where('role', 'Associate')->with('createdUsers')->get();
-                } else {
-                    $users = $admin->createdUsers()->where('role', 'Junior Associate')->with('createdUsers')->get();
-                }
-
-                foreach ($users as $user) {
-                    $associates[] = [
-                        'role' => $user->role,
-                        'id' => $user->id,
-                        'name' => $user->name,
-                    ];
-                }
-            }
-        }
+        $associates = AdminService::getUsersByProcessor($id,$teamid);
         return response()->json($associates, 200);
-
-    }
-
-    public function savepdf(Request $request)
-    {
-        return response()->json($request->all(), 200);
     }
     public function markAsRead($id)
     {
-        Auth::user()->notifications->where('id', $id)->markAsRead();
+        CommonService::markAsRead($id);
         return back();
+    }
+
+    public function changeProjectStatus($type,Project $project)
+    {
+        $project->update(['status'=>$type]);
+        return redirect(getRoutePrefix().'/projects')->with('msg_success',"\"$project->name\" project $type"."d successfully");
     }
 
 }

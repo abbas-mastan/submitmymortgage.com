@@ -48,7 +48,7 @@ class HomeController extends Controller
         if (session('role') == 'Admin') {
             $data['users'] = User::whereNotIn("role", ["Admin"])->get();
             $data['usersCount'] = User::whereNotIn("role", ["Admin"])->count();
-            $data['teams'] = Team::all();
+            $data['teams'] = Team::where('disable',false)->get();
         } else {
             $userId = Auth::id();
             $data['teams'] = Team::whereHas('users', function ($query) use ($userId) {
