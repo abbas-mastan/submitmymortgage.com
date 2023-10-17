@@ -108,8 +108,8 @@
                                 <g>
                                     <path style="fill:#ffffff;"
                                         d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
-                                                                        c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
-                                                                        c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                                                                                c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
+                                                                                                c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
                                 </g>
                             </g>
                         </svg>
@@ -117,11 +117,13 @@
                     <div class="dropdownMenu hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
                         <div class="py-1">
                             @php
-                                $application = \App\Models\Project::where('borrower_id',$user->id)->first();
+                                $application = \App\Models\Project::where('borrower_id', $user->id)->first();
                             @endphp
-                            <a href="{{url(getRoutePrefix().'/project/disable/'.$application->id)}}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
-                                id="menu-item-0">Disable Team</a>
-                            <a href="{{url(getRoutePrefix().'/project/close/'.$application->id)}}" class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
+                            <a href="{{ url(getRoutePrefix() . '/project/disable/' . $application->id) }}"
+                                class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
+                                id="menu-item-0">Disable Deal</a>
+                            <a href="{{ url(getRoutePrefix() . '/project/close/' . $application->id) }}"
+                                class="text-gray-700 block px-4 py-2 text-sm" role="menuitem" tabindex="-1"
                                 id="menu-item-1">Close Deal</a>
                         </div>
                     </div>
@@ -135,35 +137,58 @@
         @include('admin.file.category-wise-files-table')
     </div>
     <div class="">
-        <label for="category">Sort By:</label>
-        <div class="flex justify-between">
-            <button class="bg-red-800 px-5 py-1 text-white flex newProject">Category</button>
+        <div class="flex justify-between mb-5">
+            <div class="relative categoryContainer">
+                <button class="categoryButton bg-red-800 px-5 py-1 text-white flex newProject">Sort By</button>
+                <div class="categoryMenu hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
+                    <div class="py-1">
+                        <a href="{{ url(getRoutePrefix() . '/sortby/'.$user->id.'/category'  ) }}"
+                            @class([
+                                'text-gray-700 block px-4 py-2 text-sm',
+                                isset($sortby) && $sortby === 'category' ? 'bg-red-800 text-white' : '',
+                            ]) role="menuitem" tabindex="-1"
+                            id="menu-item-0">Category</a>
+                        <a href="{{ url(getRoutePrefix() . '/sortby/'.$user->id.'/latest'  ) }}"
+                            @class([
+                                'text-gray-700 block px-4 py-2 text-sm',
+                                isset($sortby) && $sortby === 'latest' ? 'bg-red-800 text-white' : '',
+                            ]) role="menuitem" tabindex="-1"
+                            id="menu-item-1">Files</a>
+                    </div>
+                </div>
+            </div>
             <label class="serachlabel flex justify-end" for="" class="">
                 <input type="text" id="myInput" placeholder="search"
-                    class="serachinput bg-red-800 px-5 py-1  text-white flex">
+                    class="serachinput bg-red-800 px-5 py-1 ring-0  text-white flex">
                 <img class="absolute z-10 top-1/4 mr-2" width="20" src="{{ asset('icons/search.svg') }}" alt="">
             </label>
         </div>
-        @foreach (config('smm.file_category') as $category)
+      
+        
+        
+        @foreach ($categories as $category)
             @if (fileCatCount($category, $user->id) > 0 && $category !== 'Credit Report')
-                @component('components.accordion', [
-                    'title' => $category,
-                    'color' => 'bg-red-800',
-                    'count' => fileCatCount($category, $user->id),
-                ])
-                    @foreach ($files as $file)
-                        @if ($file->category === $category)
-                            <table class="w-full">
-                                <tbody class="tablebody">
-                                    <tr @class(['mb-5', 'bg-gray-200' => $loop->odd])>
-                                        <td class="text-center" width="30%">
+                <div class="searchablediv">
+                    @component('components.accordion', [
+                        'title' => $category,
+                        'color' => 'bg-red-800',
+                        'count' => fileCatCount($category, $user->id),
+                    ])
+                        @foreach ($files as $file)
+                            @if ($file->category === $category)
+                                <div class="searchablediv">
+                                    <div @class([
+                                        'mb-5 flex justify-evenly items-center',
+                                        'bg-gray-200' => $loop->odd,
+                                    ])>
+                                        <div class="text-center" width="30%">
                                             <div class="font-bold mb-2">File Name</div>
                                             <div class="font-bold mb-2">Category</div>
                                             <div class="font-bold mb-2">Upload Date</div>
                                             <div class="font-bold mb-2">Uploaded By</div>
                                             <div class="font-bold mb-2">User ID</div>
-                                        </td>
-                                        <td width="30%">
+                                        </div>
+                                        <div width="30%">
                                             <!-- File Name -->
                                             <div class="mb-2">
                                                 <a href="{{ asset($file->file_path) }}" class="hover:text-blue-500 inline">
@@ -180,12 +205,13 @@
                                             <!-- Upload Date -->
                                             <div class="mb-2"> {{ convertDBDateUSFormat($file->created_at) }}</div>
                                             <!-- Uploaded By -->
-                                            <div class="mb-2">{{ $file->uploadedBy ? $file->uploadedBy->name : '' }}</div>
+                                            <div class="mb-2">{{ $file->uploadedBy ? $file->uploadedBy->name : '' }}
+                                            </div>
                                             <!-- User ID -->
                                             <div class="mb-2">{{ $file->uploadedBy ? $file->uploadedBy->email : '' }}
                                             </div>
-                                        </td>
-                                        <td width="30%">
+                                        </div>
+                                        <div width="30%">
                                             <!-- Sent By Client -->
                                             <div class="flex space-x-4">
                                                 <label for="status-verified{{ $file->id }}" class="font-bold">Sent By
@@ -233,8 +259,8 @@
                                                     </div>
                                                 </form>
                                             </div>
-                                        </td>
-                                        <td>
+                                        </div>
+                                        <div class="flex align-center">
                                             <a class="delete" data="Delete" title="Delete this file"
                                                 href="{{ url(getRoutePrefix() . '/delete-file/' . $file->id) }}">
                                                 <button class="bg-themered tracking-wide font-semibold capitalize text-xl">
@@ -242,13 +268,13 @@
                                                         class="p-1 w-7">
                                                 </button>
                                             </a>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        @endif
-                    @endforeach
-                @endcomponent
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    @endcomponent
+                </div>
             @endif
         @endforeach
     </div>
@@ -274,6 +300,20 @@
             $('#user-table').removeClass("no-footer dataTable");
         });
         $(document).on("click", function(e) {
+            if (!$(e.target).closest(".categoryContainer").length) {
+                // Clicked outside of the .categoryContainer
+                $('.categoryMenu').addClass('hidden');
+            }
+        });
+
+        $(".categoryButton").click(function(e) {
+            e.stopPropagation(); // Prevent the document click event from firing
+            $('.categoryMenu').toggleClass('hidden'); // Toggle visibility
+        });
+
+
+
+        $(document).on("click", function(e) {
             if (!$(e.target).closest(".dropdownContainer").length) {
                 // Clicked outside of the .dropdownContainer
                 $('.dropdownMenu').addClass('hidden');
@@ -286,17 +326,14 @@
         });
 
         $(document).ready(function() {
-         
-
-
-
             $("#myInput").on("keyup", function() {
                 var value = $(this).val().toLowerCase();
-                $(".tablebody tr").filter(function() {
+                $(".searchablediv").filter(function() {
                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
             });
         });
+
         (function() {
             let textarea = document.querySelectorAll(".comments");
             for (let i = 0; i < textarea.length; i++) {
@@ -320,7 +357,6 @@
             });
             $('#files-table_wrapper').css('width', '100%');
             $('select[name="files-table_length"]').css('width', '4rem');
-
         });
     </script>
     <script>

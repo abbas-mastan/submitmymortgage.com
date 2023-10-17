@@ -4,12 +4,12 @@
 
 @foreach ($teams as $team)
     <script>
-        new DataTable("#{{ str_replace(' ', '', $team->name) }}-table");
-        $("#{{ str_replace(' ', '', $team->name) }}-table_length").css('display', 'none');
-        $("#{{ str_replace(' ', '', $team->name) }}-table_filter").css('display', 'none');
-        $("#{{ str_replace(' ', '', $team->name) }}-table_wrapper").css('box-shadow', '0px 0px 11px 0px gray');
-        $(`select[name="{{ $team->name }}-table_length"]`).addClass('w-16');
-        $(`select[name="{{ $team->name }}-table_length"]`).addClass('mb-3');
+        new DataTable("#{{ str_replace(' ', '', $team->name) }}-table{{$team->id}}");
+        $("#{{ str_replace(' ', '', $team->name) }}-table{{$team->id}}_length").css('display', 'none');
+        $("#{{ str_replace(' ', '', $team->name) }}-table{{$team->id}}_filter").css('display', 'none');
+        $("#{{ str_replace(' ', '', $team->name) }}-table{{$team->id}}_wrapper").css('box-shadow', '0px 0px 11px 0px gray');
+        $(`select[name="{{ $team->name }}-table{{$team->id}}_length"]`).addClass('w-16');
+        $(`select[name="{{ $team->name }}-table{{$team->id}}_length"]`).addClass('mb-3');
     </script>
 @endforeach
 <script>

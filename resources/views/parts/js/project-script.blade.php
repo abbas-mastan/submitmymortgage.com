@@ -4,13 +4,13 @@
 
 @foreach ($projects as $project)
     <script>
-        new DataTable("#{{ str_replace(' ', '', $project->name . $loop->index) }}-table");
-        $("#{{ str_replace(' ', '', $project->name . $loop->index) }}-table_length").css('display', 'none');
-        $("#{{ str_replace(' ', '', $project->name . $loop->index) }}-table_filter").css('display', 'none');
-        $("#{{ str_replace(' ', '', $project->name . $loop->index) }}-table_wrapper").css('box-shadow',
+        new DataTable("#{{ str_replace(' ', '', $project->name . $project->id) }}-table");
+        $("#{{ str_replace(' ', '', $project->name . $project->id) }}-table_length").css('display', 'none');
+        $("#{{ str_replace(' ', '', $project->name . $project->id) }}-table_filter").css('display', 'none');
+        $("#{{ str_replace(' ', '', $project->name . $project->id) }}-table_wrapper").css('box-shadow',
             '0px 0px 11px 0px gray');
-        $(`select[name="{{ $project->name . $loop->index }}-table_length"]`).addClass('w-16');
-        $(`select[name="{{ $project->name . $loop->index }}-table_length"]`).addClass('mb-3');
+        $(`select[name="{{ $project->name . $project->id }}-table_length"]`).addClass('w-16');
+        $(`select[name="{{ $project->name . $project->id }}-table_length"]`).addClass('mb-3');
     </script>
 @endforeach
 @can('isAdmin')

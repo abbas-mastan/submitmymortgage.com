@@ -353,6 +353,9 @@ class AdminController extends Controller
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
         if ($admin->role == 'Admin') {
             $data['projects'] = Project::all();
+            $data['enableProjects'] = Project::where('status','enable')->get();
+            $data['disableProjects'] = Project::where('status','disable')->get();
+            $data['closeProjects'] = Project::where('status','close')->get();
             $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
             $data['teams'] = Team::where('disable',false)->get();
             $data['trashed'] = User::onlyTrashed()->get();
@@ -365,7 +368,7 @@ class AdminController extends Controller
             $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
             $data['projects'] = Project::where('created_by', $admin->id)->get();
 
-            foreach (Project::all() as $project) {
+            foreach (Project::where('status','enable') as $project) {
                 if (in_array($userId, $project->managers[2])) {
                     $data['projects']->push($project);
                 }
@@ -374,7 +377,29 @@ class AdminController extends Controller
         }
         return view('admin.newpages.projects', $data);
     }
-
+   
+    public function ProjectOverview(Request $request, $id = -1,$sortby = null)
+    {
+       if ($request->ajax()) {
+            $data['attachments'] = \App\Models\Attachment::where('user_id', Auth::id())->paginate(2);
+            return $data;
+        }
+        $data = AdminService::filesCat($request, $id);
+        if($sortby && $sortby === 'latest'){
+            $data['categories'] = [];
+            foreach($data['user']->media()->latest()->get() as $file){
+                $data['categories'][] = $file->category;
+            }
+            $data['sortby'] = $sortby;
+        }else{
+            $data['sortby'] = 'category';
+            $data['categories'] = config('smm.file_category');
+            sort($data['categories']); // Sort the array in ascending order
+        }
+        $data['categories'] = array_unique($data['categories']);
+        return view('admin.newpages.project-overview', $data);
+    }
+    
     public function storeProject(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -487,15 +512,7 @@ class AdminController extends Controller
         $contact->delete();
         return back()->with(['success', 'contact deleted successfully']);
     }
-    public function ProjectOverview(Request $request, $id = -1)
-    {
-        if ($request->ajax()) {
-            $data['attachments'] = \App\Models\Attachment::where('user_id', Auth::id())->paginate(2);
-            return $data;
-        }
-        $data = AdminService::filesCat($request, $id);
-        return view('admin.newpages.project-overview', $data);
-    }
+   
     public function teams($id = null): View
     {
 

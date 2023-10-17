@@ -32,120 +32,120 @@
     @can('isAdmin')
         <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Team</button>
     @endcan
-
-    <h2 class="text-center text-xl border-y-4 py-3  mt-5">Enabled Teams</h2>
+    @if (count($enableTeams) > 0)
+        <h2 class="text-center text-xl border-y-4 py-3  mt-5">Enabled Teams</h2>
+    @endif
     @foreach ($enableTeams as $team)
-            @component('components.accordion', ['title' => $team->name])
-                <table class="w-full display shadow-lg" id="{{ str_replace(' ', '', $team->name) }}-table">
-                    <thead class="hidden bg-gray-300">
-                        <tr>
-                            <th class="pl-2 tracking-wide">
-                                S No.
-                            </th>
-                            <th class="">
-                                Name
-                            </th>
-                            <th class="">
-                                User ID
-                            </th>
-                            <th class="">
-                                Role
-                            </th>
-                            <th class="">
-                                Created By
-                            </th>
-                            <th class="">
-                                Actions
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
+        @component('components.accordion', ['title' => $team->name])
+            <table class="w-full display shadow-lg" id="{{ str_replace(' ', '', $team->name) }}-table{{ $team->id }}">
+                <thead class="hidden bg-gray-300">
+                    <tr>
+                        <th class="pl-2 tracking-wide">
+                            S No.
+                        </th>
+                        <th class="">
+                            Name
+                        </th>
+                        <th class="">
+                            User ID
+                        </th>
+                        <th class="">
+                            Role
+                        </th>
+                        <th class="">
+                            Created By
+                        </th>
+                        <th class="">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @php
+                        $serialNumber = 1;
+                    @endphp
+                    @foreach ($team->users as $key => $user)
                         @php
-                            $serialNumber = 1;
+                            $associates = \App\Models\User::where('id', $user->pivot->associates)->get();
                         @endphp
-                        @foreach ($team->users as $key => $user)
-                            @php
-                                $associates = \App\Models\User::where('id', $user->pivot->associates)->get();
-                            @endphp
-                            @foreach ($associates as $key => $teammember)
-                                <tr class="border-none">
-                                    <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
-                                        {{ $serialNumber }}
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                            {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}>
-                                            {{ $teammember->name }}
+                        @foreach ($associates as $key => $teammember)
+                            <tr class="border-none">
+                                <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
+                                    {{ $serialNumber }}
+                                </td>
+                                <td class=" pl-2 tracking-wide border border-l-0">
+                                    <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
+                                        {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}>
+                                        {{ $teammember->name }}
+                                    </a>
+                                    @if (Auth::user()->role === 'Admiin')
+                                        <a title="Edit this user"
+                                            href="{{ url(getRoutePrefix() . '/add-user/' . $teammember->id) }}">
+                                            <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
                                         </a>
-                                        @if (Auth::user()->role === 'Admiin')
-                                            <a title="Edit this user"
-                                                href="{{ url(getRoutePrefix() . '/add-user/' . $teammember->id) }}">
-                                                <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
-                                            </a>
-                                        @endif
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        {{ $teammember->email }}
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        {{ $teammember->role }}
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        @if ($teammember->created_by)
-                                            {{ \App\Models\User::where('id', $teammember->created_by)->first()->name }}
-                                            |
-                                            {{ \App\Models\User::where('id', $teammember->created_by)->first()->role }}
-                                        @endif
-                                    </td>
-                                    <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                        @if (session('role') == 'Admin')
-                                            <a data="Delete" disabaled class="delete"
-                                                href="{{ url(getRoutePrefix() . "/delete-user-from-team/$team->id/" . $teammember->id) }}">
-                                                <button
-                                                    class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
-                                                    <img src="{{ asset('icons/trash.svg') }}" alt="">
+                                    @endif
+                                </td>
+                                <td class=" pl-2 tracking-wide border border-l-0">
+                                    {{ $teammember->email }}
+                                </td>
+                                <td class=" pl-2 tracking-wide border border-l-0">
+                                    {{ $teammember->role }}
+                                </td>
+                                <td class=" pl-2 tracking-wide border border-l-0">
+                                    @if ($teammember->created_by)
+                                        {{ \App\Models\User::where('id', $teammember->created_by)->first()->name }}
+                                        |
+                                        {{ \App\Models\User::where('id', $teammember->created_by)->first()->role }}
+                                    @endif
+                                </td>
+                                <td class="flex pl-2 justify-center tracking-wide border border-r-0">
+                                    @if (session('role') == 'Admin')
+                                        <a data="Delete" disabaled class="delete"
+                                            href="{{ url(getRoutePrefix() . "/delete-user-from-team/$team->id/" . $teammember->id) }}">
+                                            <button
+                                                class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
+                                                <img src="{{ asset('icons/trash.svg') }}" alt="">
+                                            </button>
+                                        </a>
+                                        <form method="POST" action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                            @csrf
+                                            <input type="hidden" name="user_id" value="{{ $teammember->id }}">
+                                            <span class="loginBtn">
+                                                <button type="submit"
+                                                    class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
+                                                    <img src="{{ asset('icons/user.svg') }}" alt="">
                                                 </button>
-                                            </a>
-                                            <form method="POST"
-                                                action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
-                                                @csrf
-                                                <input type="hidden" name="user_id" value="{{ $teammember->id }}">
-                                                <span class="loginBtn">
-                                                    <button type="submit"
-                                                        class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
-                                                        <img src="{{ asset('icons/user.svg') }}" alt="">
-                                                    </button>
-                                                </span>
-                                            </form>
-                                        @endif
-                                    </td>
-                                </tr>
-                                @php
-                                    $serialNumber++;
-                                @endphp
-                            @endforeach
+                                            </span>
+                                        </form>
+                                    @endif
+                                </td>
+                            </tr>
+                            @php
+                                $serialNumber++;
+                            @endphp
                         @endforeach
-                    </tbody>
-                </table>
-                <div class="mt-5">
-                    <a data="{{ $team->disable ? 'Enable' : 'Disable' }}" class="delete"
-                        href="{{ url(getAdminRoutePrefix() . '/delete-team/' . $team->id) }}">
-                        <button class="bg-red-800 px-5 py-2 text-white">
-                            {{ $team->disable ? 'Enable' : 'Disable' }} Team
-                        </button>
-                    </a>
-                </div>
-            @endcomponent
+                    @endforeach
+                </tbody>
+            </table>
+            <div class="mt-5">
+                <a data="{{ $team->disable ? 'Enable' : 'Disable' }}" class="delete"
+                    href="{{ url(getAdminRoutePrefix() . '/delete-team/' . $team->id) }}">
+                    <button class="bg-red-800 px-5 py-2 text-white">
+                        {{ $team->disable ? 'Enable' : 'Disable' }} Team
+                    </button>
+                </a>
+            </div>
+        @endcomponent
     @endforeach
 
 
-    @if ($disableTeams)
-         <h2 class="text-center text-xl border-y-4 py-3  mt-5">Disabled Teams</h2>
+    @if (count($disableTeams) > 0)
+        <h2 class="text-center text-xl border-y-4 py-3  mt-5">Disabled Teams</h2>
     @endif
     @foreach ($disableTeams as $key => $team)
         @if ($team->disable)
             @component('components.accordion', ['title' => $team->name])
-                <table class="w-full display shadow-lg" id="{{ str_replace(' ', '', $team->name) }}-table">
+                <table class="w-full display shadow-lg" id="{{ str_replace(' ', '', $team->name) }}-table{{ $team->id }}">
                     <thead class="hidden bg-gray-300">
                         <tr>
                             <th class="pl-2 tracking-wide">
