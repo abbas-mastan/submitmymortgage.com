@@ -11,6 +11,10 @@ class Project extends Model
     protected $guarded = [];
 
 
+    protected $casts = [
+        'managers' => 'array',
+    ];
+    
     public function setManagersAttribute($value)
     {
         // Convert the array to JSON format

@@ -15,27 +15,32 @@
 @endforeach
 @can('isAdmin')
     <script>
-        $.each(['associate', 'processor', 'juniorAssociate'], function(indexInArray, input) {
-            $(document).on('change', "input[name='" + input + "[]']", function(e) {
-                e.preventDefault();
-                var indexInArray = $("input[name='" + input + "[]']:checked").length;
-                var buttonText = '.' + input + 'ButtonText';
-                if (indexInArray > 0) {
-                    $(buttonText).text(indexInArray + " " + input + (indexInArray > 1 ?
-                        "s" : "") + " are selected");
-                } else {
-                    $(buttonText).text("Select " + input);
-                }
-            });
-        });
-
-
         $(document).ready(function() {
+
+            $('.AddNewMember').click(function (e) { 
+                e.preventDefault();
+                alert('asdfasdf');
+                $('AddNewMemberModal').removeClass('hidden');
+            });
+
+
+            $.each(['associate', 'processor', 'juniorAssociate'], function(indexInArray, input) {
+                $(document).on('change', "input[name='" + input + "[]']", function(e) {
+                    e.preventDefault();
+                    var indexInArray = $("input[name='" + input + "[]']:checked").length;
+                    var buttonText = '.' + input + 'ButtonText';
+                    if (indexInArray > 0) {
+                        $(buttonText).text(indexInArray + " " + input + (indexInArray > 1 ?
+                            "s" : "") + " are selected");
+                    } else {
+                        $(buttonText).text("Select " + input);
+                    }
+                });
+            });
             // Function to close all dropdowns
             function closeDropdowns() {
                 $('.associateDropdown, .jrAssociateDropdown, .processorDropdown').addClass('hidden');
             }
-
             // Click event listener for the document
             $(document).on('click', function(e) {
                 if (!$(e.target).closest('.associateButton, .jrAssociateButton, .processorButton').length &&
@@ -52,76 +57,77 @@
                     $(selector + 'Dropdown').toggleClass('hidden');
                 });
             });
-        });
 
 
-        $('.newProject, .closeModal').click(function(e) {
-            e.preventDefault();
-            $('#newProjectModal').toggleClass('hidden');
-        });
-        $('#email').attr('disabed', 'disabled');
-        $("#sendemail").change(function(e) {
-            e.preventDefault();
-            $('.email').toggleClass('hidden');
-            if ($('.email').hasClass('hidden')) {
-                $('#email').attr('disabled', 'disabled');
-            } else {
-                $('#email').removeAttr('disabled');
-            }
-        });
+            $('.newProject, .closeModal').click(function(e) {
+                e.preventDefault();
+                $('#newProjectModal').toggleClass('hidden');
+            });
 
-        $("#addprocessor").change(function(e) {
-            e.preventDefault();
-            $('.processor').toggleClass('hidden');
-            if ($('.processor').hasClass('hidden')) {
-                $('#processor').attr('disabled', 'disabled');
-            } else {
-                $('#processor').removeAttr('disabled');
-            }
-        });
+            $('#email').attr('disabed', 'disabled');
+            $("#sendemail").change(function(e) {
+                e.preventDefault();
+                $('.email').toggleClass('hidden');
+                if ($('.email').hasClass('hidden')) {
+                    $('#email').attr('disabled', 'disabled');
+                } else {
+                    $('#email').removeAttr('disabled');
+                }
+            });
 
-        $('.nameContinue').click(function(e) {
-            e.preventDefault();
-            $('#name_error').text($('#name').val() === '' ? 'This field is required' : '');
-            if ($('.email').hasClass('hidden')) {
-                $('#email_error').text('');
-            } else {
-                $('#email_error').text($('#email').val() === '' ? 'This field is required' : '');
-            }
-            $('#borroweraddress_error').text($('#borroweraddress').val() === '' ? 'This field is required' : '');
+            $("#addprocessor").change(function(e) {
+                e.preventDefault();
+                $('.processor').toggleClass('hidden');
+                if ($('.processor').hasClass('hidden')) {
+                    $('#processor').attr('disabled', 'disabled');
+                } else {
+                    $('#processor').removeAttr('disabled');
+                }
+            });
 
-            if ($('#name_error').text() === '' && $('#email_error').text() === '' && $(
-                    '#borroweraddress_error').text() === '') {
-                $('.namepart').addClass('hidden');
-                $('.typepart').removeClass('hidden');
-            }
-        });
+            $('.nameContinue').click(function(e) {
+                e.preventDefault();
+                $('#name_error').text($('#name').val() === '' ? 'This field is required' : '');
+                if ($('.email').hasClass('hidden')) {
+                    $('#email_error').text('');
+                } else {
+                    $('#email_error').text($('#email').val() === '' ? 'This field is required' : '');
+                }
+                $('#borroweraddress_error').text($('#borroweraddress').val() === '' ?
+                    'This field is required' : '');
 
-        $('.typeContinue').click(function(e) {
-            e.preventDefault();
-            var finance = $('#financetype_error').text($('#financetype').find(':checked').html() ===
-                "Select Finance Type" ? 'This field is required' : '');
-            var loan = $('#loantype_error').text($('#loantype').find(':checked').html() === "Select Loan Type" ?
-                'This field is required' : '');
-            if ($('#financetype_error').text() === '' && $('#loantype_error').text() === '') {
+                if ($('#name_error').text() === '' && $('#email_error').text() === '' && $(
+                        '#borroweraddress_error').text() === '') {
+                    $('.namepart').addClass('hidden');
+                    $('.typepart').removeClass('hidden');
+                }
+            });
+
+            $('.typeContinue').click(function(e) {
+                e.preventDefault();
+                var finance = $('#financetype_error').text($('#financetype').find(':checked').html() ===
+                    "Select Finance Type" ? 'This field is required' : '');
+                var loan = $('#loantype_error').text($('#loantype').find(':checked').html() ===
+                    "Select Loan Type" ?
+                    'This field is required' : '');
+                if ($('#financetype_error').text() === '' && $('#loantype_error').text() === '') {
+                    $('.typepart').addClass('hidden');
+                    $('.teampart').removeClass('hidden');
+                }
+            });
+
+
+            $(".backToname").click(function(e) {
+                e.preventDefault();
                 $('.typepart').addClass('hidden');
-                $('.teampart').removeClass('hidden');
-            }
-        });
+                $('.namepart').removeClass('hidden');
+            });
+            $(".backTotype").click(function(e) {
+                e.preventDefault();
+                $('.teampart').addClass('hidden');
+                $('.typepart').removeClass('hidden');
+            });
 
-
-        $(".backToname").click(function(e) {
-            e.preventDefault();
-            $('.typepart').addClass('hidden');
-            $('.namepart').removeClass('hidden');
-        });
-        $(".backTotype").click(function(e) {
-            e.preventDefault();
-            $('.teampart').addClass('hidden');
-            $('.typepart').removeClass('hidden');
-        });
-
-        $(document).ready(function() {
             $("#team").change(function() {
                 $(".processorDropdown").empty();
                 $(".associateDropdown").empty();

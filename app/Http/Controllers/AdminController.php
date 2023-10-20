@@ -3,12 +3,21 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationRequest;
-use App\Models\{UserCategory,User,Team,Info,Contact,Application,Project};
+use App\Models\Application;
+use App\Models\Contact;
+use App\Models\Info;
+use App\Models\Project;
+use App\Models\Team;
+use App\Models\User;
+use App\Models\UserCategory;
 use App\Notifications\FileUploadNotification;
-use App\Services\{UserService,CommonService,AdminService};
+use App\Services\AdminService;
+use App\Services\CommonService;
+use App\Services\UserService;
 use Faker\Factory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\{Validator,Auth};
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class AdminController extends Controller
@@ -353,11 +362,11 @@ class AdminController extends Controller
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
         if ($admin->role == 'Admin') {
             $data['projects'] = Project::all();
-            $data['enableProjects'] = Project::where('status','enable')->get();
-            $data['disableProjects'] = Project::where('status','disable')->get();
-            $data['closeProjects'] = Project::where('status','close')->get();
+            $data['enableProjects'] = Project::where('status', 'enable')->get();
+            $data['disableProjects'] = Project::where('status', 'disable')->get();
+            $data['closeProjects'] = Project::where('status', 'close')->get();
             $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
-            $data['teams'] = Team::where('disable',false)->get();
+            $data['teams'] = Team::where('disable', false)->get();
             $data['trashed'] = User::onlyTrashed()->get();
         } else {
             $userId = Auth::id();
@@ -368,7 +377,7 @@ class AdminController extends Controller
             $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
             $data['projects'] = Project::where('created_by', $admin->id)->get();
 
-            foreach (Project::where('status','enable') as $project) {
+            foreach (Project::where('status', 'enable') as $project) {
                 if (in_array($userId, $project->managers[2])) {
                     $data['projects']->push($project);
                 }
@@ -377,21 +386,21 @@ class AdminController extends Controller
         }
         return view('admin.newpages.projects', $data);
     }
-   
-    public function ProjectOverview(Request $request, $id = -1,$sortby = null)
+
+    public function ProjectOverview(Request $request, $id = -1, $sortby = null)
     {
-       if ($request->ajax()) {
+        if ($request->ajax()) {
             $data['attachments'] = \App\Models\Attachment::where('user_id', Auth::id())->paginate(2);
             return $data;
         }
         $data = AdminService::filesCat($request, $id);
-        if($sortby && $sortby === 'latest'){
+        if ($sortby && $sortby === 'latest') {
             $data['categories'] = [];
-            foreach($data['user']->media()->latest()->get() as $file){
+            foreach ($data['user']->media()->latest()->get() as $file) {
                 $data['categories'][] = $file->category;
             }
             $data['sortby'] = $sortby;
-        }else{
+        } else {
             $data['sortby'] = 'category';
             $data['categories'] = config('smm.file_category');
             sort($data['categories']); // Sort the array in ascending order
@@ -399,7 +408,7 @@ class AdminController extends Controller
         $data['categories'] = array_unique($data['categories']);
         return view('admin.newpages.project-overview', $data);
     }
-    
+
     public function storeProject(Request $request)
     {
         $validator = Validator::make($request->all(), [
@@ -512,15 +521,15 @@ class AdminController extends Controller
         $contact->delete();
         return back()->with(['success', 'contact deleted successfully']);
     }
-   
+
     public function teams($id = null): View
     {
 
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
         if ($admin->role == 'Admin') {
             $data['teams'] = Team::all();
-            $data['enableTeams'] = Team::where('disable',false)->get();
-            $data['disableTeams'] = Team::where('disable',true)->get();
+            $data['enableTeams'] = Team::where('disable', false)->get();
+            $data['disableTeams'] = Team::where('disable', true)->get();
             $data['users'] =
             User::where('role', '!=', 'Admin')
                 ->whereIn('role', ['Associate', 'Processor', 'Junior Associate'])
@@ -542,6 +551,26 @@ class AdminController extends Controller
         return back()->with('msg_success', 'Team created successfully');
     }
 
+    public function deleteProjectUser(Project $project, $id)
+    {
+        $jsonData = $project->managers;
+        foreach ($jsonData as $key => $innerArray) {
+            if (is_array($innerArray)) {
+                if (($index = array_search($id, $innerArray)) !== false) {
+                    unset($jsonData[$key][$index]);
+                    if (empty($jsonData[$key])) {
+                        unset($jsonData[$key]);
+                    }
+                }
+            }
+        }
+        $updatedJsonData = array_values($jsonData);
+        $project->managers = $updatedJsonData;
+        $project->save();
+
+        return redirect()->back();
+    }
+
     public function deleteTeamMember(Team $team, User $user)
     {
         $team->users()->wherePivot('associates', $user->id)->detach();
@@ -550,14 +579,18 @@ class AdminController extends Controller
 
     public function deleteTeam(Team $team)
     {
-        if ($team->disable) $team->update(['disable' => false]);
-        else $team->update(['disable' => true]);
+        if ($team->disable) {
+            $team->update(['disable' => false]);
+        } else {
+            $team->update(['disable' => true]);
+        }
+
         return back()->with('msg_success', " \"$team->name\" team has been " . ($team->disable ? "Disabled" : "Enabled") . "  Successfully");
     }
 
     public function getUsersByProcessor($id, $teamid = 0)
     {
-        $associates = AdminService::getUsersByProcessor($id,$teamid);
+        $associates = AdminService::getUsersByProcessor($id, $teamid);
         return response()->json($associates, 200);
     }
     public function markAsRead($id)
@@ -566,10 +599,10 @@ class AdminController extends Controller
         return back();
     }
 
-    public function changeProjectStatus($type,Project $project)
+    public function changeProjectStatus($type, Project $project)
     {
-        $project->update(['status'=>$type]);
-        return redirect(getRoutePrefix().'/projects')->with('msg_success',"\"$project->name\" project $type"."d successfully");
+        $project->update(['status' => $type]);
+        return redirect(getRoutePrefix() . '/projects')->with('msg_success', "\"$project->name\" project $type" . "d successfully");
     }
 
 }

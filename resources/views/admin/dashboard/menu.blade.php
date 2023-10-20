@@ -68,6 +68,11 @@
                 </div>
             </div>
         @endif
+        <div class="mt-8">
+            <button class="newProject underline text-2xl mt-5 text-red-700 capitalize font-bold">
+                intake form submission
+            </button>
+        </div>
     </div>
     @if (Auth::user()->role !== 'Borrower' && count(Auth::user()->notifications) > 0)
         <div class="pl-5 pr-1 shadow-lg rounded-xl md:w-1/3 w-full mt-8 bg-white">
