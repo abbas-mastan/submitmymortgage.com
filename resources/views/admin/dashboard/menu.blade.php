@@ -1,3 +1,4 @@
+<x-form.intake-modal-form />
 <div class="flex justify-evenly gap-8 align-center">
     <div class="sm:w-2/3 w-full">
         <div @class([

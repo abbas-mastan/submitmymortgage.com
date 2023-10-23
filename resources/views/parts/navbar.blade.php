@@ -49,8 +49,9 @@
             <a href="{{ url('/') }}" class="font-bold">
                 <img src="{{ asset('icons/bell.svg') }}" alt="" class="">
             </a>
-            @if (count(Auth::user()->unreadnotifications) > 0)
-                <span class="absolute bg-themered text-white rounded-full text-xs ml-4 px-1.5 py-0.5">{{count(Auth::user()->unreadnotifications)}}</span>
+            @php($unreadNotifications = count(Auth::user()->unreadnotifications))
+            @if ($unreadNotifications > 0)
+                <span class="absolute bg-themered text-white rounded-full text-xs ml-4 px-1.5 py-0.5">{{$unreadNotifications > 9 ? "9+" : $unreadNotifications }}</span>
             @endif
         </div>
         <div class=" mr-20 pt-3 ">

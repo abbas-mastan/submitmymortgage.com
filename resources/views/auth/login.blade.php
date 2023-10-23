@@ -7,8 +7,6 @@
     </style>
 @endsection
 @section('content')
-{{-- {{dd(session()->all())}}
-{{dump(session('url'))}} --}}
     <div class="mx-auto w-full sm:w-1/2 md:w-1/3 mt-28 mb-10">
         <div class="">
             <h1 class="xl:text-3xl text-2xl uppercase text-center font-bold text-white">
