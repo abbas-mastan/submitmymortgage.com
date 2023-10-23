@@ -70,12 +70,59 @@
     </style>
 @endsection
 @section('content')
-    @include('admin.file.cards')
+    <x-flex-card title="Files Uploaded" titlecounts="{{ $filesCount }}" iconurl="{{ asset('icons/disk.svg') }}" />
+    @component('components.modal-background', ['title' => 'Add Items to Share', 'width' => 'max-w-md'])
+        <table class="firstTable border border-1 border-gray-300 w-full">
+            <thead class="border border-1 border-gray-300 bg-gradient-to-b from-gradientStart to-gradientEnd text-white">
+                <th class="py-3 border border-1 border-gray-300">Items</th>
+                <th class="py-3 border border-1 border-gray-300">Action</th>
+            </thead>
+            <tbody>
+                @php
+                    $itemsToShare = json_decode($user->required_categories);
+                @endphp
+                @foreach ($itemsToShare as $item)
+                    <tr @class(['items-center text-center', 'bg-gray-100' => $loop->odd])>
+                        <td class="py-2 border border-1 border-gray-300">{{ $item }}</td>
+                        <td class="py-2 flex justify-center text-center border border-1 border-gray-300">
+                            <a href="{{ url(getAdminRoutePrefix().'/remove-req-cat').'/'. $item }}">
+                                <img class="bg-themered p-3" src="{{ asset('icons/trash.svg') }}" />
+                            </a>
+                        </td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <table class="secondTable hidden border border-1 border-gray-300 w-full">
+            <thead class="border border-1 border-gray-300 bg-gradient-to-b from-gradientStart to-gradientEnd text-white">
+                <th class="py-1 px-8 border border-1 border-gray-300"></th>
+                <th class="py-1 border border-1 border-gray-300">Items</th>
+            </thead>
+            <tbody>
+                @php
+                    $filecategories = array_diff(config('smm.file_category'), $itemsToShare);
+                @endphp
+                @foreach ($filecategories as $category)
+                    <tr @class(['items-center text-center', 'bg-gray-100' => $loop->odd])>
+                        <td class="py-1.5 flex justify-center text-center border border-1 border-gray-300">
+                            <input type="checkbox" name="category[]" id="{{ $category }}">
+                        </td>
+                        <td class="py-0.5 border border-1 border-gray-300">{{ $category }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+        <div class="buttonsParent flex justify-between items-center mt-3">
+            <button class="backButton hidden bg-red-700 text-white py-2 rounded-full px-5">Back</button>
+            <button class="requestButton underline text-xl text-themered capitalize font-bold">Request Another Item</button>
+            <button class="bg-red-700 text-white py-2 rounded-full px-5">Next</button>
+        </div>
+    @endcomponent
     <div class="">
         @include('elems.upload-btn')
         <div class="flex justify-between">
             <div class="flex align-center">
-                <Button class="bg-red-800 px-5 py-2 text-white flex">
+                <Button class="newProject bg-red-800 px-5 py-2 text-white flex">
                     <img class="w-7 mr-2" src="{{ asset('icons/share.png') }}" alt="">
                     <span class="pt-1">
                         Share Upload Link
@@ -108,8 +155,8 @@
                                 <g>
                                     <path style="fill:#ffffff;"
                                         d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
-                                                                                                c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
-                                                                                                c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                                                                                                                            c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
+                                                                                                                                            c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
                                 </g>
                             </g>
                         </svg>
@@ -130,7 +177,6 @@
                 </div>
             </div>
         </div>
-
         @include('admin.file.info-table')
     </div>
     <div class="">
@@ -142,30 +188,26 @@
                 <button class="categoryButton bg-red-800 px-5 py-1 text-white flex newProject">Sort By</button>
                 <div class="categoryMenu hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
                     <div class="py-1">
-                        <a href="{{ url(getRoutePrefix() . '/sortby/'.$user->id.'/category'  ) }}"
+                        <a href="{{ url(getRoutePrefix() . '/sortby/' . $user->id . '/category') }}"
                             @class([
                                 'text-gray-700 block px-4 py-2 text-sm',
                                 isset($sortby) && $sortby === 'category' ? 'bg-red-800 text-white' : '',
-                            ]) role="menuitem" tabindex="-1"
-                            id="menu-item-0">Category</a>
-                        <a href="{{ url(getRoutePrefix() . '/sortby/'.$user->id.'/latest'  ) }}"
+                            ]) role="menuitem" tabindex="-1" id="menu-item-0">Category</a>
+                        <a href="{{ url(getRoutePrefix() . '/sortby/' . $user->id . '/latest') }}"
                             @class([
                                 'text-gray-700 block px-4 py-2 text-sm',
                                 isset($sortby) && $sortby === 'latest' ? 'bg-red-800 text-white' : '',
-                            ]) role="menuitem" tabindex="-1"
-                            id="menu-item-1">Files</a>
+                            ]) role="menuitem" tabindex="-1" id="menu-item-1">Files</a>
                     </div>
                 </div>
             </div>
             <label class="serachlabel flex justify-end" for="" class="">
                 <input type="text" id="myInput" placeholder="search"
                     class="serachinput bg-red-800 px-5 py-1 ring-0  text-white flex">
-                <img class="absolute z-10 top-1/4 mr-2" width="20" src="{{ asset('icons/search.svg') }}" alt="">
+                <img class="absolute z-10 top-1/4 mr-2" width="20" src="{{ asset('icons/search.svg') }}"
+                    alt="">
             </label>
         </div>
-      
-        
-        
         @foreach ($categories as $category)
             @if (fileCatCount($category, $user->id) > 0 && $category !== 'Credit Report')
                 <div class="searchablediv">
@@ -292,6 +334,27 @@
     <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
+        $('.requestButton, .backButton').click(function(e) {
+            e.preventDefault();
+            $('.firstTable, .secondTable, .requestButton, .backButton').toggleClass('hidden');
+        });
+        $('.newProject, .closeModal').click(function(e) {
+            e.preventDefault();
+            $('#newProjectModal').toggleClass('hidden');
+        });
+
+        $('.secondTable input[type="checkbox"]').change(function() {
+            if ($('.secondTable input[type="checkbox"]:checked').length > 0) {
+                $('.backButton').addClass('hidden');
+                $('.buttonsParent').removeClass('justify-between');
+                $('.buttonsParent').addClass('justify-end');
+            } else {
+                $('.backButton').removeClass('hidden');
+                $('.buttonsParent').removeClass('justify-end');
+                $('.buttonsParent').addClass('justify-between');
+            }
+        });
+
         $(document).ready(function() {
             $("input[type=search]").css("background", "#991b1b");
             $("input[type=search]").attr("placeholder", "search");

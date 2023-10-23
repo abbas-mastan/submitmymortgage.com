@@ -69,8 +69,6 @@
                     <button class="font-bold px-2 bg-red-600 text-white">Logout</button>
                 </a>
             @endif
-
         </div>
     </div>
-
 </div>

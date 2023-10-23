@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -62,7 +61,6 @@
     </script>
     @yield('head')
 </head>
-
 <body class="font-graphik" style="font-family: graphik, sans-serif !important">
     @include('user.file-upload.upload-modal')
     @include('user.file-upload.category-modal')

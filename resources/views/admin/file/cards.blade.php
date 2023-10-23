@@ -1,4 +1,4 @@
-<div class="w-full   my-2">
+<div class="w-full my-2">
     <div class="w-full h-44 ">
         <a href="{{ url(getRoutePrefix() . '/files') }}">
             <div class="flex h-32 bg-gradient-to-b from-gradientStart to-gradientEnd">
