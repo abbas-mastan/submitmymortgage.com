@@ -72,50 +72,59 @@
 @section('content')
     <x-flex-card title="Files Uploaded" titlecounts="{{ $filesCount }}" iconurl="{{ asset('icons/disk.svg') }}" />
     @component('components.modal-background', ['title' => 'Add Items to Share', 'width' => 'max-w-md'])
-        <table class="firstTable border border-1 border-gray-300 w-full">
-            <thead class="border border-1 border-gray-300 bg-gradient-to-b from-gradientStart to-gradientEnd text-white">
-                <th class="py-3 border border-1 border-gray-300">Items</th>
-                <th class="py-3 border border-1 border-gray-300">Action</th>
-            </thead>
-            <tbody>
-                @php
-                    $itemsToShare = json_decode($user->required_categories);
-                @endphp
-                @foreach ($itemsToShare as $item)
-                    <tr @class(['items-center text-center', 'bg-gray-100' => $loop->odd])>
-                        <td class="py-2 border border-1 border-gray-300">{{ $item }}</td>
-                        <td class="py-2 flex justify-center text-center border border-1 border-gray-300">
-                            <a href="{{ url(getAdminRoutePrefix().'/remove-req-cat').'/'. $item }}">
-                                <img class="bg-themered p-3" src="{{ asset('icons/trash.svg') }}" />
-                            </a>
-                        </td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <table class="secondTable hidden border border-1 border-gray-300 w-full">
-            <thead class="border border-1 border-gray-300 bg-gradient-to-b from-gradientStart to-gradientEnd text-white">
-                <th class="py-1 px-8 border border-1 border-gray-300"></th>
-                <th class="py-1 border border-1 border-gray-300">Items</th>
-            </thead>
-            <tbody>
-                @php
-                    $filecategories = array_diff(config('smm.file_category'), $itemsToShare);
-                @endphp
-                @foreach ($filecategories as $category)
-                    <tr @class(['items-center text-center', 'bg-gray-100' => $loop->odd])>
-                        <td class="py-1.5 flex justify-center text-center border border-1 border-gray-300">
-                            <input type="checkbox" name="category[]" id="{{ $category }}">
-                        </td>
-                        <td class="py-0.5 border border-1 border-gray-300">{{ $category }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
-        <div class="buttonsParent flex justify-between items-center mt-3">
-            <button class="backButton hidden bg-red-700 text-white py-2 rounded-full px-5">Back</button>
-            <button class="requestButton underline text-xl text-themered capitalize font-bold">Request Another Item</button>
-            <button class="bg-red-700 text-white py-2 rounded-full px-5">Next</button>
+        <div class="firstTable">
+
+            <table class="firstTable border border-1 border-gray-300 w-full">
+                <thead class="border border-1 border-gray-300 bg-gradient-to-b from-gradientStart to-gradientEnd text-white">
+                    <th class="py-3 border border-1 border-gray-300">Items</th>
+                    <th class="py-3 border border-1 border-gray-300">Action</th>
+                </thead>
+                <tbody class="itemsToShare">
+                    @php
+                        $itemsToShare = ['Bank Statements', "ID/Driver's License", 'Fillable Loan Application'];
+                    @endphp
+                    @foreach ($itemsToShare as $item)
+                        <tr @class(['items-center text-center', 'bg-gray-100' => $loop->odd])>
+                            <td class="py-2 border border-1 border-gray-300">{{ $item }}</td>
+                            <td class="py-2 flex justify-center text-center border border-1 border-gray-300">
+                                <a href="{{ url(getAdminRoutePrefix() . '/remove-req-cat') . '/' . $item }}">
+                                    <img class="bg-themered p-3" src="{{ asset('icons/trash.svg') }}" />
+                                </a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <div class="firstTableButtonsParent flex justify-between items-center mt-3">
+                <button class="requestButton underline text-xl text-themered capitalize font-bold">Request Another Item</button>
+                <button class="bg-red-700 text-white py-2 rounded-full px-5">Next</button>
+            </div>
+        </div>
+        <div class="secondTable hidden">
+            <table class="border border-1 border-gray-300 w-full">
+                <thead class="border border-1 border-gray-300 bg-gradient-to-b from-gradientStart to-gradientEnd text-white">
+                    <th class="py-1 px-8 border border-1 border-gray-300"></th>
+                    <th class="py-1 border border-1 border-gray-300">Items</th>
+                </thead>
+                <tbody>
+                    @php
+                        $itemsToShare[] = 'Loan Application';
+                        $filecategories = array_diff(config('smm.file_category'), $itemsToShare);
+                    @endphp
+                    @foreach ($filecategories as $category)
+                        <tr @class(['items-center text-center', 'bg-gray-100' => $loop->odd])>
+                            <td class="py-1.5 flex justify-center text-center border border-1 border-gray-300">
+                                <input type="checkbox" value="{{ $category }}" name="category[]" id="{{ $category }}">
+                            </td>
+                            <td class="py-0.5 border border-1 border-gray-300">{{ $category }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+            <div class="secondTableButtonsParent flex justify-between items-center mt-3">
+                <button class="backButton bg-red-700 text-white py-2 rounded-full px-5">Back</button>
+                <button class="nextButton bg-red-700 text-white py-2 rounded-full px-5">Next</button>
+            </div>
         </div>
     @endcomponent
     <div class="">
@@ -155,8 +164,8 @@
                                 <g>
                                     <path style="fill:#ffffff;"
                                         d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
-                                                                                                                                            c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
-                                                                                                                                            c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                                                                                                                                                            c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
+                                                                                                                                                                            c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
                                 </g>
                             </g>
                         </svg>
@@ -334,26 +343,63 @@
     <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script>
-        $('.requestButton, .backButton').click(function(e) {
+        $('.requestButton ,.backButton').click(function(e) {
             e.preventDefault();
-            $('.firstTable, .secondTable, .requestButton, .backButton').toggleClass('hidden');
+            $('.firstTable, .secondTable,.requestButton').toggleClass('hidden');
         });
+
+
         $('.newProject, .closeModal').click(function(e) {
             e.preventDefault();
             $('#newProjectModal').toggleClass('hidden');
         });
 
+        $('.nextButton').click(function(e) {
+            e.preventDefault();
+            if ($('.firstTable').hasClass('hidden')) {
+                $('.firstTable').removeClass('hidden');
+                $('.secondTable').addClass('hidden');
+                $('.requestButton').removeClass('hidden');
+            } else {
+                alert('no class')
+            }
+        });
+
         $('.secondTable input[type="checkbox"]').change(function() {
             if ($('.secondTable input[type="checkbox"]:checked').length > 0) {
                 $('.backButton').addClass('hidden');
-                $('.buttonsParent').removeClass('justify-between');
-                $('.buttonsParent').addClass('justify-end');
+                $('.secondTableButtonsParent').removeClass('justify-between');
+                $('.secondTableButtonsParent').addClass('justify-end');
             } else {
                 $('.backButton').removeClass('hidden');
-                $('.buttonsParent').removeClass('justify-end');
-                $('.buttonsParent').addClass('justify-between');
+                $('.secondTableButtonsParent').removeClass('justify-end');
+                $('.secondTableButtonsParent').addClass('justify-between');
             }
         });
+
+        $('.secondTable input[type="checkbox"]').change(function(e) {
+            e.preventDefault();
+            var checkboxValue = $(this).val();
+            if ($(this).prop('checked')) {
+                if ($('.itemsToShare').length > 0) {
+                    var newRow = `<tr class="items-center text-center bg-gray-100">
+                <td class="py-2 border border-1 border-gray-300">${checkboxValue}</td>
+                <td class="py-2 flex justify-center text-center border border-1 border-gray-300">
+                    <a href="{{ getAdminRoutePrefix() }}/remove-req-cat/${checkboxValue}">
+                        <img class="bg-themered p-3" src="{{ asset('icons/trash.svg') }}">
+                    </a>
+                </td>
+            </tr>`;
+                    $('.itemsToShare').append(newRow);
+                }
+            } else {
+                $('.itemsToShare td:contains(' + checkboxValue + ')').closest('tr').remove();
+            }
+        });
+
+
+
+
 
         $(document).ready(function() {
             $("input[type=search]").css("background", "#991b1b");
