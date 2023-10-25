@@ -194,7 +194,7 @@
     <div class="">
         <div class="flex justify-between mb-5">
             <div class="relative categoryContainer">
-                <button class="categoryButton bg-red-800 px-5 py-1 text-white flex newProject">Sort By</button>
+                <button class="categoryButton bg-red-800 px-5 py-1 text-white flex">Sort By</button>
                 <div class="categoryMenu hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
                     <div class="py-1">
                         <a href="{{ url(getRoutePrefix() . '/sortby/' . $user->id . '/category') }}"
