@@ -28,7 +28,9 @@
             $('.secondTable').addClass('hidden');
             $('.requestButton').removeClass('hidden');
         } else {
-            alert('no class')
+            $('.modalTitle').text('Share Submit Link');
+            $('.firstTable').addClass('hidden');
+            $('.submitPart').removeClass('hidden');
         }
     });
 
@@ -43,6 +45,8 @@
             $('.secondTableButtonsParent').addClass('justify-between');
         }
     });
+
+
 
     $(document).on('change', '.secondTable input[type="checkbox"]', function(e) {
         e.preventDefault();
@@ -80,6 +84,12 @@
                     </tr>`;
         $(".secondTableTbody td:contains("+value+")").closest('tr').remove();
         $('.secondTableTbody').append(removedRow);
+    });
+
+
+    $('.submitPart form').submit(function (e) { 
+        e.preventDefault();
+        console.log($('.submitPart form input[name="email"]').val());
     });
 
 

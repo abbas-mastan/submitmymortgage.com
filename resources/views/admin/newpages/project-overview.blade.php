@@ -67,13 +67,15 @@
         .svg {
             fill: white;
         }
+        .icon{
+            filter:invert(1);
+        }
     </style>
 @endsection
 @section('content')
     <x-flex-card title="Files Uploaded" titlecounts="{{ $filesCount }}" iconurl="{{ asset('icons/disk.svg') }}" />
     @component('components.modal-background', ['title' => 'Add Items to Share', 'width' => 'max-w-md'])
         <div class="firstTable">
-
             <table class="firstTable border border-1 border-gray-300 w-full">
                 <thead class="border border-1 border-gray-300 bg-gradient-to-b from-gradientStart to-gradientEnd text-white">
                     <th class="py-3 border border-1 border-gray-300">Items</th>
@@ -100,7 +102,7 @@
             </table>
             <div class="firstTableButtonsParent flex justify-between items-center mt-3">
                 <button class="requestButton underline text-xl text-themered capitalize font-bold">Request Another Item</button>
-                <button class="bg-red-700 text-white py-2 rounded-full px-5">Next</button>
+                <button class="nextButton bg-red-700 text-white py-2 rounded-full px-5">Next</button>
             </div>
         </div>
         <div class="secondTable hidden">
@@ -128,6 +130,31 @@
                 <button class="backButton bg-red-700 text-white py-2 rounded-full px-5">Back</button>
                 <button class="nextButton bg-red-700 text-white py-2 rounded-full px-5">Next</button>
             </div>
+        </div>
+        
+        <div class="hidden py-3 submitPart">
+            <form action="{{url(getAdminRoutePrefix().'/share-items')}}" method="post">
+                @csrf
+                <input type="email" name="email" class="w-full py-3 focus:ring-2 focus:border-0  focus:ring-red-700 rounded-md">
+                <h3 class="mt-3 text-xl font-bold">People With access</h3>
+                <div class="flex justify-between items-center mt-3">
+                    <div>
+                        <h3 class="text-xl font-normal">Jasmine Saiedian</h3>
+                        <p class="text-gray-600">JasmineSaeidian@gmail.com</p>
+                    </div>
+                    <img class="icon w-10" src="{{asset('icons/trash.svg')}}" alt="">
+                </div>
+                <div class="flex justify-between items-center mt-3">
+                    <div>
+                        <h3 class="text-xl font-normal">Shaun Bina</h3>
+                        <p class="text-gray-600">Shaunbinaservice@gmail.com</p>
+                    </div>
+                    <img class="icon w-10" src="{{asset('icons/trash.svg')}}" alt="">
+                </div>
+                <div class="flex justify-end items-center mt-3">
+                    <button type="submit" class="bg-red-700 text-white  py-2 rounded-full px-5">Done</button>
+                </div>
+            </form>
         </div>
     @endcomponent
     <div class="">
