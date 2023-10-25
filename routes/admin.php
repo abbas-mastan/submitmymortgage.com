@@ -87,6 +87,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::get('new-users', [AdminController::class, 'newusers']);
     Route::get('contacts', [AdminController::class, 'contacts']);
     Route::post('savepdf', [AdminController::class, 'savepdf']);
+    Route::view('showemail','vendor.notifications.deal-email');
     Route::get('/delete-contact/{contact}', [AdminController::class, 'deleteContact']);
     Route::post('/do-contact/{id?}', [AdminController::class, 'doContact']);
     Route::get('project-overview/{id?}', [AdminController::class, 'projectOverview']);
