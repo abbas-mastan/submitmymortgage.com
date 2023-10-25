@@ -84,10 +84,13 @@
                         $itemsToShare = ['Bank Statements', "ID/Driver's License", 'Fillable Loan Application'];
                     @endphp
                     @foreach ($itemsToShare as $item)
-                        <tr @class(['items-center text-center', 'bg-gray-100' => $loop->odd])>
+                        <tr @class([
+                            'deleteItemTr items-center text-center',
+                            'bg-gray-100' => $loop->odd,
+                        ])>
                             <td class="py-2 border border-1 border-gray-300">{{ $item }}</td>
                             <td class="py-2 flex justify-center text-center border border-1 border-gray-300">
-                                <a href="{{ url(getAdminRoutePrefix() . '/remove-req-cat') . '/' . $item }}">
+                                <a class="deleteItem">
                                     <img class="bg-themered p-3" src="{{ asset('icons/trash.svg') }}" />
                                 </a>
                             </td>
@@ -106,7 +109,7 @@
                     <th class="py-1 px-8 border border-1 border-gray-300"></th>
                     <th class="py-1 border border-1 border-gray-300">Items</th>
                 </thead>
-                <tbody>
+                <tbody class="secondTableTbody">
                     @php
                         $itemsToShare[] = 'Loan Application';
                         $filecategories = array_diff(config('smm.file_category'), $itemsToShare);
@@ -164,8 +167,8 @@
                                 <g>
                                     <path style="fill:#ffffff;"
                                         d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
-                                                                                                                                                                            c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
-                                                                                                                                                                            c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                                                                                                                                                                                    c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
+                                                                                                                                                                                                    c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
                                 </g>
                             </g>
                         </svg>
@@ -192,31 +195,34 @@
         @include('admin.file.category-wise-files-table')
     </div>
     <div class="">
-        <div class="flex justify-between mb-5">
-            <div class="relative categoryContainer">
-                <button class="categoryButton bg-red-800 px-5 py-1 text-white flex">Sort By</button>
-                <div class="categoryMenu hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
-                    <div class="py-1">
-                        <a href="{{ url(getRoutePrefix() . '/sortby/' . $user->id . '/category') }}"
-                            @class([
-                                'text-gray-700 block px-4 py-2 text-sm',
-                                isset($sortby) && $sortby === 'category' ? 'bg-red-800 text-white' : '',
-                            ]) role="menuitem" tabindex="-1" id="menu-item-0">Category</a>
-                        <a href="{{ url(getRoutePrefix() . '/sortby/' . $user->id . '/latest') }}"
-                            @class([
-                                'text-gray-700 block px-4 py-2 text-sm',
-                                isset($sortby) && $sortby === 'latest' ? 'bg-red-800 text-white' : '',
-                            ]) role="menuitem" tabindex="-1" id="menu-item-1">Files</a>
+        @if (count($files) > 0)
+            <div class="flex justify-between mb-5">
+                <div class="relative categoryContainer">
+                    <button class="categoryButton bg-red-800 px-5 py-1 text-white flex">Sort By</button>
+                    <div class="categoryMenu hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
+                        <div class="py-1">
+                            <a href="{{ url(getRoutePrefix() . '/sortby/' . $user->id . '/category') }}"
+                                @class([
+                                    'text-gray-700 block px-4 py-2 text-sm',
+                                    isset($sortby) && $sortby === 'category' ? 'bg-red-800 text-white' : '',
+                                ]) role="menuitem" tabindex="-1" id="menu-item-0">Category</a>
+                            <a href="{{ url(getRoutePrefix() . '/sortby/' . $user->id . '/latest') }}"
+                                @class([
+                                    'text-gray-700 block px-4 py-2 text-sm',
+                                    isset($sortby) && $sortby === 'latest' ? 'bg-red-800 text-white' : '',
+                                ]) role="menuitem" tabindex="-1" id="menu-item-1">Files</a>
+                        </div>
                     </div>
                 </div>
+                <label class="serachlabel flex justify-end" for="" class="">
+                    <input type="text" id="myInput" placeholder="search"
+                        class="serachinput bg-red-800 px-5 py-1 ring-0  text-white flex">
+                    <img class="absolute z-10 top-1/4 mr-2" width="20" src="{{ asset('icons/search.svg') }}"
+                        alt="">
+                </label>
             </div>
-            <label class="serachlabel flex justify-end" for="" class="">
-                <input type="text" id="myInput" placeholder="search"
-                    class="serachinput bg-red-800 px-5 py-1 ring-0  text-white flex">
-                <img class="absolute z-10 top-1/4 mr-2" width="20" src="{{ asset('icons/search.svg') }}"
-                    alt="">
-            </label>
-        </div>
+        @endif
+
         @foreach ($categories as $category)
             @if (fileCatCount($category, $user->id) > 0 && $category !== 'Credit Report')
                 <div class="searchablediv">
@@ -365,7 +371,7 @@
             }
         });
 
-        $('.secondTable input[type="checkbox"]').change(function() {
+        $(document).on('change', '.secondTable input[type="checkbox"]', function() {
             if ($('.secondTable input[type="checkbox"]:checked').length > 0) {
                 $('.backButton').addClass('hidden');
                 $('.secondTableButtonsParent').removeClass('justify-between');
@@ -377,17 +383,16 @@
             }
         });
 
-        $('.secondTable input[type="checkbox"]').change(function(e) {
+        $(document).on('change', '.secondTable input[type="checkbox"]', function(e) {
             e.preventDefault();
             var checkboxValue = $(this).val();
+            var bgcolor = $('.itemsToShare tr:last').hasClass('bg-gray-100') ? null : 'bg-gray-100';
             if ($(this).prop('checked')) {
                 if ($('.itemsToShare').length > 0) {
-                    var newRow = `<tr class="items-center text-center bg-gray-100">
+                    var newRow = `<tr class="deleteItemTr items-center text-center ${bgcolor}">
                 <td class="py-2 border border-1 border-gray-300">${checkboxValue}</td>
                 <td class="py-2 flex justify-center text-center border border-1 border-gray-300">
-                    <a href="{{ getAdminRoutePrefix() }}/remove-req-cat/${checkboxValue}">
-                        <img class="bg-themered p-3" src="{{ asset('icons/trash.svg') }}">
-                    </a>
+                    <a class="deleteItem"> <img class="bg-themered p-3" src="{{ asset('icons/trash.svg') }}"></a>
                 </td>
             </tr>`;
                     $('.itemsToShare').append(newRow);
@@ -398,6 +403,23 @@
         });
 
 
+        $(document).on('click', '.deleteItem', function(e) {
+            e.preventDefault(); // Prevent the default link behavior
+            $(this).closest('tr').remove();
+            var value = $(this).closest('tr').find('td:first').text();
+            var bgColor = 'bg-gray-100';
+            if ($('.secondTableTbody').find('tr:last').hasClass('bg-gray-100')) {
+                bgColor = null;
+            }
+            var removedRow = `<tr class='items-center text-center ${bgColor}'>
+                            <td class="py-1.5 flex justify-center text-center border border-1 border-gray-300">
+                                <input type="checkbox" value="${value}" name="category[]" id="${value}">
+                            </td>
+                            <td class="py-0.5 border border-1 border-gray-300">${value}</td>
+                        </tr>`;
+            $(".secondTableTbody td:contains("+value+")").closest('tr').remove();
+            $('.secondTableTbody').append(removedRow);
+        });
 
 
 
