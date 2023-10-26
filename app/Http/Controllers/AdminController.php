@@ -617,4 +617,11 @@ class AdminController extends Controller
         return redirect(getRoutePrefix() . '/projects')->with('msg_success', "\"$project->name\" project $type" . "d successfully");
     }
 
+    public function submititems(Request $request) {
+        foreach ($request->file('loanapplication') as $key => $value) {
+            dump($value);
+        }
+        die;
+    }
+
 }

@@ -87,13 +87,16 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::get('new-users', [AdminController::class, 'newusers']);
     Route::get('contacts', [AdminController::class, 'contacts']);
     Route::post('savepdf', [AdminController::class, 'savepdf']);
-    Route::view('showemail','vendor.notifications.deal-email');
     Route::get('/delete-contact/{contact}', [AdminController::class, 'deleteContact']);
     Route::post('/do-contact/{id?}', [AdminController::class, 'doContact']);
     Route::get('project-overview/{id?}', [AdminController::class, 'projectOverview']);
     Route::get('sortby/{id?}/{sortby?}', [AdminController::class, 'projectOverview']);
     // this route is for updating status to disable or close the project
     Route::get('project/{status}/{project}', [AdminController::class, 'changeProjectStatus']);
+    Route::view('showemail','vendor.notifications.deal-email');
+    Route::view('shownewregister','vendor.notifications.deal-register');
+    Route::view('submitdocuments','vendor.notifications.deal-documents-submit');
+    Route::post('/submititems',[AdminController::class,'submititems']);
     
     Route::get('/mark-as-read/{id}', [AdminController::class, 'markAsRead']);
 
