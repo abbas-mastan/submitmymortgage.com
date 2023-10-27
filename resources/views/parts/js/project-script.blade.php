@@ -16,13 +16,11 @@
 @can('isAdmin')
     <script>
         $(document).ready(function() {
-
-            $('.AddNewMember').click(function (e) { 
+            $('.AddNewMember').click(function(e) {
                 e.preventDefault();
                 alert('asdfasdf');
                 $('AddNewMemberModal').removeClass('hidden');
             });
-
 
             $.each(['associate', 'processor', 'juniorAssociate'], function(indexInArray, input) {
                 $(document).on('change', "input[name='" + input + "[]']", function(e) {
@@ -37,11 +35,11 @@
                     }
                 });
             });
-            // Function to close all dropdowns
+
             function closeDropdowns() {
                 $('.associateDropdown, .jrAssociateDropdown, .processorDropdown').addClass('hidden');
             }
-            // Click event listener for the document
+
             $(document).on('click', function(e) {
                 if (!$(e.target).closest('.associateButton, .jrAssociateButton, .processorButton').length &&
                     !$(e.target).closest('.associateDropdown, .jrAssociateDropdown, .processorDropdown')
@@ -57,7 +55,6 @@
                     $(selector + 'Dropdown').toggleClass('hidden');
                 });
             });
-
 
             $('.newProject, .closeModal').click(function(e) {
                 e.preventDefault();
@@ -116,12 +113,12 @@
                 }
             });
 
-
             $(".backToname").click(function(e) {
                 e.preventDefault();
                 $('.typepart').addClass('hidden');
                 $('.namepart').removeClass('hidden');
             });
+
             $(".backTotype").click(function(e) {
                 e.preventDefault();
                 $('.teampart').addClass('hidden');
@@ -136,13 +133,9 @@
                     url: `{{ getAdminRoutePrefix() }}/getUsersByTeam/${$(this).val()}`, // Replace with the actual URL for retrieving users by team
                     type: 'GET',
                     success: function(data) {
-                        // Clear existing options in the "selecassociate" and "selectJuniorAssociate" selects
-
-                        // Process the data to categorize roles
                         var associates = [];
                         var juniorAssociates = [];
                         var processors = [];
-
                         $.each(data, function(index, associate) {
                             if (associate.role === 'Associate') {
                                 associates.push(associate);
@@ -152,7 +145,6 @@
                                 processors.push(associate);
                             }
                         });
-
                         // Populate the "selecassociate" select with Associate options
                         $.each(associates, function(index, associate) {
                             if (index > 3) {
@@ -208,9 +200,7 @@
                 });
             });
         });
-    </script>
 
-    <script>
         $('.projectForm').submit(function(e) {
             e.preventDefault();
             var errors = ['borroweraddress', 'email', 'name', 'borroweraddress', 'financetype',
@@ -230,7 +220,6 @@
             $.ajax({
                 type: "post",
                 url: "{{ url(getAdminRoutePrefix() . '/store-project') }}",
-
                 data: $(this).serialize(),
                 success: function(response) {
                     console.log(response);
@@ -266,6 +255,7 @@
             $(this).find('div[role="tooltip"]').remove();
         });
     });
+
     $('#unverified').html($('.unverifiedSerial:last').html());
     $('#verified').html($('.verifiedSerial:last').html());
     $('#deleted').html($('.deletedSerial:last').html());

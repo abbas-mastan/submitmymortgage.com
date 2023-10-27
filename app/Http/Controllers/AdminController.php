@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ApplicationRequest;
-use App\Models\Application;
-use App\Models\Contact;
+use Mail;
+use Faker\Factory;
 use App\Models\Info;
-use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Contact;
+use App\Models\Project;
+use Illuminate\View\View;
+use App\Mail\AssistantMail;
+use App\Models\Application;
 use App\Models\UserCategory;
-use App\Notifications\FileUploadNotification;
+use Illuminate\Http\Request;
+use App\Services\UserService;
 use App\Services\AdminService;
 use App\Services\CommonService;
-use App\Services\UserService;
-use Faker\Factory;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\ApplicationRequest;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\View\View;
+use App\Notifications\FileUploadNotification;
 
 class AdminController extends Controller
 {
@@ -615,6 +617,16 @@ class AdminController extends Controller
     {
         $project->update(['status' => $type]);
         return redirect(getRoutePrefix() . '/projects')->with('msg_success', "\"$project->name\" project $type" . "d successfully");
+    }
+
+
+    public function shareItemWithAssistant(Request $request){
+        if(empty($request->email)) return response()->json('emal field is required', 200);
+        if(empty($request->textArray)) return response()->json('you should select at least one item', 200);
+
+        Mail::to($request->email)->send(new AssistantMail());
+
+        return response()->json('email sent', 200);
     }
 
     public function submititems(Request $request) {

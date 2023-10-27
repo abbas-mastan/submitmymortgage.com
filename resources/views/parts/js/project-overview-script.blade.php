@@ -15,12 +15,11 @@
         $('.firstTable, .secondTable,.requestButton').toggleClass('hidden');
     });
 
-
     $('.newProject, .closeModal').click(function(e) {
         e.preventDefault();
         $('#newProjectModal').toggleClass('hidden');
     });
-
+    var textArray;
     $('.nextButton').click(function(e) {
         e.preventDefault();
         if ($('.firstTable').hasClass('hidden')) {
@@ -31,6 +30,12 @@
             $('.modalTitle').text('Share Submit Link');
             $('.firstTable').addClass('hidden');
             $('.submitPart').removeClass('hidden');
+            var text = $('.itemsToShare td').text();
+            textArray = text.split('\n').map(function(item) {
+                return item.trim();
+            }).filter(function(item) {
+                return item !== '';
+            });
         }
     });
 
@@ -45,8 +50,6 @@
             $('.secondTableButtonsParent').addClass('justify-between');
         }
     });
-
-
 
     $(document).on('change', '.secondTable input[type="checkbox"]', function(e) {
         e.preventDefault();
@@ -67,7 +70,6 @@
         }
     });
 
-
     $(document).on('click', '.deleteItem', function(e) {
         e.preventDefault(); // Prevent the default link behavior
         $(this).closest('tr').remove();
@@ -82,17 +84,31 @@
                         </td>
                         <td class="py-0.5 border border-1 border-gray-300">${value}</td>
                     </tr>`;
-        $(".secondTableTbody td:contains("+value+")").closest('tr').remove();
+        $(".secondTableTbody td:contains(" + value + ")").closest('tr').remove();
         $('.secondTableTbody').append(removedRow);
     });
 
-
-    $('.submitPart form').submit(function (e) { 
+    $('.submitPart form').submit(function(e) {
         e.preventDefault();
-        console.log($('.submitPart form input[name="email"]').val());
+        var inputs = $('.submitPart form input[name="email"]').val();
+        console.log(textArray);
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: { email: inputs, textArray: textArray }, // Send data as an object
+            success: function(response) {
+                console.log(response);
+            },
+            error: function (data) {
+                console.log(data);
+            }
+        });
     });
-
-
 
     $(document).ready(function() {
         $("input[type=search]").css("background", "#991b1b");
@@ -101,6 +117,7 @@
         $("input[type=search]").addClass('bg-red-800');
         $('#user-table').removeClass("no-footer dataTable");
     });
+
     $(document).on("click", function(e) {
         if (!$(e.target).closest(".categoryContainer").length) {
             // Clicked outside of the .categoryContainer
@@ -112,8 +129,6 @@
         e.stopPropagation(); // Prevent the document click event from firing
         $('.categoryMenu').toggleClass('hidden'); // Toggle visibility
     });
-
-
 
     $(document).on("click", function(e) {
         if (!$(e.target).closest(".dropdownContainer").length) {
@@ -150,8 +165,7 @@
             });
         }
     })();
-</script>
-<script>
+
     $(document).ready(function() {
         $('#files-table').DataTable({
             pageLength: 50,
@@ -160,8 +174,7 @@
         $('#files-table_wrapper').css('width', '100%');
         $('select[name="files-table_length"]').css('width', '4rem');
     });
-</script>
-<script>
+
     $(document).ready(function() {
         @if ($user->finance_type == 'Purchase')
             let purchasePrice = $('#purchase-price').text();

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -23,13 +24,17 @@
     </script>
     @yield('head')
 </head>
+
 <body class="font-graphik" style="font-family: graphik, sans-serif !important">
-    <div class="body-first-div h-full 2xl:h-screen flex justify-center bg-gradient-to-b from-gradientStart to-gradientEnd">
+    <div
+        class="body-first-div h-full 2xl:h-screen flex justify-center">
         @yield('content')
         @include('parts/footer')
     </div>
     <script src="{{ asset('js/app.js') }}"></script>
+    <script src="{{ asset('js/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
     {{-- <script src="{{ asset('js/app.min.js') }}"></script> --}}
     @yield('foot')
 </body>
+
 </html>

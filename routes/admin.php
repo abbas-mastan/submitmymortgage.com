@@ -65,6 +65,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     //==============================
     Route::get('/profile', [AdminController::class, 'profile']);
     Route::post('/do-profile', [AdminController::class, 'doProfile']);
+
     Route::get('/disconnect-google', [AdminController::class, 'disconnectGoogle'])->name('disconnect.google');
     Route::get('/excel', [AdminController::class, 'excel']);
     Route::post('/spreadsheet', [AdminController::class, 'spreadsheet']);
@@ -90,6 +91,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::get('/delete-contact/{contact}', [AdminController::class, 'deleteContact']);
     Route::post('/do-contact/{id?}', [AdminController::class, 'doContact']);
     Route::get('project-overview/{id?}', [AdminController::class, 'projectOverview']);
+    Route::post('/share-items', [AdminController::class, 'shareItemWithAssistant']);
     Route::get('sortby/{id?}/{sortby?}', [AdminController::class, 'projectOverview']);
     // this route is for updating status to disable or close the project
     Route::get('project/{status}/{project}', [AdminController::class, 'changeProjectStatus']);
@@ -106,5 +108,4 @@ Route::prefix(getAdminRoutePrefix())->group(function () {
     //==========Ajax routes
     //==============================
     //College related stuff
-    Route::get('/get-colleges', [AdminController::class, 'getColleges']);
 });

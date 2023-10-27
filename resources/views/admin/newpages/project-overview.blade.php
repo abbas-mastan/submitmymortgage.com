@@ -30,7 +30,6 @@
         nav {
             margin-top: 20px;
             text-align: center;
-
         }
 
         .dropdown:hover .dropdown-menu {
@@ -67,8 +66,9 @@
         .svg {
             fill: white;
         }
-        .icon{
-            filter:invert(1);
+
+        .icon {
+            filter: invert(1);
         }
     </style>
 @endsection
@@ -131,25 +131,30 @@
                 <button class="nextButton bg-red-700 text-white py-2 rounded-full px-5">Next</button>
             </div>
         </div>
-        
+
         <div class="hidden py-3 submitPart">
-            <form action="{{url(getAdminRoutePrefix().'/share-items')}}" method="post">
+            <form action="{{ url(getAdminRoutePrefix() . '/share-items') }}" method="POST">
                 @csrf
-                <input type="email" name="email" class="w-full py-3 focus:ring-2 focus:border-0  focus:ring-red-700 rounded-md">
+                <input type="email" name="email" 
+                    class="bg-transperent w-full py-3 focus:bg-transperent focus:ring-2 focus:border-0 focus:ring-red-700 rounded-md">
                 <h3 class="mt-3 text-xl font-bold">People With access</h3>
                 <div class="flex justify-between items-center mt-3">
                     <div>
                         <h3 class="text-xl font-normal">Jasmine Saiedian</h3>
                         <p class="text-gray-600">JasmineSaeidian@gmail.com</p>
                     </div>
-                    <img class="icon w-10" src="{{asset('icons/trash.svg')}}" alt="">
+                    <a href="#">
+                        <img class="icon w-10" src="{{ asset('icons/trash.svg') }}" alt="">
+                    </a>
                 </div>
                 <div class="flex justify-between items-center mt-3">
                     <div>
                         <h3 class="text-xl font-normal">Shaun Bina</h3>
                         <p class="text-gray-600">Shaunbinaservice@gmail.com</p>
                     </div>
-                    <img class="icon w-10" src="{{asset('icons/trash.svg')}}" alt="">
+                    <a href="#">
+                        <img class="icon w-10" src="{{ asset('icons/trash.svg') }}" alt="">
+                    </a>
                 </div>
                 <div class="flex justify-end items-center mt-3">
                     <button type="submit" class="bg-red-700 text-white  py-2 rounded-full px-5">Done</button>
@@ -194,8 +199,8 @@
                                 <g>
                                     <path style="fill:#ffffff;"
                                         d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
-                                                                                                                                                                                                    c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
-                                                                                                                                                                                                    c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                                                                                                                                                                                                c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
+                                                                                                                                                                                                                c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
                                 </g>
                             </g>
                         </svg>
@@ -226,7 +231,8 @@
             <div class="flex justify-between mb-5">
                 <div class="relative categoryContainer">
                     <button class="categoryButton bg-red-800 px-5 py-1 text-white flex">Sort By</button>
-                    <div class="categoryMenu hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
+                    <div
+                        class="categoryMenu hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
                         <div class="py-1">
                             <a href="{{ url(getRoutePrefix() . '/sortby/' . $user->id . '/category') }}"
                                 @class([
@@ -364,5 +370,5 @@
     </div>
 @endsection
 @section('foot')
-   @include('parts.js.project-overview-script')
+    @include('parts.js.project-overview-script')
 @endsection

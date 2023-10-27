@@ -2,7 +2,6 @@
 @section('head')
     <style>
         body div:first-child {
-            background: white;
             height: 80%;
         }
     </style>

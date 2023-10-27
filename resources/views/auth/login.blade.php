@@ -128,4 +128,9 @@
 @section('foot')
     <script src="https://cdn.tailwindcss.com/3.2.4"></script>
     <script src="https://cdn.jsdelivr.net/npm/tw-elements@1.0.0-beta2/dist/js/tw-elements.umd.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.body-first-div').addClass('bg-gradient-to-b from-gradientStart to-gradientEnd');
+        });
+    </script>
 @endsection

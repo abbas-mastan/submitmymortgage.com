@@ -4,12 +4,13 @@
 
 @foreach ($teams as $team)
     <script>
-        new DataTable("#{{ str_replace(' ', '', $team->name) }}-table{{$team->id}}");
-        $("#{{ str_replace(' ', '', $team->name) }}-table{{$team->id}}_length").css('display', 'none');
-        $("#{{ str_replace(' ', '', $team->name) }}-table{{$team->id}}_filter").css('display', 'none');
-        $("#{{ str_replace(' ', '', $team->name) }}-table{{$team->id}}_wrapper").css('box-shadow', '0px 0px 11px 0px gray');
-        $(`select[name="{{ $team->name }}-table{{$team->id}}_length"]`).addClass('w-16');
-        $(`select[name="{{ $team->name }}-table{{$team->id}}_length"]`).addClass('mb-3');
+        new DataTable("#{{ str_replace(' ', '', $team->name) }}-table{{ $team->id }}");
+        $("#{{ str_replace(' ', '', $team->name) }}-table{{ $team->id }}_length").css('display', 'none');
+        $("#{{ str_replace(' ', '', $team->name) }}-table{{ $team->id }}_filter").css('display', 'none');
+        $("#{{ str_replace(' ', '', $team->name) }}-table{{ $team->id }}_wrapper").css('box-shadow',
+            '0px 0px 11px 0px gray');
+        $(`select[name="{{ $team->name }}-table{{ $team->id }}_length"]`).addClass('w-16');
+        $(`select[name="{{ $team->name }}-table{{ $team->id }}_length"]`).addClass('mb-3');
     </script>
 @endforeach
 <script>
@@ -26,7 +27,6 @@
             }
         });
     });
-
 
     var teamsData = {!! json_encode($teams) !!};
     $('.newProject, .closeModal').click(function(e) {
@@ -48,11 +48,9 @@
     }
 
     $(document).ready(function() {
-        // Function to close all dropdowns
         function closeDropdowns() {
             $('.associateDropdown, .jrAssociateDropdown, .processorDropdown').addClass('hidden');
         }
-        // Click event listener for the document
         $(document).on('click', function(e) {
             if (!$(e.target).closest('.associateButton, .jrAssociateButton, .processorButton').length &&
                 !$(e.target).closest('.associateDropdown, .jrAssociateDropdown, .processorDropdown')
@@ -61,6 +59,7 @@
             }
         });
     });
+
     $.each(['processor', 'associate', 'jrAssociate'], function(index, btnclass) {
         var selector = '.' + btnclass;
         $(selector + 'Button').click(function(e) {
@@ -98,7 +97,6 @@
                         return false; // Exit the loop early
                     }
                 });
-
                 if (!nameExists) {
                     removeError('name');
                     $('.modalTitle').text('Add an Processor');
@@ -223,7 +221,6 @@
             });
         }
     });
-
 
     function showError(id, error = " field is required") {
         $('#' + id).addClass('border-red-700 border-2');

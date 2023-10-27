@@ -2,7 +2,6 @@
 @section('head')
     <style>
         .body-first-div {
-            background: white;
             height: 80%;
         }
 
@@ -41,7 +40,7 @@
 @section('content')
     <div class="child mt-24 mx-16 w-full shadow-2xl bg-white p-10 rounded-2xl">
         <header class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white rounded-t-2xl p-4">
-            <h1 class="text-3xl text-center font-bold">Submit Documents for Your Mortgage Deal </h1>
+            <h1 class="text-2xl text-center font-bold">Submit Documents for Your Mortgage Deal </h1>
         </header>
         <form class="my-3" action="{{ url(getAdminRoutePrefix().'/submititems') }}" enctype="multipart/form-data" method="post">
             @csrf
@@ -52,7 +51,7 @@
             <div class="flex mt-3">
                 <div class="flex w-1/5 h-8 py-7 items-center px-3">ID/Driver's License</div>
                 <div class="flex h-8 py-7 items-center">
-                    <input accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" id="license" type="file" name="license[]" multiple hidden>
+                    <input accept=".xlsx,.xls,.jpeg,.jpg,.png,.doc, .docx,.ppt, .pptx,.txt,.pdf" id="license" type="file" name="license[]" multiple hidden>
                     <label for="license" class="px-4 py-2 text-white bg-red-700 rounded-md">Add File</label>
                     <p id="license-files-area">
                         <span id="LicensefilesList">
@@ -65,7 +64,7 @@
                 <div class="flex w-1/5 h-8 py-7 items-center px-3">Loan Application</div>
                 <div class="flex h-8 py-7 items-center">
                     <div class="w-full flex items-center">
-                        <input accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" id="loanapplication" type="file" name="loanapplication[]" multiple hidden>
+                        <input accept=".xlsx,.xls,.jpeg,.jpg,.png,.doc, .docx,.ppt, .pptx,.txt,.pdf" id="loanapplication" type="file" name="loanapplication[]" multiple hidden>
                         <label for="loanapplication" class="px-4 py-2 text-white bg-red-700 rounded-md">Add File</label>
                         <p id="loan-files-area">
                             <span id="loanfilesList">
@@ -78,7 +77,7 @@
             <div class="flex mt-3">
                 <div class="flex w-1/5 h-8 py-7 items-center px-3">Bank Statement</div>
                 <div class="flex h-8 py-7 items-center">
-                    <input accept=".xlsx,.xls,image/*,.doc, .docx,.ppt, .pptx,.txt,.pdf" id="bankstatement" type="file" name="bankstatement[]" multiple hidden>
+                    <input accept=".xlsx,.xls,.jpeg,.jpg,.png,.doc, .docx,.ppt, .pptx,.txt,.pdf" id="bankstatement" type="file" name="bankstatement[]" multiple hidden>
                     <label for="bankstatement" class="px-4 py-2 text-white bg-red-700 rounded-md">Add File</label>
                     <p id="bank-files-area">
                         <span id="bankfilesList">
@@ -130,13 +129,10 @@
                     });
                 });
             }
-
             // Handle the "ID/Driver's License" file input
             handleFileInput("#license", "#LicensefilesList", "#license-files-names");
-
             // Handle the "Loan Application" file input
             handleFileInput("#loanapplication", "#loanfilesList", "#loan-files-names");
-
             // Handle the "Bank Statement" file input
             handleFileInput("#bankstatement", "#bankfilesList", "#bank-files-names");
         });
