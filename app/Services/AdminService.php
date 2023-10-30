@@ -44,7 +44,7 @@ class AdminService
                 'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
                 'name' => "required",
                 'password' => 'sometimes:required|confirmed',
-                'role' =>
+                'role' => 
                 #This is the custom Rule. Less than Admin Role Can't add User with the role === admin OR Processor
                 function ($attribute, $value, $fail) {
                     self::validateCurrentUser($attribute, $value, $fail);
@@ -70,7 +70,7 @@ class AdminService
             if (!str_contains($user->pic, "default") && $id !== -1) {
                 Storage::delete($user->pic);
             }
-            $user->pic = $request->file('file')->store(getFileDirectory());
+            $user->pic = $request->file('file')->store(getFileDirectory()) ?? 'img/profile-default.svg';
         }
 
         if ($request->role === 'Borrower' || Auth::guest()) {
@@ -189,7 +189,7 @@ class AdminService
         }
         return ['msg_type' => 'msg_error', 'msg_value' => 'An error occured while udpate the status of the file.'];
     }
-
+    
     //Saves the record of a newly inserted user in database
     public static function updateCategoryStatus($request)
     {

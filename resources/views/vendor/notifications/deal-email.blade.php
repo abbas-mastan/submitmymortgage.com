@@ -9,6 +9,7 @@
                 <span class="block mb-2">
                     Dear {{ $user->name ?? "Borrower's Name" }}
                 </span>
+                {{$url}}
                 <br>
                 Congratulations! You've been added as a team member on a Submit My Loan deal. This is an important step in
                 completing your mortgage application.
@@ -16,7 +17,7 @@
                 Click the link below to begin adding the necessar files to complete your mortgage deal:
             </p>
             <div class="flex justify-center">
-                <a class="block w-40 text-white py-3 px-5 text-lg font-bold bg-red-700 rounded-md text-center">Get
+                <a href="{{$url}}" class="block w-40 text-white py-3 px-5 text-lg font-bold bg-red-700 rounded-md text-center">Get
                     Started</a>
             </div>
             <p class="text-2xl font-bold p-8 text-center">

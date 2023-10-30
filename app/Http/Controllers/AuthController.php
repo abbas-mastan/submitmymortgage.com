@@ -4,15 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Services\AdminService;
-
 use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Support\Facades\Hash;
-
 use Illuminate\Support\Facades\Password;
-
 use Illuminate\Support\Facades\Redirect;use Illuminate\Support\Str;
 
 class AuthController extends Controller
@@ -128,5 +124,10 @@ class AuthController extends Controller
     {
         $request->user()->sendEmailVerificationNotification();
         return back()->with('msg_info', 'Verification link sent!');
+    }
+
+    public function assitantRegister()
+    {
+        return view('user.assistant.deal-register');
     }
 }

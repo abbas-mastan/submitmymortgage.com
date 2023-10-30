@@ -2,28 +2,36 @@
 
 namespace App\Http\Controllers;
 
-use Mail;
-use Faker\Factory;
-use App\Models\Info;
-use App\Models\Team;
-use App\Models\User;
-use App\Models\Contact;
-use App\Models\Project;
-use Illuminate\View\View;
+use App\Http\Requests\ApplicationRequest;
 use App\Mail\AssistantMail;
 use App\Models\Application;
+use App\Models\Contact;
+use App\Models\Info;
+use App\Models\Project;
+use App\Models\Team;
+use App\Models\User;
 use App\Models\UserCategory;
-use Illuminate\Http\Request;
-use App\Services\UserService;
+use App\Notifications\FileUploadNotification;
 use App\Services\AdminService;
 use App\Services\CommonService;
+use App\Services\UserService;
+use Faker\Factory;
+use GuzzleHttp\Psr7\Uri;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\ApplicationRequest;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
-use App\Notifications\FileUploadNotification;
+use Illuminate\View\View;
+use Mail;
 
 class AdminController extends Controller
 {
+
+    protected $faker;
+    public function __construct()
+    {
+        $this->faker = Factory::create();
+    }
 
     public function users(Request $request)
     {
@@ -450,8 +458,7 @@ class AdminController extends Controller
             }
             return response()->json($response);
         } else {
-            $faker = Factory::create();
-            $request->merge(['email' => $request->email ?? $faker->unique()->safeEmail,
+            $request->merge(['email' => $request->email ?? $this->faker->unique()->safeEmail,
                 'role' => 'Borrower',
             ]);
             $user = AdminService::doUser($request, -1);
@@ -619,17 +626,28 @@ class AdminController extends Controller
         return redirect(getRoutePrefix() . '/projects')->with('msg_success', "\"$project->name\" project $type" . "d successfully");
     }
 
+    public function shareItemWithAssistant(Request $request)
+    {
+        // $validator = Validator::make($request->only(['email', 'items']), [
+        //     'email' => 'required|unique:users,email',
+        //     'items' => 'required',
+        // ]);
 
-    public function shareItemWithAssistant(Request $request){
-        if(empty($request->email)) return response()->json('emal field is required', 200);
-        if(empty($request->textArray)) return response()->json('you should select at least one item', 200);
+        // if ($validator->fails()) return response()->json(['error' => $validator->errors()->all()]);
 
-        Mail::to($request->email)->send(new AssistantMail());
-
-        return response()->json('email sent', 200);
+        // $user = new User();
+        // $user->role = 'Assistant';
+        // $user->name = $this->faker->name;
+        // $user->password = bcrypt($this->faker->unique()->password(8));
+        // $user->email = $request->email;
+        // $user->pic = 'img/profile-default.svg';
+        // $user->save();
+        Mail::to($request->email)->send(new AssistantMail(route('generated-url')));
+        return response()->json('sucess', 200);
     }
 
-    public function submititems(Request $request) {
+    public function submititems(Request $request)
+    {
         foreach ($request->file('loanapplication') as $key => $value) {
             dump($value);
         }

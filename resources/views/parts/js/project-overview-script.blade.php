@@ -90,8 +90,9 @@
 
     $('.submitPart form').submit(function(e) {
         e.preventDefault();
+        $('.jq-loader-for-ajax').removeClass('hidden');
+        $('.errors').empty();
         var inputs = $('.submitPart form input[name="email"]').val();
-        console.log(textArray);
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -100,11 +101,22 @@
         $.ajax({
             type: 'POST',
             url: $(this).attr('action'),
-            data: { email: inputs, textArray: textArray }, // Send data as an object
+            data: {
+                email: inputs,
+                items: textArray
+            }, // Send data as an object
             success: function(response) {
-                console.log(response);
+                $('.jq-loader-for-ajax').addClass('hidden');
+                if (response === 'sucess') {
+                    alert('Link submitted successfully');
+                    location.reload();
+                }
+                $.each(response.error, function(index, message) {
+                    $('.submitPart .errors').append(
+                        `<li class="text-red-700">${message}</li>`);
+                });
             },
-            error: function (data) {
+            error: function(data) {
                 console.log(data);
             }
         });

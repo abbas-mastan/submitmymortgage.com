@@ -11,14 +11,10 @@ class AssistantMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    /**
-     * Create a new message instance.
-     *
-     * @return void
-     */
-    public function __construct()
+    protected $url;
+    public function __construct($url)
     {
-        //
+        $this->url = $url;
     }
 
     /**
@@ -28,6 +24,7 @@ class AssistantMail extends Mailable
      */
     public function build()
     {
-        return $this->view('\vendor\notifications\deal-email');
+        $url = $this->url;
+        return $this->view('\vendor\notifications\deal-email',compact('url'));
     }
 }
