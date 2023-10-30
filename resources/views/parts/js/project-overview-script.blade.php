@@ -106,6 +106,7 @@
                 items: textArray
             }, // Send data as an object
             success: function(response) {
+                console.log(response);
                 $('.jq-loader-for-ajax').addClass('hidden');
                 if (response === 'sucess') {
                     alert('Link submitted successfully');

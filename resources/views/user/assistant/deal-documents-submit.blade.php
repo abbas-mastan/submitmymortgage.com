@@ -38,11 +38,15 @@
     </style>
 @endsection
 @section('content')
-    <div class="child mt-24 mx-16 w-full shadow-2xl bg-white p-10 rounded-2xl">
+<div class="child mt-24 mx-16 w-full shadow-2xl bg-white p-10 rounded-2xl">
+        <div class="my-5 flex justify-end ">
+            <a href="" class="bg-red-700 px-5 py-2 text-white">Logout</a>
+        </div>
         <header class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white rounded-t-2xl p-4">
             <h1 class="text-2xl text-center font-bold">Submit Documents for Your Mortgage Deal </h1>
         </header>
-        <form class="my-3" action="{{ url(getAdminRoutePrefix().'/submititems') }}" enctype="multipart/form-data" method="post">
+        <form class="my-3" action="{{ url(getAssistantRoutePrefix() . '/submititems') }}" enctype="multipart/form-data"
+            method="post">
             @csrf
             <div class="flex items-center h-10 bg-gradient-to-b from-gradientStart to-gradientEnd text-white">
                 <div class="w-1/5 border-e-2 pl-5">Item</div>
@@ -51,7 +55,8 @@
             <div class="flex mt-3">
                 <div class="flex w-1/5 h-8 py-7 items-center px-3">ID/Driver's License</div>
                 <div class="flex h-8 py-7 items-center">
-                    <input accept=".xlsx,.xls,.jpeg,.jpg,.png,.doc, .docx,.ppt, .pptx,.txt,.pdf" id="license" type="file" name="license[]" multiple hidden>
+                    <input accept=".xlsx,.xls,.jpeg,.jpg,.png,.doc, .docx,.ppt, .pptx,.txt,.pdf" id="license"
+                        type="file" name="license[]" multiple hidden>
                     <label for="license" class="px-4 py-2 text-white bg-red-700 rounded-md">Add File</label>
                     <p id="license-files-area">
                         <span id="LicensefilesList">
@@ -64,7 +69,8 @@
                 <div class="flex w-1/5 h-8 py-7 items-center px-3">Loan Application</div>
                 <div class="flex h-8 py-7 items-center">
                     <div class="w-full flex items-center">
-                        <input accept=".xlsx,.xls,.jpeg,.jpg,.png,.doc, .docx,.ppt, .pptx,.txt,.pdf" id="loanapplication" type="file" name="loanapplication[]" multiple hidden>
+                        <input accept=".xlsx,.xls,.jpeg,.jpg,.png,.doc, .docx,.ppt, .pptx,.txt,.pdf" id="loanapplication"
+                            type="file" name="loanapplication[]" multiple hidden>
                         <label for="loanapplication" class="px-4 py-2 text-white bg-red-700 rounded-md">Add File</label>
                         <p id="loan-files-area">
                             <span id="loanfilesList">
@@ -77,7 +83,8 @@
             <div class="flex mt-3">
                 <div class="flex w-1/5 h-8 py-7 items-center px-3">Bank Statement</div>
                 <div class="flex h-8 py-7 items-center">
-                    <input accept=".xlsx,.xls,.jpeg,.jpg,.png,.doc, .docx,.ppt, .pptx,.txt,.pdf" id="bankstatement" type="file" name="bankstatement[]" multiple hidden>
+                    <input accept=".xlsx,.xls,.jpeg,.jpg,.png,.doc, .docx,.ppt, .pptx,.txt,.pdf" id="bankstatement"
+                        type="file" name="bankstatement[]" multiple hidden>
                     <label for="bankstatement" class="px-4 py-2 text-white bg-red-700 rounded-md">Add File</label>
                     <p id="bank-files-area">
                         <span id="bankfilesList">

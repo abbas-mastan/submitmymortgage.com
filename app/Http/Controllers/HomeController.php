@@ -31,15 +31,13 @@ class HomeController extends Controller
             Gate::allows('isAdmin') => $this->getAdminDashboard(),
             Gate::allows('isUser') => $this->getUserDashboard(),
             Gate::allows('isAssociate') => $this->getAssociateDashboard(),
+            Gate::allows('isAssistant') => $this->getAssistantDashboard(),
             default => []
         };
+
         $data["authUrl"] = $this->client->createAuthUrl();
         $data["active"] = "dashboard";
         $data['carbon'] = Carbon::class;
-        // if (Auth::user()->role !== 'Borrower') {
-        //     return redirect(getRoutePrefix() . '/applications');
-        // }
-
         return view('dashboard', $data);
     }
 
@@ -48,7 +46,7 @@ class HomeController extends Controller
         if (session('role') == 'Admin') {
             $data['users'] = User::whereNotIn("role", ["Admin"])->get();
             $data['usersCount'] = User::whereNotIn("role", ["Admin"])->count();
-            $data['teams'] = Team::where('disable',false)->get();
+            $data['teams'] = Team::where('disable', false)->get();
         } else {
             $userId = Auth::id();
             $data['teams'] = Team::whereHas('users', function ($query) use ($userId) {
@@ -77,5 +75,10 @@ class HomeController extends Controller
     private function getUserDashboard()
     {
         return UserService::getUserDashboard();
+    }
+
+    private function getAssistantDashboard()
+    {
+        return $data['user'] = Auth::user();
     }
 }

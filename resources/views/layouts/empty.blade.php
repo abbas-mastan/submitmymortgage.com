@@ -26,8 +26,12 @@
 </head>
 
 <body class="font-graphik" style="font-family: graphik, sans-serif !important">
-    <div
-        class="body-first-div h-full 2xl:h-screen flex justify-center">
+    @isset($msg_error)
+        <div class="p-4 my-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+            <span class="font-medium">Error!</span>{{ $msg_error }}
+        </div>
+    @endisset
+    <div class="body-first-div h-full 2xl:h-screen flex justify-center">
         @yield('content')
         @include('parts/footer')
     </div>

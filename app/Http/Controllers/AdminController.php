@@ -16,7 +16,6 @@ use App\Services\AdminService;
 use App\Services\CommonService;
 use App\Services\UserService;
 use Faker\Factory;
-use GuzzleHttp\Psr7\Uri;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\URL;
@@ -628,21 +627,19 @@ class AdminController extends Controller
 
     public function shareItemWithAssistant(Request $request)
     {
-        // $validator = Validator::make($request->only(['email', 'items']), [
-        //     'email' => 'required|unique:users,email',
-        //     'items' => 'required',
-        // ]);
-
-        // if ($validator->fails()) return response()->json(['error' => $validator->errors()->all()]);
-
-        // $user = new User();
-        // $user->role = 'Assistant';
-        // $user->name = $this->faker->name;
-        // $user->password = bcrypt($this->faker->unique()->password(8));
-        // $user->email = $request->email;
-        // $user->pic = 'img/profile-default.svg';
-        // $user->save();
-        Mail::to($request->email)->send(new AssistantMail(route('generated-url')));
+        $validator = Validator::make($request->only(['email', 'items']), [
+            'email' => 'required|unique:users,email',
+            'items' => 'required',
+        ]);
+        if ($validator->fails()) return response()->json(['error' => $validator->errors()->all()]);
+        $user = new User();
+        $user->role = 'Assistant';
+        $user->name = $this->faker->name;
+        $user->password = bcrypt($this->faker->unique()->password(8));
+        $user->email = $request->email;
+        $user->save();
+        $url = function() use($user){return Url::signedRoute('assistant.register',['user'=>$user->id]);};
+        Mail::to($request->email)->send(new AssistantMail($url()));
         return response()->json('sucess', 200);
     }
 

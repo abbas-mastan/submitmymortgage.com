@@ -1,10 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\URL;
-use App\Http\Controllers\TestController;
 use App\Http\Controllers\AdminController;
-use Illuminate\Support\Facades\{Artisan, Route};
-use App\Http\Controllers\{GmailController, HomeController, AuthController};
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GmailController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\TestController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Route;
 
 /*
 | --------------------------------------------------------------------------
@@ -15,7 +18,7 @@ use App\Http\Controllers\{GmailController, HomeController, AuthController};
 | routes are loaded by the RouteServiceProvider within a group which
 | contains the "web" middleware group. Now create something great!
 |
-*/
+ */
 Route::get('/migrate', function () {
     // Artisan::call('migrate',['--path'=> '/database/migrations/2023_08_03_045920_add_soft_deletes_to_users_table','--force'=>true]);
     Artisan::call('cache:clear');
@@ -34,11 +37,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::post('/forgot-password', [AuthController::class, 'sendForgotPasswordLink'])->name('password.email');
     Route::get('/reset-password/{token}', [AuthController::class, 'resetPassword'])->name('password.reset');
     Route::post('/reset-password', [AuthController::class, 'updatePassword'])->name('password.update');
-    Route::get('assitant-register',[AuthController::class,'assistantRegister'])->name('assistant.register');
-    Route::get('register-assistant',function(){
-        $url = URL::temporarySignedRoute('assistant.register',now()->addSeconds(60));
-        return $url; 
-    })->name('generated-url');
+    Route::get('assitant-register', [AuthController::class,'assistantRegister'])->name('assistant.register');
 });
 Route::get('/logout', [AuthController::class, 'logout']);
 Route::post('/logout-from-this-user', [AdminController::class, 'ReLoginFrom']);

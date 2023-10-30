@@ -11,26 +11,42 @@
         <header class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white rounded-t-2xl p-4">
             <h1 class="text-3xl text-center font-bold">Welcome to Submit My Loan</h1>
         </header>
-        <form class="my-3" action="{{ url('deal-user-register') }}" method="post">
+        <form class="my-3" action="{{ url(getAssistantRoutePrefix() . '/register-assistant/'.$user->id) }}" method="post">
             @csrf
             <div class="flex flex-col w-full">
-                <label for="firstname" class="py-3 text-xl font-bold">First Name</label>
-                <input type="text" class="rounded" name="firstname" placeholder="Enter youur first name" id="firstname">
-            </div>
-            <div class="flex flex-col w-full">
-                <label for="lastname" class="py-3 text-xl font-bold">Last Name</label>
-                <input type="text" class="rounded" name="lastname" placeholder="Enter youur last name" id="lastname">
+                <label for="name" class="py-3 text-xl font-bold">Full Name</label>
+                <input type="text" class="rounded" name="name"  value="{{old('name')}}" placeholder="Enter your Full name" id="name">
+                @error('name')
+                    <span class="text-red-700">{{ $message }}</span>
+                @enderror
             </div>
             <div class="flex flex-col w-full">
                 <label for="email" class="py-3 text-xl font-bold">Email</label>
-                <input type="text" class="rounded" name="email" placeholder="Enter youur email address" id="email">
+                <input type="text" class="rounded" name="email" value="{{ $user->email }}" disabled
+                    placeholder="Enter youur email address" id="email">
             </div>
             <div class="flex flex-col w-full">
                 <label for="phone" class="py-3 text-xl font-bold">Phone</label>
-                <input type="text" class="rounded" name="phone" placeholder="Enter youur phone address" id="phone">
+                <input type="text" class="rounded" value="{{old('phone')}}" name="phone" placeholder="Enter your phone address" id="phone">
+                @error('phone')
+                    <span class="text-red-700">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="flex flex-col w-full">
+                <label for="password" class="py-3 text-xl font-bold">password</label>
+                <input type="password" class="rounded" name="password" placeholder="Enter your password" id="password">
+                @error('password')
+                    <span class="text-red-700">{{ $message }}</span>
+                @enderror
+            </div>
+            <div class="flex flex-col w-full">
+                <label for="password_confirmation" class="py-3 text-xl font-bold">Confirm Password</label>
+                <input type="password" class="rounded" name="password_confirmation"
+                    placeholder="Enter your confirm password " id="password_confirmation">
             </div>
             <button type="submit" class="px-5 py-3 text-white bg-red-700 mt-7 rounded-md">Continue</button>
-            <p class="mt-3 font-bold">Alread have an account? <a href="{{url('login')}}" class="text-red-700">Log in!</a></p>
+            <p class="mt-3 font-bold">Already have an account? <a href="{{ url('login') }}" class="text-red-700">Log
+                    in!</a></p>
         </form>
     </div>
 @endsection

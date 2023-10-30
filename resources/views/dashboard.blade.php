@@ -47,6 +47,9 @@
             {{-- @include('admin.dashboard.menu') --}}
             @include('user.dashboard.cards')
         @endcan
+        @can('isAssistant')
+            @include('user.assistant.deal-documents-submit')
+        @endcan
     </div>
 @endsection
 @section('foot')

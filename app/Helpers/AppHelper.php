@@ -24,6 +24,10 @@ function getAssociateRoutePrefix()
 {
     return "/associate";
 }
+function getAssistantRoutePrefix()
+{
+    return "/assistant";
+}
 //Returns prefix for routes to be used by admin
 function getRoutePrefix()
 {
@@ -46,6 +50,9 @@ function getRoutePrefix()
 
         case 'Borrower':
             return getUserRoutePrefix();
+            break;
+        case 'Assistant':
+            return getAssistantRoutePrefix();
             break;
     }
 }

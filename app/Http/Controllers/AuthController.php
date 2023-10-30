@@ -126,8 +126,12 @@ class AuthController extends Controller
         return back()->with('msg_info', 'Verification link sent!');
     }
 
-    public function assitantRegister()
+    public function assistantRegister(Request $request)
     {
-        return view('user.assistant.deal-register');
+            if (!$request->hasValidSignature()) {
+                abort(401);
+            }
+            $user = User::find($request->user);
+            return view('user.assistant.deal-register',compact('user'));
     }
 }

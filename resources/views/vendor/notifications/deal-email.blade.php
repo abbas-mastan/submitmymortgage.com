@@ -9,7 +9,6 @@
                 <span class="block mb-2">
                     Dear {{ $user->name ?? "Borrower's Name" }}
                 </span>
-                {{$url}}
                 <br>
                 Congratulations! You've been added as a team member on a Submit My Loan deal. This is an important step in
                 completing your mortgage application.

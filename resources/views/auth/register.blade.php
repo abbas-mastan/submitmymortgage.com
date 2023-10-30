@@ -103,7 +103,7 @@
         </form>
     </div>
 @endsection
-{{-- @section('foot')
+@section('foot')
     <script src="https://www.google.com/recaptcha/api.js" async defer></script>
     <script>
         function checkRecaptcha() {
@@ -118,7 +118,7 @@
             return true;
         }
     </script>
-@endsection --}}
+@endsection
 @section('foot')
 <script>
 $(document).ready(function () {
