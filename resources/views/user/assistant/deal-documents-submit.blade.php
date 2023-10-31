@@ -40,7 +40,7 @@
 @section('content')
 <div class="child mt-24 mx-16 w-full shadow-2xl bg-white p-10 rounded-2xl">
         <div class="my-5 flex justify-end ">
-            <a href="" class="bg-red-700 px-5 py-2 text-white">Logout</a>
+            <a href="{{url(getAssistantRoutePrefix().'/logout')}}" class="bg-red-700 px-5 py-2 text-white">Logout</a>
         </div>
         <header class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white rounded-t-2xl p-4">
             <h1 class="text-2xl text-center font-bold">Submit Documents for Your Mortgage Deal </h1>

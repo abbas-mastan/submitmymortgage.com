@@ -22,6 +22,7 @@ class AuthController extends Controller
             // Authentication passed...
             $request->session()->regenerate();
             $request->session()->put('role', Auth::user()->role);
+            if(Auth::user()->role === 'Assistant') return redirect(getAssistantRoutePrefix().'/');
             return redirect()->intended('/dashboard');
         }
         return redirect('/login')->with('msg_error', "Username or password is incorrect. Or your account might be disabled.");

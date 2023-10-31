@@ -30,8 +30,19 @@ class AssistantController extends Controller
         return back()->with('msg_error', "Username or password is incorrect. Or your account might be disabled.");
     }
 
+    
     public function submitDocument()
     {
         return view('user.assistant.deal-documents-submit');
+    }
+    public function login()
+    {
+        dd('asdfasdf');
+    }
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        return redirect(getAssistantRoutePrefix().'/login');
     }
 }
