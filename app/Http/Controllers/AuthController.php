@@ -22,7 +22,7 @@ class AuthController extends Controller
             // Authentication passed...
             $request->session()->regenerate();
             $request->session()->put('role', Auth::user()->role);
-            if(Auth::user()->role === 'Assistant') return redirect(getAssistantRoutePrefix().'/');
+            if(Auth::user()->role === 'Assistant') return redirect(getAssistantRoutePrefix().'/submit-document');
             return redirect()->intended('/dashboard');
         }
         return redirect('/login')->with('msg_error', "Username or password is incorrect. Or your account might be disabled.");
@@ -125,14 +125,5 @@ class AuthController extends Controller
     {
         $request->user()->sendEmailVerificationNotification();
         return back()->with('msg_info', 'Verification link sent!');
-    }
-
-    public function assistantRegister(Request $request)
-    {
-            if (!$request->hasValidSignature()) {
-                abort(401);
-            }
-            $user = User::find($request->user);
-            return view('user.assistant.deal-register',compact('user'));
     }
 }

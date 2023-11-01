@@ -760,14 +760,11 @@ select {
 .float-left {
   float: left;
 }
-.m-auto {
-  margin: auto;
-}
-.m-5 {
-  margin: 1.25rem;
-}
 .m-10 {
   margin: 2.5rem;
+}
+.m-auto {
+  margin: auto;
 }
 .mx-1 {
   margin-left: 0.25rem;
@@ -1124,6 +1121,9 @@ select {
 }
 .w-\[70px\] {
   width: 70px;
+}
+.w-\[80\%\] {
+  width: 80%;
 }
 .w-auto {
   width: auto;
@@ -2032,10 +2032,6 @@ select {
 }
 .focus\:border-none:focus {
   border-style: none;
-}
-.focus\:bg-white:focus {
-  --tw-bg-opacity: 1;
-  background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 .focus\:opacity-100:focus {
   opacity: 1;

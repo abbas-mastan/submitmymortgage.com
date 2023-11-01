@@ -2,20 +2,28 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\URL;
+use Faker\Factory;
 use App\Models\Info;
-use App\Models\Media;
 use App\Models\Team;
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
+use App\Models\Media;
+use App\Models\Assistant;
+use App\Mail\AssistantMail;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Validator;
 
 class AdminService
 {
+
+   
     public static function users(Request $request)
     {
         $data['users'] = User::where('role', 'Borrower')->get();
@@ -339,4 +347,31 @@ class AdminService
         return $associates;
     }
 
+    public  static function shareItemWithAssistant($request)
+    {
+        $faker =  Factory::create();
+        $validator = Validator::make($request->only(['email', 'items']), [
+            'email' => 'required|unique:users,email',
+            'items' => 'required',
+        ]);
+
+        if ($validator->fails()) return response()->json(['error' => $validator->errors()->all()]);
+        $user = new User();
+        $user->role = 'Assistant';
+        $user->active = 0;
+        $user->name = $faker->name;
+        $user->password = bcrypt($faker->unique()->password(8));
+        $user->email = $request->email;
+        $user->save();
+        $assitant = new Assistant;
+        $assitant->assistant_id = $user->id;
+        $assitant->user_id = $request->userId;
+        $assitant->categories = json_encode($request->items);
+        $assitant->save();
+
+        $url = function() use($user){return Url::signedRoute('assistant.register',['user'=>$user->id]);};
+        Mail::to($request->email)->send(new AssistantMail($url()));
+        return response()->json('sucess', 200);
+    }
+    
 }

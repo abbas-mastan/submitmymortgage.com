@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ApplicationRequest;
 use App\Mail\AssistantMail;
 use App\Models\Application;
+use App\Models\Assistant;
 use App\Models\Contact;
 use App\Models\Info;
 use App\Models\Project;
@@ -627,28 +628,6 @@ class AdminController extends Controller
 
     public function shareItemWithAssistant(Request $request)
     {
-        $validator = Validator::make($request->only(['email', 'items']), [
-            'email' => 'required|unique:users,email',
-            'items' => 'required',
-        ]);
-        if ($validator->fails()) return response()->json(['error' => $validator->errors()->all()]);
-        $user = new User();
-        $user->role = 'Assistant';
-        $user->name = $this->faker->name;
-        $user->password = bcrypt($this->faker->unique()->password(8));
-        $user->email = $request->email;
-        $user->save();
-        $url = function() use($user){return Url::signedRoute('assistant.register',['user'=>$user->id]);};
-        Mail::to($request->email)->send(new AssistantMail($url()));
-        return response()->json('sucess', 200);
+      return AdminService::shareItemWithAssistant($request);
     }
-
-    public function submititems(Request $request)
-    {
-        foreach ($request->file('loanapplication') as $key => $value) {
-            dump($value);
-        }
-        die;
-    }
-
 }

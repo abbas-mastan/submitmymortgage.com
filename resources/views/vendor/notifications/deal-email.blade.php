@@ -1,7 +1,7 @@
 @extends('layouts.empty')
 @section('content')
     <div class="m-10">
-        <div class="child flex-col justify-center mt-5 shadow-lg bg-white w-full p-10">
+        <div class="child flex-col justify-center mt-5 shadow-2xl bg-white w-full p-10">
             <header class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white rounded-t-2xl p-4">
                 <h1 class="text-3xl text-center font-bold">You've Been Added as a Team Member on a Submit My Loan Deal!</h1>
             </header>

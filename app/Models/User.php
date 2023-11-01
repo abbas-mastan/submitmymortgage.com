@@ -2,12 +2,12 @@
 
 namespace App\Models;
 
+use App\Notifications\ResetPassword as ResetPasswordNotification;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use App\Notifications\ResetPassword as ResetPasswordNotification;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -102,5 +102,15 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Team::class)
             ->withPivot(['associates', 'jrAssociateManager']);
+    }
+
+    public function assistants()
+    {
+        return $this->hasMany(Assistant::class);
+    }
+
+    public function assistantCategories()
+    {
+        return $this->hasOne(Assistant::class,'assistant_id');
     }
 }

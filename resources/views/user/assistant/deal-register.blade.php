@@ -1,8 +1,8 @@
 @extends('layouts.empty')
 @section('head')
     <style>
-        body div:first-child {
-            height: 80%;
+        .body-first-div {
+            height: 100%;
         }
     </style>
 @endsection
@@ -45,7 +45,7 @@
                     placeholder="Enter your confirm password " id="password_confirmation">
             </div>
             <button type="submit" class="px-5 py-3 text-white bg-red-700 mt-7 rounded-md">Continue</button>
-            <p class="mt-3 font-bold">Already have an account? <a href="{{ url(getAssistantRoutePrefix().'/login') }}" class="text-red-700">Log
+            <p class="mt-3 font-bold">Already have an account? <a href="{{ url('/login') }}" class="text-red-700">Log
                     in!</a></p>
         </form>
     </div>

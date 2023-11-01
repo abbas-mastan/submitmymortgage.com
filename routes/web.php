@@ -37,7 +37,6 @@ Route::group(['middleware' => 'guest'], function () {
     Route::post('/forgot-password', [AuthController::class, 'sendForgotPasswordLink'])->name('password.email');
     Route::get('/reset-password/{token}', [AuthController::class, 'resetPassword'])->name('password.reset');
     Route::post('/reset-password', [AuthController::class, 'updatePassword'])->name('password.update');
-    Route::get('assitant-register', [AuthController::class,'assistantRegister'])->name('assistant.register');
 });
 Route::get('/logout', [AuthController::class, 'logout']);
 Route::post('/logout-from-this-user', [AdminController::class, 'ReLoginFrom']);

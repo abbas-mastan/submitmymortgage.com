@@ -103,10 +103,10 @@
             url: $(this).attr('action'),
             data: {
                 email: inputs,
-                items: textArray
+                items: textArray,
+                userId:userId
             }, // Send data as an object
             success: function(response) {
-                console.log(response);
                 $('.jq-loader-for-ajax').addClass('hidden');
                 if (response === 'sucess') {
                     alert('Link submitted successfully');
@@ -115,10 +115,11 @@
                 $.each(response.error, function(index, message) {
                     $('.submitPart .errors').append(
                         `<li class="text-red-700">${message}</li>`);
-                });
-            },
-            error: function(data) {
-                console.log(data);
+                    });
+                },
+                error: function(data) {
+                    console.log(data);
+                    $('.jq-loader-for-ajax').addClass('hidden');
             }
         });
     });

@@ -95,11 +95,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::get('sortby/{id?}/{sortby?}', [AdminController::class, 'projectOverview']);
     // this route is for updating status to disable or close the project
     Route::get('project/{status}/{project}', [AdminController::class, 'changeProjectStatus']);
-    Route::view('showemail','vendor.notifications.deal-email');
-    Route::view('shownewregister','vendor.notifications.deal-register');
-    Route::view('submitdocuments','vendor.notifications.deal-documents-submit');
-    Route::post('/submititems',[AdminController::class,'submititems']);
-    
+    // this route is for mark as read the notification
     Route::get('/mark-as-read/{id}', [AdminController::class, 'markAsRead']);
 
 });
