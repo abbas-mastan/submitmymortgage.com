@@ -25,6 +25,6 @@ class AssistantMail extends Mailable
     public function build()
     {
         $url = $this->url;
-        return $this->view('\vendor\notifications\deal-email',compact('url'));
+        return $this->view('notifications::deal-email',compact('url'));
     }
 }
