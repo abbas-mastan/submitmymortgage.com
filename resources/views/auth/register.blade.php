@@ -117,12 +117,8 @@
             }
             return true;
         }
+        $(document).ready(function () {
+        $('.body-first-div').addClass('bg-gradient-to-b from-gradientStart to-gradientEnd');
+        });
     </script>
-@endsection
-@section('foot')
-<script>
-$(document).ready(function () {
-$('.body-first-div').addClass('bg-gradient-to-b from-gradientStart to-gradientEnd');
-});
-</script>
 @endsection

@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Media;
-use App\Services\CommonService;
 use Illuminate\Http\Request;
+use App\Services\CommonService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use App\Http\Controllers\AdminController;
 
 class AssistantController extends Controller
 {
@@ -52,7 +54,7 @@ class AssistantController extends Controller
     {
         $categoryMappings = [
             'credit-report' => 0,
-            'fillable-loan-application' => 1,
+            'fillable-loan-application' => null,
             'bank-statements' => 2,
             'pay-stubs' => 3,
             'tax-returns' => 4,
@@ -64,36 +66,62 @@ class AssistantController extends Controller
             'miscellaneous' => 10,
         ];
         return config('smm.file_category')[$categoryMappings[$cat]] ?? null;
-    }    
+    }
 
     public function submitDocument(Request $request)
     {
-        $Borrower = User::find(Auth::id())->assistantCategories()->first();
+        $borrower = User::find(Auth::id())->assistantCategories()->first();
         $success = true;
-    
+
         foreach ($request->all() as $key => $file) {
-            if ($key === '_token') continue;
-            foreach (request()->file($key) as $category) {
-                $media = new Media();
-                $media->file_name = $category->getClientOriginalName();
-                $media->file_path = $category->store(getFileDirectory());
-                $media->file_size = $category->getSize();
-                $media->file_type = $category->getClientMimeType();
-                $media->file_extension = $category->getClientOriginalExtension();
-                $media->category = $this->catName($key);
-                $media->user_id = $Borrower->user_id;
-                $media->uploaded_by = Auth::id();
-                if ($media->save()){
-                    CommonService::storeNotification("Uploaded $request->category", $request->id ?? Auth::id());
-                }else{
-                    $success = false;
-                    break; // Stop processing if there's an error
+            if ($key === '_token') {
+                continue;
+            }
+
+            $catName = $this->catName($key);
+            $cat = $catName ? $catName : ucwords(str_replace('-', ' ', $key));
+
+            $user = User::find($borrower->user_id);
+            $admin = new AdminController();
+            $addCategoryResult = $admin->addCategoryToUser($request->merge(['name' => $cat]), $user);
+
+            if ($addCategoryResult) {
+                foreach (request()->file($key) as $category) {
+                    $media = new Media();
+                    $media->file_name = $category->getClientOriginalName();
+                    $media->file_path = $category->store(getFileDirectory());
+                    $media->file_size = $category->getSize();
+                    $media->file_type = $category->getClientMimeType();
+                    $media->file_extension = $category->getClientOriginalExtension();
+                    $media->category = $cat;
+                    $media->user_id = $borrower->user_id;
+                    $media->uploaded_by = Auth::id();
+                    if ($media->save()) {
+                        CommonService::storeNotification("Uploaded $cat on behalf of $user->name", Auth::id());
+                    }
+
                 }
+            } else {
+                $success = false;
+                break;
             }
         }
-    
-        if ($success) return back()->with('msg_success', "Files Upload Successfully");
-        else return back()->with('msg_danger', "Files Upload Failed");
+
+        if ($success) {
+            return back()->with('msg_success', "Files Upload Successfully");
+        } else {
+            return back()->with('msg_error', "Files Upload Failed");
+        }
     }
-    
+
+    public function deleteFile($id)
+    {
+        $media = Media::find($id);
+        if ($media->delete()) {
+            Storage::delete($media->file_path);
+            return response()->json('file delete');
+        }
+        return ['msg_type' => 'msg_error', 'msg_value' => 'An error occured while deleting the file.'];
+    }
+
 }

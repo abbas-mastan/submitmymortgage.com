@@ -11,5 +11,6 @@ Route::prefix(getAssistantRoutePrefix())->group(function () {
     Route::middleware(['auth', 'assistant'])->group(function () {
         Route::get('/submit-document', [AssistantController::class, 'submitDocumentView']);
         Route::post('/submit-document', [AssistantController::class, 'submitDocument']);
+        Route::get('/delete-file/{id}', [AssistantController::class, 'deleteFile']);
     });
 });

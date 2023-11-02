@@ -315,7 +315,7 @@ class AdminController extends Controller
         return back()->with($msg['msg_type'], $msg['msg_value']);
     }
 
-    public function addCategoryToUser(CommonService $commonService, Request $request, User $user)
+    public function addCategoryToUser(Request $request, User $user)
     {
         if (in_array(ucwords($request->name), config('smm.file_category')) || $request->name == "id/driver's license") {
             return response()->json(["error" => "This Category \" $request->name\" already exists"]);
