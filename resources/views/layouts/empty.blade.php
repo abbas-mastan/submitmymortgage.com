@@ -24,11 +24,7 @@
     </script>
     @yield('head')
 </head>
-
 <body class="font-graphik" style="font-family: graphik, sans-serif !important">
-    <div class="flex justify-center ">
-        @include('parts.alerts')
-    </div>
     <div class="body-first-div h-full 2xl:h-screen flex justify-center">
         @yield('content')
         @include('parts/footer')
