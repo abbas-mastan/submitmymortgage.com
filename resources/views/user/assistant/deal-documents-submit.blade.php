@@ -58,7 +58,7 @@
                     <div class="flex w-1/5 h-8 py-7 items-center px-3">{{ $item }}</div>
                     <div class="flex h-8 py-7 items-center">
                         <input accept=".xlsx,.xls,.jpeg,.jpg,.png,.doc, .docx,.ppt, .pptx,.txt,.pdf"
-                            id="{{ $id }}" type="file" name="{{ $item }}[]" multiple hidden>
+                            id="{{ $id }}" type="file" name="{{ $id }}[]" multiple hidden>
                         <label for="{{ $id }}" class="px-4 py-2 text-white bg-red-700 rounded-md">Add File</label>
                         <p id="{{ $id }}-files-area">
                             <span id="{{ $id }}filesList">

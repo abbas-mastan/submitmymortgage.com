@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Media;
+use App\Services\CommonService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -46,11 +48,52 @@ class AssistantController extends Controller
         return view('user.assistant.deal-documents-submit', compact('cats'));
     }
 
-    public function submitDocument()
+    protected function catName($cat)
     {
-        foreach (request()->file() as $key => $value) {
-            dump($value);
+        $categoryMappings = [
+            'credit-report' => 0,
+            'fillable-loan-application' => 1,
+            'bank-statements' => 2,
+            'pay-stubs' => 3,
+            'tax-returns' => 4,
+            'iddrivers-license' => 5,
+            '1003-form' => 6,
+            'mortgage-statement' => 7,
+            'evidence-of-insurance' => 8,
+            'purchase-agreement' => 9,
+            'miscellaneous' => 10,
+        ];
+        return config('smm.file_category')[$categoryMappings[$cat]] ?? null;
+    }    
+
+    public function submitDocument(Request $request)
+    {
+        $Borrower = User::find(Auth::id())->assistantCategories()->first();
+        $success = true;
+    
+        foreach ($request->all() as $key => $file) {
+            if ($key === '_token') continue;
+            foreach (request()->file($key) as $category) {
+                $media = new Media();
+                $media->file_name = $category->getClientOriginalName();
+                $media->file_path = $category->store(getFileDirectory());
+                $media->file_size = $category->getSize();
+                $media->file_type = $category->getClientMimeType();
+                $media->file_extension = $category->getClientOriginalExtension();
+                $media->category = $this->catName($key);
+                $media->user_id = $Borrower->user_id;
+                $media->uploaded_by = Auth::id();
+                if ($media->save()){
+                    CommonService::storeNotification("Uploaded $request->category", $request->id ?? Auth::id());
+                }else{
+                    $success = false;
+                    break; // Stop processing if there's an error
+                }
+            }
         }
-        die;
+    
+        if ($success) return back()->with('msg_success', "Files Upload Successfully");
+        else return back()->with('msg_danger', "Files Upload Failed");
     }
+    
 }

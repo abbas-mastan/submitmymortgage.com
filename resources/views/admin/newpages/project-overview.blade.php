@@ -131,7 +131,6 @@
                 <button class="nextButton bg-red-700 text-white py-2 rounded-full px-5">Next</button>
             </div>
         </div>
-
         <div class="hidden py-3 submitPart">
             <span class="errors">
 
