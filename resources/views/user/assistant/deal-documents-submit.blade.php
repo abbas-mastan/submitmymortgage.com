@@ -63,7 +63,6 @@
 @endsection
 @section('content')
     <div class="child mt-24 mx-16 w-full shadow-2xl bg-white p-10 rounded-2xl">
-        @include('parts.alerts')
         <div class="my-5 flex justify-end ">
             <a href="{{ url('/logout') }}" class="rounded-md bg-red-700 px-5 py-2 text-white">Logout</a>
         </div>
@@ -101,7 +100,7 @@
                                         </span>
                                     @empty
                                     @endforelse
-                                    <span id="{{ $id }}-files-names"></span>
+                                    <span id="{{ $id }}-files-names"></span>  
                                 </span>
                             </span>
                         </p>
