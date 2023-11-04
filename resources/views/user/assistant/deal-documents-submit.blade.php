@@ -112,8 +112,8 @@
                                             <span class="font-bold text-[#56b35a] ml-2 capitalize success">file
                                                 Submitted!</span>
                                             <span class="file-block w-[90%]" style="background-color:#56b35a;">
-                                                <span class="px-2 cursor-pointer rotate-45" value="{{ $file->id }}" title="delete this item"
-                                                    class="file-delete-old">+</span>
+                                                <span value="{{ $file->id }}" title="delete this item"
+                                                    class="file-delete-old px-2 cursor-pointer rotate-45">+</span>
                                                 <span class="name-old truncate">
                                                     {{ $file->file_name }}
                                                 </span>
