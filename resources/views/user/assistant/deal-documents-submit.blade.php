@@ -59,6 +59,26 @@
             background-color: rgba(144, 163, 203, 0.2);
             border-radius: 10px;
         }
+
+        .menu::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        /* Track */
+        .menu::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        .menu::-webkit-scrollbar-thumb {
+            background: #848484;
+            border-radius: 5px;
+        }
+
+        /* Handle on hover */
+        .menu::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
     </style>
 @endsection
 @section('content')
@@ -80,28 +100,29 @@
                 @php($id = Str::slug($item))
                 <div class="flex mt-3">
                     <div class="flex w-1/5 h-8 py-7 items-center px-3">{{ $item }}</div>
-                    <div class="flex h-8 py-7 items-center w-full">
-                        <p id="{{ $id }}-files-area" class="w-[90%] pl-10 h-16 overflow-y-auto flex items-center">
+                    <div class="flex h-8 py-7 items-center w-full ">
+                        <p id="{{ $id }}-files-area" class="menu w-[90%] pl-10 h-16 overflow-y-auto flex items-center">
                             <span id="{{ $id }}filesList">
-                                <span class="grid grid-cols-5 gap-1 items-end">
+                                <span class="grid grid-cols-5 items-end">
                                     @forelse(\App\Models\Media::where('uploaded_by',Auth::id())->get() as $file)
                                         @if ($file->category !== $item)
                                             @continue
                                         @endif
                                         <span>
-                                            <span class="font-bold text-[#56b35a] ml-2 capitalize success">file Submitted!</span>
-                                            <span class="file-block" style="background-color:#56b35a;">
-                                                <span value="{{ $file->id }}" title="delete this item"
+                                            <span class="font-bold text-[#56b35a] ml-2 capitalize success">file
+                                                Submitted!</span>
+                                            <span class="file-block w-[90%]" style="background-color:#56b35a;">
+                                                <span class="px-2 cursor-pointer rotate-45" value="{{ $file->id }}" title="delete this item"
                                                     class="file-delete-old">+</span>
-                                                <span class="name-old">
+                                                <span class="name-old truncate">
                                                     {{ $file->file_name }}
                                                 </span>
                                             </span>
                                         </span>
                                     @empty
                                     @endforelse
-                                    <span id="{{ $id }}-files-names"></span>  
                                 </span>
+                                <span id="{{ $id }}-files-names" class="grid grid-cols-5"></span>
                             </span>
                         </p>
                         <div>
@@ -140,8 +161,8 @@
                 success: function(response) {
                     console.log(response);
                     if (response == 'file delete') {
-                        $span.parent().parent().remove(); // Use the stored reference to remove the parent element
-                        // $span.closest('.success').remove();
+                        $span.parent().parent()
+                    .remove(); // Use the stored reference to remove the parent element
                     }
                 }
             });
@@ -157,10 +178,10 @@
                                 class: 'file-block'
                             }),
                             fileName = $('<span/>', {
-                                class: 'name',
+                                class: 'name truncate',
                                 text: this.files.item(i).name
                             });
-                        fileBloc.append('<span class="file-delete"><span>+</span></span>')
+                        fileBloc.append('<span class="px-1 file-delete"><span>+</span></span>')
                             .append(fileName);
                         $(filesListId).find(filesNamesId).append(fileBloc);
                     };
