@@ -161,7 +161,8 @@
                         <img class="icon w-10" src="{{ asset('icons/trash.svg') }}" alt="">
                     </a>
                 </div>
-                <div class="flex justify-end items-center mt-3">
+                <div class="flex justify-between items-center mt-3">
+                    <button class="bg-red-700 text-white py-2 rounded-full px-5 back">back</button>
                     <button type="submit" class="bg-red-700 text-white  py-2 rounded-full px-5">Done</button>
                 </div>
             </form>

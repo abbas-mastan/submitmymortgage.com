@@ -399,18 +399,7 @@ class AdminController extends Controller
 
     public function ProjectOverview(Request $request, $id = -1, $sortby = null)
     {
-        $borrowerUsers = User::where('role', 'Borrower')->get();
-
-        foreach ($borrowerUsers as $user) {
-            try {
-                $user->required_categories = ["Bank Statements", "ID/Driver's License", "Fillable Loan Application"];
-                $user->save();
-            } catch (\Exception $e) {
-                // Log the error or handle it appropriately
-                // For debugging purposes, you can also use dd($e) to dump the exception.
-            }
-        }
-
+       
         if ($request->ajax()) {
             $data['attachments'] = \App\Models\Attachment::where('user_id', Auth::id())->paginate(2);
             return $data;

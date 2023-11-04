@@ -19,6 +19,12 @@
         e.preventDefault();
         $('#newProjectModal').toggleClass('hidden');
     });
+
+    $('.submitPart .back').click(function (e) { 
+        e.preventDefault();
+        $('.submitPart').addClass('hidden');
+        $('.firstTable').removeClass('hidden');
+    });
     var textArray;
     $('.nextButton').click(function(e) {
         e.preventDefault();
