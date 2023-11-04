@@ -83,13 +83,13 @@
                     <div class="flex h-8 py-7 items-center w-full">
                         <p id="{{ $id }}-files-area" class="w-[90%] pl-10 h-16 overflow-y-auto flex items-center">
                             <span id="{{ $id }}filesList">
-                                <span class="grid grid-cols-5 items-end">
+                                <span class="grid grid-cols-5 gap-1 items-end">
                                     @forelse(\App\Models\Media::where('uploaded_by',Auth::id())->get() as $file)
                                         @if ($file->category !== $item)
                                             @continue
                                         @endif
                                         <span>
-                                            <span class="font-bold text-[#56b35a] ml-2 capitalize">file Submitted!</span>
+                                            <span class="font-bold text-[#56b35a] ml-2 capitalize success">file Submitted!</span>
                                             <span class="file-block" style="background-color:#56b35a;">
                                                 <span value="{{ $file->id }}" title="delete this item"
                                                     class="file-delete-old">+</span>
@@ -140,8 +140,8 @@
                 success: function(response) {
                     console.log(response);
                     if (response == 'file delete') {
-                        $span.parent()
-                            .remove(); // Use the stored reference to remove the parent element
+                        $span.parent().parent().remove(); // Use the stored reference to remove the parent element
+                        // $span.closest('.success').remove();
                     }
                 }
             });
