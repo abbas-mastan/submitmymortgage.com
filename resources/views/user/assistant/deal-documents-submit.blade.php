@@ -84,20 +84,25 @@
                     <div class="flex h-8 py-7 items-center w-full">
                         <p id="{{ $id }}-files-area" class="w-[90%] pl-10 h-16 overflow-y-auto flex items-center">
                             <span id="{{ $id }}filesList">
-                                <span id="{{ $id }}-files-names"></span>
-                                @forelse(\App\Models\Media::where('uploaded_by',Auth::id())->get() as $file)
-                                    @if ($file->category !== $item)
-                                        @continue
-                                    @endif
-                                    <span class="file-block" style="background-color:lawngreen;">
-                                        <span value="{{ $file->id }}" title="delete this item"
-                                            class="file-delete-old">+</span>
-                                        <span class="name-old">
-                                            {{ $file->file_name }}
+                                <span class="grid grid-cols-5 items-end">
+                                    @forelse(\App\Models\Media::where('uploaded_by',Auth::id())->get() as $file)
+                                        @if ($file->category !== $item)
+                                            @continue
+                                        @endif
+                                        <span>
+                                            <span class="font-bold text-[#56b35a] ml-2 capitalize">file Submitted!</span>
+                                            <span class="file-block" style="background-color:#56b35a;">
+                                                <span value="{{ $file->id }}" title="delete this item"
+                                                    class="file-delete-old">+</span>
+                                                <span class="name-old">
+                                                    {{ $file->file_name }}
+                                                </span>
+                                            </span>
                                         </span>
-                                    </span>
-                                @empty
-                                @endforelse
+                                    @empty
+                                    @endforelse
+                                    <span id="{{ $id }}-files-names"></span>
+                                </span>
                             </span>
                         </p>
                         <div>
@@ -122,30 +127,26 @@
         $('span.file-delete-old').click(function(e) {
             e.preventDefault();
             var $span = $(this); // Store a reference to the clicked span
-
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
             });
-
             var id = $span.attr('value');
-
             $.ajax({
                 type: "get",
                 url: `/assistant/delete-file/${id}`,
                 data: $span
-            .serialize(), // Note: serialize() is typically used with forms, so this may not be necessary
+                    .serialize(), // Note: serialize() is typically used with forms, so this may not be necessary
                 success: function(response) {
                     console.log(response);
                     if (response == 'file delete') {
                         $span.parent()
-                    .remove(); // Use the stored reference to remove the parent element
+                            .remove(); // Use the stored reference to remove the parent element
                     }
                 }
             });
         });
-
 
         $(document).ready(function() {
             // Function to handle file inputs
