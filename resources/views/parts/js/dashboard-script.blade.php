@@ -21,6 +21,7 @@
             success: function(response) {
                 console.log(response);
                 if (response === 'success') {
+                    alert('Form submitted successfully!');
                     location.reload();
                 }
                 $.each(response.error, function(index, error) {

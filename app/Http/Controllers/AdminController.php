@@ -642,7 +642,6 @@ class AdminController extends Controller
             'last_name' => 'required',
             'address' => 'required',
             'phone' => 'required',
-            'loantype' => 'required',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
