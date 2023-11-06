@@ -2,19 +2,38 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
 <script>
-    $(document).ready(function() {
-        $('#user-table').DataTable({
-            pageLength: 30,
-            lengthMenu: [10, 20, 30, 50, 100, 200],
+    $('.intakeForm').submit(function(e) {
+
+        errors = ['email','first_name','last_name','address','phone','loantype'];
+        $.each(errors, function (indexInArray, error_tag) { 
+             $(`#${error_tag}`).empty();
+        });
+        e.preventDefault();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            type: "post",
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function(response) {
+                console.log(response);
+                if (response === 'success') {
+                    location.reload();
+                }
+                $.each(response.error, function(index, error) {
+                    var fieldId = `#${error.field}_error`;
+                    var errorMessage = error.message;
+                    $(fieldId).text(errorMessage);
+                });
+            }
         });
     });
-</script>
-<script>
-    $(document).ready(function() {
-        $(".intakeForm input").attr("required", true);
-        $(".intakeForm textarea").attr("required", true);
-    });
 
+    $('.personalinfo input').attr('required', true);
+    $('input[name=address]').attr('required', true);
 
     $('.newProject, .closeModal').click(function(e) {
         e.preventDefault();
@@ -35,11 +54,14 @@
         for (const section in sections) {
             if (selectedValue === section) {
                 $(`.${sections[section]}`).removeClass('hidden');
+                $(`.${sections[section]} input`).removeAttr('disabled');
             } else {
                 $(`.${sections[section]}`).addClass('hidden');
+                $(`.${sections[section]} input`).attr('disabled', true);
+
             }
         }
-        $('select[name=loantype]').val(selectedValue);
+        $('select[name=loan_type]').val(selectedValue);
     });
 
 

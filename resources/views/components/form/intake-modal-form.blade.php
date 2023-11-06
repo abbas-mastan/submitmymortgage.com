@@ -7,16 +7,16 @@
 
     <form class="intakeForm" action="{{ url(getAdminRoutePrefix() . '/submit-intake-form') }}" method="post">
         @csrf
-        <div class="grid grid-cols-2 gap-x-4">
-            <x-form.input name="firstname" label="First Name" class="mb-0" />
-            <x-form.input name="lastname" label="Last Name" class="mb-0" />
+        <div class="personalinfo grid grid-cols-2 gap-x-4">
+            <x-form.input name="first_name" label="First Name" class="mb-0" />
+            <x-form.input name="last_name" label="Last Name" class="mb-0" />
             <x-form.input name="email" label="Email" type="email" />
             <x-form.input name="phone" type="number" label="Phone Number" />
         </div>
         <span class="block k mt-1 font-bold">Property Address</span>
         <div class="grid grid-cols-2 gap-x-4">
             <x-form.input name="address" label="Street Adress" class="mb-0" />
-            <x-form.input name="addresstwo" label="Street Address Line 2" class="mb-0" />
+            <x-form.input name="address_two" label="Street Address Line 2" class="mb-0" />
             <x-form.input name="city" label="city" class="mb-0" />
             <x-form.input name="state" label="State / Province / Region" class="mb-0" />
             <x-form.input name="zip" label="Postal/Zip Code" />
@@ -29,29 +29,29 @@
                     class="loantype w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
             sm:text-sm sm:leading-6"
-                    name="loantype">
+                    name="loan_type">
                     @foreach (['Purchase', 'Cash Out', 'Fix & Flip', 'Refinance'] as $LoanType)
                         <option value="{{ $LoanType }}">{{ $LoanType }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="relative">
-                <x-form.input name="purchaseprice" type="number" label="Purchase Price" class="mb-0" />
+                <x-form.input name="purchase_price" type="number" label="Purchase Price" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
             <div class="relative">
-                <x-form.input name="propertyvalue" type="number" label="Property Value" class="mb-0" />
+                <x-form.input name="property_value" type="number" label="Property Value" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
             <div class="relative">
-                <x-form.input name="downpayment" type="number" label="Down Payment" class="mb-0" />
+                <x-form.input name="down_payment" type="number" label="Down Payment" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
             <div class="relative">
-                <x-form.input name="loanamount" type="number" label="Current Loan Amount" class="mb-0" />
+                <x-form.input name="loan_amount" type="number" label="Current Loan Amount" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
-            <x-form.input name="closingdate" type="date" class="mb-0" label="ClosingDate" />
+            <x-form.input name="closing_date" type="date" class="mb-0" label="ClosingDate" />
         </div>
         <div class="cashout hidden grid grid-cols-2 gap-x-4">
             <div class="mt-3 ">
@@ -60,18 +60,18 @@
                     class="loantype w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
             sm:text-sm sm:leading-6"
-                    name="loantype">
+                    name="loan_type">
                     @foreach (['Purchase', 'Cash Out', 'Fix & Flip', 'Refinance'] as $LoanType)
                         <option value="{{ $LoanType }}">{{ $LoanType }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="relative">
-                <x-form.input name="currentloanamount" type="number" label="Current Loan Amount" class="mb-0" />
+                <x-form.input name="current_loan_amount" type="number" label="Current Loan Amount" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
             <div class="relative">
-                <x-form.input name="currentlender" label="Current Lender" class="mb-0" />
+                <x-form.input name="current_lender" label="Current Lender" class="mb-0" />
             </div>
             <div class="relative">
                 <x-form.input name="rate" type="number" label="Rate" class="mb-0" />
@@ -84,18 +84,18 @@
                     class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
             sm:text-sm sm:leading-6"
-                    name="isItRentalProperty" id="isItRentalProperty">
+                    name="is_it_rental_property" id="isItRentalProperty">
                     @foreach (['Yes', 'No'] as $retal)
                         <option value="{{ $retal }}">{{ $retal }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="relative">
-                <x-form.input name="monthlyrentalincome" type="number" label="Monthly Rental Income" class="mb-0" />
+                <x-form.input name="monthly_rental_income" type="number" label="Monthly Rental Income" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
             <div class="relative">
-                <x-form.input name="cashoutamount" type="number" label="Cash Out Amount" class="mb-0" />
+                <x-form.input name="cashout_amount" type="number" label="Cash Out Amount" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
         </div>
@@ -106,25 +106,25 @@
                     class="loantype w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
             sm:text-sm sm:leading-6"
-                    name="loantype">
+                    name="loan_type">
                     @foreach (['Purchase', 'Cash Out', 'Fix & Flip', 'Refinance'] as $LoanType)
                         <option value="{{ $LoanType }}">{{ $LoanType }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="relative">
-                <x-form.input name="purchaseprice" type="number" label="Purchase Price" class="mb-0" />
+                <x-form.input name="purchase_price" type="number" label="Purchase Price" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
             <div class="relative">
-                <x-form.input name="propertyvalue" type="number" label="Property Value" class="mb-0" />
+                <x-form.input name="property_value" type="number" label="Property Value" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
             <div class="relative">
-                <x-form.input name="downpayment" type="number" label="Down Payment" class="mb-0" />
+                <x-form.input name="down_payment" type="number" label="Down Payment" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
-            <x-form.input name="closingdate" type="date" class="mb-0" label="ClosingDate" />
+            <x-form.input name="closing_date" type="date" class="mb-0" label="ClosingDate" />
             <div class="mt-3 ">
                 <label for="isRepairFinanceNeeded" class="block text-sm text-dark-500 leading-6 font-bold">Is Repair
                     Financing Needed?</label>
@@ -132,14 +132,14 @@
                     class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
             sm:text-sm sm:leading-6"
-                    name="isRepairFinanceNeeded" id="isRepairFinanceNeeded">
+                    name="is_it_rental_property" id="isRepairFinanceNeeded">
                     @foreach (['Yes', 'No'] as $retal)
                         <option value="{{ $retal }}">{{ $retal }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="relative repairfinanceamountdiv">
-                <x-form.input name="repairfinanceamount" type="number" label="How much?" class="mb-0" />
+                <x-form.input name="repair_finance_amount" type="number" label="How much?" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
         </div>
@@ -150,18 +150,18 @@
                     class="loantype w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
             sm:text-sm sm:leading-6"
-                    name="loantype">
+                    name="loan_type">
                     @foreach (['Purchase', 'Cash Out', 'Fix & Flip', 'Refinance'] as $LoanType)
                         <option value="{{ $LoanType }}">{{ $LoanType }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="relative">
-                <x-form.input name="currentloanamount" type="number" label="Current Loan Amount" class="mb-0" />
+                <x-form.input name="current_loan_amount" type="number" label="Current Loan Amount" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
             <div class="relative">
-                <x-form.input name="currentlender" type="number" label="Current Lender" class="mb-0" />
+                <x-form.input name="current_lender" type="number" label="Current Lender" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
             <div class="relative">
@@ -175,14 +175,14 @@
                     class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
             sm:text-sm sm:leading-6"
-                    name="isItRentalProperty" id="isItRentalProperty">
+                    name="is_it_rental_property" id="isItRentalProperty">
                     @foreach (['Yes', 'No'] as $retal)
                         <option value="{{ $retal }}">{{ $retal }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="relative">
-                <x-form.input name="monthlyrentalincome" type="number" label="Monthly Rental Income" class="mb-0" />
+                <x-form.input name="monthly_rental_income" type="number" label="Monthly Rental Income" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
         </div>
@@ -192,7 +192,7 @@
                 class="w-full bg-gray-100 border-1
     ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
     sm:text-sm sm:leading-6"
-                name="Note" id="Note" cols="30" rows="3"></textarea>
+                name="note" id="Note" cols="30" rows="3"></textarea>
             <div class="flex justify-end">
                 <button type="submit"
                     class="w-1/4 py-2 mt-3 bg-red-800 text-white px-5 text-xs font-thin teamContinue">Continue</button>

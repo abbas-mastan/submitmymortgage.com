@@ -6,6 +6,7 @@ use App\Http\Requests\ApplicationRequest;
 use App\Models\Application;
 use App\Models\Contact;
 use App\Models\Info;
+use App\Models\IntakeForm;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
@@ -422,7 +423,6 @@ class AdminController extends Controller
         }
         $data['assistants'] = collect($data['assistants'])->unique('id');
 
-      
         $data['categories'] = array_unique($data['categories']);
         return view('admin.newpages.project-overview', $data);
     }
@@ -632,6 +632,65 @@ class AdminController extends Controller
         $user->active = 0;
         $user->update();
         return response()->json('access removed', 200);
+    }
+
+    public function submitIntakeForm(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|unique:users,email',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'address' => 'required',
+            'phone' => 'required',
+            'loantype' => 'required',
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->toArray();
+            $response = ['error' => []];
+            foreach ($errors as $field => $error) {
+                foreach ($error as $message) {
+                    $response['error'][] = [
+                        'field' => $field,
+                        'message' => $message,
+                    ];
+                }
+            }
+            return response()->json($response);
+        } else {
+            $user = new User;
+            $user->name = $request->firstname . ' ' . $request->lastname;
+            $user->email = $request->email;
+            $user->role = 'Borrower';
+            $user->password = $this->faker->password(8);
+            $user->save();
+
+            IntakeForm::create([
+                'user_id' => $user->id,
+                'name' => $request->first_name ?? null . '' . $request->last_name,
+                'email' => $request->email ?? null,
+                'address' => $request->address ?? null,
+                'phone' => $request->phone ?? null,
+                'address' => $request->address . ' ' . $request->address_two ?? null,
+                'city' => $request->city ?? null,
+                'state' => $request->state ?? null,
+                'zip' => $request->zip ?? null,
+                'loan_type' => $request->loan_type ?? null,
+                'purchase_price' => $request->purchase_price ?? null,
+                'property_value' => $request->property_value ?? null,
+                'down_payment' => $request->down_payment ?? null,
+                'current_loan_amount' => $request->current_loan_amount ?? null,
+                'closing_date' => $request->closing_date ?? null,
+                'current_lender' => $request->current_lender ?? null,
+                'rate' => $request->rate ?? null,
+                'is_it_rental_property' => $request->is_it_rental_property ?? null,
+                'monthly_rental_income' => $request->monthly_rental_income ?? null,
+                'cashout_amount' => $request->cashout_amount ?? null,
+                'is_repair_finance_needed' => $request->is_repair_finance_needed ?? null,
+                'how_much' => $request->how_much ?? null,
+                'note' => $request->note ?? null,
+            ]);
+            return response()->json('success', 200);
+        }
     }
 
 }
