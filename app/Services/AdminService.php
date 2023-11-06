@@ -358,7 +358,7 @@ class AdminService
         if ($validator->fails()) return response()->json(['error' => $validator->errors()->all()]);
         $user = new User();
         $user->role = 'Assistant';
-        $user->active = 1;
+        $user->active = 0;
         $user->name = $faker->name;
         $user->password = bcrypt($faker->unique()->password(8));
         $user->email = $request->email;

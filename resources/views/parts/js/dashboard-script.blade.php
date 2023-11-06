@@ -10,6 +10,12 @@
     });
 </script>
 <script>
+    $(document).ready(function() {
+        $(".intakeForm input").attr("required", true);
+        $(".intakeForm textarea").attr("required", true);
+    });
+
+
     $('.newProject, .closeModal').click(function(e) {
         e.preventDefault();
         $('#newProjectModal').toggleClass('hidden');
@@ -36,35 +42,6 @@
         $('select[name=loantype]').val(selectedValue);
     });
 
-
-    // $('.loantype').change(function(e) {
-    //     e.preventDefault();
-    //     if ($(this).val() === 'Purchase') {
-    //         $('.purchase').removeClass('hidden');
-    //         $('.cashout').addClass('hidden');
-    //         $('.fix-flip').addClass('hidden');
-    //         $('.refinance').addClass('hidden');
-    //         $('select[name=loantype]').val('Purchase');
-    //     } else if ($(this).val() === 'Cash Out') {
-    //         $('.cashout').removeClass('hidden');
-    //         $('.purchase').addClass('hidden');
-    //         $('.fix-flip').addClass('hidden');
-    //         $('.refinance').addClass('hidden');
-    //         $('select[name=loantype]').val('Cash Out');
-    //     } else if ($(this).val() === 'Fix & Flip') {
-    //         $('.fix-flip').removeClass('hidden');
-    //         $('.cashout').addClass('hidden');
-    //         $('.purchase').addClass('hidden');
-    //         $('.refinance').addClass('hidden');
-    //         $('select[name=loantype]').val('Fix & Flip');
-    //     } else if ($(this).val() === 'Refinance') {
-    //         $('.refinance').removeClass('hidden');
-    //         $('.cashout').addClass('hidden');
-    //         $('.purchase').addClass('hidden');
-    //         $('.fix-flip').addClass('hidden');
-    //         $('select[name=loantype]').val('Refinance');
-    //     }
-    // });
 
 
     $('#isRepairFinanceNeeded').change(function(e) {
