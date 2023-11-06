@@ -250,4 +250,27 @@
         }
         return x1 + x2;
     }
+
+    $('.removeAccess').click(function(e) {
+            e.preventDefault();
+            var $span = $(this); // Store a reference to the clicked span
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            var id = $span.attr('data-id');
+            $.ajax({
+                type: "get",
+                url: `/admin/remove-access/${id}`,
+                data: $span
+                    .serialize(), // Note: serialize() is typically used with forms, so this may not be necessary
+                success: function(response) {
+                    console.log(response);
+                    if (response == 'access removed') {
+                        $span.parent().remove(); // Use the stored reference to remove the parent element
+                    }
+                }
+            });
+        });
 </script>

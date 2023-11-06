@@ -7,9 +7,9 @@
     </style>
 @endsection
 @section('content')
-    <div class="child mt-24 w-2/3 shadow-2xl bg-white p-10 rounded-2xl">
+    <div class="child w-2/3 shadow-2xl bg-white p-10 rounded-2xl">
         <header class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white rounded-t-2xl p-4">
-            <h1 class="text-3xl text-center font-bold">Welcome to Submit My Loan</h1>
+            <h1 class="text-3xl text-center font-bold">Welcome to Submit My Mortgage</h1>
         </header>
         <form class="my-3" action="{{ url(getAssistantRoutePrefix() . '/register-assistant/'.$user->id) }}" method="post">
             @csrf
@@ -33,7 +33,7 @@
                 @enderror
             </div>
             <div class="flex flex-col w-full">
-                <label for="password" class="py-3 text-xl font-bold">password</label>
+                <label for="password" class="py-3 text-xl font-bold">Password</label>
                 <input type="password" class="rounded" name="password" placeholder="Enter your password" id="password">
                 @error('password')
                     <span class="text-red-700">{{ $message }}</span>

@@ -17,6 +17,7 @@
         "phpoffice/phpspreadsheet": "^1.29"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.7",
         "facade/ignition": "^2.5",
         "fakerphp/faker": "^1.23",
         "laravel/sail": "^1.0.1",

@@ -97,6 +97,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::get('project/{status}/{project}', [AdminController::class, 'changeProjectStatus']);
     // this route is for mark as read the notification
     Route::get('/mark-as-read/{id}', [AdminController::class, 'markAsRead']);
+    Route::get('/remove-access/{user}', [AdminController::class, 'removeAcess']);
 
 });
 Route::prefix(getAdminRoutePrefix())->group(function () {

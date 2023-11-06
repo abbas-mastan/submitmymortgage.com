@@ -11,6 +11,7 @@
             margin: 5px;
             color: initial;
             display: inline-flex;
+            width: 80%;
         }
 
         span.name {
@@ -40,7 +41,11 @@
         span.name-old {
             padding-right: 10px;
             width: max-content;
-            display: inline-flex;
+            /* display: inline-flex; */
+            overflow: hidden;
+            text-overflow: ellipsis !important;
+            white-space: nowrap;
+
         }
 
         .file-delete-old {
@@ -111,12 +116,10 @@
                                         <span>
                                             <span class="font-bold text-[#56b35a] ml-2 capitalize success">file
                                                 Submitted!</span>
-                                            <span class="file-block w-[90%]" style="background-color:#56b35a;">
+                                            <span class="file-block flex items-center" style="background-color:#56b35a;">
                                                 <span value="{{ $file->id }}" title="delete this item"
                                                     class="file-delete-old px-2 cursor-pointer rotate-45">+</span>
-                                                <span class="name-old truncate">
-                                                    {{ $file->file_name }}
-                                                </span>
+                                                <span class="name-old">{{ $file->file_name }}</span>
                                             </span>
                                         </span>
                                     @empty
@@ -175,9 +178,9 @@
                 $(inputId).on('change', function(e) {
                     for (var i = 0; i < this.files.length; i++) {
                         let fileBloc = $('<span/>', {
-                                class: 'file-block'
+                                class: 'file-block flex items-center'
                             }),
-                            fileName = $('<span/>', {
+                            fileName = $('<p/>', {
                                 class: 'name truncate',
                                 text: this.files.item(i).name
                             });

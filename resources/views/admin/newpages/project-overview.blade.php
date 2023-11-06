@@ -143,26 +143,22 @@
                 <input type="email" name="email"
                     class="bg-transperent w-full py-3 focus:bg-transperent focus:ring-2 focus:border-0 focus:ring-red-700 rounded-md">
                 <h3 class="mt-3 text-xl font-bold">People With access</h3>
+                @forelse($assistants as $assistant)
+                @if($assistant->active === 0) @continue @endif
                 <div class="flex justify-between items-center mt-3">
                     <div>
-                        <h3 class="text-xl font-normal">Jasmine Saiedian</h3>
-                        <p class="text-gray-600">JasmineSaeidian@gmail.com</p>
+                        <h3 class="text-xl font-normal">{{$assistant->name}}</h3>
+                        <p class="text-gray-600">{{$assistant->email}}</p>
                     </div>
-                    <a href="#">
+                    <a class="removeAccess" href="#" data-id="{{$assistant->id}}">
                         <img class="icon w-10" src="{{ asset('icons/trash.svg') }}" alt="">
                     </a>
                 </div>
+                @empty
+                <div class="text-center text-xl font-bold">Sorry! no data available</div>
+                @endforelse
                 <div class="flex justify-between items-center mt-3">
-                    <div>
-                        <h3 class="text-xl font-normal">Shaun Bina</h3>
-                        <p class="text-gray-600">Shaunbinaservice@gmail.com</p>
-                    </div>
-                    <a href="#">
-                        <img class="icon w-10" src="{{ asset('icons/trash.svg') }}" alt="">
-                    </a>
-                </div>
-                <div class="flex justify-between items-center mt-3">
-                    <button class="bg-red-700 text-white py-2 rounded-full px-5 back">back</button>
+                    <button class="bg-red-700 text-white py-2 rounded-full px-5 back">Back</button>
                     <button type="submit" class="bg-red-700 text-white  py-2 rounded-full px-5">Done</button>
                 </div>
             </form>

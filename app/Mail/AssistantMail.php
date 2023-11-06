@@ -24,6 +24,6 @@ class AssistantMail extends Mailable
     public function build()
     {
         $url = $this->url;
-        return $this->view('notifications::deal-email',compact('url'));
+        return $this->subject('You have been added to SubmitMyMortgage!')->view('notifications::deal-email',compact('url'));
     }
 }

@@ -3,9 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationRequest;
-use App\Mail\AssistantMail;
 use App\Models\Application;
-use App\Models\Assistant;
 use App\Models\Contact;
 use App\Models\Info;
 use App\Models\Project;
@@ -19,10 +17,8 @@ use App\Services\UserService;
 use Faker\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
-use Mail;
 
 class AdminController extends Controller
 {
@@ -399,7 +395,7 @@ class AdminController extends Controller
 
     public function ProjectOverview(Request $request, $id = -1, $sortby = null)
     {
-       
+
         if ($request->ajax()) {
             $data['attachments'] = \App\Models\Attachment::where('user_id', Auth::id())->paginate(2);
             return $data;
@@ -416,6 +412,17 @@ class AdminController extends Controller
             $data['categories'] = config('smm.file_category');
             sort($data['categories']); // Sort the array in ascending order
         }
+        $data['assistants'] = []; // Initialize the array
+        
+        foreach ($data['user']->assistants as $assistant) {
+            $user = $data['assistants'][] = User::with('assistants')->find($assistant->assistant_id);
+            if ($user) {
+                $data['assistants'][$user->id] = $user;
+            }
+        }
+        $data['assistants'] = collect($data['assistants'])->unique('id');
+
+      
         $data['categories'] = array_unique($data['categories']);
         return view('admin.newpages.project-overview', $data);
     }
@@ -617,6 +624,14 @@ class AdminController extends Controller
 
     public function shareItemWithAssistant(Request $request)
     {
-      return AdminService::shareItemWithAssistant($request);
+        return AdminService::shareItemWithAssistant($request);
     }
-} 
+
+    public function removeAcess(User $user)
+    {
+        $user->active = 0;
+        $user->update();
+        return response()->json('access removed', 200);
+    }
+
+}
