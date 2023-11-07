@@ -13,14 +13,14 @@
                 This is an important step in
                 completing your mortgage application.
                 <br><br>
-                Click the link below to begin adding the necessar files to complete your mortgage deal:
+                Click the link below to begin adding the necessary files to complete your mortgage deal:
             </p>
             <div class="flex justify-center">
                 <a href="{{$url}}" class="block w-40 text-white py-3 px-5 text-lg font-bold bg-red-700 rounded-md text-center">Get
                     Started</a>
             </div>
             <p class="text-2xl font-bold p-8 text-center">
-                if you have nay quuesitons or need assistance, please don't hesitate to reach out to our support team.
+                if you have any quuesitons or need assistance, please don't hesitate to reach out to our support team.
                 <br><br>
                 Thank you for choosing Submit My Mortgeage!
             </p>

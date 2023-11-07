@@ -259,12 +259,12 @@
         @endif
 
         @foreach ($categories as $category)
-            @if (fileCatCount($category, $user->id) > 0 && $category !== 'Credit Report')
+            @if (\Illuminate\Support\Facades\DB::table('media')->where('user_id',$user->id)->where('category',$category)->count() > 0 && $category !== 'Credit Report')
                 <div class="searchablediv">
                     @component('components.accordion', [
                         'title' => $category,
                         'color' => 'bg-red-800',
-                        'count' => fileCatCount($category, $user->id),
+                        'count' => \Illuminate\Support\Facades\DB::table('media')->where('user_id',$user->id)->where('category',$category)->count(),
                     ])
                         @foreach ($files as $file)
                             @if ($file->category === $category)

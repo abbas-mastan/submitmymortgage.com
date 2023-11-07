@@ -403,6 +403,7 @@ class AdminController extends Controller
         }
         $data = AdminService::filesCat($request, $id);
         if ($sortby && $sortby === 'latest') {
+            dd('asdfasdf');
             $data['categories'] = [];
             foreach ($data['user']->media()->latest()->get() as $file) {
                 $data['categories'][] = $file->category;
@@ -414,7 +415,6 @@ class AdminController extends Controller
             sort($data['categories']); // Sort the array in ascending order
         }
         $data['assistants'] = []; // Initialize the array
-
         foreach ($data['user']->assistants as $assistant) {
             $user = $data['assistants'][] = User::with('assistants')->find($assistant->assistant_id);
             if ($user) {

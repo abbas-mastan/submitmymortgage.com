@@ -19,7 +19,7 @@
             $('.AddNewMember').click(function(e) {
                 e.preventDefault();
                 alert('asdfasdf');
-                $('AddNewMemberModal').removeClass('hidden');
+                $('.AddNewMemberModal').removeClass('hidden');
             });
 
             $.each(['associate', 'processor', 'juniorAssociate'], function(indexInArray, input) {
@@ -58,6 +58,8 @@
 
             $('.newProject, .closeModal').click(function(e) {
                 e.preventDefault();
+                $('#newProjectModal').toggleClass('items-center');
+                $('#newProjectModal div:first').removeClass('md:top-44 sm:top-36 max-sm:top-44');
                 $('#newProjectModal').toggleClass('hidden');
             });
 

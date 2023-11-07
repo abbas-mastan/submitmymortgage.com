@@ -232,9 +232,7 @@ function getUserCatComments($cat, $userId)
 function fileCatCount($cat, $userId)
 {
     $cat = str_replace('-', '/', $cat);
-    return Media::where('user_id', $userId)
-        ->where('category', $cat)
-        ->count();
+    return DB::table('media')->where('user_id',$userId)->where('category',$cat)->count();
 }
 //Returns link for the category
 function getCatLink($cat)
