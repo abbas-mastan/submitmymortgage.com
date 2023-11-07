@@ -1,15 +1,14 @@
+<script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
+<script src="{{ asset('js/upload.js') }}"></script>
+<script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
     @if (!empty($id))
         var userId = {{ $id }};
         var cat = '';
         var uploadUrl = '{{ url(getRoutePrefix() . '/file-upload') }}';
     @endif
-</script>
-<script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
-<script src="{{ asset('js/upload.js') }}"></script>
-<script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
-<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script>
+
     $('.requestButton ,.backButton').click(function(e) {
         e.preventDefault();
         $('.firstTable, .secondTable,.requestButton').toggleClass('hidden');
@@ -20,7 +19,7 @@
         $('#newProjectModal').toggleClass('hidden');
     });
 
-    $('.submitPart .back').click(function (e) { 
+    $('.submitPart .back').click(function(e) {
         e.preventDefault();
         $('.submitPart').addClass('hidden');
         $('.firstTable').removeClass('hidden');
@@ -110,7 +109,7 @@
             data: {
                 email: inputs,
                 items: textArray,
-                userId:userId
+                userId: userId
             }, // Send data as an object
             success: function(response) {
                 $('.jq-loader-for-ajax').addClass('hidden');
@@ -121,11 +120,11 @@
                 $.each(response.error, function(index, message) {
                     $('.submitPart .errors').append(
                         `<li class="text-red-700">${message}</li>`);
-                    });
-                },
-                error: function(data) {
-                    console.log(data);
-                    $('.jq-loader-for-ajax').addClass('hidden');
+                });
+            },
+            error: function(data) {
+                console.log(data);
+                $('.jq-loader-for-ajax').addClass('hidden');
             }
         });
     });
@@ -252,25 +251,26 @@
     }
 
     $('.removeAccess').click(function(e) {
-            e.preventDefault();
-            var $span = $(this); // Store a reference to the clicked span
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            var id = $span.attr('data-id');
-            $.ajax({
-                type: "get",
-                url: `/admin/remove-access/${id}`,
-                data: $span
-                    .serialize(), // Note: serialize() is typically used with forms, so this may not be necessary
-                success: function(response) {
-                    console.log(response);
-                    if (response == 'access removed') {
-                        $span.parent().remove(); // Use the stored reference to remove the parent element
-                    }
-                }
-            });
+        e.preventDefault();
+        var $span = $(this); // Store a reference to the clicked span
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
         });
+        var id = $span.attr('data-id');
+        $.ajax({
+            type: "get",
+            url: `/admin/remove-access/${id}`,
+            data: $span
+                .serialize(), // Note: serialize() is typically used with forms, so this may not be necessary
+            success: function(response) {
+                console.log(response);
+                if (response == 'access removed') {
+                    $span.parent()
+                .remove(); // Use the stored reference to remove the parent element
+                }
+            }
+        });
+    });
 </script>

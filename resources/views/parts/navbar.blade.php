@@ -37,7 +37,7 @@
         <div class="flex mr-3">
             <div class="">
                 <a href="{{ url(getRoutePrefix() . '/profile') }}" class="">
-                    <img class="rounded-full w-12 h-12" src="{{ asset(auth()->user()->pic) }}" alt=""
+                    <img class="rounded-full w-12 h-12" src="{{ asset(auth()->user()->pic ?? 'img/profile-default.svg')  }}" alt=""
                         srcset="">
                 </a>
             </div>

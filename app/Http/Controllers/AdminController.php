@@ -18,6 +18,7 @@ use App\Services\UserService;
 use Faker\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
@@ -383,7 +384,6 @@ class AdminController extends Controller
 
             $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
             $data['projects'] = Project::where('created_by', $admin->id)->get();
-
             foreach (Project::where('status', 'enable') as $project) {
                 if (in_array($userId, $project->managers[2])) {
                     $data['projects']->push($project);
@@ -657,11 +657,15 @@ class AdminController extends Controller
             return response()->json($response);
         } else {
             $user = new User;
-            $user->name = $request->firstname . ' ' . $request->lastname;
+            $user->name = $request->first_name . ' ' . $request->last_name;
             $user->email = $request->email;
             $user->role = 'Borrower';
-            $user->password = $this->faker->password(8);
-            $user->save();
+            $user->created_by = Auth::id();
+            $user->password = bcrypt($this->faker->password(8));
+            if ($user->save()) {
+                Password::sendResetLink($request->only('email'));
+                Password::RESET_LINK_SENT;
+            }
 
             IntakeForm::create([
                 'user_id' => $user->id,
@@ -691,5 +695,10 @@ class AdminController extends Controller
             return response()->json('success', 200);
         }
     }
+
+    public function redirectToDashboard()
+    {
+        return redirect('/dashboard')->with('msg_success','Form Submitted Successfully');
+    }   
 
 }

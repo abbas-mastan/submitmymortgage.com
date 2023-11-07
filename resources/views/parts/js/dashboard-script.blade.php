@@ -1,12 +1,10 @@
 <script src="{{ asset('js/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-
 <script>
     $('.intakeForm').submit(function(e) {
-
-        errors = ['email','first_name','last_name','address','phone','loantype'];
-        $.each(errors, function (indexInArray, error_tag) { 
-             $(`#${error_tag}`).empty();
+        errors = ['email', 'first_name', 'last_name', 'address', 'phone', 'loantype'];
+        $.each(errors, function(indexInArray, error_tag) {
+            $(`#${error_tag}`).empty();
         });
         e.preventDefault();
         $.ajaxSetup({
@@ -21,9 +19,10 @@
             success: function(response) {
                 console.log(response);
                 if (response === 'success') {
-                    alert('Form submitted successfully!');
-                    location.reload();
+                    window.location.href =
+                        "{{ url(getAdminRoutePrefix() . '/redirect-to-dashboard') }}";
                 }
+
                 $.each(response.error, function(index, error) {
                     var fieldId = `#${error.field}_error`;
                     var errorMessage = error.message;
@@ -39,8 +38,9 @@
     $('.newProject, .closeModal').click(function(e) {
         e.preventDefault();
         $('#newProjectModal').toggleClass('hidden');
+        $('#newProjectModal div:first').removeClass('md:top-44');
+        $('#newProjectModal div:first').toggleClass('md:top-9');
     });
-
 
     // this code is the shorter version of below commented code
     $('.loantype').change(function(e) {
@@ -59,13 +59,10 @@
             } else {
                 $(`.${sections[section]}`).addClass('hidden');
                 $(`.${sections[section]} input`).attr('disabled', true);
-
             }
         }
         $('select[name=loan_type]').val(selectedValue);
     });
-
-
 
     $('#isRepairFinanceNeeded').change(function(e) {
         e.preventDefault();
@@ -75,8 +72,6 @@
             $('.repairfinanceamountdiv').addClass('hidden');
         }
     });
-
-
 
     $("#start-upload-btn").click(function(e) {
         e.preventDefault();
@@ -187,8 +182,7 @@
         request.open('POST', url);
         request.send(data);
     }
-</script>
-<script type="text/javascript">
+
     $(document).ready(function() {
         $('#user-table_wrapper').css('width', '100%');
         $('select[name="user-table_length"]').css('width', '4rem');
@@ -214,8 +208,7 @@
         // // read the image file as a data URL.
         // reader.readAsDataURL(this.files[0]);
     });
-</script>
-<script>
+
     var file;
 
     function dropHandler(ev) {
