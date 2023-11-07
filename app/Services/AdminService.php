@@ -362,6 +362,7 @@ class AdminService
         $user->name = $faker->name;
         $user->password = bcrypt($faker->unique()->password(8));
         $user->email = $request->email;
+        $user->created_by = Auth::id();
         $user->save();
         $assitant = new Assistant;
         $assitant->assistant_id = $user->id;

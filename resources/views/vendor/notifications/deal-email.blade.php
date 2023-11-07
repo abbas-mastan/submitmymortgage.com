@@ -10,7 +10,7 @@
                     {{-- Dear {{ $user->name ?? "" }} --}}
                 </span>
                 <br>
-                Congratulations! You've been added as a team member on a Submit My Mortgage deal. This is an important step in
+                This is an important step in
                 completing your mortgage application.
                 <br><br>
                 Click the link below to begin adding the necessar files to complete your mortgage deal:
@@ -20,7 +20,7 @@
                     Started</a>
             </div>
             <p class="text-2xl font-bold p-8 text-center">
-                if you have nay quuesitons or need assistance, please don't hesitate to read out to our support team.
+                if you have nay quuesitons or need assistance, please don't hesitate to reach out to our support team.
                 <br><br>
                 Thank you for choosing Submit My Mortgeage!
             </p>
