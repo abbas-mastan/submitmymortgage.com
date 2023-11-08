@@ -20,7 +20,7 @@
                     Started</a>
             </div>
             <p class="text-2xl font-bold p-8 text-center">
-                if you have any quuesitons or need assistance, please don't hesitate to reach out to our support team.
+                if you have any quries or need assistance, please don't hesitate to reach out to our support team.
                 <br><br>
                 Thank you for choosing Submit My Mortgeage!
             </p>

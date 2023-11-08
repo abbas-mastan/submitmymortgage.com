@@ -30,7 +30,7 @@ class AssistantController extends Controller
         $data = $request->validate([
             'name' => 'required',
             'phone' => 'required',
-            'password' => 'required:confirmed',
+            'password' => 'required:confirmed|min:8',
         ]);
         $data['password'] = bcrypt($data['password']);
         $user->active = 1;
