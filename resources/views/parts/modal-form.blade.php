@@ -41,11 +41,11 @@
                     </label>
                     <div class="">
                         <button type="button"
-                            class="processorButton  h-8 pt-1 flex justify-between align-center w-full shadow-none px-2 py-0.5 bg-gray-100 border-1
+                            class="processorButton overflow-hidden h-8 pt-1 flex justify-between align-center w-full shadow-none px-2 py-0.5 bg-gray-100 border-1
                             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                              sm:text-sm sm:leading-6"
                             id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
-                            <span class="processorButtonText">
+                            <span class="processorButtonText truncate">
                                 Select Processor
                             </span>
                             <img class="w-4 mt-1" src="{{ asset('icons/chewron.svg') }}" alt="">
@@ -63,7 +63,7 @@
                                 <input type="hidden" name="count" class="processorcount" value="{{ $loop->index }}">
                                 <div class="py-1">
                                     <label
-                                        class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                                        class="processorLabel flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                                         role="option">
                                         <input type="checkbox" name="processor[]"
                                             class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="{{ $user->id }}">
@@ -75,7 +75,7 @@
                             <input type="hidden" name="count" class="processorcount" value="1">
                             <div class="py-1">
                                 <label
-                                    class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                                    class="processorLabel flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                                     role="option">
                                     <input type="checkbox" name="processor[]"
                                         class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="{{ Auth::id() }}">
@@ -103,7 +103,7 @@
                         ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                          sm:text-sm sm:leading-6"
                         id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
-                        <span class="associateButtonText">
+                        <span class="associateButtonText truncate">
                             Select Associate
                         </span>
                         <img class="w-4 mt-1" src="{{ asset('icons/chewron.svg') }}" alt="">
@@ -131,7 +131,7 @@
                         ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                          sm:text-sm sm:leading-6"
                         id="multiselect-toggle" aria-haspopup="listbox" aria-expanded="true">
-                        <span class="jrAssociateButtonText">
+                        <span class="jrAssociateButtonText truncate">
                             Select Jr.Associate
                         </span>
                         <img class="w-4 mt-1" src="{{ asset('icons/chewron.svg') }}" alt="">

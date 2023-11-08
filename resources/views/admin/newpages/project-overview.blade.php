@@ -113,8 +113,16 @@
                 </thead>
                 <tbody class="secondTableTbody">
                     @php
+                        $categories = config('smm.file_category');
+                        $user = \App\Models\User::with('categories')->find($user->id);
+                        if (isset($user) && $user->categories()->exists()) {
+
+                            foreach ($user->categories()->get() as $cat) {
+                                $categories[] = $cat->name;
+                            }
+                        }
                         $itemsToShare[] = 'Loan Application';
-                        $filecategories = array_diff(config('smm.file_category'), $itemsToShare);
+                        $filecategories = array_diff($categories, $itemsToShare);
                     @endphp
                     @foreach ($filecategories as $category)
                         <tr @class(['items-center text-center', 'bg-gray-100' => $loop->odd])>
@@ -137,25 +145,28 @@
             </span>
             <form action="{{ url(getAdminRoutePrefix() . '/share-items') }}" method="POST">
                 @csrf
-                <div class="hidden jq-loader-for-ajax flex justify-center w-full h-full overflow-x-hidden overflow-y-auto fixed top-0 left-0 bg-gray-500 bg-opacity-40 z-50 justify-center items-center">
+                <div
+                    class="hidden jq-loader-for-ajax flex justify-center w-full h-full overflow-x-hidden overflow-y-auto fixed top-0 left-0 bg-gray-500 bg-opacity-40 z-50 justify-center items-center">
                     <img style="width: 8%" src="{{ asset('img/Eclipse-1s-200px (1).gif') }}" alt="">
                 </div>
                 <input type="email" name="email"
                     class="bg-transperent w-full py-3 focus:bg-transperent focus:ring-2 focus:border-0 focus:ring-red-700 rounded-md">
                 <h3 class="mt-3 text-xl font-bold">People With access</h3>
                 @forelse($assistants as $assistant)
-                @if($assistant->active === 0) @continue @endif
-                <div class="flex justify-between items-center mt-3">
-                    <div>
-                        <h3 class="text-xl font-normal">{{$assistant->name}}</h3>
-                        <p class="text-gray-600">{{$assistant->email}}</p>
+                    @if ($assistant->active === 0 || $assistant->active === 2)
+                        @continue
+                    @endif
+                    <div class="flex justify-between items-center mt-3">
+                        <div>
+                            <h3 class="text-xl font-normal">{{ $assistant->name }}</h3>
+                            <p class="text-gray-600">{{ $assistant->email }}</p>
+                        </div>
+                        <a class="removeAccess" href="#" data-id="{{ $assistant->id }}">
+                            <img class="icon w-10" src="{{ asset('icons/trash.svg') }}" alt="">
+                        </a>
                     </div>
-                    <a class="removeAccess" href="#" data-id="{{$assistant->id}}">
-                        <img class="icon w-10" src="{{ asset('icons/trash.svg') }}" alt="">
-                    </a>
-                </div>
                 @empty
-                <div class="text-center text-xl font-bold">Sorry! no data available</div>
+                    <div class="text-center text-xl font-bold">Sorry! no data available</div>
                 @endforelse
                 <div class="flex justify-between items-center mt-3">
                     <button class="bg-red-700 text-white py-2 rounded-full px-5 back">Back</button>
@@ -201,8 +212,8 @@
                                 <g>
                                     <path style="fill:#ffffff;"
                                         d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
-                                                                                                                                                                                                                        c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
-                                                                                                                                                                                                                        c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                                                                                                                                                                                                            c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
+                                                                                                                                                                                                                            c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
                                 </g>
                             </g>
                         </svg>
@@ -259,12 +270,12 @@
         @endif
 
         @foreach ($categories as $category)
-            @if (\Illuminate\Support\Facades\DB::table('media')->where('user_id',$user->id)->where('category',$category)->count() > 0 && $category !== 'Credit Report')
+            @if (\Illuminate\Support\Facades\DB::table('media')->where('user_id', $user->id)->where('category', $category)->count() > 0 && $category !== 'Credit Report')
                 <div class="searchablediv">
                     @component('components.accordion', [
                         'title' => $category,
                         'color' => 'bg-red-800',
-                        'count' => \Illuminate\Support\Facades\DB::table('media')->where('user_id',$user->id)->where('category',$category)->count(),
+                        'count' => \Illuminate\Support\Facades\DB::table('media')->where('user_id', $user->id)->where('category', $category)->count(),
                     ])
                         @foreach ($files as $file)
                             @if ($file->category === $category)

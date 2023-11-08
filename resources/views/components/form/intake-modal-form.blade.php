@@ -169,20 +169,20 @@
                 {!! $dollarsign !!}
             </div>
             <div class="mt-3 ">
-                <label for="isItRentalProperty" class="block text-sm text-dark-500 leading-6 font-bold">Is it Rental
+                <label for="isItRentalPropertyRefinance" class="block text-sm text-dark-500 leading-6 font-bold">Is it Rental
                     Property?</label>
                 <select
                     class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
             sm:text-sm sm:leading-6"
-                    name="is_it_rental_property" id="isItRentalProperty">
+                    name="is_it_rental_property" id="isItRentalPropertyRefinance">
                     @foreach (['Yes', 'No'] as $retal)
                         <option value="{{ $retal }}">{{ $retal }}</option>
                     @endforeach
                 </select>
             </div>
             <div class="relative">
-                <x-form.input name="monthly_rental_income" type="number" label="Monthly Rental Income" class="mb-0" />
+                <x-form.input name="monthly_rental_income_refinance" type="number" label="Monthly Rental Income" class="mb-0" />
                 {!! $dollarsign !!}
             </div>
         </div>

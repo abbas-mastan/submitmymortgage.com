@@ -17,21 +17,29 @@
     $.each(['associate', 'processor', 'jrAssociate'], function(indexInArray, input) {
         $(document).on('change', "input[name='" + input + "[]']", function(e) {
             e.preventDefault();
-            var indexInArray = $("input[name='" + input + "[]']:checked").length;
             var buttonText = '.' + input + 'ButtonText';
-            if (indexInArray > 0) {
-                $(buttonText).text(indexInArray + " " + input + (indexInArray > 1 ?
-                    "s" : "") + " are selected");
+            var $selectedItems = $("input[name='" + input + "[]']:checked");
+            if ($selectedItems.length > 0) {
+                $(buttonText).empty(); // Clear existing content
+                $selectedItems.each(function() {
+                    var $btnText = $(this).parent().text();
+                    var button = `<span class="inputLabel mr-1">${$btnText}</span>`;
+                    $(button).appendTo(buttonText);
+                });
             } else {
                 $(buttonText).text("Select " + input);
             }
         });
+
     });
 
     var teamsData = {!! json_encode($teams) !!};
     $('.newProject, .closeModal').click(function(e) {
         e.preventDefault();
         $('#newProjectModal').toggleClass('hidden');
+        $('#newProjectModal').toggleClass('items-center');
+        $('#newProjectModal div:first').toggleClass('md:top-44 max-sm:top-44 sm:top-36');
+        
     });
 
     var teamid = 0;

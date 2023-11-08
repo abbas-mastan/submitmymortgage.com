@@ -30,6 +30,12 @@
             border: 1px solid black;
             direction: ltr;
         }
+        .inputLabel{
+            background-color: rgb(192, 192, 191);
+            padding : 3px 8px;
+            border-radius: 5px;
+            
+        }
     </style>
 @endsection
 @section('content')
@@ -346,7 +352,7 @@
                         <div class="flex justify-between">
                             <a href="{{ url(getRoutePrefix() . ($borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $borrower->id) }}"
                                 class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a>
-                            <button class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New Member</button>
+                            {{-- <button class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New Member</button> --}}
                         </div>
                         </p>
                     </details>

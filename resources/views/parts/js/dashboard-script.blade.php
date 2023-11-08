@@ -63,9 +63,19 @@
         }
         $('select[name=loan_type]').val(selectedValue);
     });
-
+    
     $('#isRepairFinanceNeeded').change(function(e) {
         e.preventDefault();
+        if ($(this).val() === 'Yes') {
+            $('#monthly_rental_income').removeClass('hidden');
+        } else {
+            $('#monthly_rental_income').addClass('hidden');
+        }
+    });
+
+    $('#isItRentalProperty').change(function(e) {
+        e.preventDefault();
+        // alert($(this).val());
         if ($(this).val() === 'Yes') {
             $('.repairfinanceamountdiv').removeClass('hidden');
         } else {

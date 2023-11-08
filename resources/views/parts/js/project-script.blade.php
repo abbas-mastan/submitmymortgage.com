@@ -16,20 +16,24 @@
 @can('isAdmin')
     <script>
         $(document).ready(function() {
-            $('.AddNewMember').click(function(e) {
-                e.preventDefault();
-                alert('asdfasdf');
-                $('.AddNewMemberModal').removeClass('hidden');
-            });
+            // $('.AddNewMember').click(function(e) {
+            //     e.preventDefault();
+            //     alert('asdfasdf');
+            //     $('.AddNewMemberModal').removeClass('hidden');
+            // });
 
             $.each(['associate', 'processor', 'juniorAssociate'], function(indexInArray, input) {
                 $(document).on('change', "input[name='" + input + "[]']", function(e) {
                     e.preventDefault();
-                    var indexInArray = $("input[name='" + input + "[]']:checked").length;
                     var buttonText = '.' + input + 'ButtonText';
-                    if (indexInArray > 0) {
-                        $(buttonText).text(indexInArray + " " + input + (indexInArray > 1 ?
-                            "s" : "") + " are selected");
+                    var $selectedItems = $("input[name='" + input + "[]']:checked");
+                    if ($selectedItems.length > 0) {
+                        $(buttonText).empty(); // Clear existing content
+                        $selectedItems.each(function() {
+                            var $btnText = $(this).parent().text();
+                            var button = `<span class="inputLabel mr-1">${$btnText}</span>`;
+                            $(button).appendTo(buttonText);
+                        });
                     } else {
                         $(buttonText).text("Select " + input);
                     }
@@ -87,16 +91,16 @@
             $('.nameContinue').click(function(e) {
                 e.preventDefault();
                 $('#name_error').text($('#name').val() === '' ? 'This field is required' : '');
-                if ($('.email').hasClass('hidden')) {
-                    $('#email_error').text('');
-                } else {
-                    $('#email_error').text($('#email').val() === '' ? 'This field is required' : '');
-                }
                 $('#borroweraddress_error').text($('#borroweraddress').val() === '' ?
                     'This field is required' : '');
 
-                if ($('#name_error').text() === '' && $('#email_error').text() === '' && $(
+                if ($('#name_error').text() === '' && $('#email_error').text() == '' && $(
                         '#borroweraddress_error').text() === '') {
+
+                    $('#loantype_error').empty();
+                    $('#financetype_error').empty();
+                    $('#team_error').empty();
+                    $('#associate_error').empty();
                     $('.namepart').addClass('hidden');
                     $('.typepart').removeClass('hidden');
                 }
@@ -203,8 +207,16 @@
             });
         });
 
+        $('#sendemail, #email').on('change', function(e) {
+            e.preventDefault();
+            handleAjaxRequest();
+        });
         $('.projectForm').submit(function(e) {
             e.preventDefault();
+            handleAjaxRequest();
+        });
+
+        function handleAjaxRequest() {
             var errors = ['borroweraddress', 'email', 'name', 'borroweraddress', 'financetype',
                 'loantype',
                 'team', 'associate', 'juniorAssociate'
@@ -212,7 +224,7 @@
 
             $.each(errors, function(index, error) {
                 var field = `#${error}_error`;
-                $(field).text('');
+                $(field).empty();
             });
             $.ajaxSetup({
                 headers: {
@@ -222,11 +234,10 @@
             $.ajax({
                 type: "post",
                 url: "{{ url(getAdminRoutePrefix() . '/store-project') }}",
-                data: $(this).serialize(),
+                data: $('.projectForm').serialize(),
                 success: function(response) {
-                    console.log(response);
                     if (response === 'success') {
-                        location.reload();
+                        window.location.href();
                     }
                     $.each(response.error, function(index, error) {
                         var fieldId = `#${error.field}_error`;
@@ -235,7 +246,7 @@
                     });
                 }
             });
-        });
+        }
     </script>
 @endcan
 

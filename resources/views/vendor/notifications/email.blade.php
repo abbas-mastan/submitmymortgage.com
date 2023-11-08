@@ -13,7 +13,7 @@
 {{-- Intro Lines --}}
 @foreach ($introLines as $line)
 @if(Auth::check())
-You are recieiving this email to complete your registeration process by entering your password.
+You are receiving this email to complete your registration process by entering your password.
 @break
 @else
 {{ $line }}
@@ -41,7 +41,7 @@ You are recieiving this email to complete your registeration process by entering
 {{-- Outro Lines --}}
 @foreach ($outroLines as $line)
 @if(Auth::check())
-This Choose Password link will expire in 60 minutes.
+This link will expire in 60 minutes.
 @break
 @else
 {{$line}}

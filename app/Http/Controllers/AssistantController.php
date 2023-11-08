@@ -19,8 +19,11 @@ class AssistantController extends Controller
             abort(401);
         }
         $user = User::where('id', $request->user)->select(['id', 'active', 'email'])->first();
-        if ($user->active) {
+        if ($user->active === 1) {
             return redirect('/login');
+        }
+        if($user->active === 2){
+            abort(403, 'Sorry, your account has been disabled!');
         }
 
         return view("user.assistant.deal-register", compact('user'));

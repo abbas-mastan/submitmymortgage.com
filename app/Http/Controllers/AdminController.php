@@ -431,7 +431,7 @@ class AdminController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'borroweraddress' => 'required',
-            'email' => 'sometimes:required|unique:users,email',
+            'email' => 'required_with:sendemail|unique:users,email',
             'name' => 'required',
             'borroweraddress' => 'required',
             'financetype' => 'required',
@@ -629,8 +629,8 @@ class AdminController extends Controller
 
     public function removeAcess(User $user)
     {
-        $user->active = 0;
-        $user->update();
+        $user->active = 2;
+        $user->save();
         return response()->json('access removed', 200);
     }
 
@@ -698,7 +698,7 @@ class AdminController extends Controller
 
     public function redirectToDashboard()
     {
-        return redirect('/dashboard')->with('msg_success','Form Submitted Successfully');
-    }   
+        return redirect('/dashboard')->with('msg_success', 'Form Submitted Successfully');
+    }
 
 }

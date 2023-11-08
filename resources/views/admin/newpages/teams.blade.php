@@ -24,6 +24,12 @@
             margin-right: 10px;
             margin-bottom: 4px;
         }
+        .inputLabel{
+            background-color: rgb(192, 192, 191);
+            padding : 3px 8px;
+            border-radius: 5px;
+            
+        }
     </style>
 @endsection
 @section('content')
