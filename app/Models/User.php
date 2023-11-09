@@ -37,7 +37,7 @@ class User extends Authenticatable implements MustVerifyEmail
     //Get all media files owned by this user
     public function media()
     {
-        return $this->hasMany(Media::class,'user_id');
+        return $this->hasMany(Media::class, 'user_id');
     }
     //Get all media files uploaded by this user
     public function uploads()
@@ -111,6 +111,11 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function assistantCategories()
     {
-        return $this->hasOne(Assistant::class,'assistant_id');
+        return $this->hasOne(Assistant::class, 'assistant_id');
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany(Attachment::class);
     }
 }

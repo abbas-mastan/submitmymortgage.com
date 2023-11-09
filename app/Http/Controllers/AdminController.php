@@ -2,25 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ApplicationRequest;
-use App\Models\Application;
-use App\Models\Contact;
+use Faker\Factory;
 use App\Models\Info;
-use App\Models\IntakeForm;
-use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Contact;
+use App\Models\Project;
+use Illuminate\View\View;
+use App\Models\IntakeForm;
+use App\Models\Application;
 use App\Models\UserCategory;
-use App\Notifications\FileUploadNotification;
+use Illuminate\Http\Request;
+use App\Services\UserService;
 use App\Services\AdminService;
 use App\Services\CommonService;
-use App\Services\UserService;
-use Faker\Factory;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
+use App\Http\Requests\IntakeFormRequest;
+use App\Http\Requests\ApplicationRequest;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\View\View;
+use App\Notifications\FileUploadNotification;
 
 class AdminController extends Controller
 {
@@ -398,7 +399,8 @@ class AdminController extends Controller
     {
 
         if ($request->ajax()) {
-            $data['attachments'] = \App\Models\Attachment::where('user_id', Auth::id())->paginate(2);
+            $data['attachments'] = Auth::user()->load('attachments')->attachments()->paginate(2);
+            // $data['attachments'] = \App\Models\Attachment::where('user_id', Auth::id())->paginate(2);
             return $data;
         }
         $data = AdminService::filesCat($request, $id);
@@ -414,6 +416,7 @@ class AdminController extends Controller
             sort($data['categories']); // Sort the array in ascending order
         }
         $data['assistants'] = []; // Initialize the array
+        $data['catCount'] = [];
         foreach ($data['user']->assistants as $assistant) {
             $user = $data['assistants'][] = User::with('assistants')->find($assistant->assistant_id);
             if ($user) {
@@ -421,9 +424,14 @@ class AdminController extends Controller
             }
         }
         $data['assistants'] = collect($data['assistants'])->unique('id');
-
         $data['categories'] = array_unique($data['categories']);
-        return view('admin.newpages.project-overview', $data);
+        foreach ($data['categories'] as $category){
+            if($category === 'Credit Report') continue;
+            $data['catCount'] [$category ] = [
+             $data['user']->media()->where('category',$category)->count()
+            ];
+        }
+    return view('admin.newpages.project-overview', $data);
     }
 
     public function storeProject(Request $request)
@@ -633,28 +641,8 @@ class AdminController extends Controller
         return response()->json('access removed', 200);
     }
 
-    public function submitIntakeForm(Request $request)
+    public function submitIntakeForm(IntakeFormRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|unique:users,email',
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'address' => 'required',
-            'phone' => 'required',
-        ]);
-        if ($validator->fails()) {
-            $errors = $validator->errors()->toArray();
-            $response = ['error' => []];
-            foreach ($errors as $field => $error) {
-                foreach ($error as $message) {
-                    $response['error'][] = [
-                        'field' => $field,
-                        'message' => $message,
-                    ];
-                }
-            }
-            return response()->json($response);
-        } else {
             $user = new User;
             $user->name = $request->first_name . ' ' . $request->last_name;
             $user->email = $request->email;
@@ -693,7 +681,6 @@ class AdminController extends Controller
             ]);
             return response()->json('success', 200);
         }
-    }
 
     public function redirectTo($route,$message)
     {

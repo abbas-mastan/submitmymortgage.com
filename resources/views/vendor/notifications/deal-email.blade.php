@@ -10,7 +10,7 @@
                     {{-- Dear {{ $user->name ?? "" }} --}}
                 </span>
                 <br>
-                TThis is an important step in completing your mortgage application.
+                This is an important step in completing your mortgage application.
                 <br><br>
                 Click the link below to begin adding the necessary files to complete your mortgage deal:            </p>
             <div class="flex justify-center">

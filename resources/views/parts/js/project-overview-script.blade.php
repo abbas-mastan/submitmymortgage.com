@@ -115,11 +115,12 @@
             }, // Send data as an object
             success: function(response) {
                 console.log(response);
+                $('.jq-loader-for-ajax').addClass('hidden');
                 if (response === 'sucess') {
+                    $('#newProjectModal').toggleClass('hidden');
                     window.location.href =
                     "{{ url(getAdminRoutePrefix() . '/redirect/back/link-shared-successfully') }}";
                 }
-                $('.jq-loader-for-ajax').addClass('hidden');
                 $.each(response.error, function(index, message) {
                     $('.submitPart .errors').append(
                         `<li class="text-red-700">${message}</li>`);

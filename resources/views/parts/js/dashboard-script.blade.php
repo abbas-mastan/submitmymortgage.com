@@ -3,6 +3,7 @@
 <script>
     $('.intakeForm').submit(function(e) {
         e.preventDefault();
+        $('[id$="_error"]').text('');
         $('.jq-loader-for-ajax').removeClass('hidden');
         errors = ['email', 'first_name', 'last_name', 'address', 'phone', 'loantype'];
         $.each(errors, function(indexInArray, error_tag) {
@@ -18,9 +19,10 @@
             url: $(this).attr('action'),
             data: $(this).serialize(),
             success: function(response) {
+                
                 $('.jq-loader-for-ajax').addClass('hidden');
-                console.log(response);
                 if (response === 'success') {
+                    $('#newProjectModal').toggleClass('hidden');
                     window.location.href =
                         "{{ url(getAdminRoutePrefix() . '/redirect/dashboard/form-submitted-successfully') }}";
                 }
@@ -54,6 +56,10 @@
             'Refinance': 'refinance'
         };
         for (const section in sections) {
+            $("#isItRentalProperty").prop('disabled', selectedValue !== 'Cash Out');
+            $("#isItRentalPropertyRefinance").prop('disabled', selectedValue !== 'Refinance');
+            $("#isRepairFinanceNeeded").prop('disabled', selectedValue !== 'Fix & Flip');
+
             if (selectedValue === section) {
                 $(`.${sections[section]}`).removeClass('hidden');
                 $(`.${sections[section]} input`).removeAttr('disabled');
