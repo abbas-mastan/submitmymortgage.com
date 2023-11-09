@@ -17,6 +17,8 @@
     $('.newProject, .closeModal').click(function(e) {
         e.preventDefault();
         $('#newProjectModal').toggleClass('hidden');
+        $('#newProjectModal div:first').toggleClass('md:top-44 max-sm:top-44 sm:top-36');
+        $('#newProjectModal').toggleClass('items-center');
     });
 
     $('.submitPart .back').click(function(e) {
@@ -112,11 +114,12 @@
                 userId: userId
             }, // Send data as an object
             success: function(response) {
-                $('.jq-loader-for-ajax').addClass('hidden');
+                console.log(response);
                 if (response === 'sucess') {
-                    alert('Link submitted successfully');
-                    location.reload();
+                    window.location.href =
+                    "{{ url(getAdminRoutePrefix() . '/redirect/back/link-shared-successfully') }}";
                 }
+                $('.jq-loader-for-ajax').addClass('hidden');
                 $.each(response.error, function(index, message) {
                     $('.submitPart .errors').append(
                         `<li class="text-red-700">${message}</li>`);
@@ -184,15 +187,6 @@
             });
         }
     })();
-
-    $(document).ready(function() {
-        $('#files-table').DataTable({
-            pageLength: 50,
-            lengthMenu: [10, 20, 30, 50, 100, 200],
-        });
-        $('#files-table_wrapper').css('width', '100%');
-        $('select[name="files-table_length"]').css('width', '4rem');
-    });
 
     $(document).ready(function() {
         @if ($user->finance_type == 'Purchase')
@@ -268,7 +262,7 @@
                 console.log(response);
                 if (response == 'access removed') {
                     $span.parent()
-                .remove(); // Use the stored reference to remove the parent element
+                        .remove(); // Use the stored reference to remove the parent element
                 }
             }
         });

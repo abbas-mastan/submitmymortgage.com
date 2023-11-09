@@ -403,7 +403,6 @@ class AdminController extends Controller
         }
         $data = AdminService::filesCat($request, $id);
         if ($sortby && $sortby === 'latest') {
-            dd('asdfasdf');
             $data['categories'] = [];
             foreach ($data['user']->media()->latest()->get() as $file) {
                 $data['categories'][] = $file->category;
@@ -619,7 +618,7 @@ class AdminController extends Controller
     public function changeProjectStatus($type, Project $project)
     {
         $project->update(['status' => $type]);
-        return redirect(getRoutePrefix() . '/projects')->with('msg_success', "\"$project->name\" project $type" . "d successfully");
+        return redirect(getRoutePrefix() . '/projects')->with('msg_success', "project $type" . "d successfully");
     }
 
     public function shareItemWithAssistant(Request $request)
@@ -696,9 +695,13 @@ class AdminController extends Controller
         }
     }
 
-    public function redirectToDashboard()
+    public function redirectTo($route,$message)
     {
-        return redirect('/dashboard')->with('msg_success', 'Form Submitted Successfully');
+        $message = ucfirst(str_replace('-',' ',$message));
+        if ($route === 'back') {
+            return back()->with('msg_success',"$message.");
+        }
+        return redirect(getRoutePrefix()."/$route")->with('msg_success',"$message.");
     }
 
 }

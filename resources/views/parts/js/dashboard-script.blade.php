@@ -2,11 +2,12 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script>
     $('.intakeForm').submit(function(e) {
+        e.preventDefault();
+        $('.jq-loader-for-ajax').removeClass('hidden');
         errors = ['email', 'first_name', 'last_name', 'address', 'phone', 'loantype'];
         $.each(errors, function(indexInArray, error_tag) {
             $(`#${error_tag}`).empty();
         });
-        e.preventDefault();
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -17,12 +18,12 @@
             url: $(this).attr('action'),
             data: $(this).serialize(),
             success: function(response) {
+                $('.jq-loader-for-ajax').addClass('hidden');
                 console.log(response);
                 if (response === 'success') {
                     window.location.href =
-                        "{{ url(getAdminRoutePrefix() . '/redirect-to-dashboard') }}";
+                        "{{ url(getAdminRoutePrefix() . '/redirect/dashboard/form-submitted-successfully') }}";
                 }
-
                 $.each(response.error, function(index, error) {
                     var fieldId = `#${error.field}_error`;
                     var errorMessage = error.message;
@@ -64,18 +65,30 @@
         $('select[name=loan_type]').val(selectedValue);
     });
     
-    $('#isRepairFinanceNeeded').change(function(e) {
+    $('#isItRentalProperty').change(function(e) {
         e.preventDefault();
         if ($(this).val() === 'Yes') {
-            $('#monthly_rental_income').removeClass('hidden');
+            $('#monthly_rental_income').parent().parent().parent().removeClass('hidden');
+            $('#monthly_rental_income').removeAttr('disabled',true);
         } else {
-            $('#monthly_rental_income').addClass('hidden');
+            $('#monthly_rental_income').attr('disabled',true);
+            $('#monthly_rental_income').parent().parent().parent().addClass('hidden');
         }
     });
 
-    $('#isItRentalProperty').change(function(e) {
+    $('#isItRentalPropertyRefinance').change(function(e) {
         e.preventDefault();
-        // alert($(this).val());
+        if ($(this).val() === 'Yes') {
+            $('#monthly_rental_income_refinance').parent().parent().parent().removeClass('hidden');
+            $('#monthly_rental_income_refinance').removeAttr('disabled',true);
+        } else {
+            $('#monthly_rental_income_refinance').attr('disabled',true);
+            $('#monthly_rental_income_refinance').parent().parent().parent().addClass('hidden');
+        }
+    });
+
+    $('#isRepairFinanceNeeded').change(function(e) {
+        e.preventDefault();
         if ($(this).val() === 'Yes') {
             $('.repairfinanceamountdiv').removeClass('hidden');
         } else {

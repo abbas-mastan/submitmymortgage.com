@@ -6,6 +6,7 @@
     @endphp
 
     <form class="intakeForm" action="{{ url(getAdminRoutePrefix() . '/submit-intake-form') }}" method="post">
+        <x-jq-loader />
         @csrf
         <div class="personalinfo grid grid-cols-2 gap-x-4">
             <x-form.input name="first_name" label="First Name" class="mb-0" />
@@ -17,10 +18,11 @@
         <div class="grid grid-cols-2 gap-x-4">
             <x-form.input name="address" label="Street Adress" class="mb-0" />
             <x-form.input name="address_two" label="Street Address Line 2" class="mb-0" />
-            <x-form.input name="city" label="city" class="mb-0" />
+            <x-form.input name="city" label="City" class="mb-0" />
             <x-form.input name="state" label="State / Province / Region" class="mb-0" />
             <x-form.input name="zip" label="Postal/Zip Code" />
         </div>
+
         <span class="block mt-1 font-bold">Loan Information</span>
         <div class="purchase grid grid-cols-2 gap-x-4">
             <div class="mt-3 ">
@@ -132,7 +134,7 @@
                     class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
             sm:text-sm sm:leading-6"
-                    name="is_it_rental_property" id="isRepairFinanceNeeded">
+                    name="is_repair_finance_needed" id="isRepairFinanceNeeded">
                     @foreach (['Yes', 'No'] as $retal)
                         <option value="{{ $retal }}">{{ $retal }}</option>
                     @endforeach
