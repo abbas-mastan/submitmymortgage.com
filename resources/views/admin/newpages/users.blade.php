@@ -123,9 +123,10 @@
                             </td>
                             <td class=" pl-2 tracking-wide border border-l-0">
                                 @if ($processor->created_by)
-                                    {{ \App\Models\User::where('id', $processor->created_by)->first()->name }} |
-                                    {{ \App\Models\User::where('id', $processor->created_by)->first()->role }}
-                                @endif
+                                {{  $processor->createdBy->name }}
+                                |
+                                {{ $processor->createdBy->role }}
+                            @endif
                             </td>
                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                                 <a data="Delete" class="delete"

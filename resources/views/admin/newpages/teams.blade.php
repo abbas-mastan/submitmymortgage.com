@@ -84,7 +84,7 @@
                                         {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}>
                                         {{ $teammember->name }}
                                     </a>
-                                    @if (Auth::user()->role === 'Admiin')
+                                    @if (Auth::user()->role === 'Admin')
                                         <a title="Edit this user"
                                             href="{{ url(getRoutePrefix() . '/add-user/' . $teammember->id) }}">
                                             <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">

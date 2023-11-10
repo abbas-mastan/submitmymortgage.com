@@ -136,12 +136,12 @@ class AdminService
 
     public static function filesCat(Request $request, $id)
     {
-        $user = User::with(['info','media','categories','uploads'])->find($id);
+        $user = User::with(['info','media','categories','project'])->find($id);
         $data['user'] = $user;
         $data['id'] = $id;
         $data['info'] = $user->info;
-        $data["files"] = $user->media()->orderBy("category")->get();
         $data['filesCount'] = $user->media->count();
+        $data["files"] = $user->media()->with('uploadedBy')->orderBy("category")->get();
         $data["active"] = "file";
         return $data;
     }

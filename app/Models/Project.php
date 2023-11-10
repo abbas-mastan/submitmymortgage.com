@@ -26,4 +26,10 @@ class Project extends Model
     {
         return json_decode($value, true);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class,'borrower_id');
+    }
+
 }

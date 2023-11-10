@@ -215,14 +215,11 @@
                     </button>
                     <div class="dropdownMenu hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
                         <div class="py-1">
-                            @php
-                                $application = \App\Models\Project::where('borrower_id', $user->id)->first();
-                            @endphp
-                            <a href="{{ url(getRoutePrefix() . '/project/disable/' . $application->id) }}"
-                                class="text-gray-700 block px-4 py-2 text-sm {{$application->status === 'disable' ? 'bg-red-800 text-white':''}}" role="menuitem" tabindex="-1"
+                          <a href="{{ url(getRoutePrefix() . '/project/disable/' . $user->project->id) }}"
+                                class="text-gray-700 block px-4 py-2 text-sm {{$user->project->status === 'disable' ? 'bg-red-800 text-white':''}}" role="menuitem" tabindex="-1"
                                 id="menu-item-0">Disable Deal</a>
-                            <a href="{{ url(getRoutePrefix() . '/project/close/' . $application->id) }}"
-                                class="text-gray-700 block px-4 py-2 text-sm {{$application->status === 'close' ? 'bg-red-800 text-white':''}}" role="menuitem" tabindex="-1"
+                            <a href="{{ url(getRoutePrefix() . '/project/close/' . $user->project->id) }}"
+                                class="text-gray-700 block px-4 py-2 text-sm {{$user->project->status === 'close' ? 'bg-red-800 text-white':''}}" role="menuitem" tabindex="-1"
                                 id="menu-item-1">Close Deal</a>
                         </div>
                     </div>
@@ -235,7 +232,7 @@
         @include('admin.file.category-wise-files-table')
     </div>
     <div class="">
-        @if (count($files) > 0)
+        @if ($files)
             <div class="flex justify-between mb-5">
                 <div class="relative categoryContainer">
                     <button class="categoryButton bg-red-800 px-5 py-1 text-white flex">Sort By</button>
@@ -263,7 +260,6 @@
                 </label>
             </div>
         @endif
-
         @foreach ($categories as $category)
             @if (\Illuminate\Support\Facades\DB::table('media')->where('user_id', $user->id)->where('category', $category)->count() > 0 && $category !== 'Credit Report')
                 <div class="searchablediv">

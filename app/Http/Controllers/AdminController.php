@@ -287,11 +287,16 @@ class AdminController extends Controller
     public function allUsers($id = null)
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-        if ($admin->role == 'Admin') {
-            $data['users'] = User::where('role', '!=', 'Admin')->get();
-            $data['trashed'] = User::onlyTrashed()->get();
+        if ($admin->role === 'Admin') {
+            $data['users'] = User::with(['createdBy', 'createdUsers'])
+            ->where('role', '!=', 'Admin')
+            ->get(['id', 'name', 'email', 'created_by', 'role','email_verified_at']);
+            $data['trashed'] = User::onlyTrashed()->get(['id','name','email','role','created_by']);
         } else {
-            $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+            $data['users'] = $admin
+            ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
+            ->with(['createdUsers','createdBy'])
+            ->get();
         }
         return view('admin.user.all-users', $data);
     }
@@ -507,10 +512,10 @@ class AdminController extends Controller
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
         if ($admin->role == 'Admin') {
-            $data['users'] = User::where('role', '!=', 'Admin')->get();
+            $data['users'] = User::with(['createdBy'])->where('role', '!=', 'Admin')->get(['id','name','email','role','created_by','email_verified_at']);
             $data['trashed'] = User::onlyTrashed()->get();
         } else {
-            $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+            $data['users'] = $admin->with(['createdUsers','createdBy'])->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         }
         return view('admin.newpages.users', $data);
     }
@@ -551,9 +556,9 @@ class AdminController extends Controller
 
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
         if ($admin->role == 'Admin') {
-            $data['teams'] = Team::all();
-            $data['enableTeams'] = Team::where('disable', false)->get();
-            $data['disableTeams'] = Team::where('disable', true)->get();
+            $data['teams'] = Team::with('users')->get();
+            $data['enableTeams'] = Team::with('users')->where('disable', false)->get();
+            $data['disableTeams'] = Team::with('users')->where('disable', true)->get();
             $data['users'] =
             User::where('role', '!=', 'Admin')
                 ->whereIn('role', ['Associate', 'Processor', 'Junior Associate'])

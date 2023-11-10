@@ -67,7 +67,7 @@
                 @php
                     $serialNumber = 1;
                 @endphp
-                @foreach ($users as $key => $processor)
+                @foreach ($users as  $processor)
                     @if ($processor->email_verified_at !== null)
                         <tr>
                             <td class="verifiedSerial pl-2 tracking-wide border border-l-0">{{ $serialNumber }}
@@ -89,9 +89,10 @@
                             </td>
                             <td class=" pl-2 tracking-wide border border-l-0">
                                 @if ($processor->created_by)
-                                    {{ \App\Models\User::where('id', $processor->created_by)->first()->name }} |
-                                    {{ \App\Models\User::where('id', $processor->created_by)->first()->role }}
-                                @endif
+                                {{  $processor->createdBy->name }}
+                                |
+                                {{ $processor->createdBy->role }}
+                            @endif
                             </td>
                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                                 <a data="Delete" class="delete"
@@ -153,7 +154,7 @@
                 @php
                     $serialNumber = 1;
                 @endphp
-                @foreach ($users as $key => $processor)
+                @foreach ($users as  $processor)
                     @if ($processor->email_verified_at == null)
                         <tr>
                             <td class="unverifiedSerial pl-2 tracking-wide border border-l-0">{{ $serialNumber }}
@@ -175,10 +176,10 @@
                             </td>
                             <td class=" pl-2 tracking-wide border border-l-0">
                                 @if ($processor->created_by)
-                                    {{ \App\Models\User::where('id', $processor->created_by)->first()->name }}
-                                    |
-                                    {{ \App\Models\User::where('id', $processor->created_by)->first()->role }}
-                                @endif
+                                {{  $processor->createdBy->name }}
+                                |
+                                {{ $processor->createdBy->role }}
+                            @endif
                             </td>
                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                                 <a data="Delete" class="delete"
@@ -244,7 +245,7 @@
                     @endphp
                     @if (isset($trashed))
                         
-                    @foreach ($trashed as $key => $processor)
+                    @foreach ($trashed as  $processor)
                         <tr>
                             <td class="deletedSerial pl-2 tracking-wide border border-l-0">{{ $serialNumber }}
                             </td>
@@ -265,10 +266,10 @@
                             </td>
                             <td class=" pl-2 tracking-wide border border-l-0">
                                 @if ($processor->created_by)
-                                    {{ \App\Models\User::where('id', $processor->created_by)->first()->name }}
-                                    |
-                                    {{ \App\Models\User::where('id', $processor->created_by)->first()->role }}
-                                @endif
+                                {{  $processor->createdBy->name }}
+                                |
+                                {{ $processor->createdBy->role }}
+                            @endif
                             </td>
                             <td class="flex justify-center pl-2 tracking-wide border border-r-0">
                                 <a data="restore" class="delete loginBtn"

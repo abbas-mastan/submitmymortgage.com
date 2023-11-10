@@ -34,6 +34,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email_verified_at' => 'datetime',
     ];
 
+
+
     //Get all media files owned by this user
     public function media()
     {
@@ -95,7 +97,7 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public function createdBy()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class,'created_by');
     }
 
     public function teams()
@@ -117,5 +119,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function attachments()
     {
         return $this->hasMany(Attachment::class);
+    }
+
+    public function project()
+    {
+        return $this->hasOne(Project::class,'borrower_id');
     }
 }
