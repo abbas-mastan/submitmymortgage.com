@@ -89,7 +89,7 @@
                             </td>
                             <td class=" pl-2 tracking-wide border border-l-0">
                                 @if ($processor->created_by)
-                                {{  $processor->createdBy->name }}
+                                {{  $processor->createdBy->name ?? null }}
                                 |
                                 {{ $processor->createdBy->role }}
                             @endif
