@@ -91,7 +91,7 @@
                                 @if ($processor->created_by)
                                 {{  $processor->createdBy->name ?? null }}
                                 |
-                                {{ $processor->createdBy->role }}
+                                {{ $processor->createdBy->role ?? null }}
                             @endif
                             </td>
                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
