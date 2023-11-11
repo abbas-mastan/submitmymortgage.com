@@ -122,11 +122,11 @@
                                 {{ $processor->role }}
                             </td>
                             <td class=" pl-2 tracking-wide border border-l-0">
-                                @if ($processor->created_by)
-                                {{  $processor->createdBy->name }}
-                                |
-                                {{ $processor->createdBy->role }}
-                            @endif
+                                @if ($processor->createdBy)
+                                    {{ $processor->createdBy->name ?? null }}
+                                    @if ($processor->createdBy->name) | @endif
+                                    {{ $processor->createdBy->role ?? null }}
+                                @endif
                             </td>
                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                                 <a data="Delete" class="delete"

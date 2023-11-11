@@ -90,7 +90,7 @@
                             <td class=" pl-2 tracking-wide border border-l-0">
                                 @if ($processor->createdBy)
                                 {{  $processor->createdBy->name ?? null }}
-                                    @if($processor->createdBy->name !== null)| @endif
+                                    @if($processor->createdBy->name)| @endif
                                 {{ $processor->createdBy->role ?? null }}
                             @endif
                             </td>
