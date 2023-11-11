@@ -53,7 +53,7 @@ class AdminService
             $request->validate([
                 'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
                 'name' => "required",
-                'password' => 'sometimes:required|confirmed',
+                'password' => 'sometimes:required|confirmed|min:8',
                 'role' => 
                 #This is the custom Rule. Less than Admin Role Can't add User with the role === admin OR Processor
                 function ($attribute, $value, $fail) {
