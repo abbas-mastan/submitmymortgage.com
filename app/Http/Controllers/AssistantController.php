@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Media;
+use App\Models\{Media,User};
 use Illuminate\Http\Request;
 use App\Services\CommonService;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\{Auth,Storage,Crypt};
 use App\Http\Controllers\AdminController;
 
 class AssistantController extends Controller
@@ -18,7 +16,8 @@ class AssistantController extends Controller
         if (!$request->hasValidSignature()) {
             abort(401);
         }
-        $user = User::where('id', $request->user)->select(['id', 'active', 'email'])->first();
+        $id = Crypt::decryptString($request->user);
+        $user = User::where('id', $id)->select(['id', 'active', 'email'])->first();
         if ($user->active === 1) {
             return redirect('/login');
         }

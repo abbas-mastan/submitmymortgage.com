@@ -34,7 +34,7 @@ You are receiving this email to complete your registration process by entering y
 ?>
 @component('mail::button', ['url' => $actionUrl, 'color' => $color])
 
-{{ Auth::check() ? 'Choose Password': $actionText }}
+{{ Auth::check() ? 'Create Password': $actionText }}
 @endcomponent
 @endisset
 
@@ -47,7 +47,6 @@ This link will expire in 60 minutes.
 {{$line}}
 @endif
 @endforeach
-
 {{-- Salutation --}}
 @if (! empty($salutation))
 {{ $salutation }}

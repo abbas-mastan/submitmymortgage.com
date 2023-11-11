@@ -8,7 +8,6 @@
                 Reset Passsword
             </h1>
         </div>
-        
         <form action="{{ url('/reset-password') }}" method="post" class=" w-7/8">
             @include('parts.alerts')
             @csrf
@@ -20,7 +19,6 @@
                 <div class="mt-2">
                     <input type="email" value="{{old('email')}}" class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400" name="email"  id="username" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email">
                 </div>
-                
             </div>
             <div class="mt-3 mx-auto">
                 <div class=" text-left mr-12">
@@ -29,7 +27,6 @@
                 <div class="mt-2">
                     <input type="password" class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400" name="password"  id="password" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
                 </div>
-                
             </div>
             <div class="mt-3 mx-auto">
                 <div class=" text-left mr-12">
@@ -39,8 +36,6 @@
                     <input type="password" class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400" name="password_confirmation"  id="password" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
                 </div>    
             </div>
-            
-                
             <div class="mt-5 grid grid-cols-6">
                 <div class="col-span-2 text-right mr-12">
                     &nbsp;

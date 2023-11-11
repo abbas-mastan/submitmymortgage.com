@@ -15,10 +15,12 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\Crypt;
+
 
 class AdminService
 {
@@ -97,6 +99,7 @@ class AdminService
                 event(new Registered($user));
             }
         }
+
         if ($request->ajax()) {
             return $user->id;
         }
@@ -368,8 +371,8 @@ class AdminService
         $assitant->user_id = $request->userId;
         $assitant->categories = json_encode($request->items);
         $assitant->save();
-
-        $url = function() use($user){return Url::signedRoute('assistant.register',['user'=>$user->id]);};
+        $id = Crypt::encryptString($user->id);
+        $url = function() use($id){return Url::signedRoute('assistant.register',['user'=>$id]);};
         Mail::to($request->email)->send(new AssistantMail($url()));
         return response()->json('sucess', 200);
     }

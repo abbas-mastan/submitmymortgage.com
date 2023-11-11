@@ -3,25 +3,14 @@
 namespace App\Http\Controllers;
 
 use Faker\Factory;
-use App\Models\Info;
-use App\Models\Team;
-use App\Models\User;
-use App\Models\Contact;
-use App\Models\Project;
+use App\Models\{Contact,Project,User,Team,Info,IntakeForm,Application,UserCategory};
 use Illuminate\View\View;
-use App\Models\IntakeForm;
-use App\Models\Application;
-use App\Models\UserCategory;
 use Illuminate\Http\Request;
-use App\Services\UserService;
-use App\Services\AdminService;
-use App\Services\CommonService;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Password;
-use App\Http\Requests\IntakeFormRequest;
-use App\Http\Requests\ApplicationRequest;
-use Illuminate\Support\Facades\Validator;
+use App\Services\{UserService,AdminService,CommonService};
+use Illuminate\Support\Facades\{Auth,Password,Validator};
+use App\Http\Requests\{IntakeFormRequest,ApplicationRequest};
 use App\Notifications\FileUploadNotification;
+
 
 class AdminController extends Controller
 {
@@ -402,7 +391,6 @@ class AdminController extends Controller
 
     public function ProjectOverview(Request $request, $id = -1, $sortby = null)
     {
-
         if ($request->ajax()) {
             $data['attachments'] = Auth::user()->load('attachments')->attachments()->paginate(2);
             // $data['attachments'] = \App\Models\Attachment::where('user_id', Auth::id())->paginate(2);
@@ -436,7 +424,7 @@ class AdminController extends Controller
              $data['user']->media()->where('category',$category)->count()
             ];
         }
-    return view('admin.newpages.project-overview', $data);
+         return view('admin.newpages.project-overview', $data);
     }
 
     public function storeProject(Request $request)
@@ -685,7 +673,7 @@ class AdminController extends Controller
                 'note' => $request->note ?? null,
             ]);
             return response()->json('success', 200);
-        }
+    }
 
     public function redirectTo($route,$message)
     {

@@ -113,11 +113,11 @@
                 </thead>
                 <tbody class="secondTableTbody">
                     @php
-                        $categories = config('smm.file_category');
+                        $filecat = config('smm.file_category');
                         $user = \App\Models\User::with('categories')->find($user->id);
                         if (isset($user) && $user->categories()->exists()) {
                             foreach ($user->categories()->get() as $cat) {
-                                $categories[] = $cat->name;
+                                $filecat[] = $cat->name;
                             }
                         }
                         $itemsToShare[] = 'Loan Application';

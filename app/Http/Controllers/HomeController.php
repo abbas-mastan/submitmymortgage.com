@@ -27,6 +27,8 @@ class HomeController extends Controller
     }
     public function dashboard(Request $request)
     {
+
+        
         $data = match (true) {
             Gate::allows('isAdmin') => $this->getAdminDashboard(),
             Gate::allows('isUser') => $this->getUserDashboard(),
