@@ -2,30 +2,28 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\URL;
-use Faker\Factory;
+use App\Mail\AssistantMail;
+use App\Models\Assistant;
 use App\Models\Info;
+use App\Models\Media;
 use App\Models\Team;
 use App\Models\User;
-use App\Models\Media;
-use App\Models\Assistant;
-use App\Mail\AssistantMail;
-use Illuminate\Support\Str;
+use Faker\Factory;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Crypt;
-
+use Illuminate\Support\Str;
 
 class AdminService
 {
 
-   
     public static function users(Request $request)
     {
         $data['users'] = User::where('role', 'Borrower')->get();
@@ -54,7 +52,7 @@ class AdminService
                 'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
                 'name' => "required",
                 'password' => 'sometimes:required|confirmed|min:8',
-                'role' => 
+                'role' =>
                 #This is the custom Rule. Less than Admin Role Can't add User with the role === admin OR Processor
                 function ($attribute, $value, $fail) {
                     self::validateCurrentUser($attribute, $value, $fail);
@@ -139,7 +137,7 @@ class AdminService
 
     public static function filesCat(Request $request, $id)
     {
-        $user = User::with(['info','media','categories','project'])->find($id);
+        $user = User::with(['info', 'media', 'categories', 'project'])->find($id);
         $data['user'] = $user;
         $data['id'] = $id;
         $data['info'] = $user->info;
@@ -199,7 +197,7 @@ class AdminService
         }
         return ['msg_type' => 'msg_error', 'msg_value' => 'An error occured while udpate the status of the file.'];
     }
-    
+
     //Saves the record of a newly inserted user in database
     public static function updateCategoryStatus($request)
     {
@@ -280,38 +278,24 @@ class AdminService
         if ($id) {
             $team = Team::find($id);
         } else {
-            $team = Team::create([
+            $team = new Team([
                 'name' => $teamData['name'],
+                'jrAssociateManager' => $teamData['jrAssociateManager'],
             ]);
         }
+        $team->owner()->associate(Auth::id());
+        $team->save();
 
         foreach ($teamData['processor'] as $processorId) {
-            $team->users()->attach([
-                Auth::id() => [
-                    'associates' => $processorId,
-                    'jrAssociateManager' => $teamData['jrAssociateManager'],
-                ],
-            ]);
+            $team->users()->attach($processorId);
         }
-
-        // Attach multiple associates
+        
         foreach ($teamData['associate'] as $associateId) {
-            $team->users()->attach([
-                Auth::id() => [
-                    'associates' => $associateId,
-                    'jrAssociateManager' => $teamData['jrAssociateManager'],
-                ],
-            ]);
+            $team->users()->attach($associateId);
         }
-
-        // Attach multiple jrassociates
+        
         foreach ($teamData['jrAssociate'] as $jrAssociateId) {
-            $team->users()->attach([
-                Auth::id() => [
-                    'associates' => $jrAssociateId,
-                    'jrAssociateManager' => $teamData['jrAssociateManager'],
-                ],
-            ]);
+            $team->users()->attach($jrAssociateId);
         }
         CommonService::storeNotification("Created new team by name : $request->name", Auth::id());
     }
@@ -349,15 +333,18 @@ class AdminService
         return $associates;
     }
 
-    public  static function shareItemWithAssistant($request)
+    public static function shareItemWithAssistant($request)
     {
-        $faker =  Factory::create();
+        $faker = Factory::create();
         $validator = Validator::make($request->only(['email', 'items']), [
             'email' => 'required|unique:users,email',
             'items' => 'required',
         ]);
 
-        if ($validator->fails()) return response()->json(['error' => $validator->errors()->all()]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->all()]);
+        }
+
         $user = new User();
         $user->role = 'Assistant';
         $user->active = 0;
@@ -372,9 +359,9 @@ class AdminService
         $assitant->categories = json_encode($request->items);
         $assitant->save();
         $id = Crypt::encryptString($user->id);
-        $url = function() use($id){return Url::signedRoute('assistant.register',['user'=>$id]);};
+        $url = function () use ($id) {return Url::signedRoute('assistant.register', ['user' => $id]);};
         Mail::to($request->email)->send(new AssistantMail($url()));
         return response()->json('sucess', 200);
     }
-    
+
 }

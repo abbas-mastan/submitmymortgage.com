@@ -547,16 +547,20 @@ class AdminController extends Controller
             $data['teams'] = Team::with('users')->get();
             $data['enableTeams'] = Team::with('users')->where('disable', false)->get();
             $data['disableTeams'] = Team::with('users')->where('disable', true)->get();
-            $data['users'] =
-            User::where('role', '!=', 'Admin')
-                ->whereIn('role', ['Associate', 'Processor', 'Junior Associate'])
-                ->get(['id', 'email', 'name', 'role']);
+            $data['users'] = User::where('role', '!=', 'Admin')
+            ->whereIn('role', ['Associate', 'Processor', 'Junior Associate'])
+            ->get(['id', 'email', 'name', 'role']);
         } else {
             $userId = Auth::id();
-            $data['teams'] = Team::whereHas('users', function ($query) use ($userId) {
+            $data['disableTeams'] = Team::with('users')->where('disable',true)->orWhereHas('users', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             })->get();
-
+            $data['enableTeams'] = Team::with('users')->where('disable',false)->orWhereHas('users', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })->get();
+            $data['teams'] = Team::with('users')->whereHas('users', function ($query) use ($userId) {
+                $query->where('user_id', $userId);
+            })->get();
             $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         }
         return view('admin.newpages.teams', $data);
@@ -590,7 +594,7 @@ class AdminController extends Controller
 
     public function deleteTeamMember(Team $team, User $user)
     {
-        $team->users()->wherePivot('associates', $user->id)->detach();
+        $team->users()->detach($user->id);
         return back()->with("msg_success", "$user->name deleted from $team->name successfully");
     }
 

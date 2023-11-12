@@ -138,7 +138,7 @@
                     </button>
                 </div>
                 <!-- Dropdown panel -->
-                <div class="jrAssociateDropdown hidden absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
+                <div class="jrAssociateDropdown hidden z-10 absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
                     role="listbox" aria-labelledby="multiselect-toggle" id="multiselect-dropdown1">
                 </div>
             </div>

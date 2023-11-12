@@ -71,10 +71,6 @@
                         $serialNumber = 1;
                     @endphp
                     @foreach ($team->users as $key => $user)
-                        @php
-                            $associates = \App\Models\User::where('id', $user->pivot->associates)->get();
-                        @endphp
-                        @foreach ($associates as $key => $teammember)
                             <tr class="border-none">
                                 <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
                                     {{ $serialNumber }}
@@ -82,32 +78,32 @@
                                 <td class=" pl-2 tracking-wide border border-l-0">
                                     <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
                                         {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}>
-                                        {{ $teammember->name }}
+                                        {{ $user->name }}
                                     </a>
                                     @if (Auth::user()->role === 'Admin')
                                         <a title="Edit this user"
-                                            href="{{ url(getRoutePrefix() . '/add-user/' . $teammember->id) }}">
+                                            href="{{ url(getRoutePrefix() . '/add-user/' . $user->id) }}">
                                             <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
                                         </a>
                                     @endif
                                 </td>
                                 <td class=" pl-2 tracking-wide border border-l-0">
-                                    {{ $teammember->email }}
+                                    {{ $user->email }}
                                 </td>
                                 <td class=" pl-2 tracking-wide border border-l-0">
-                                    {{ $teammember->role }}
+                                    {{ $user->role }}
                                 </td>
                                 <td class=" pl-2 tracking-wide border border-l-0">
-                                    @if ($teammember->created_by)
-                                        {{ \App\Models\User::where('id', $teammember->created_by)->first()->name }}
+                                    @if ($user->created_by)
+                                        {{ \App\Models\User::where('id', $user->created_by)->first()->name }}
                                         |
-                                        {{ \App\Models\User::where('id', $teammember->created_by)->first()->role }}
+                                        {{ \App\Models\User::where('id', $user->created_by)->first()->role }}
                                     @endif
                                 </td>
                                 <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                                     @if (session('role') == 'Admin')
                                         <a data="Delete" disabaled class="delete"
-                                            href="{{ url(getRoutePrefix() . "/delete-user-from-team/$team->id/" . $teammember->id) }}">
+                                            href="{{ url(getRoutePrefix() . "/delete-user-from-team/$team->id/" . $user->id) }}">
                                             <button
                                                 class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
                                                 <img src="{{ asset('icons/trash.svg') }}" alt="">
@@ -115,7 +111,7 @@
                                         </a>
                                         <form method="POST" action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
                                             @csrf
-                                            <input type="hidden" name="user_id" value="{{ $teammember->id }}">
+                                            <input type="hidden" name="user_id" value="{{ $user->id }}">
                                             <span class="loginBtn">
                                                 <button type="submit"
                                                     class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
@@ -129,7 +125,6 @@
                             @php
                                 $serialNumber++;
                             @endphp
-                        @endforeach
                     @endforeach
                 </tbody>
             </table>
@@ -179,10 +174,6 @@
                             $serialNumber = 1;
                         @endphp
                         @foreach ($team->users as $key => $user)
-                            @php
-                                $associates = \App\Models\User::where('id', $user->pivot->associates)->get();
-                            @endphp
-                            @foreach ($associates as $key => $teammember)
                                 <tr class="border-none">
                                     <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
                                         {{ $serialNumber }}
@@ -190,32 +181,32 @@
                                     <td class=" pl-2 tracking-wide border border-l-0">
                                         <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
                                             {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}>
-                                            {{ $teammember->name }}
+                                            {{ $user->name }}
                                         </a>
                                         @if (Auth::user()->role === 'Admiin')
                                             <a title="Edit this user"
-                                                href="{{ url(getRoutePrefix() . '/add-user/' . $teammember->id) }}">
+                                                href="{{ url(getRoutePrefix() . '/add-user/' . $user->id) }}">
                                                 <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
                                             </a>
                                         @endif
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
-                                        {{ $teammember->email }}
+                                        {{ $user->email }}
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
-                                        {{ $teammember->role }}
+                                        {{ $user->role }}
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
-                                        @if ($teammember->created_by)
-                                            {{ \App\Models\User::where('id', $teammember->created_by)->first()->name }}
+                                        @if ($user->created_by)
+                                            {{ \App\Models\User::where('id', $user->created_by)->first()->name }}
                                             |
-                                            {{ \App\Models\User::where('id', $teammember->created_by)->first()->role }}
+                                            {{ \App\Models\User::where('id', $user->created_by)->first()->role }}
                                         @endif
                                     </td>
                                     <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                                         @if (session('role') == 'Admin')
                                             <a data="Delete" disabaled class="delete"
-                                                href="{{ url(getRoutePrefix() . "/delete-user-from-team/$team->id/" . $teammember->id) }}">
+                                                href="{{ url(getRoutePrefix() . "/delete-user-from-team/$team->id/" . $user->id) }}">
                                                 <button
                                                     class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
                                                     <img src="{{ asset('icons/trash.svg') }}" alt="">
@@ -224,7 +215,7 @@
                                             <form method="POST"
                                                 action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
                                                 @csrf
-                                                <input type="hidden" name="user_id" value="{{ $teammember->id }}">
+                                                <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                 <span class="loginBtn">
                                                     <button type="submit"
                                                         class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
@@ -238,7 +229,6 @@
                                 @php
                                     $serialNumber++;
                                 @endphp
-                            @endforeach
                         @endforeach
                     </tbody>
                 </table>
