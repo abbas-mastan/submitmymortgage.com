@@ -30,11 +30,12 @@
             border: 1px solid black;
             direction: ltr;
         }
-        .inputLabel{
+
+        .inputLabel {
             background-color: rgb(192, 192, 191);
-            padding : 3px 8px;
+            padding: 3px 8px;
             border-radius: 5px;
-            
+
         }
     </style>
 @endsection
@@ -57,7 +58,173 @@
                         <summary
                             class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white py-2 flex text-xl justify-between items-center font-medium cursor-pointer list-none">
                             <span class="px-5"> {{ $project->name }} |
-                                {{ \App\Models\Team::find($project->team_id)->name }}</span>
+                                {{ $project->team->name }}</span>
+                            <span class="mr-4 transition group-open:rotate-180">
+                                <svg fill="none" height="35" width="35" shape-rendering="geometricPrecision"
+                                    stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    viewBox="0 0 24 24">
+                                    <path d="M6 9l6 6 6-6"></path>
+                                </svg>
+                            </span>
+                        </summary>
+                        <p id="toptable1" class="text-neutral-600 group-open:animate-fadeIn">
+                        <table class="w-full display shadow-lg" id="{{ Str::slug($project->name . $project->id) }}-table">
+                            <thead class="hidden bg-gray-300">
+                                <tr>
+                                    <th class="pl-2 tracking-wide">
+                                        S No.
+                                    </th>
+                                    <th class="">
+                                        Name
+                                    </th>
+                                    <th class="">
+                                        User ID
+                                    </th>
+                                    <th class="">
+                                        Role
+                                    </th>
+                                    <th class="">
+                                        Created By
+                                    </th>
+                                    <th class="">
+                                        Actions
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @php
+                                    $serialNumber = 1;
+                                @endphp
+                                @foreach ($project->users as $processor)
+                                    @if ($processor->email_verified_at !== null)
+                                        <tr class="border-none">
+                                            <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
+                                                {{ $serialNumber }}
+                                            </td>
+                                            <td class=" pl-2 tracking-wide border border-l-0">
+                                                <a title="Click to view files uploaded by this user"
+                                                    class="text-blue-500 inline"
+                                                    href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $processor->id) }}">
+                                                    {{ $processor->name }}
+                                                </a>
+                                                {{-- <a title="Edit this user"
+                                                    href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
+                                                    <img src="{{ asset('icons/pencil.svg') }}" alt=""
+                                                        class="inline ml-5">
+                                                </a> --}}
+                                            </td>
+                                            <td class=" pl-2 tracking-wide border border-l-0">
+                                                {{ $processor->email }}
+                                            </td>
+                                            <td class=" pl-2 tracking-wide border border-l-0">
+                                                {{ $processor->role }}
+                                            </td>
+                                            <td class=" pl-2 tracking-wide border border-l-0">
+                                                @if ($processor->created_by)
+                                                    {{ $processor->createdBy->name }}
+                                                    |
+                                                    {{ $processor->createdBy->role }}
+                                                @endif
+                                            </td>
+                                            <td class="flex pl-2 justify-center tracking-wide border border-r-0">
+                                                <a data="Delete" class="delete"
+                                                    href='{{ url(getAdminRoutePrefix() . "/delete-project-user/$project->id/" . $processor->id) }}'>
+                                                    <button
+                                                        class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
+                                                        <img src="{{ asset('icons/trash.svg') }}" alt="">
+                                                    </button>
+                                                </a>
+                                                @if (session('role') == 'Admin')
+                                                    <form method="POST"
+                                                        action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                                        @csrf
+                                                        <input type="hidden" name="user_id" value="{{ $processor->id }}">
+                                                        <span class="loginBtn">
+                                                            <button type="submit"
+                                                                class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
+                                                                <img src="{{ asset('icons/user.svg') }}" alt="">
+                                                            </button>
+                                                        </span>
+                                                    </form>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                        @php
+                                            $serialNumber++;
+                                        @endphp
+                                    @endif
+                                @endforeach
+                                <tr class="border-none">
+                                    <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
+                                        {{ $serialNumber }}
+                                    </td>
+                                    <td class=" pl-2 tracking-wide border border-l-0">
+                                        <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
+                                            href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}">
+                                            {{ $project->borrower->name }}
+                                        </a>
+                                        {{-- <a title="Edit this user"
+                                            href="{{ url(getRoutePrefix() . '/add-user/' . $borrower->id) }}">
+                                            <img src="{{ asset('icons/pencil.svg') }}" alt=""
+                                                class="inline ml-5">
+                                        </a> --}}
+                                    </td>
+                                    <td class=" pl-2 tracking-wide border border-l-0">
+                                        {{ $project->borrower->email }}
+                                    </td>
+                                    <td class=" pl-2 tracking-wide border border-l-0">
+                                        {{ $project->borrower->role }}
+                                    </td>
+                                    <td class=" pl-2 tracking-wide border border-l-0">
+                                        @if ($project->borrower->created_by)
+                                            {{ $project->borrower->createdBy->name }}
+                                            |
+                                            {{ $project->borrower->createdBy->role }}
+                                        @endif
+                                    </td>
+                                    <td class="flex pl-2 justify-center tracking-wide border border-r-0">
+                                        @if (session('role') == 'Admin')
+                                            <form method="POST"
+                                                action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                                @csrf
+                                                <input type="hidden" name="user_id" value="{{ $project->borrower->id }}">
+                                                <span class="loginBtn">
+                                                    <button type="submit"
+                                                        class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
+                                                        <img src="{{ asset('icons/user.svg') }}" alt="">
+                                                    </button>
+                                                </span>
+                                            </form>
+                                        @endif
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="flex justify-between">
+                            <a href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}"
+                                class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a>
+                            {{-- <button class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New Member</button> --}}
+                        </div>
+                        </p>
+                    </details>
+                </div>
+            </div>
+        </div>
+    @empty
+    @endforelse
+
+    @if (count($disableProjects) > 0)
+        <h2 class="text-center text-xl border-y-4 py-3  mt-5">Disable Deals</h2>
+    @endif
+    @forelse ($disableProjects as $project)
+        <div class="flex mb-10 flex-wrap w-full">
+            <div class="grid divide-y divide-neutral-200 w-full mt-8">
+                <div class="py-2">
+                    <details class="group">
+                        <summary
+                            class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white py-2 flex text-xl justify-between items-center font-medium cursor-pointer list-none">
+                            <span class="px-5"> {{ $project->name }} |
+                                {{ $project->team->name }}</span>
                             <span class="mr-4 transition group-open:rotate-180">
                                 <svg fill="none" height="35" width="35" shape-rendering="geometricPrecision"
                                     stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -95,248 +262,101 @@
                                 @php
                                     $serialNumber = 1;
                                 @endphp
-                                @if ($project->managers[2] ?? 0 > 0)
-                                    @foreach ($project->managers[2] as $key => $processor)
+                                @foreach ($project->users as $key => $processor)
+                                    @if ($processor->email_verified_at !== null)
+                                        <tr class="border-none">
+                                            <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
+                                                {{ $serialNumber }}
+                                            </td>
+                                            <td class=" pl-2 tracking-wide border border-l-0">
+                                                <a title="Click to view files uploaded by this user"
+                                                    class="text-blue-500 inline"
+                                                    href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $processor->id) }}">
+                                                    {{ $processor->name }}
+                                                </a>
+                                                {{-- <a title="Edit this user"
+                                                href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
+                                                <img src="{{ asset('icons/pencil.svg') }}" alt=""
+                                                    class="inline ml-5">
+                                            </a> --}}
+                                            </td>
+                                            <td class=" pl-2 tracking-wide border border-l-0">
+                                                {{ $processor->email }}
+                                            </td>
+                                            <td class=" pl-2 tracking-wide border border-l-0">
+                                                {{ $processor->role }}
+                                            </td>
+                                            <td class=" pl-2 tracking-wide border border-l-0">
+                                                @if ($processor->created_by)
+                                                    {{ $processor->createdBy->name }}
+                                                    |
+                                                    {{ $processor->createdBy->role }}
+                                                @endif
+                                            </td>
+                                            <td class="flex pl-2 justify-center tracking-wide border border-r-0">
+                                                <a data="Delete" class="delete"
+                                                    href='{{ url(getAdminRoutePrefix() . "/delete-project-user/$project->id/" . $processor->id) }}'>
+                                                    <button
+                                                        class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
+                                                        <img src="{{ asset('icons/trash.svg') }}" alt="">
+                                                    </button>
+                                                </a>
+                                                @if (session('role') == 'Admin')
+                                                    <form method="POST"
+                                                        action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                                        @csrf
+                                                        <input type="hidden" name="user_id"
+                                                            value="{{ $processor->id }}">
+                                                        <span class="loginBtn">
+                                                            <button type="submit"
+                                                                class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
+                                                                <img src="{{ asset('icons/user.svg') }}" alt="">
+                                                            </button>
+                                                        </span>
+                                                    </form>
+                                                @endif
+                                            </td>
+                                        </tr>
                                         @php
-                                            $processor = \App\Models\User::find($processor);
+                                            $serialNumber++;
                                         @endphp
-                                        @if ($processor->email_verified_at !== null)
-                                            <tr class="border-none">
-                                                <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
-                                                    {{ $serialNumber }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    <a title="Click to view files uploaded by this user"
-                                                        class="text-blue-500 inline"
-                                                        href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $processor->id) }}">
-                                                        {{ $processor->name }}
-                                                    </a>
-                                                    {{-- <a title="Edit this user"
-                                                    href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
-                                                    <img src="{{ asset('icons/pencil.svg') }}" alt=""
-                                                        class="inline ml-5">
-                                                </a> --}}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $processor->email }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $processor->role }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    @if ($processor->created_by)
-                                                        {{ \App\Models\User::where('id', $processor->created_by)->first()->name }}
-                                                        |
-                                                        {{ \App\Models\User::where('id', $processor->created_by)->first()->role }}
-                                                    @endif
-                                                </td>
-                                                <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                                    <a data="Delete" class="delete"
-                                                        href='{{ url(getAdminRoutePrefix() . "/delete-project-user/$project->id/" . $processor->id) }}'>
-                                                        <button
-                                                            class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
-                                                            <img src="{{ asset('icons/trash.svg') }}" alt="">
-                                                        </button>
-                                                    </a>
-                                                    @if (session('role') == 'Admin')
-                                                        <form method="POST"
-                                                            action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
-                                                            @csrf
-                                                            <input type="hidden" name="user_id"
-                                                                value="{{ $processor->id }}">
-                                                            <span class="loginBtn">
-                                                                <button type="submit"
-                                                                    class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
-                                                                    <img src="{{ asset('icons/user.svg') }}"
-                                                                        alt="">
-                                                                </button>
-                                                            </span>
-                                                        </form>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                            @php
-                                                $serialNumber++;
-                                            @endphp
-                                        @endif
-                                    @endforeach
-                                @endif
-                                @if ($project->managers[0] ?? 0 > 0)
-                                    @foreach ($project->managers[0] as $key => $processor)
-                                        @php
-                                            $processor = \App\Models\User::find($processor);
-                                        @endphp
-                                        @if ($processor->email_verified_at !== null)
-                                            <tr class="border-none">
-                                                <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
-                                                    {{ $serialNumber }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    <a title="Click to view files uploaded by this user"
-                                                        class="text-blue-500 inline"
-                                                        href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $processor->id) }}">
-                                                        {{ $processor->name }}
-                                                    </a>
-                                                    {{-- <a title="Edit this user"
-                                                    href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
-                                                    <img src="{{ asset('icons/pencil.svg') }}" alt=""
-                                                        class="inline ml-5">
-                                                </a> --}}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $processor->email }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $processor->role }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    @if ($processor->created_by)
-                                                        {{ \App\Models\User::where('id', $processor->created_by)->first()->name }}
-                                                        |
-                                                        {{ \App\Models\User::where('id', $processor->created_by)->first()->role }}
-                                                    @endif
-                                                </td>
-                                                <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                                    <a data="Delete" class="delete"
-                                                        href='{{ url(getAdminRoutePrefix() . "/delete-project-user/$project->id/" . $processor->id) }}'>
-                                                        <button
-                                                            class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
-                                                            <img src="{{ asset('icons/trash.svg') }}" alt="">
-                                                        </button>
-                                                    </a>
-                                                    @if (session('role') == 'Admin')
-                                                        <form method="POST"
-                                                            action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
-                                                            @csrf
-                                                            <input type="hidden" name="user_id"
-                                                                value="{{ $processor->id }}">
-                                                            <span class="loginBtn">
-                                                                <button type="submit"
-                                                                    class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
-                                                                    <img src="{{ asset('icons/user.svg') }}"
-                                                                        alt="">
-                                                                </button>
-                                                            </span>
-                                                        </form>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                            @php
-                                                $serialNumber++;
-                                            @endphp
-                                        @endif
-                                    @endforeach
-                                @endif
-                                @if ($project->managers[1] ?? 0 > 0)
-                                    @foreach ($project->managers[1] as $key => $processor)
-                                        @php
-                                            $processor = \App\Models\User::find($processor);
-                                        @endphp
-                                        @if ($processor->email_verified_at !== null)
-                                            <tr class="border-none">
-                                                <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
-                                                    {{ $serialNumber }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    <a title="Click to view files uploaded by this user"
-                                                        class="text-blue-500 inline"
-                                                        href='{{ url(getAdminRoutePrefix() . "/delete-project-user/$project->id/" . $processor->id) }}'>
-                                                        {{ $processor->name }}
-                                                    </a>
-                                                    {{-- <a title="Edit this user"
-                                                    href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
-                                                    <img src="{{ asset('icons/pencil.svg') }}" alt=""
-                                                        class="inline ml-5">
-                                                </a> --}}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $processor->email }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $processor->role }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    @if ($processor->created_by)
-                                                        {{ \App\Models\User::where('id', $processor->created_by)->first()->name }}
-                                                        |
-                                                        {{ \App\Models\User::where('id', $processor->created_by)->first()->role }}
-                                                    @endif
-                                                </td>
-                                                <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                                    <a data="Delete" class="delete"
-                                                        href='{{ url(getAdminRoutePrefix() . "/delete-project-user/$project->id/" . $processor->id) }}'>
-                                                        <button
-                                                            class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
-                                                            <img src="{{ asset('icons/trash.svg') }}" alt="">
-                                                        </button>
-                                                    </a>
-                                                    @if (session('role') == 'Admin')
-                                                        <form method="POST"
-                                                            action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
-                                                            @csrf
-                                                            <input type="hidden" name="user_id"
-                                                                value="{{ $processor->id }}">
-                                                            <span class="loginBtn">
-                                                                <button type="submit"
-                                                                    class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
-                                                                    <img src="{{ asset('icons/user.svg') }}"
-                                                                        alt="">
-                                                                </button>
-                                                            </span>
-                                                        </form>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                            @php
-                                                $serialNumber++;
-                                            @endphp
-                                        @endif
-                                    @endforeach
-                                @endif
-                                @php
-                                    $borrower = \App\Models\User::find($project->borrower_id);
-                                @endphp
+                                    @endif
+                                @endforeach
                                 <tr class="border-none">
                                     <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
                                         {{ $serialNumber }}
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
                                         <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                            href="{{ url(getRoutePrefix() . ($borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $borrower->id) }}">
-                                            {{ $borrower->name }}
+                                            href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}">
+                                            {{ $project->borrower->name }}
                                         </a>
                                         {{-- <a title="Edit this user"
-                                            href="{{ url(getRoutePrefix() . '/add-user/' . $borrower->id) }}">
-                                            <img src="{{ asset('icons/pencil.svg') }}" alt=""
-                                                class="inline ml-5">
-                                        </a> --}}
+                                        href="{{ url(getRoutePrefix() . '/add-user/' . $borrower->id) }}">
+                                        <img src="{{ asset('icons/pencil.svg') }}" alt=""
+                                            class="inline ml-5">
+                                    </a> --}}
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
-                                        {{ $borrower->email }}
+                                        {{ $project->borrower->email }}
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
-                                        {{ $borrower->role }}
+                                        {{ $project->borrower->role }}
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
-                                        @if ($borrower->created_by)
-                                            {{ \App\Models\User::where('id', $borrower->created_by)->first()->name }}
+                                        @if ($project->borrower->created_by)
+                                            {{ $project->borrower->createdBy->name }}
                                             |
-                                            {{ \App\Models\User::where('id', $borrower->created_by)->first()->role }}
+                                            {{ $project->borrower->createdBy->role }}
                                         @endif
                                     </td>
                                     <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                        {{-- <a data="Delete" class="delete"
-                                            href="{{ url(getRoutePrefix() . '/delete-user/' . $borrower->id) }}">
-                                            <button
-                                                class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
-                                                <img src="{{ asset('icons/trash.svg') }}" alt="">
-                                            </button>
-                                        </a> --}}
                                         @if (session('role') == 'Admin')
                                             <form method="POST"
                                                 action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
                                                 @csrf
-                                                <input type="hidden" name="user_id" value="{{ $borrower->id }}">
+                                                <input type="hidden" name="user_id"
+                                                    value="{{ $project->borrower->id }}">
                                                 <span class="loginBtn">
                                                     <button type="submit"
                                                         class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
@@ -350,7 +370,7 @@
                             </tbody>
                         </table>
                         <div class="flex justify-between">
-                            <a href="{{ url(getRoutePrefix() . ($borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $borrower->id) }}"
+                            <a href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}"
                                 class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a>
                             {{-- <button class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New Member</button> --}}
                         </div>
@@ -361,317 +381,7 @@
         </div>
     @empty
     @endforelse
-    
-    @if (count($disableProjects) > 0)
-        <h2 class="text-center text-xl border-y-4 py-3  mt-5">Disable Deals</h2>
-    @endif
-    @forelse ($disableProjects as $project)
-        <div class="flex mb-10 flex-wrap w-full">
-            <div class="grid divide-y divide-neutral-200 w-full mt-8">
-                <div class="py-2">
-                    <details class="group">
-                        <summary
-                            class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white py-2 flex text-xl justify-between items-center font-medium cursor-pointer list-none">
-                            <span class="px-5"> {{ $project->name }} |
-                                {{ \App\Models\Team::find($project->team_id)->name }}</span>
-                            <span class="mr-4 transition group-open:rotate-180">
-                                <svg fill="none" height="35" width="35" shape-rendering="geometricPrecision"
-                                    stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="1.5" viewBox="0 0 24 24">
-                                    <path d="M6 9l6 6 6-6"></path>
-                                </svg>
-                            </span>
-                        </summary>
-                        <p id="toptable" class="text-neutral-600 group-open:animate-fadeIn">
-                        <table class="w-full display shadow-lg"
-                            id="{{ Str::slug($project->name . $project->id) }}-table">
-                            <thead class="hidden bg-gray-300">
-                                <tr>
-                                    <th class="pl-2 tracking-wide">
-                                        S No.
-                                    </th>
-                                    <th class="">
-                                        Name
-                                    </th>
-                                    <th class="">
-                                        User ID
-                                    </th>
-                                    <th class="">
-                                        Role
-                                    </th>
-                                    <th class="">
-                                        Created By
-                                    </th>
-                                    <th class="">
-                                        Actions
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @php
-                                    $serialNumber = 1;
-                                @endphp
-                                @if ($project->managers[2] > 0)
-                                    @foreach ($project->managers[2] as $key => $processor)
-                                        @php
-                                            $processor = \App\Models\User::find($processor);
-                                        @endphp
-                                        @if ($processor->email_verified_at !== null)
-                                            <tr class="border-none">
-                                                <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
-                                                    {{ $serialNumber }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    <a title="Click to view files uploaded by this user"
-                                                        class="text-blue-500 inline"
-                                                        href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $processor->id) }}">
-                                                        {{ $processor->name }}
-                                                    </a>
-                                                    {{-- <a title="Edit this user"
-                                                    href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
-                                                    <img src="{{ asset('icons/pencil.svg') }}" alt=""
-                                                        class="inline ml-5">
-                                                </a> --}}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $processor->email }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $processor->role }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    @if ($processor->created_by)
-                                                        {{ \App\Models\User::where('id', $processor->created_by)->first()->name }}
-                                                        |
-                                                        {{ \App\Models\User::where('id', $processor->created_by)->first()->role }}
-                                                    @endif
-                                                </td>
-                                                <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                                    {{-- <a data="Delete" class="delete"
-                                                    href="{{ url(getRoutePrefix() . '/delete-user/' . $processor->id) }}">
-                                                    <button
-                                                        class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
-                                                        <img src="{{ asset('icons/trash.svg') }}" alt="">
-                                                    </button>
-                                                </a> --}}
-                                                    @if (session('role') == 'Admin')
-                                                        <form method="POST"
-                                                            action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
-                                                            @csrf
-                                                            <input type="hidden" name="user_id"
-                                                                value="{{ $processor->id }}">
-                                                            <span class="loginBtn">
-                                                                <button type="submit"
-                                                                    class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
-                                                                    <img src="{{ asset('icons/user.svg') }}"
-                                                                        alt="">
-                                                                </button>
-                                                            </span>
-                                                        </form>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                            @php
-                                                $serialNumber++;
-                                            @endphp
-                                        @endif
-                                    @endforeach
-                                @endif
-                                @foreach ($project->managers[0] as $key => $processor)
-                                    @php
-                                        $processor = \App\Models\User::find($processor);
-                                    @endphp
-                                    @if ($processor->email_verified_at !== null)
-                                        <tr class="border-none">
-                                            <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
-                                                {{ $serialNumber }}
-                                            </td>
-                                            <td class=" pl-2 tracking-wide border border-l-0">
-                                                <a title="Click to view files uploaded by this user"
-                                                    class="text-blue-500 inline"
-                                                    href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $processor->id) }}">
-                                                    {{ $processor->name }}
-                                                </a>
-                                                {{-- <a title="Edit this user"
-                                                    href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
-                                                    <img src="{{ asset('icons/pencil.svg') }}" alt=""
-                                                        class="inline ml-5">
-                                                </a> --}}
-                                            </td>
-                                            <td class=" pl-2 tracking-wide border border-l-0">
-                                                {{ $processor->email }}
-                                            </td>
-                                            <td class=" pl-2 tracking-wide border border-l-0">
-                                                {{ $processor->role }}
-                                            </td>
-                                            <td class=" pl-2 tracking-wide border border-l-0">
-                                                @if ($processor->created_by)
-                                                    {{ \App\Models\User::where('id', $processor->created_by)->first()->name }}
-                                                    |
-                                                    {{ \App\Models\User::where('id', $processor->created_by)->first()->role }}
-                                                @endif
-                                            </td>
-                                            <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                                {{-- <a data="Delete" class="delete"
-                                                    href="{{ url(getRoutePrefix() . '/delete-user/' . $processor->id) }}">
-                                                    <button
-                                                        class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
-                                                        <img src="{{ asset('icons/trash.svg') }}" alt="">
-                                                    </button>
-                                                </a> --}}
-                                                @if (session('role') == 'Admin')
-                                                    <form method="POST"
-                                                        action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
-                                                        @csrf
-                                                        <input type="hidden" name="user_id"
-                                                            value="{{ $processor->id }}">
-                                                        <span class="loginBtn">
-                                                            <button type="submit"
-                                                                class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
-                                                                <img src="{{ asset('icons/user.svg') }}" alt="">
-                                                            </button>
-                                                        </span>
-                                                    </form>
-                                                @endif
-                                            </td>
-                                        </tr>
-                                        @php
-                                            $serialNumber++;
-                                        @endphp
-                                    @endif
-                                @endforeach
-                                @if ($project->managers[1] > 0)
-                                    @foreach ($project->managers[1] as $key => $processor)
-                                        @php
-                                            $processor = \App\Models\User::find($processor);
-                                        @endphp
-                                        @if ($processor->email_verified_at !== null)
-                                            <tr class="border-none">
-                                                <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
-                                                    {{ $serialNumber }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    <a title="Click to view files uploaded by this user"
-                                                        class="text-blue-500 inline"
-                                                        href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $processor->id) }}">
-                                                        {{ $processor->name }}
-                                                    </a>
-                                                    {{-- <a title="Edit this user"
-                                                    href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
-                                                    <img src="{{ asset('icons/pencil.svg') }}" alt=""
-                                                        class="inline ml-5">
-                                                </a> --}}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $processor->email }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $processor->role }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    @if ($processor->created_by)
-                                                        {{ \App\Models\User::where('id', $processor->created_by)->first()->name }}
-                                                        |
-                                                        {{ \App\Models\User::where('id', $processor->created_by)->first()->role }}
-                                                    @endif
-                                                </td>
-                                                <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                                    {{-- <a data="Delete" class="delete"
-                                                    href="{{ url(getRoutePrefix() . '/delete-user/' . $processor->id) }}">
-                                                    <button
-                                                        class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
-                                                        <img src="{{ asset('icons/trash.svg') }}" alt="">
-                                                    </button>
-                                                </a> --}}
-                                                    @if (session('role') == 'Admin')
-                                                        <form method="POST"
-                                                            action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
-                                                            @csrf
-                                                            <input type="hidden" name="user_id"
-                                                                value="{{ $processor->id }}">
-                                                            <span class="loginBtn">
-                                                                <button type="submit"
-                                                                    class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
-                                                                    <img src="{{ asset('icons/user.svg') }}"
-                                                                        alt="">
-                                                                </button>
-                                                            </span>
-                                                        </form>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                            @php
-                                                $serialNumber++;
-                                            @endphp
-                                        @endif
-                                    @endforeach
-                                @endif
 
-                                @php
-                                    $borrower = \App\Models\User::find($project->borrower_id);
-                                @endphp
-                                <tr class="border-none">
-                                    <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
-                                        {{ $serialNumber }}
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                            href="{{ url(getRoutePrefix() . ($borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $borrower->id) }}">
-                                            {{ $borrower->name }}
-                                        </a>
-                                        {{-- <a title="Edit this user"
-                                            href="{{ url(getRoutePrefix() . '/add-user/' . $borrower->id) }}">
-                                            <img src="{{ asset('icons/pencil.svg') }}" alt=""
-                                                class="inline ml-5">
-                                        </a> --}}
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        {{ $borrower->email }}
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        {{ $borrower->role }}
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        @if ($borrower->created_by)
-                                            {{ \App\Models\User::where('id', $borrower->created_by)->first()->name }}
-                                            |
-                                            {{ \App\Models\User::where('id', $borrower->created_by)->first()->role }}
-                                        @endif
-                                    </td>
-                                    <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                        {{-- <a data="Delete" class="delete"
-                                            href="{{ url(getRoutePrefix() . '/delete-user/' . $borrower->id) }}">
-                                            <button
-                                                class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
-                                                <img src="{{ asset('icons/trash.svg') }}" alt="">
-                                            </button>
-                                        </a> --}}
-                                        @if (session('role') == 'Admin')
-                                            <form method="POST"
-                                                action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
-                                                @csrf
-                                                <input type="hidden" name="user_id" value="{{ $borrower->id }}">
-                                                <span class="loginBtn">
-                                                    <button type="submit"
-                                                        class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
-                                                        <img src="{{ asset('icons/user.svg') }}" alt="">
-                                                    </button>
-                                                </span>
-                                            </form>
-                                        @endif
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <a href="{{ url(getRoutePrefix() . ($borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $borrower->id) }}"
-                            class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a>
-                        </p>
-                    </details>
-                </div>
-            </div>
-        </div>
-    @empty
-    @endforelse
     @if (count($closeProjects) > 0)
         <h2 class="text-center text-xl border-y-4 py-3  mt-5">Closed Deals</h2>
     @endif
@@ -683,7 +393,7 @@
                         <summary
                             class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white py-2 flex text-xl justify-between items-center font-medium cursor-pointer list-none">
                             <span class="px-5"> {{ $project->name }} |
-                                {{ \App\Models\Team::find($project->team_id)->name }}</span>
+                                {{ $project->team->name }}</span>
                             <span class="mr-4 transition group-open:rotate-180">
                                 <svg fill="none" height="35" width="35" shape-rendering="geometricPrecision"
                                     stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
@@ -692,7 +402,7 @@
                                 </svg>
                             </span>
                         </summary>
-                        <p id="toptable" class="text-neutral-600 group-open:animate-fadeIn">
+                        <p id="toptable1" class="text-neutral-600 group-open:animate-fadeIn">
                         <table class="w-full display shadow-lg"
                             id="{{ Str::slug($project->name . $project->id) }}-table">
                             <thead class="hidden bg-gray-300">
@@ -721,76 +431,7 @@
                                 @php
                                     $serialNumber = 1;
                                 @endphp
-                                @if ($project->managers[2] > 0)
-                                    @foreach ($project->managers[2] as $key => $processor)
-                                        @php
-                                            $processor = \App\Models\User::find($processor);
-                                        @endphp
-                                        @if ($processor->email_verified_at !== null)
-                                            <tr class="border-none">
-                                                <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
-                                                    {{ $serialNumber }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    <a title="Click to view files uploaded by this user"
-                                                        class="text-blue-500 inline"
-                                                        href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $processor->id) }}">
-                                                        {{ $processor->name }}
-                                                    </a>
-                                                    {{-- <a title="Edit this user"
-                                                    href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
-                                                    <img src="{{ asset('icons/pencil.svg') }}" alt=""
-                                                        class="inline ml-5">
-                                                </a> --}}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $processor->email }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $processor->role }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    @if ($processor->created_by)
-                                                        {{ \App\Models\User::where('id', $processor->created_by)->first()->name }}
-                                                        |
-                                                        {{ \App\Models\User::where('id', $processor->created_by)->first()->role }}
-                                                    @endif
-                                                </td>
-                                                <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                                    {{-- <a data="Delete" class="delete"
-                                                    href="{{ url(getRoutePrefix() . '/delete-user/' . $processor->id) }}">
-                                                    <button
-                                                        class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
-                                                        <img src="{{ asset('icons/trash.svg') }}" alt="">
-                                                    </button>
-                                                </a> --}}
-                                                    @if (session('role') == 'Admin')
-                                                        <form method="POST"
-                                                            action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
-                                                            @csrf
-                                                            <input type="hidden" name="user_id"
-                                                                value="{{ $processor->id }}">
-                                                            <span class="loginBtn">
-                                                                <button type="submit"
-                                                                    class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
-                                                                    <img src="{{ asset('icons/user.svg') }}"
-                                                                        alt="">
-                                                                </button>
-                                                            </span>
-                                                        </form>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                            @php
-                                                $serialNumber++;
-                                            @endphp
-                                        @endif
-                                    @endforeach
-                                @endif
-                                @foreach ($project->managers[0] as $key => $processor)
-                                    @php
-                                        $processor = \App\Models\User::find($processor);
-                                    @endphp
+                                @foreach ($project->users as $key => $processor)
                                     @if ($processor->email_verified_at !== null)
                                         <tr class="border-none">
                                             <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
@@ -803,10 +444,10 @@
                                                     {{ $processor->name }}
                                                 </a>
                                                 {{-- <a title="Edit this user"
-                                                    href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
-                                                    <img src="{{ asset('icons/pencil.svg') }}" alt=""
-                                                        class="inline ml-5">
-                                                </a> --}}
+                                                href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
+                                                <img src="{{ asset('icons/pencil.svg') }}" alt=""
+                                                    class="inline ml-5">
+                                            </a> --}}
                                             </td>
                                             <td class=" pl-2 tracking-wide border border-l-0">
                                                 {{ $processor->email }}
@@ -816,19 +457,19 @@
                                             </td>
                                             <td class=" pl-2 tracking-wide border border-l-0">
                                                 @if ($processor->created_by)
-                                                    {{ \App\Models\User::where('id', $processor->created_by)->first()->name }}
+                                                    {{ $processor->name }}
                                                     |
-                                                    {{ \App\Models\User::where('id', $processor->created_by)->first()->role }}
+                                                    {{ $processor->role }}
                                                 @endif
                                             </td>
                                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                                {{-- <a data="Delete" class="delete"
-                                                    href="{{ url(getRoutePrefix() . '/delete-user/' . $processor->id) }}">
+                                                <a data="Delete" class="delete"
+                                                    href='{{ url(getAdminRoutePrefix() . "/delete-project-user/$project->id/" . $processor->id) }}'>
                                                     <button
                                                         class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
                                                         <img src="{{ asset('icons/trash.svg') }}" alt="">
                                                     </button>
-                                                </a> --}}
+                                                </a>
                                                 @if (session('role') == 'Admin')
                                                     <form method="POST"
                                                         action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
@@ -850,117 +491,41 @@
                                         @endphp
                                     @endif
                                 @endforeach
-                                @if ($project->managers[1] > 0)
-                                    @foreach ($project->managers[1] as $key => $processor)
-                                        @php
-                                            $processor = \App\Models\User::find($processor);
-                                        @endphp
-                                        @if ($processor->email_verified_at !== null)
-                                            <tr class="border-none">
-                                                <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
-                                                    {{ $serialNumber }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    <a title="Click to view files uploaded by this user"
-                                                        class="text-blue-500 inline"
-                                                        href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $processor->id) }}">
-                                                        {{ $processor->name }}
-                                                    </a>
-                                                    {{-- <a title="Edit this user"
-                                                    href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
-                                                    <img src="{{ asset('icons/pencil.svg') }}" alt=""
-                                                        class="inline ml-5">
-                                                </a> --}}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $processor->email }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    {{ $processor->role }}
-                                                </td>
-                                                <td class=" pl-2 tracking-wide border border-l-0">
-                                                    @if ($processor->created_by)
-                                                        {{ \App\Models\User::where('id', $processor->created_by)->first()->name }}
-                                                        |
-                                                        {{ \App\Models\User::where('id', $processor->created_by)->first()->role }}
-                                                    @endif
-                                                </td>
-                                                <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                                    {{-- <a data="Delete" class="delete"
-                                                    href="{{ url(getRoutePrefix() . '/delete-user/' . $processor->id) }}">
-                                                    <button
-                                                        class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
-                                                        <img src="{{ asset('icons/trash.svg') }}" alt="">
-                                                    </button>
-                                                </a> --}}
-                                                    @if (session('role') == 'Admin')
-                                                        <form method="POST"
-                                                            action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
-                                                            @csrf
-                                                            <input type="hidden" name="user_id"
-                                                                value="{{ $processor->id }}">
-                                                            <span class="loginBtn">
-                                                                <button type="submit"
-                                                                    class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
-                                                                    <img src="{{ asset('icons/user.svg') }}"
-                                                                        alt="">
-                                                                </button>
-                                                            </span>
-                                                        </form>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                            @php
-                                                $serialNumber++;
-                                            @endphp
-                                        @endif
-                                    @endforeach
-                                @endif
-
-                                @php
-                                    $borrower = \App\Models\User::find($project->borrower_id);
-                                @endphp
                                 <tr class="border-none">
                                     <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
                                         {{ $serialNumber }}
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
                                         <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                            href="{{ url(getRoutePrefix() . ($borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $borrower->id) }}">
-                                            {{ $borrower->name }}
+                                            href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}">
+                                            {{ $project->borrower->name }}
                                         </a>
                                         {{-- <a title="Edit this user"
-                                            href="{{ url(getRoutePrefix() . '/add-user/' . $borrower->id) }}">
-                                            <img src="{{ asset('icons/pencil.svg') }}" alt=""
-                                                class="inline ml-5">
-                                        </a> --}}
+                                        href="{{ url(getRoutePrefix() . '/add-user/' . $borrower->id) }}">
+                                        <img src="{{ asset('icons/pencil.svg') }}" alt=""
+                                            class="inline ml-5">
+                                    </a> --}}
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
-                                        {{ $borrower->email }}
+                                        {{ $project->borrower->email }}
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
-                                        {{ $borrower->role }}
+                                        {{ $project->borrower->role }}
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
-                                        @if ($borrower->created_by)
-                                            {{ \App\Models\User::where('id', $borrower->created_by)->first()->name }}
-                                            |
-                                            {{ \App\Models\User::where('id', $borrower->created_by)->first()->role }}
-                                        @endif
+                                        @if ($project->borrower->created_by)
+                                        {{ $project->borrower->createdBy->name }}
+                                        |
+                                        {{ $project->borrower->createdBy->role }}
+                                    @endif
                                     </td>
                                     <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                        {{-- <a data="Delete" class="delete"
-                                            href="{{ url(getRoutePrefix() . '/delete-user/' . $borrower->id) }}">
-                                            <button
-                                                class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
-                                                <img src="{{ asset('icons/trash.svg') }}" alt="">
-                                            </button>
-                                        </a> --}}
                                         @if (session('role') == 'Admin')
                                             <form method="POST"
                                                 action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
                                                 @csrf
-                                                <input type="hidden" name="user_id" value="{{ $borrower->id }}">
+                                                <input type="hidden" name="user_id"
+                                                    value="{{ $project->borrower->id }}">
                                                 <span class="loginBtn">
                                                     <button type="submit"
                                                         class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
@@ -973,8 +538,11 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <a href="{{ url(getRoutePrefix() . ($borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $borrower->id) }}"
-                            class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a>
+                        <div class="flex justify-between">
+                            <a href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}"
+                                class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a>
+                            {{-- <button class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New Member</button> --}}
+                        </div>
                         </p>
                     </details>
                 </div>
@@ -982,7 +550,6 @@
         </div>
     @empty
     @endforelse
-
 @endsection
 @section('foot')
     @include('parts.js.project-script')

@@ -14,22 +14,25 @@ class Project extends Model
     protected $casts = [
         'managers' => 'array',
     ];
-    
-    public function setManagersAttribute($value)
-    {
-        // Convert the array to JSON format
-        $this->attributes['managers'] = json_encode($value);
-    }
 
-    // Define an accessor to convert the JSON back to an array when accessing the 'managers' attribute
-    public function getManagersAttribute($value)
-    {
-        return json_decode($value, true);
-    }
-
-    public function user()
+    public function borrower()
     {
         return $this->belongsTo(User::class,'borrower_id');
     }
+    public function team()
+    {
+        return $this->belongsTo(Team::class,'team_id');
+    }
+
+    public function creater()
+    {
+        return $this->belongsTo(User::class,'created_by');
+    }
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    
 
 }

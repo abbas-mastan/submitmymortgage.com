@@ -2,15 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Factory;
-use App\Models\{Contact,Project,User,Team,Info,IntakeForm,Application,UserCategory};
-use Illuminate\View\View;
-use Illuminate\Http\Request;
-use App\Services\{UserService,AdminService,CommonService};
-use Illuminate\Support\Facades\{Auth,Password,Validator};
-use App\Http\Requests\{IntakeFormRequest,ApplicationRequest};
+use App\Http\Requests\ApplicationRequest;
+
+use App\Http\Requests\IntakeFormRequest;
+use App\Models\Application;
+use App\Models\Contact;
+use App\Models\Info;
+use App\Models\IntakeForm;
+use App\Models\Project;
+use App\Models\Team;
+use App\Models\User;
+
+use App\Models\UserCategory;
 use App\Notifications\FileUploadNotification;
 
+use App\Services\AdminService;
+use App\Services\CommonService;
+use App\Services\UserService;
+use Faker\Factory;use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\View\View;
 
 class AdminController extends Controller
 {
@@ -245,12 +259,6 @@ class AdminController extends Controller
         return back()->with($msg['msg_type'], $msg['msg_value']);
     }
 
-    // public function deleteApplication(Application $application)
-    // {
-    //     $application->delete();
-    //     return back()->with("msg_success", "Application Deleted Successfully.");
-    // }
-
     public function allLeads()
     {
         $data = AdminService::allLeads();
@@ -275,17 +283,20 @@ class AdminController extends Controller
 
     public function allUsers($id = null)
     {
-        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
+        $admin = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
         if ($admin->role === 'Admin') {
             $data['users'] = User::with(['createdBy', 'createdUsers'])
-            ->where('role', '!=', 'Admin')
-            ->get(['id', 'name', 'email', 'created_by', 'role','email_verified_at']);
-            $data['trashed'] = User::onlyTrashed()->get(['id','name','email','role','created_by']);
+                ->where('role', '!=', 'Admin')
+                ->get(['id', 'name', 'email', 'created_by', 'role', 'email_verified_at']);
+            $data['trashed'] = User::withTrashed()
+                ->with(['createdBy', 'createdUsers'])
+                ->whereNotNull('deleted_at')
+                ->get();
         } else {
             $data['users'] = $admin
-            ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
-            ->with(['createdUsers','createdBy'])
-            ->get();
+                ->with(['createdUsers', 'createdBy'])
+                ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
+                ->get();
         }
         return view('admin.user.all-users', $data);
     }
@@ -364,11 +375,11 @@ class AdminController extends Controller
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
         if ($admin->role == 'Admin') {
-            $data['projects'] = Project::all();
-            $data['enableProjects'] = Project::where('status', 'enable')->get();
-            $data['disableProjects'] = Project::where('status', 'disable')->get();
-            $data['closeProjects'] = Project::where('status', 'close')->get();
-            $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
+            $data['projects'] = Project::with('users')->get();
+            $data['enableProjects'] = Project::with(['users.createdBy','team','borrower.createdBy'])->where('status', 'enable')->get();
+            $data['disableProjects'] = Project::with(['users.createdBy','team','borrower.createdBy'])->where('status', 'disable')->get();
+            $data['closeProjects'] = Project::with(['users.createdBy','team','borrower.createdBy'])->where('status', 'close')->get();
+            $data['borrowers'] = User::where('role','Borrower')->get(['id', 'name','role']);
             $data['teams'] = Team::where('disable', false)->get();
             $data['trashed'] = User::onlyTrashed()->get();
         } else {
@@ -418,13 +429,16 @@ class AdminController extends Controller
         }
         $data['assistants'] = collect($data['assistants'])->unique('id');
         $data['categories'] = array_unique($data['categories']);
-        foreach ($data['categories'] as $category){
-            if($category === 'Credit Report') continue;
-            $data['catCount'] [$category ] = [
-             $data['user']->media()->where('category',$category)->count()
+        foreach ($data['categories'] as $category) {
+            if ($category === 'Credit Report') {
+                continue;
+            }
+
+            $data['catCount'][$category] = [
+                $data['user']->media()->where('category', $category)->count(),
             ];
         }
-         return view('admin.newpages.project-overview', $data);
+        return view('admin.newpages.project-overview', $data);
     }
 
     public function storeProject(Request $request)
@@ -458,13 +472,23 @@ class AdminController extends Controller
                 'role' => 'Borrower',
             ]);
             $user = AdminService::doUser($request, -1);
-            Project::create([
+            $project = Project::create([
                 'name' => $request->borroweraddress,
                 'borrower_id' => $user,
                 'team_id' => $request->team,
                 'created_by' => Auth::id(),
-                'managers' => [$request->associate, $request->juniorAssociate, $request->processor],
             ]);
+
+            foreach ($request->associate as $associate_id) {
+                $project->users()->attach($associate_id);
+            }
+            foreach ($request->juniorAssociate as $associate_id) {
+                $project->users()->attach($associate_id);
+            }
+            foreach ($request->processor as $associate_id) {
+                $project->users()->attach($associate_id);
+            }
+
             $message = "Created new Deal by name : $request->borroweraddress";
             $admin = User::where('role', 'Admin')->first();
             $user = User::find(Auth::id());
@@ -476,7 +500,10 @@ class AdminController extends Controller
     public function getUsersByTeam(Team $team)
     {
         $associates = [];
-        if (!$team) return response()->json([], 404); // Team not found
+        if (!$team) {
+            return response()->json([], 404);
+        }
+        // Team not found
         // Retrieve associates and store them in the $associates array
         foreach ($team->users as $user) {
             $associates[] = [
@@ -494,10 +521,10 @@ class AdminController extends Controller
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
         if ($admin->role == 'Admin') {
-            $data['users'] = User::with(['createdBy'])->where('role', '!=', 'Admin')->get(['id','name','email','role','created_by','email_verified_at']);
+            $data['users'] = User::with(['createdBy'])->where('role', '!=', 'Admin')->get(['id', 'name', 'email', 'role', 'created_by', 'email_verified_at']);
             $data['trashed'] = User::onlyTrashed()->get();
         } else {
-            $data['users'] = $admin->with(['createdUsers','createdBy'])->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+            $data['users'] = $admin->with(['createdUsers', 'createdBy'])->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         }
         return view('admin.newpages.users', $data);
     }
@@ -542,14 +569,14 @@ class AdminController extends Controller
             $data['enableTeams'] = Team::with('users')->where('disable', false)->get();
             $data['disableTeams'] = Team::with('users')->where('disable', true)->get();
             $data['users'] = User::where('role', '!=', 'Admin')
-            ->whereIn('role', ['Associate', 'Processor', 'Junior Associate'])
-            ->get(['id', 'email', 'name', 'role']);
+                ->whereIn('role', ['Associate', 'Processor', 'Junior Associate'])
+                ->get(['id', 'email', 'name', 'role']);
         } else {
             $userId = Auth::id();
-            $data['disableTeams'] = Team::with('users')->where('disable',true)->orWhereHas('users', function ($query) use ($userId) {
+            $data['disableTeams'] = Team::with('users')->where('disable', true)->orWhereHas('users', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             })->get();
-            $data['enableTeams'] = Team::with('users')->where('disable',false)->orWhereHas('users', function ($query) use ($userId) {
+            $data['enableTeams'] = Team::with('users')->where('disable', false)->orWhereHas('users', function ($query) use ($userId) {
                 $query->where('user_id', $userId);
             })->get();
             $data['teams'] = Team::with('users')->whereHas('users', function ($query) use ($userId) {
@@ -634,50 +661,53 @@ class AdminController extends Controller
 
     public function submitIntakeForm(IntakeFormRequest $request)
     {
-            $user = new User;
-            $user->name = $request->first_name . ' ' . $request->last_name;
-            $user->email = $request->email;
-            $user->role = 'Borrower';
-            $user->created_by = Auth::id();
-            $user->password = bcrypt($this->faker->password(8));
-            if ($user->save()) {
-                Password::sendResetLink($request->only('email'));
-                Password::RESET_LINK_SENT;
-            }
+        $user = new User;
+        $user->name = $request->first_name . ' ' . $request->last_name;
+        $user->email = $request->email;
+        $user->role = 'Borrower';
+        $user->created_by = Auth::id();
+        $user->password = bcrypt($this->faker->password(8));
+        if ($user->save()) {
+            Password::sendResetLink($request->only('email'));
+            Password::RESET_LINK_SENT;
+        }
 
-            IntakeForm::create([
-                'user_id' => $user->id,
-                'name' => $request->first_name ?? null . '' . $request->last_name,
-                'email' => $request->email ?? null,
-                'address' => $request->address ?? null,
-                'phone' => $request->phone ?? null,
-                'address' => $request->address . ' ' . $request->address_two ?? null,
-                'city' => $request->city ?? null,
-                'state' => $request->state ?? null,
-                'zip' => $request->zip ?? null,
-                'loan_type' => $request->loan_type ?? null,
-                'purchase_price' => $request->purchase_price ?? null,
-                'property_value' => $request->property_value ?? null,
-                'down_payment' => $request->down_payment ?? null,
-                'current_loan_amount' => $request->current_loan_amount ?? null,
-                'closing_date' => $request->closing_date ?? null,
-                'current_lender' => $request->current_lender ?? null,
-                'rate' => $request->rate ?? null,
-                'is_it_rental_property' => $request->is_it_rental_property ?? null,
-                'monthly_rental_income' => $request->monthly_rental_income ?? null,
-                'cashout_amount' => $request->cashout_amount ?? null,
-                'is_repair_finance_needed' => $request->is_repair_finance_needed ?? null,
-                'how_much' => $request->how_much ?? null,
-                'note' => $request->note ?? null,
-            ]);
-            return response()->json('success', 200);
+        IntakeForm::create([
+            'user_id' => $user->id,
+            'name' => $request->first_name ?? null . '' . $request->last_name,
+            'email' => $request->email ?? null,
+            'address' => $request->address ?? null,
+            'phone' => $request->phone ?? null,
+            'address' => $request->address . ' ' . $request->address_two ?? null,
+            'city' => $request->city ?? null,
+            'state' => $request->state ?? null,
+            'zip' => $request->zip ?? null,
+            'loan_type' => $request->loan_type ?? null,
+            'purchase_price' => $request->purchase_price ?? null,
+            'property_value' => $request->property_value ?? null,
+            'down_payment' => $request->down_payment ?? null,
+            'current_loan_amount' => $request->current_loan_amount ?? null,
+            'closing_date' => $request->closing_date ?? null,
+            'current_lender' => $request->current_lender ?? null,
+            'rate' => $request->rate ?? null,
+            'is_it_rental_property' => $request->is_it_rental_property ?? null,
+            'monthly_rental_income' => $request->monthly_rental_income ?? null,
+            'cashout_amount' => $request->cashout_amount ?? null,
+            'is_repair_finance_needed' => $request->is_repair_finance_needed ?? null,
+            'how_much' => $request->how_much ?? null,
+            'note' => $request->note ?? null,
+        ]);
+        return response()->json('success', 200);
     }
 
-    public function redirectTo($route,$message)
+    public function redirectTo($route, $message)
     {
-        $message = ucfirst(str_replace('-',' ',$message));
-        if ($route === 'back') return back()->with('msg_success',"$message.");
-        return redirect(getRoutePrefix()."/$route")->with('msg_success',"$message.");
+        $message = ucfirst(str_replace('-', ' ', $message));
+        if ($route === 'back') {
+            return back()->with('msg_success', "$message.");
+        }
+
+        return redirect(getRoutePrefix() . "/$route")->with('msg_success', "$message.");
     }
 
 }

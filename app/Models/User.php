@@ -126,4 +126,8 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Project::class, 'borrower_id');
     }
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class);
+    }
 }
