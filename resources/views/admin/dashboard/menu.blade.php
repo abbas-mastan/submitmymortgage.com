@@ -24,8 +24,8 @@
                     <a href="{{ url(getRoutePrefix() . '/teams') }}" class="flex justify-center align-center flex-col">
                         <div
                             class="h-16  flex align-center justify-center rounded px-7 py-2 bg-gradient-to-b from-gradientStart to-gradientEnd">
-                            <img class="object-contain  sm:w-[100%] " src="{{ asset('icons/Teams.svg') }}"
-                                alt="">
+                            <img class="object-contain  sm:w-[100%] h-12  w-14" src="{{ asset('icons/Teams.svg') }}"
+                            alt="">
                         </div>
                         <p class="text-center font-bold">Teams</p>
                     </a>
@@ -33,7 +33,8 @@
                 <a href="{{ url(getRoutePrefix() . '/new-users') }}" class="flex justify-center align-center flex-col">
                     <div
                         class="h-16 flex align-center justify-center rounded px-7 py-2 bg-gradient-to-b from-gradientStart to-gradientEnd">
-                        <img class="object-contain  sm:w-[100%] " src="{{ asset('icons/Users.svg') }}" alt="">
+                        <img class="object-contain  sm:w-[100%] h-12  w-14" src="{{ asset('icons/Users.svg') }}"
+                        alt="">
                     </div>
                     <p class="text-center font-bold">Users</p>
                 </a>

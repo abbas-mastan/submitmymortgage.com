@@ -237,7 +237,9 @@
                 data: $('.projectForm').serialize(),
                 success: function(response) {
                     if (response === 'success') {
-                        window.location.href();
+                        window.location.href =
+                    "{{ url(getAdminRoutePrefix() . '/redirect/back/link-shared-successfully') }}";
+                
                     }
                     $.each(response.error, function(index, error) {
                         var fieldId = `#${error.field}_error`;

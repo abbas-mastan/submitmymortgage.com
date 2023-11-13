@@ -9,6 +9,11 @@
         var uploadUrl = '{{ url(getRoutePrefix() . '/file-upload') }}';
     @endif
 
+    $('.closealertbox').click(function(e) {
+        e.preventDefault();
+        $('.alertbox').toggleClass('hidden');
+    });
+
     $('.requestButton ,.backButton').click(function(e) {
         e.preventDefault();
         $('.firstTable, .secondTable,.requestButton').toggleClass('hidden');
@@ -119,7 +124,7 @@
                 if (response === 'sucess') {
                     $('#newProjectModal').toggleClass('hidden');
                     window.location.href =
-                    "{{ url(getAdminRoutePrefix() . '/redirect/back/link-shared-successfully') }}";
+                        "{{ url(getAdminRoutePrefix() . '/redirect/back/link-shared-successfully') }}";
                 }
                 $.each(response.error, function(index, message) {
                     $('.submitPart .errors').append(
@@ -262,8 +267,7 @@
             success: function(response) {
                 console.log(response);
                 if (response == 'access removed') {
-                    $span.parent()
-                        .remove(); // Use the stored reference to remove the parent element
+                    $span.parent().remove();
                 }
             }
         });

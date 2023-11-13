@@ -473,22 +473,16 @@ class AdminController extends Controller
         }
     }
 
-    public function getUsersByTeam($id)
+    public function getUsersByTeam(Team $team)
     {
-        $team = Team::find($id);
         $associates = [];
-
-        if (!$team) {
-            return response()->json([], 404); // Team not found
-        }
-
+        if (!$team) return response()->json([], 404); // Team not found
         // Retrieve associates and store them in the $associates array
         foreach ($team->users as $user) {
-            $associate = User::find($user->pivot->associates);
             $associates[] = [
-                'role' => $associate->role,
-                'name' => $associate->name,
-                'id' => $associate->id,
+                'role' => $user->role,
+                'name' => $user->name,
+                'id' => $user->id,
             ];
         }
 
@@ -682,9 +676,7 @@ class AdminController extends Controller
     public function redirectTo($route,$message)
     {
         $message = ucfirst(str_replace('-',' ',$message));
-        if ($route === 'back') {
-            return back()->with('msg_success',"$message.");
-        }
+        if ($route === 'back') return back()->with('msg_success',"$message.");
         return redirect(getRoutePrefix()."/$route")->with('msg_success',"$message.");
     }
 

@@ -33,11 +33,16 @@ $(document).ready(function () {
                 return $(this).val();
             }).get();
             if ($('#category').val() === "") {
-                alert('Please choose document type');
+                $("#select_error").empty();
+                $("#select_error").append('Please choose document type!');
                 return;
+            } else {
+                $("#select_error").empty();
             }
             if (!file && checkedValues == 0) {
-                alert('Please select or drag a file to upload. Or select at least one file from Gmail');
+                $("#file_error").empty();
+                $("#file_error").append('Please select or drag a file to upload. Or select at least one file from Gmail!');
+                // alert('Please select or drag a file to upload. Or select at least one file from Gmail');
                 return;
             }
             $("#start-upload-div").toggleClass("hidden");
@@ -46,12 +51,18 @@ $(document).ready(function () {
             uploadToPHPServer(checkedValues);
         } else {
             if ($('#category').val() === "") {
-                alert('Please choose document type');
+                $("#select_error").empty();
+                $("#select_error").append('Please choose document type!');
                 return;
+            } else {
+                $("#select_error").empty();
             }
             if (!file) {
-                alert('Please select or drag a file to upload.');
+                $("#file_error").empty();
+                $("#file_error").append('Please select or drag a file to upload!');
                 return;
+            } else {
+                $("#file_error").empty();
             }
             $("#start-upload-div").toggleClass("hidden");
             $("#file-progress").toggleClass("hidden");
@@ -79,7 +90,7 @@ function uploadToPHPServer(checkedValues = null) {
         formData.append('attachment', $.map(checkedValues, function (value, index) { return [value]; }));
     }
     // var upload_url = 'https://your-domain.com/files-uploader/';
-    var upload_url = uploadUrl;       
+    var upload_url = uploadUrl;
     makeXMLHttpRequest(upload_url, formData, function (progress) {
         console.log(progress);
         if (progress !== 'upload-ended') {
@@ -87,11 +98,12 @@ function uploadToPHPServer(checkedValues = null) {
             $("#file-name-percent").text(progress);
             return;
         }
-        alert('File upload complete.')
         $("#start-upload-div").toggleClass("hidden");
         $("#file-progress").toggleClass("hidden");
         $("#filename").text("");
-        location.reload();
+        $('#default-modal').addClass('hidden');
+        $('.alertbox').removeClass('hidden');
+        $('.alerttextbox').text('File uploaded successfully');
     });
 }
 function makeXMLHttpRequest(url, data, callback) {
@@ -106,31 +118,35 @@ function makeXMLHttpRequest(url, data, callback) {
                 return;
             }
             if (data.status == 'File exists') {
-                alert(data.filename + ' already exists');
+                $("#file_error").empty();
+                $("#file_error").append(data.filename + 'already exists!');
                 $("#start-upload-div").removeClass("hidden");
+            } else {
+                $("#file_error").empty();
             }
         }
-    };
-    request.upload.onloadstart = function () {
-        //callback('Upload started...');
-    };
-    request.upload.onprogress = function (event) {
-        callback(Math.round(event.loaded / event.total * 100) + "%");
-    };
-    request.upload.onload = function () {
-        // callback('progress-about-to-end');
-    };
-    request.upload.onload = function () {
-        // callback('Getting File URL..');
-    };
-    request.upload.onerror = function (error) {
-        // callback('Failed to upload to server');
-    };
-    request.upload.onabort = function (error) {
-        // callback('Upload aborted.');
-    };
-    request.open('POST', url);
-    request.send(data);
+    }
+};
+request.upload.onloadstart = function () {
+    //callback('Upload started...');
+};
+request.upload.onprogress = function (event) {
+    callback(Math.round(event.loaded / event.total * 100) + "%");
+};
+request.upload.onload = function () {
+    // callback('progress-about-to-end');
+};
+request.upload.onload = function () {
+    // callback('Getting File URL..');
+};
+request.upload.onerror = function (error) {
+    // callback('Failed to upload to server');
+};
+request.upload.onabort = function (error) {
+    // callback('Upload aborted.');
+};
+request.open('POST', url);
+request.send(data);
 }
 var file;
 function dropHandler(ev) {

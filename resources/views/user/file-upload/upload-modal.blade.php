@@ -46,6 +46,7 @@ fixed bg-gray-500 bg-opacity-40
                     @endforeach
                 </select>
             </div>
+            <span class="block text-center text-red-700" id="select_error"></span>
             <div class="mx-auto mt-6 w-3/4 h-36 outline-red-300 outline-dashed outline-offset-8" id="drop_zone"
                 ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
                 <div class="pt-5 flex justify-center">
@@ -64,6 +65,7 @@ fixed bg-gray-500 bg-opacity-40
                     <p class=" text-center"><span id='filename' class="text-blue-500"></span></p>
                 </div>
             </div>
+            <div class="block text-center text-red-700 mt-4" id="file_error"></div>
             <div id="file-progress" class="hidden w-full flex justify-center space-x-2 mt-8">
                 <div>
                     <img class="w-10 h-16" src="{{ asset('icons/file-type.svg') }}" alt="" srcset="">
