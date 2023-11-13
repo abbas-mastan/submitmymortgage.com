@@ -43,7 +43,7 @@
     @endif
     @foreach ($enableTeams as $team)
         @component('components.accordion', ['title' => $team->name])
-            <table class="w-full display shadow-lg" id="{{ str_replace(' ', '', $team->name) }}-table{{ $team->id }}">
+            <table class="w-full display shadow-lg" id="{{ Str::slug($team->name) }}-table{{ $team->id }}">
                 <thead class="hidden bg-gray-300">
                     <tr>
                         <th class="pl-2 tracking-wide">
@@ -146,7 +146,7 @@
     @foreach ($disableTeams as $key => $team)
         @if ($team->disable)
             @component('components.accordion', ['title' => $team->name])
-                <table class="w-full display shadow-lg" id="{{ str_replace(' ', '', $team->name) }}-table{{ $team->id }}">
+                <table class="w-full display shadow-lg" id="{{ Str::slug($team->name) }}-table{{ $team->id }}">
                     <thead class="hidden bg-gray-300">
                         <tr>
                             <th class="pl-2 tracking-wide">

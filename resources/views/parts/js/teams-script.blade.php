@@ -4,10 +4,10 @@
 
 @foreach ($teams as $team)
     <script>
-        new DataTable("#{{ str_replace(' ', '', $team->name) }}-table{{ $team->id }}");
-        $("#{{ str_replace(' ', '', $team->name) }}-table{{ $team->id }}_length").css('display', 'none');
-        $("#{{ str_replace(' ', '', $team->name) }}-table{{ $team->id }}_filter").css('display', 'none');
-        $("#{{ str_replace(' ', '', $team->name) }}-table{{ $team->id }}_wrapper").css('box-shadow',
+        new DataTable("#{{ Str::slug($team->name) }}-table{{ $team->id }}");
+        $("#{{ Str::slug($team->name) }}-table{{ $team->id }}_length").css('display', 'none');
+        $("#{{ Str::slug($team->name) }}-table{{ $team->id }}_filter").css('display', 'none');
+        $("#{{ Str::slug($team->name) }}-table{{ $team->id }}_wrapper").css('box-shadow',
             '0px 0px 11px 0px gray');
         $(`select[name="{{ $team->name }}-table{{ $team->id }}_length"]`).addClass('w-16');
         $(`select[name="{{ $team->name }}-table{{ $team->id }}_length"]`).addClass('mb-3');
