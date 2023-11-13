@@ -42,7 +42,7 @@
         <h2 class="text-center text-xl border-y-4 py-3  mt-5">Enabled Teams</h2>
     @endif
     @foreach ($enableTeams as $team)
-        @component('components.accordion', ['title' => $team->name])
+        @component('components.accordion', ['title' => $team->name.$team->owner_id])
             <table class="w-full display shadow-lg" id="{{ Str::slug($team->name) }}-table{{ $team->id }}">
                 <thead class="hidden bg-gray-300">
                     <tr>
@@ -145,7 +145,7 @@
     @endif
     @foreach ($disableTeams as $key => $team)
         @if ($team->disable)
-            @component('components.accordion', ['title' => $team->name])
+            @component('components.accordion', ['title' => $team->name ])
                 <table class="w-full display shadow-lg" id="{{ Str::slug($team->name) }}-table{{ $team->id }}">
                     <thead class="hidden bg-gray-300">
                         <tr>

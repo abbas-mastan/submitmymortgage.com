@@ -68,7 +68,7 @@
                         </summary>
                         <p id="toptable1" class="text-neutral-600 group-open:animate-fadeIn">
                         <table class="w-full display shadow-lg"
-                            id="{{ str_replace(' ', '', $project->name . $project->id) }}-table">
+                            id="{{ Str::slug($project->name . $project->id) }}-table">
                             <thead class="hidden bg-gray-300">
                                 <tr>
                                     <th class="pl-2 tracking-wide">
@@ -361,7 +361,7 @@
         </div>
     @empty
     @endforelse
-
+    
     @if (count($disableProjects) > 0)
         <h2 class="text-center text-xl border-y-4 py-3  mt-5">Disable Deals</h2>
     @endif
@@ -384,7 +384,7 @@
                         </summary>
                         <p id="toptable" class="text-neutral-600 group-open:animate-fadeIn">
                         <table class="w-full display shadow-lg"
-                            id="{{ str_replace(' ', '', $project->name . $project->id) }}-table">
+                            id="{{ Str::slug($project->name . $project->id) }}-table">
                             <thead class="hidden bg-gray-300">
                                 <tr>
                                     <th class="pl-2 tracking-wide">
@@ -672,8 +672,6 @@
         </div>
     @empty
     @endforelse
-
-
     @if (count($closeProjects) > 0)
         <h2 class="text-center text-xl border-y-4 py-3  mt-5">Closed Deals</h2>
     @endif
@@ -696,7 +694,7 @@
                         </summary>
                         <p id="toptable" class="text-neutral-600 group-open:animate-fadeIn">
                         <table class="w-full display shadow-lg"
-                            id="{{ str_replace(' ', '', $project->name . $project->id) }}-table">
+                            id="{{ Str::slug($project->name . $project->id) }}-table">
                             <thead class="hidden bg-gray-300">
                                 <tr>
                                     <th class="pl-2 tracking-wide">
