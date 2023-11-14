@@ -591,22 +591,8 @@ class AdminController extends Controller
 
     public function deleteProjectUser(Project $project, $id)
     {
-        $jsonData = $project->managers;
-        foreach ($jsonData as $key => $innerArray) {
-            if (is_array($innerArray)) {
-                if (($index = array_search($id, $innerArray)) !== false) {
-                    unset($jsonData[$key][$index]);
-                    if (empty($jsonData[$key])) {
-                        unset($jsonData[$key]);
-                    }
-                }
-            }
-        }
-        $updatedJsonData = array_values($jsonData);
-        $project->managers = $updatedJsonData;
-        $project->save();
-
-        return redirect()->back();
+        $project->users()->detach($id);
+        return back()->with('msg_success','User deleted successfully');
     }
 
     public function deleteTeamMember(Team $team, User $user)
