@@ -4,7 +4,7 @@
         <div class="createTeam">
             @if (count($enableTeams) > 0)
                 <div>
-                    <input type="radio" name="team" id="newInput" onclick="changeInputs()">
+                    <input type="radio" checked name="team" id="newInput" onclick="changeInputs()">
                     <label for="newInput">Add New</label>
                     <input class="ml-2" type="radio" name="team" id="existingInput" onclick="changeInputs()">
                     <label for="existingInput">Existing Team</label>
@@ -111,9 +111,10 @@
                 </div>
                 <!-- Dropdown panel -->
                 <div class="associateDropdown hidden absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
-                    role="listbox" aria-labelledby="multiselect-toggle" id="multiselect-dropdown1">
-
-                </div>
+                role="listbox" aria-labelledby="multiselect-toggle" id="multiselect-dropdown1">
+                
+            </div>
+            <button class="text-red-700 my-3  addNewAssociate">+ Add Associate</button>
             </div>
             <span class="text-red-700" id="associate_error"></span>
             <div class="my-3 flex justify-between">
@@ -151,4 +152,15 @@
             </div>
         </div>
     </form>
+
+    <form action="{{getAdminRoutePrefix().'/do-associate'}}" class="associateForm hidden">
+        @csrf
+        <x-form.input name="AssociateName" label="Associate Name" class="mb-5" />
+        <x-form.input name="AssociateEmail" type="email" label="Assoicate Email" class="mb-5" />
+        <div class="my-3 flex justify-between mt-5">
+            <button class="bg-gray-400 text-white px-8 py-2 text-xs font-thin backToAssociate">back</button>
+            <button class="bg-red-800 text-white px-8 py-2 text-xs font-thin" type="submit ">Continue</button>
+        </div>
+    </form>
+
 @endcomponent

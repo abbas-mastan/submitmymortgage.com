@@ -240,6 +240,7 @@
                         </button>
                     </a>
                 </div>
+
             @endcomponent
         @endif
     @endforeach

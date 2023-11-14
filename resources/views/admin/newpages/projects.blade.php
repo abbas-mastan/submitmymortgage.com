@@ -212,7 +212,6 @@
         </div>
     @empty
     @endforelse
-
     @if (count($disableProjects) > 0)
         <h2 class="text-center text-xl border-y-4 py-3  mt-5">Disable Deals</h2>
     @endif

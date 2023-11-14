@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationRequest;
-
 use App\Http\Requests\IntakeFormRequest;
 use App\Models\Application;
 use App\Models\Contact;
@@ -12,16 +11,13 @@ use App\Models\IntakeForm;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
-
 use App\Models\UserCategory;
 use App\Notifications\FileUploadNotification;
-
 use App\Services\AdminService;
 use App\Services\CommonService;
 use App\Services\UserService;
 use Faker\Factory;use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
@@ -376,10 +372,10 @@ class AdminController extends Controller
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
         if ($admin->role == 'Admin') {
             $data['projects'] = Project::with('users')->get();
-            $data['enableProjects'] = Project::with(['users.createdBy','team','borrower.createdBy'])->where('status', 'enable')->get();
-            $data['disableProjects'] = Project::with(['users.createdBy','team','borrower.createdBy'])->where('status', 'disable')->get();
-            $data['closeProjects'] = Project::with(['users.createdBy','team','borrower.createdBy'])->where('status', 'close')->get();
-            $data['borrowers'] = User::where('role','Borrower')->get(['id', 'name','role']);
+            $data['enableProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'enable')->get();
+            $data['disableProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'disable')->get();
+            $data['closeProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'close')->get();
+            $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name', 'role']);
             $data['teams'] = Team::where('disable', false)->get();
             $data['trashed'] = User::onlyTrashed()->get();
         } else {
@@ -708,6 +704,31 @@ class AdminController extends Controller
         }
 
         return redirect(getRoutePrefix() . "/$route")->with('msg_success', "$message.");
+    }
+
+    public function doAssociate(Request $request)
+    {
+        $validator = Validator::make($request->only(['AssociateName', 'AssociateEmail']), [
+            'AssociateEmail' => 'required|email:rfc,dns|unique:users,email',
+        ]);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->toArray();
+            $response = ['error' => []];
+            foreach ($errors as $field => $error) {
+                foreach ($error as $message) {
+                    $response['error'][] = [
+                        'field' => $field,
+                        'message' => $message,
+                    ];
+                }
+            }
+            return response()->json($response);
+        }
+
+        $request->merge(['email' => $request->AssociateEmail, 'role' => 'Associate', 'name' => $request->AssociateName,
+        ]);
+        $user = AdminService::doUser($request, -1);
+        return response()->json('success', 200);
     }
 
 }

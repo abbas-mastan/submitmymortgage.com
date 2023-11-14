@@ -7,12 +7,53 @@
         new DataTable("#{{ Str::slug($team->name) }}-table{{ $team->id }}");
         $("#{{ Str::slug($team->name) }}-table{{ $team->id }}_length").css('display', 'none');
         $("#{{ Str::slug($team->name) }}-table{{ $team->id }}_filter").css('display', 'none');
-        $("#{{ Str::slug($team->name) }}-table{{ $team->id }}_wrapper").css('box-shadow','0px 0px 11px 0px gray');
+        $("#{{ Str::slug($team->name) }}-table{{ $team->id }}_wrapper").css('box-shadow', '0px 0px 11px 0px gray');
         $(`select[name="{{ Str::slug($team->name) }}-table{{ $team->id }}_length"]`).addClass('w-16');
         $(`select[name="{{ Str::slug($team->name) }}-table{{ $team->id }}_length"]`).addClass('mb-3');
     </script>
 @endforeach
 <script>
+    $('.addNewAssociate ,.backToAssociate').click(function(e) {
+        e.preventDefault();
+       handleNewAssociate();
+    });
+
+    function handleNewAssociate() { 
+        $('.associate').toggleClass('hidden');
+        $('.associateForm').toggleClass('hidden');
+        if ($('.associateForm').hasClass('hidden')) {
+            $('.modalTitle').text('Add an Associate');
+        } else {
+            $('.modalTitle').text('Create New Associate');
+        }
+        $('.associateForm input').attr('required', true);
+     }
+
+    $('.associateForm').submit(function(e) {
+        e.preventDefault();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            type: "post",
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            success: function(response) {
+                if (response === 'success') {
+                  handleNewAssociate();  
+                  $('.associate').before(`<span class="text-green-700">Associate created successfully!</span>`);
+                }
+                $.each(response.error, function(index, error) {
+                    var fieldId = `#${error.field}_error`;
+                    var errorMessage = error.message;
+                    $(fieldId).text(errorMessage);
+                });
+            }
+        });
+    });
+
     $.each(['associate', 'processor', 'jrAssociate'], function(indexInArray, input) {
         $(document).on('change', "input[name='" + input + "[]']", function(e) {
             e.preventDefault();
@@ -38,7 +79,7 @@
         $('#newProjectModal').toggleClass('hidden');
         $('#newProjectModal').toggleClass('items-center');
         $('#newProjectModal div:first').toggleClass('md:top-44 max-sm:top-44 sm:top-36');
-        
+
     });
 
     var teamid = 0;
@@ -125,6 +166,7 @@
             $('#processor_error').text('Please select at least one processor');
             return;
         } else {
+            $('.associateButtonText').text('Select Associate');
             $('#processor_error').text('');
             $(".associateDropdown").empty();
             $(document).ready(function() {

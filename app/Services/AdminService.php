@@ -160,10 +160,8 @@ class AdminService
         }
         $filesIds = [];
         foreach ($users as $user) {
-            # code...
             $media = $user->media;
             foreach ($media as $m) {
-                # code...
                 $filesIds[] = $m->id;
             }
         }
@@ -353,6 +351,7 @@ class AdminService
         $user->email = $request->email;
         $user->created_by = Auth::id();
         $user->save();
+
         $assitant = new Assistant;
         $assitant->assistant_id = $user->id;
         $assitant->user_id = $request->userId;

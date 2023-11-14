@@ -97,6 +97,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::get('/mark-as-read/{id}', [AdminController::class, 'markAsRead']);
     Route::get('/remove-access/{user}', [AdminController::class, 'removeAcess']);
     Route::post('/submit-intake-form', [AdminController::class, 'submitIntakeForm']);
+    Route::post('/do-associate', [AdminController::class, 'doAssociate']);
     Route::get('/redirect/{route}/{message}', [AdminController::class, 'redirectTo']);
     
 });
