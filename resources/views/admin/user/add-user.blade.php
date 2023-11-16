@@ -67,18 +67,23 @@
                         class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
                         <option disabled value="">Choose a type</option>
                         @foreach (config('smm.roles') as $role)
-                            {{-- the roles are showing depend on logged in user --}}
-                            @if (
-                                !(
-                                    (Auth::user()->role == 'Processor' && $role == 'Processor') ||
-                                    (Auth::user()->role == 'Associate' && in_array($role, ['Associate', 'Processor'])) ||
-                                    (Auth::user()->role == 'Junior Associate' && in_array($role, ['Junior Associate', 'Associate', 'Processor']))
-                                ))
-                                <option {{ old('role', $user->role) == $role ? 'selected' : '' }}
-                                    value="{{ $role }}">
-                                    {{ $role }}</option>
-                            @endif
-                        @endforeach
+                        {{-- The roles are shown depending on the logged-in user --}}
+                        @if (
+                            !(
+                                (Auth::user()->role == 'Processor' && $role == 'Processor') ||
+                                (Auth::user()->role == 'Associate' && in_array($role, ['Associate', 'Processor'])) ||
+                                (Auth::user()->role == 'Junior Associate' && in_array($role, ['Junior Associate', 'Associate', 'Processor'])) ||
+                                (in_array(Auth::user()->role, ['Processor', 'Associate', 'Junior Associate']) && $role == 'Admin')
+                            )
+                        )
+                            <option {{ old('role', $user->role) == $role ? 'selected' : '' }}
+                                value="{{ $role }}">
+                                {{ $role }}
+                            </option>
+                        @endif
+                    @endforeach
+                    
+                    
                     </select>
                 </div>
             </div>

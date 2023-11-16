@@ -30,7 +30,7 @@
                 <table class="w-full pt-3" id="user-table">
                     @include('components.table-head')
                     <tbody>
-                        @if (Auth::user()->role == 'Admin')
+                        @if (Auth::user()->role == 'Super Admin')
                             @foreach ($leads as $lead)
                                 <tr class="text-center">
                                     <td class=" pl-2 tracking-wide border border-l-0">

@@ -1,11 +1,24 @@
 <div class="w-full grid grid-cols-2 h-20 m-auto items-center justify-start bg-white shadow-md">
     <div class="col-span-1">
         <div class="flex flex-row">
+            @can('isSuperAdmin')
+                <div class="pl-20">
+                    <span class="text-xl font-semibold">
+                        @if (request()->routeIs('dashboard'))
+                            {{ session('role') === 'Processor' ? 'Processor ' : 'Super Admin' }}Dashboard
+                        @else
+                            <a href="{{ url(getRoutePrefix() . '/dashboard') }}">
+                                {{ session('role') === 'Processor' ? 'Processor ' : 'Super Admin ' }}Dashboard
+                            </a>
+                        @endif
+                    </span>
+                </div>
+            @endcan
             @can('isAdmin')
                 <div class="pl-20">
                     <span class="text-xl font-semibold">
                         @if (request()->routeIs('dashboard'))
-                            {{ session('role') === 'Processor' ? 'Processor ' : 'Admin ' }}Dashboard
+                            {{ session('role') === 'Processor' ? 'Processor ' : 'Admin' }}Dashboard
                         @else
                             <a href="{{ url(getRoutePrefix() . '/dashboard') }}">
                                 {{ session('role') === 'Processor' ? 'Processor ' : 'Admin ' }}Dashboard

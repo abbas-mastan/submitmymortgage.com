@@ -1,4 +1,6 @@
+@can(['isAdmin', 'isSuperAdmin'])
 <x-form.intake-modal-form />
+@endcan
 <div class="flex justify-evenly gap-8 align-center">
     <div class="sm:w-2/3 w-full">
         <div @class([
@@ -25,7 +27,7 @@
                         <div
                             class="h-16  flex align-center justify-center rounded px-7 py-2 bg-gradient-to-b from-gradientStart to-gradientEnd">
                             <img class="object-contain  sm:w-[100%] h-12  w-14" src="{{ asset('icons/Teams.svg') }}"
-                            alt="">
+                                alt="">
                         </div>
                         <p class="text-center font-bold">Teams</p>
                     </a>
@@ -34,7 +36,7 @@
                     <div
                         class="h-16 flex align-center justify-center rounded px-7 py-2 bg-gradient-to-b from-gradientStart to-gradientEnd">
                         <img class="object-contain  sm:w-[100%] h-12  w-14" src="{{ asset('icons/Users.svg') }}"
-                        alt="">
+                            alt="">
                     </div>
                     <p class="text-center font-bold">Users</p>
                 </a>
@@ -52,7 +54,7 @@
             <div
                 class="px-8 py-5 flex rounded justify-between w-full mt-8 
             bg-gradient-to-b from-gradientStart to-gradientEnd">
-                @if (Auth::user()->role === 'Admin' || Auth::user()->role === 'Processor')
+                @if (Auth::user()->role === 'Super Admin' || Auth::user()->role === 'Processor')
                     <div class="text-white flex flex-col justify-center">
                         <h3 class="">Teams</h3>
                         <h2 class="text-center text-2xl">{{ count($teams) }}</h2>
@@ -60,21 +62,23 @@
                 @endif
                 <div class="text-white flex flex-col justify-center">
                     <h3 class="text-center">Opened <br class="lg:hidden block"> Deals</h3>
-                    <h1 class="text-center text-2xl">{{ count(\App\Models\Project::all()) }}
+                    <h1 class="text-center text-2xl">{{ count($projects) }}
                     </h1>
                 </div>
                 <div class="text-white flex flex-col justify-center">
                     <h3 class="text-center">Closed <br class="lg:hidden block"> Deals</h3>
-                    <h2 class="text-center text-2xl">{{ count(\App\Models\Application::where('status', 3)->get()) }}
+                    <h2 class="text-center text-2xl">{{ count($closedProjects) }}
                     </h2>
                 </div>
             </div>
         @endif
-        <div class="mt-8">
-            <button class="newProject underline text-2xl mt-5 text-red-700 capitalize font-bold">
-                intake form submission
-            </button>
-        </div>
+        @can(['isAdmin', 'isSuperAdmin'])
+            <div class="mt-8">
+                <button class="newProject underline text-2xl mt-5 text-red-700 capitalize font-bold">
+                    intake form submission
+                </button>
+            </div>
+        @endcan
     </div>
     @if (Auth::user()->role !== 'Borrower' && count(Auth::user()->notifications) > 0)
         <div class="pl-5 pr-1 shadow-lg rounded-xl md:w-1/3 w-full mt-8 bg-white">

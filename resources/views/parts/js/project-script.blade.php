@@ -233,12 +233,13 @@
             });
             $.ajax({
                 type: "post",
-                url: "{{ url(getAdminRoutePrefix() . '/store-project') }}",
+                url: "{{ url(getRoutePrefix() . '/store-project') }}",
                 data: $('.projectForm').serialize(),
                 success: function(response) {
+                    console.log(response);
                     if (response === 'success') {
                         window.location.href =
-                    "{{ url(getAdminRoutePrefix() . '/redirect/back/link-shared-successfully') }}";
+                    "{{ url(getRoutePrefix() . '/redirect/back/link-shared-successfully') }}";
                 
                     }
                     $.each(response.error, function(index, error) {

@@ -1,13 +1,13 @@
 <?php
 
-use App\Http\Controllers\AdminController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\GmailController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\TestController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\GmailController;
+use App\Http\Controllers\SuperAdminController;
 
 /*
 | --------------------------------------------------------------------------
@@ -40,7 +40,6 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/set-password/{token}', [AuthController::class, 'sePassword'])->name('set.password');
 });
 Route::get('/logout', [AuthController::class, 'logout']);
-Route::post('/logout-from-this-user', [AdminController::class, 'ReLoginFrom']);
 
 //Email verification links
 Route::get('/email/verify', [AuthController::class, 'notifyEmailVerification'])->middleware('auth')->name('verification.notice');
@@ -50,6 +49,7 @@ Route::post('/email/verification-notification', [AuthController::class, 'emailVe
 //Authentication required roots
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/logout-from-this-user', [SuperAdminController::class, 'ReLoginFrom']);
     Route::get('/dashboard', [HomeController::class, 'dashboard']);
     Route::get('/home', [HomeController::class, 'dashboard']);
     // Gmail attachments download and other routes

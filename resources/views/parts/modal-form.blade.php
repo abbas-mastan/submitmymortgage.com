@@ -55,7 +55,7 @@
                     <div class="processorDropdown hidden absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
                         role="listbox" aria-labelledby="multiselect-toggle" id="multiselect-dropdown">
                         <!-- Checkboxes for options -->
-                        @if (Auth::user()->role === 'Admin')
+                        @if (Auth::user()->role === 'Super Admin')
                             @foreach ($users as $user)
                                 @if ($user->role !== 'Processor')
                                     @continue

@@ -19,12 +19,11 @@
             url: $(this).attr('action'),
             data: $(this).serialize(),
             success: function(response) {
-                
                 $('.jq-loader-for-ajax').addClass('hidden');
                 if (response === 'success') {
                     $('#newProjectModal').toggleClass('hidden');
                     window.location.href =
-                        "{{ url(getAdminRoutePrefix() . '/redirect/dashboard/form-submitted-successfully') }}";
+                        "{{ url(getRoutePrefix() . '/redirect/dashboard/form-submitted-successfully') }}";
                 }
                 $.each(response.error, function(index, error) {
                     var fieldId = `#${error.field}_error`;

@@ -16,13 +16,14 @@ use App\Notifications\FileUploadNotification;
 use App\Services\AdminService;
 use App\Services\CommonService;
 use App\Services\UserService;
-use Faker\Factory;use Illuminate\Http\Request;
+use Faker\Factory;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
-class AdminController extends Controller
+class SuperAdminController extends Controller
 {
 
     protected $faker;
@@ -53,15 +54,13 @@ class AdminController extends Controller
 
     public function LoginAsThisUser(Request $request)
     {
-        if (session('role') != 'Super Admin') {
-            abort(403, 'You are not allowed to this part of the world!');
-        }
         $id = Auth::id();
-        $user = User::where('id', $request->user_id)->where('role', '<>', 'Admin')->first();
+        $user = User::where('id', $request->user_id)->where('role', '<>', 'Super Admin')->first();
         Auth::login($user);
         $request->session()->regenerate();
         $request->session()->put('role', $user->role);
         $request->session()->put('reLogin', $id);
+        $request->session()->put('url',url()->previous());
         return redirect('/dashboard');
     }
 
@@ -76,7 +75,7 @@ class AdminController extends Controller
         $request->session()->forget('reLogin');
         $request->session()->regenerate();
         $request->session()->put('role', $user->role);
-        return redirect()->intended();
+        return redirect()->intended(session('url'));
     }
 
     public function deleteUser(Request $request, $id)
@@ -87,7 +86,7 @@ class AdminController extends Controller
 
     public function restoreUser(User $user)
     {
-        if (Auth::user()->role !== 'Admin') {
+        if (Auth::user()->role !== 'Super Admin') {
             abort(403, 'you are not allowed to restore user');
         }
 
@@ -97,7 +96,7 @@ class AdminController extends Controller
 
     public function deleteUserPermenant(User $user)
     {
-        if (Auth::user()->role !== 'Admin') {
+        if (Auth::user()->role !== 'Super           Admin') {
             abort(403, 'you are not allowed to to permenantly delete user');
         }
 
@@ -280,12 +279,22 @@ class AdminController extends Controller
     public function allUsers($id = null)
     {
         $user = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
-        $data['role'] = $user->role;
-        $data['users'] = $user
-            ->createdUsers()
-            ->with(['createdBy'])
-            ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
-            ->get();
+        if ($user->role === 'Super Admin') {
+            $data['role'] = $user->role;
+            $data['users'] = User::with(['createdBy', 'createdUsers'])
+            ->where('role', '!=', 'Super Admin')
+                ->get(['id', 'name', 'email', 'created_by', 'role', 'email_verified_at']);
+            $data['trashed'] = User::withTrashed()
+                ->with('createdBy')
+                ->whereNotNull('deleted_at')
+                ->get();
+        } else {
+            $data['role'] = $user->role;
+            $data['users'] = $user->createdUsers()
+                ->with(['createdUsers', 'createdBy'])
+                ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
+                ->get();
+        }
         return view('admin.user.all-users', $data);
     }
 
@@ -361,15 +370,13 @@ class AdminController extends Controller
 
     public function projects($id = null): View
     {
-        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-        $data['teams'] = Team::whereHas('users', function ($query) use ($admin) {
-            $query->where('user_id', $admin->id);
-        })->get();
-        $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
-        $data['projects'] = Project::with(['team', 'users.createdBy', 'borrower.createdBy'])->whereHas('users', function ($query) use ($admin) {
-            $query->where('user_id', $admin->id);
-        })->get();
-        $data['enableProjects'] = $data['projects'];
+        $data['projects'] = Project::with('users')->get();
+        $data['enableProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'enable')->get();
+        $data['disableProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'disable')->get();
+        $data['closeProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'close')->get();
+        $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name', 'role']);
+        $data['teams'] = Team::where('disable', false)->get();
+        $data['trashed'] = User::onlyTrashed()->get();
         return view('admin.newpages.projects', $data);
     }
 
@@ -377,6 +384,7 @@ class AdminController extends Controller
     {
         if ($request->ajax()) {
             $data['attachments'] = Auth::user()->load('attachments')->attachments()->paginate(2);
+            // $data['attachments'] = \App\Models\Attachment::where('user_id', Auth::id())->paginate(2);
             return $data;
         }
         $data = AdminService::filesCat($request, $id);
@@ -391,21 +399,11 @@ class AdminController extends Controller
             $data['categories'] = config('smm.file_category');
             sort($data['categories']); // Sort the array in ascending order
         }
-        $data['assistants'] = []; // Initialize the array
+        $data['assistants'] = User::find($id)->assistants; // Initialize the array
         $data['catCount'] = [];
-        foreach ($data['user']->assistants as $assistant) {
-            $user = $data['assistants'][] = User::with('assistants')->find($assistant->assistant_id);
-            if ($user) {
-                $data['assistants'][$user->id] = $user;
-            }
-        }
-        $data['assistants'] = collect($data['assistants'])->unique('id');
         $data['categories'] = array_unique($data['categories']);
         foreach ($data['categories'] as $category) {
-            if ($category === 'Credit Report') {
-                continue;
-            }
-
+            if ($category === 'Credit Report') continue;
             $data['catCount'][$category] = [
                 $data['user']->media()->where('category', $category)->count(),
             ];
@@ -491,8 +489,13 @@ class AdminController extends Controller
 
     public function newusers($id = null)
     {
-        $admin = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
-        $data['users'] = $admin->createdUsers()->with(['createdBy'])->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
+        if ($admin->role == 'Super Admin') {
+            $data['users'] = User::with(['createdBy'])->where('role', '!=', 'Super Admin')->get(['id', 'name', 'email', 'role', 'created_by', 'email_verified_at']);
+            $data['trashed'] = User::onlyTrashed()->get();
+        } else {
+            $data['users'] = $admin->with(['createdUsers', 'createdBy'])->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        }
         return view('admin.newpages.users', $data);
     }
 
@@ -529,18 +532,12 @@ class AdminController extends Controller
 
     public function teams($id = null): View
     {
-        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-            $userId = Auth::id();
-            $data['disableTeams'] = Team::with('users')->where('disable', true)->orWhereHas('users', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })->get();
-            $data['enableTeams'] = Team::with('users')->where('disable', false)->orWhereHas('users', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })->get();
-            $data['teams'] = Team::with('users')->whereHas('users', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })->get();
-            $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        $data['teams'] = Team::with('users')->get();
+        $data['enableTeams'] = Team::with('users')->where('disable', false)->get();
+        $data['disableTeams'] = Team::with('users')->where('disable', true)->get();
+        $data['users'] = User::where('role', '!=', 'Admin')
+            ->whereIn('role', ['Associate', 'Processor', 'Junior Associate'])
+            ->get(['id', 'email', 'name', 'role']);
         return view('admin.newpages.teams', $data);
     }
 
@@ -674,7 +671,7 @@ class AdminController extends Controller
 
         $request->merge(['email' => $request->AssociateEmail, 'role' => 'Associate', 'name' => $request->AssociateName,
         ]);
-        $user = AdminService::doUser($request, -1);
+        AdminService::doUser($request, -1);
         return response()->json('success', 200);
     }
 

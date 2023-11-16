@@ -8,13 +8,13 @@
                     <span class="tracking-wide text-xl text-white ">Submit My <br class="xl:hidden"> Mortgage</span>
                 </a>
             </li>
-            @can('isAdmin')
+            @if(Gate::check('isAdmin') || Gate::check('isSuperAdmin'))
                 <!-- Sidebar for Admin starts -->
                 <li class="mt-10 py-3 my-1 sm:px-24 flex flex-row">
                     <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
-                    <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/add-user/-1') }}">
+                    <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/add-user/-1') }}">
                         <span class="tracking-wide sm:block  capitalize text-white">Create New User</span>
                     </a>
                 </li>
@@ -43,7 +43,7 @@
                     <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
-                    <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/all-users') }}">
+                    <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/all-users') }}">
                         <span class="tracking-wide sm:block  capitalize text-white">All Users </span>
                     </a>
                 </li>
@@ -56,7 +56,7 @@
                     <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
-                    <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/leads') }}">
+                    <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/leads') }}">
                         <span class="tracking-wide sm:block  capitalize text-white">Contacts</span>
                     </a>
                 </li>
@@ -69,7 +69,7 @@
                     <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
-                    <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/applications') }}">
+                    <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/applications') }}">
                         <span class="tracking-wide sm:block  capitalize text-white">Loan Pipeline</span>
                     </a>
                 </li>
@@ -82,7 +82,7 @@
                     <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
-                    <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/upload-files') }}">
+                    <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/upload-files') }}">
                         <span class="tracking-wide sm:block capitalize text-white">Upload Files</span>
                     </a>
                 </li>
@@ -95,7 +95,7 @@
                     <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
-                    <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/files') }}">
+                    <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/files') }}">
                         <span class="tracking-wide sm:block  capitalize text-white">Files Uploaded</span>
                     </a>
                 </li>
@@ -141,7 +141,7 @@
                     </a>
                 </li>
                 <!-- Sidebar for Admin ends -->
-            @endcan
+            @endif
             @can('isAssociate')
                 <li class="mt-10 py-3 my-1 sm:px-24 flex flex-row">
                     <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">

@@ -105,8 +105,8 @@
                                         alt="" class="p-1 w-7">
                                 </button>
                             </a>
-                            @if (session('role') == 'Admin')
-                                <form method="POST" action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                            @if (session('role') == 'Super Admin')
+                                <form method="POST" action="{{ url(getSuperAdminRoutePrefix() . '/login-as-this-user') }}">
                                     @csrf
                                     <input type="hidden" name="user_id" value="{{ $processor->id }}">
                                     <span class="loginBtn">
@@ -214,7 +214,7 @@
         </tbody>
     </table>
 
-    @if (Auth::user()->role === 'Admin')
+    @if ($role === 'Super Admin')
         <x-flex-card title="Deleted Users" id="deleted" titlecounts="0" iconurl="{{ asset('icons/Users.svg') }}" />
         <table class="w-full display my-5" id="deleted-table">
             <thead class="bg-gray-300">

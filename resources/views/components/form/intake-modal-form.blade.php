@@ -1,5 +1,5 @@
 @component('components.modal-background', ['title' => 'Loan Intake Form', 'width' => 'max-w-lg'])
-      <form class="intakeForm" action="{{ url(getAdminRoutePrefix() . '/submit-intake-form') }}" method="post">
+    <form class="intakeForm" action="{{ url(getRoutePrefix() . '/submit-intake-form') }}" method="post">
         <x-jq-loader />
         @csrf
         <div class="personalinfo grid grid-cols-2 gap-x-4">
@@ -16,7 +16,6 @@
             <x-form.input name="state" label="State / Province / Region" class="mb-0" />
             <x-form.input name="zip" label="Postal/Zip Code" />
         </div>
-
         <span class="block mt-1 font-bold">Loan Information</span>
         <div class="purchase grid grid-cols-2 gap-x-4">
             <div class="mt-3 ">
@@ -35,13 +34,14 @@
                 <x-form.input name="purchase_price" type="number" label="Purchase Price" class="mb-0" sign="1" />
             </div>
             <div class="relative">
-                <x-form.input name="property_value" type="number" label="Property Value" class="mb-0" sign="1"/>
+                <x-form.input name="property_value" type="number" label="Property Value" class="mb-0" sign="1" />
             </div>
             <div class="relative">
-                <x-form.input name="down_payment" type="number" label="Down Payment" class="mb-0" sign="1"/>
+                <x-form.input name="down_payment" type="number" label="Down Payment" class="mb-0" sign="1" />
             </div>
             <div class="relative">
-                <x-form.input name="current_loan_amount_purchase" type="number" label="Current Loan Amount" class="mb-0" sign="1"/>
+                <x-form.input name="current_loan_amount_purchase" type="number" label="Current Loan Amount" class="mb-0"
+                    sign="1" />
             </div>
             <x-form.input name="closing_date" type="date" class="mb-0" label="ClosingDate" />
         </div>
@@ -59,13 +59,14 @@
                 </select>
             </div>
             <div class="relative">
-                <x-form.input name="current_loan_amount_cashout" type="number" label="Current Loan Amount" class="mb-0" sign="1"/>
+                <x-form.input name="current_loan_amount_cashout" type="number" label="Current Loan Amount" class="mb-0"
+                    sign="1" />
             </div>
             <div class="relative">
                 <x-form.input name="current_lender_cashout" label="Current Lender" class="mb-0" />
             </div>
             <div class="relative">
-                <x-form.input name="rate_cashout" type="number" label="Rate" class="mb-0" sign="1"/>
+                <x-form.input name="rate_cashout" type="number" label="Rate" class="mb-0" sign="1" />
             </div>
             <div class="mt-3 ">
                 <label for="isItRentalProperty" class="block text-sm text-dark-500 leading-6 font-bold">Is it Rental
@@ -81,10 +82,12 @@
                 </select>
             </div>
             <div class="relative">
-                <x-form.input name="monthly_rental_income" type="number" label="Monthly Rental Income" class="mb-0" sign="1"/>
+                <x-form.input name="monthly_rental_income" type="number" label="Monthly Rental Income" class="mb-0"
+                    sign="1" />
             </div>
             <div class="relative">
-                <x-form.input name="cashout_amount" type="number" label="Cash Out Amount" class="mb-0" sign="1"/>
+                <x-form.input name="cashout_amount" type="number" label="Cash Out Amount" class="mb-0"
+                    sign="1" />
             </div>
         </div>
         <div class="fix-flip hidden grid grid-cols-2 gap-x-4">
@@ -101,13 +104,16 @@
                 </select>
             </div>
             <div class="relative">
-                <x-form.input name="purchase_price_fix_flip" type="number" label="Purchase Price" class="mb-0" sign="1"/>
+                <x-form.input name="purchase_price_fix_flip" type="number" label="Purchase Price" class="mb-0"
+                    sign="1" />
             </div>
             <div class="relative">
-                <x-form.input name="property_value_fix_flip" type="number" label="Property Value" class="mb-0" sign="1"/>
+                <x-form.input name="property_value_fix_flip" type="number" label="Property Value" class="mb-0"
+                    sign="1" />
             </div>
             <div class="relative">
-                <x-form.input name="down_payment_fix_flip" type="number" label="Down Payment" class="mb-0" sign="1"/>
+                <x-form.input name="down_payment_fix_flip" type="number" label="Down Payment" class="mb-0"
+                    sign="1" />
             </div>
             <x-form.input name="closing_date_fix_flip" type="date" class="mb-0" label="ClosingDate" />
             <div class="mt-3 ">
@@ -124,7 +130,8 @@
                 </select>
             </div>
             <div class="relative repairfinanceamountdiv">
-                <x-form.input name="repair_finance_amount" type="number" label="How much?" class="mb-0" sign="1"/>
+                <x-form.input name="repair_finance_amount" type="number" label="How much?" class="mb-0"
+                    sign="1" />
             </div>
         </div>
         <div class="refinance hidden grid grid-cols-2 gap-x-4">
@@ -141,16 +148,19 @@
                 </select>
             </div>
             <div class="relative">
-                <x-form.input name="current_loan_amount_refinance" type="number" label="Current Loan Amount" class="mb-0" sign="1"/>
+                <x-form.input name="current_loan_amount_refinance" type="number" label="Current Loan Amount"
+                    class="mb-0" sign="1" />
             </div>
             <div class="relative">
-                <x-form.input name="current_lender_refinance" type="number" label="Current Lender" class="mb-0" sign="1"/>
+                <x-form.input name="current_lender_refinance" type="number" label="Current Lender" class="mb-0"
+                    sign="1" />
             </div>
             <div class="relative">
-                <x-form.input name="rate_refinance" type="number" label="Rate" class="mb-0" sign="1"/>
+                <x-form.input name="rate_refinance" type="number" label="Rate" class="mb-0" sign="1" />
             </div>
             <div class="mt-3 ">
-                <label for="isItRentalPropertyRefinance" class="block text-sm text-dark-500 leading-6 font-bold">Is it Rental
+                <label for="isItRentalPropertyRefinance" class="block text-sm text-dark-500 leading-6 font-bold">Is it
+                    Rental
                     Property?</label>
                 <select
                     class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
@@ -163,7 +173,8 @@
                 </select>
             </div>
             <div class="relative">
-                <x-form.input name="monthly_rental_income_refinance" type="number" label="Monthly Rental Income" class="mb-0" sign="1"/>
+                <x-form.input name="monthly_rental_income_refinance" type="number" label="Monthly Rental Income"
+                    class="mb-0" sign="1" />
             </div>
         </div>
         <div class="mt-3 grid grid-cols-1">

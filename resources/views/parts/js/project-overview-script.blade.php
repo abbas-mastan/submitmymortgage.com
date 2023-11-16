@@ -1,4 +1,7 @@
 <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
+<script>
+    window.returnBack = "{{url(getRoutePrefix().'/redirect/back/file-uploaded-successfully')}}";
+</script>
 <script src="{{ asset('js/upload.js') }}"></script>
 <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
