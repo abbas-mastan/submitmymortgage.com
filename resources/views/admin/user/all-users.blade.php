@@ -261,7 +261,7 @@
                             {{ $processor->role }}
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
-                            @if ($processor->created_by)
+                            @if ($processor->createdBy)
                                 {{ $processor->createdBy->name }}
                                 |
                                 {{ $processor->createdBy->role }}
