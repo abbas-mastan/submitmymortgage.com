@@ -11,6 +11,10 @@ use Illuminate\Support\Facades\DB;
  * and open the template in the editor.
  */
 //Returns prefix for routes to be used by admin
+function getSuperAdminRoutePrefix()
+{
+    return "/superadmin";
+}
 function getAdminRoutePrefix()
 {
     return "/admin";
@@ -34,6 +38,10 @@ function getRoutePrefix()
     switch (session('role')) {
         case 'Admin':
             return getAdminRoutePrefix();
+            break;
+
+            case 'Super Admin':
+            return getSuperAdminRoutePrefix();
             break;
 
         case 'Processor':

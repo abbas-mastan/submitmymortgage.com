@@ -33,11 +33,11 @@
         @include('user.dashboard.upload')
     @endcan
     <div class="flex-wrap justify-center w-full">
-        @can('isAdmin')
+        @if(Gate::check('isSuperAdmin') || Gate::check('isAdmin'))
             @include('admin.dashboard.menu')
             {{-- @include('admin.dashboard.cards')
         @include('admin.dashboard.users') --}}
-        @endcan
+        @endif
         @can('isAssociate')
             @include('admin.dashboard.menu')
             {{-- @include('admin.dashboard.cards')

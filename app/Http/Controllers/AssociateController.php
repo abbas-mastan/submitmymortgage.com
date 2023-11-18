@@ -103,8 +103,9 @@ class AssociateController extends Controller
 
     public function allUsers($id = null)
     {
-        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-        $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        $user = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
+        $data['users'] = $user->createdUsers()->with('createdBy')->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        $data['role'] = $user->role;
         return view('admin.user.all-users', $data);
     }
 
@@ -259,23 +260,16 @@ class AssociateController extends Controller
     public function projects($id = null): View
     {
         $admin = Auth::user();
-        $userId = Auth::id();
-        $data['teams'] = Team::whereHas('users', function ($query) use ($userId) {
-            $query->where('associates', $userId);
+        $data['teams'] = Team::whereHas('users', function ($query) use ($admin) {
+            $query->where('user_id', $admin->id);
         })->get();
 
-        $data['teams'] = Team::whereHas('users', function ($query) use ($userId) {
-            $query->where('user_id', Auth::id());
+        $data['borrowers'] = User::with('projects')->where('role', 'Borrower')->get(['id', 'name']);
+        $data['projects'] = Project::with(['team','users.createdBy','borrower.createdBy'])->whereHas('users', function ($query) use ($admin) {
+            $query->where('user_id', $admin->id);
         })->get();
+        $data['enableProjects'] = $data['projects'];
 
-        $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
-        $data['projects'] = Project::where('created_by', $admin->id)->get();
-
-        foreach (Project::all() as $project) {
-            if (in_array($userId, $project->managers[Auth::user()->role === 'Associate' ? 0 : 1])) {
-                $data['projects']->push($project);
-            }
-        }
         $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         return view('admin.newpages.projects', $data);
     }
@@ -283,7 +277,7 @@ class AssociateController extends Controller
     public function newusers($id = null)
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-        $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        $data['users'] = $admin->createdUsers()->with('createdBy')->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         return view('admin.newpages.users', $data);
     }
     public function contacts()
@@ -323,6 +317,9 @@ class AssociateController extends Controller
             return $data;
         }
         $data = AdminService::filesCat($request, $id);
+        $data['categories'] = config('smm.file_category');
+$user = User::find($id);
+$data['assistants'] = $user->assistants;
         return view('admin.newpages.project-overview', $data);
     }
     public function teams($id = null): View

@@ -35,9 +35,9 @@
 @section('content')
     @include('parts.modal-form')
     <x-flex-card title="Teams" titlecounts="{{ count($enableTeams) }}" iconurl="{{ asset('icons/Teams.svg') }}" />
-    @can('isAdmin')
+    {{-- @can('isSuperAdmin') --}}
         <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Team</button>
-    @endcan
+    {{-- @endcan --}}
     @if (count($enableTeams) > 0)
         <h2 class="text-center text-xl border-y-4 py-3  mt-5">Enabled Teams</h2>
     @endif
@@ -80,7 +80,7 @@
                                         {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}>
                                         {{ $user->name }}
                                     </a>
-                                    @if (Auth::user()->role === 'Admin')
+                                    @if (Auth::user()->role === 'Super Admin')
                                         <a title="Edit this user"
                                             href="{{ url(getRoutePrefix() . '/add-user/' . $user->id) }}">
                                             <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
@@ -101,15 +101,15 @@
                                     @endif
                                 </td>
                                 <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                    @if (session('role') == 'Admin')
-                                        <a data="Delete" disabaled class="delete"
+                                    @if (session('role') === 'Super Admin')
+                                    <a data="Delete" disabaled class="delete"
                                             href="{{ url(getRoutePrefix() . "/delete-user-from-team/$team->id/" . $user->id) }}">
                                             <button
                                                 class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
                                                 <img src="{{ asset('icons/trash.svg') }}" alt="">
                                             </button>
                                         </a>
-                                        <form method="POST" action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                        <form method="POST" action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                             @csrf
                                             <input type="hidden" name="user_id" value="{{ $user->id }}">
                                             <span class="loginBtn">
@@ -130,7 +130,7 @@
             </table>
             <div class="mt-5">
                 <a data="{{ $team->disable ? 'Enable' : 'Disable' }}" class="delete"
-                    href="{{ url(getAdminRoutePrefix() . '/delete-team/' . $team->id) }}">
+                    href="{{ url(getRoutePrefix() . '/delete-team/' . $team->id) }}">
                     <button class="bg-red-800 px-5 py-2 text-white">
                         {{ $team->disable ? 'Enable' : 'Disable' }} Team
                     </button>
@@ -183,7 +183,7 @@
                                             {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}>
                                             {{ $user->name }}
                                         </a>
-                                        @if (Auth::user()->role === 'Admiin')
+                                        @if (Auth::user()->role === 'Super Admin')
                                             <a title="Edit this user"
                                                 href="{{ url(getRoutePrefix() . '/add-user/' . $user->id) }}">
                                                 <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
@@ -204,7 +204,7 @@
                                         @endif
                                     </td>
                                     <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                        @if (session('role') == 'Admin')
+                                        @if (session('role') === 'Super Admin')
                                             <a data="Delete" disabaled class="delete"
                                                 href="{{ url(getRoutePrefix() . "/delete-user-from-team/$team->id/" . $user->id) }}">
                                                 <button
@@ -213,7 +213,7 @@
                                                 </button>
                                             </a>
                                             <form method="POST"
-                                                action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                                action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                 @csrf
                                                 <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                 <span class="loginBtn">
@@ -234,7 +234,7 @@
                 </table>
                 <div class="mt-5">
                     <a data="{{ $team->disable ? 'Enable' : 'Disable' }}" class="delete"
-                        href="{{ url(getAdminRoutePrefix() . '/delete-team/' . $team->id) }}">
+                        href="{{ url(getRoutePrefix() . '/delete-team/' . $team->id) }}">
                         <button class="bg-red-800 px-5 py-2 text-white">
                             {{ $team->disable ? 'Enable' : 'Disable' }} Team
                         </button>

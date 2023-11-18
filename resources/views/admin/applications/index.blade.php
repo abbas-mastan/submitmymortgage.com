@@ -34,7 +34,7 @@
                 </a>
             </div>
         </div>
-        @if ($role == 'Admin' || $role == 'Processor')
+        @if ($role == 'Super Admin' || $role == 'Processor')
             @foreach ($tables as $key => $table)
                 @php $serialNo = 1; @endphp
                 <h2 class="text-center text-themered text-2xl font-semibold">{{ $table }}</h2>

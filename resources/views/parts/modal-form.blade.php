@@ -1,5 +1,5 @@
 @component('components.modal-background', ['title' => 'Create New Team'])
-    <form action="{{ url(getAdminRoutePrefix() . '/teams') }}" id="teamForm" method="post">
+    <form action="{{ url(getRoutePrefix() . '/teams') }}" id="teamForm" method="post">
         @csrf
         <div class="createTeam">
             @if (count($enableTeams) > 0)
@@ -55,7 +55,7 @@
                     <div class="processorDropdown hidden absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
                         role="listbox" aria-labelledby="multiselect-toggle" id="multiselect-dropdown">
                         <!-- Checkboxes for options -->
-                        @if (Auth::user()->role === 'Admin')
+                        @if (Auth::user()->role === 'Super Admin')
                             @foreach ($users as $user)
                                 @if ($user->role !== 'Processor')
                                     @continue
@@ -153,7 +153,7 @@
         </div>
     </form>
 
-    <form action="{{getAdminRoutePrefix().'/do-associate'}}" class="associateForm hidden">
+    <form action="{{getRoutePrefix().'/do-associate'}}" class="associateForm hidden">
         @csrf
         <x-form.input name="AssociateName" label="Associate Name" class="mb-5" />
         <x-form.input name="AssociateEmail" type="email" label="Assoicate Email" class="mb-5" />

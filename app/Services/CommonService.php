@@ -2,14 +2,15 @@
 
 namespace App\Services;
 
-use App\Models\{Application,Attachment,Info,Media,User};
-use App\Notifications\FileUploadNotification;
-use Illuminate\Http\Request;
+use App\Models\Project;
 use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use App\Notifications\FileUploadNotification;
 use Illuminate\Support\Facades\{Auth,Storage};
 use Illuminate\Validation\ValidationException;
 use PhpOffice\PhpSpreadsheet\{IOFactory,Spreadsheet};
-use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use App\Models\{Application,Attachment,Info,Media,User};
 
 class CommonService
 {
@@ -71,7 +72,7 @@ class CommonService
             $media->user_id = $request->input('id') ?? Auth::id();
             $media->uploaded_by = Auth::user()->id;
             if ($media->save()) {
-                self::storeNotification("Uploaded $request->category", $request->id ?? Auth::id());
+                // self::storeNotification("Uploaded $request->category", $request->id ?? Auth::id());
                 return response()->json(['status' => "success", 'msg' => "File uploaded."]);
             }
         }
@@ -153,11 +154,11 @@ class CommonService
     {
         $data['role'] = Auth::user()->role;
         $data['tables'] = ['Pending Applications', 'Completed Deals', 'Incomplete Deals', 'Deleted Deals'];
-        if ($data['role'] == 'Admin' || $data['role'] === 'Processor') {
+        if ($data['role'] == 'Super Admin' || $data['role'] === 'Processor') {
             $data['applications'] = Application::all();
         } else {
             $data['tables'] = array_diff($data['tables'], ['Deleted Deals']);
-            $data['applications'] = Auth::user()->createdUsers()->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+            $data['applications'] = Auth::user()->createdUsers()->with(['applications','application'])->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         }
         return $data;
     }
@@ -207,7 +208,7 @@ class CommonService
 
         $allowedRoles = ["Processor", "Associate", "Junior Associate", "Borrower"];
         $allowedLoanTypes = ["Private Loan", "Full Doc", "Non QM"];
-        $commonRoles = ['Processor', 'Admin'];
+        $commonRoles = ['Processor', 'Admin','Super Admin'];
         $roleHierarchy = [
             'Processor' => $commonRoles,
             'Associate' => array_merge($commonRoles, ['Associate']),
@@ -294,17 +295,17 @@ class CommonService
     public static function storeNotification($message, $userid)
     {
 
-        $project = \App\Models\Project::where('borrower_id', $userid)->first();
+        $project = Project::where('borrower_id', $userid)->first();
         if ($project) {
-            $allIds = array_merge(...array_filter($project->managers));
-            array_push($allIds, User::where('role', 'Admin')->first()->id);
+            $allIds = $project->users->pluck('id')->toArray();
+            array_push($allIds, User::where('role', 'Super Admin')->first()->id);
             foreach ($allIds as $Admin) {
                 $notifyThisUser = User::find($Admin);
                 $user = User::find($userid);
                 $notifyThisUser->notify(new FileUploadNotification($user, $message));
             }
         } else {
-            $admin = User::where('role','Admin')->first();
+            $admin = User::where('role','Super Admin')->first();
             $user = User::find($userid);
             $admin->notify(new FileUploadNotification($user, $message));
         }
