@@ -1,5 +1,5 @@
 @component('components.modal-background', ['title' => 'Create New Team'])
-    <form action="{{ url(getAdminRoutePrefix() . '/teams') }}" id="teamForm" method="post">
+    <form action="{{ url(getRoutePrefix() . '/teams') }}" id="teamForm" method="post">
         @csrf
         <div class="createTeam">
             @if (count($enableTeams) > 0)
@@ -153,7 +153,7 @@
         </div>
     </form>
 
-    <form action="{{getAdminRoutePrefix().'/do-associate'}}" class="associateForm hidden">
+    <form action="{{getRoutePrefix().'/do-associate'}}" class="associateForm hidden">
         @csrf
         <x-form.input name="AssociateName" label="Associate Name" class="mb-5" />
         <x-form.input name="AssociateEmail" type="email" label="Assoicate Email" class="mb-5" />

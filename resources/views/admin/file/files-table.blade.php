@@ -58,7 +58,7 @@
                 <td class=" pl-2 tracking-wide border border-r-0">
                     <div class="flex justify-center">
                         <a class="delete" data="Delete" title="Delete this file"
-                            href="{{ url(getAdminRoutePrefix() . '/delete-file/' . $file->id) }}">
+                            href="{{ url(getRoutePrefix() . '/delete-file/' . $file->id) }}">
                             <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                                 <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
                             </button>
@@ -66,7 +66,7 @@
                     </div>
 
                     {{-- <div class="flex justify-center">
-                        <form id="status-form" action="{{ url(getAdminRoutePrefix().'/update-file-status/'.$file->id) }}" class="">
+                        <form id="status-form" action="{{ url(getRoutePrefix().'/update-file-status/'.$file->id) }}" class="">
                             <select name="status" id="status" required class="p-0">
                                 <option value="">Change the status</option>
                                 <option {{ $file->status === 'Complete' ? 'selected' : '' }} value="Complete">Complete</option>

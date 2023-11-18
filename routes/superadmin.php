@@ -101,7 +101,7 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
     Route::get('/redirect/{route}/{message}', [SuperAdminController::class, 'redirectTo']);
     
 });
-Route::prefix(getAdminRoutePrefix())->group(function () {
+Route::prefix(getRoutePrefix())->group(function () {
     //==============================
     //==========Ajax routes
     //==============================

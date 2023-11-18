@@ -127,7 +127,7 @@
                 if (response === 'sucess') {
                     $('#newProjectModal').toggleClass('hidden');
                     window.location.href =
-                        "{{ url(getAdminRoutePrefix() . '/redirect/back/link-shared-successfully') }}";
+                        "{{ url(getRoutePrefix() . '/redirect/back/link-shared-successfully') }}";
                 }
                 $.each(response.error, function(index, message) {
                     $('.submitPart .errors').append(

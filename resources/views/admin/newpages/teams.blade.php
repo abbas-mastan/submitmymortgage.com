@@ -130,7 +130,7 @@
             </table>
             <div class="mt-5">
                 <a data="{{ $team->disable ? 'Enable' : 'Disable' }}" class="delete"
-                    href="{{ url(getAdminRoutePrefix() . '/delete-team/' . $team->id) }}">
+                    href="{{ url(getRoutePrefix() . '/delete-team/' . $team->id) }}">
                     <button class="bg-red-800 px-5 py-2 text-white">
                         {{ $team->disable ? 'Enable' : 'Disable' }} Team
                     </button>
@@ -213,7 +213,7 @@
                                                 </button>
                                             </a>
                                             <form method="POST"
-                                                action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                                action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                 @csrf
                                                 <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                 <span class="loginBtn">
@@ -234,7 +234,7 @@
                 </table>
                 <div class="mt-5">
                     <a data="{{ $team->disable ? 'Enable' : 'Disable' }}" class="delete"
-                        href="{{ url(getAdminRoutePrefix() . '/delete-team/' . $team->id) }}">
+                        href="{{ url(getRoutePrefix() . '/delete-team/' . $team->id) }}">
                         <button class="bg-red-800 px-5 py-2 text-white">
                             {{ $team->disable ? 'Enable' : 'Disable' }} Team
                         </button>

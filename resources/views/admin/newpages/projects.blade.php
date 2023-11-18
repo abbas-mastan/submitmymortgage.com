@@ -183,7 +183,7 @@
                                     <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                                         @if (Auth::user()->role === 'Super Admin')
                                             <form method="POST"
-                                                action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                                action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                 @csrf
                                                 <input type="hidden" name="user_id" value="{{ $project->borrower->id }}">
                                                 <span class="loginBtn">

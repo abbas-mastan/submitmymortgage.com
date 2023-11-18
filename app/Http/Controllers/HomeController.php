@@ -76,7 +76,7 @@ class HomeController extends Controller
     {
         $user = Auth::user(); // Assuming you have authenticated the admin
         $data['teams'] = Team::whereHas('users', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
+            $query->where('user_id', $user->id);   
         })->get();
         $data['usersCount'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->count();
         $data['users'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();

@@ -28,7 +28,7 @@
                         <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         </span>
-                        <a class="truncate ml-4" href="{{ url(getAdminRoutePrefix() . '/application/-1') }}">
+                        <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/application/-1') }}">
                             <span class="tracking-wide sm:block  capitalize text-white">Loan Application</span>
                         </a>
                     </li>

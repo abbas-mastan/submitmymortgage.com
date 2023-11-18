@@ -201,7 +201,7 @@
         let loanDiv = document.querySelector('#loan_type_div');
         let financeType = document.querySelector('#finance_type');
         role.addEventListener("change", function() {
-            if (this.value === 'Processor' || this.value === 'Associate' || this.value === 'Junior Associate') {
+            if (this.value === 'Processor' || this.value === 'Associate' || this.value === 'Junior Associate' || this.value === 'Admin') {
                 financeDiv.style.display = 'none';
                 loanDiv.style.display = 'none';
                 financeType.removeAttribute('required');

@@ -13,7 +13,7 @@
         $(`select[name="{{ Str::slug($project->name . $project->id) }}-table_length"]`).addClass('mb-3');
     </script>
 @endforeach
-@can('isAdmin')
+
     <script>
         $(document).ready(function() {
             // $('.AddNewMember').click(function(e) {
@@ -136,7 +136,7 @@
                 $(".associateDropdown").empty();
                 $(".jrAssociateDropdown").empty();
                 $.ajax({
-                    url: `{{ getAdminRoutePrefix() }}/getUsersByTeam/${$(this).val()}`, // Replace with the actual URL for retrieving users by team
+                    url: `{{ getRoutePrefix() }}/getUsersByTeam/${$(this).val()}`, // Replace with the actual URL for retrieving users by team
                     type: 'GET',
                     success: function(data) {
                         var associates = [];
@@ -251,7 +251,6 @@
             });
         }
     </script>
-@endcan
 
 <script>
     $(document).ready(function() {
