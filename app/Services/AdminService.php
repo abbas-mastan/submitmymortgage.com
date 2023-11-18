@@ -107,15 +107,15 @@ class AdminService
     private static function validateCurrentUser($attribute, $value, $fail)
     {
         $role = Auth::user()->role;
-        if ($role === 'Processor' && $value === 'Processor' || $value === 'Admin') {
+        if ($role === 'Processor' && $value === 'Processor' || $value === 'Super Admin') {
             $fail('The selected ' . $attribute . ' is invalid');
         }
 
-        if ($role === 'Associate' && ($value === 'Associate' || $value === 'Admin' || $value === 'Processor')) {
+        if ($role === 'Associate' && ($value === 'Associate' || $value === 'Super Admin' || $value === 'Processor')) {
             $fail('The selected ' . $attribute . ' is invalid');
         }
 
-        if ($role === 'Junior Associate' && ($value === 'Junior Associate' || $value === 'Admin' || $value === 'Processor' || $value === 'Associate')) {
+        if ($role === 'Junior Associate' && ($value === 'Junior Associate' || $value === 'Super Admin' || $value === 'Processor' || $value === 'Associate')) {
             $fail('The selected ' . $attribute . ' is invalid');
         }
 

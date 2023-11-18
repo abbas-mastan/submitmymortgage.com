@@ -35,9 +35,9 @@
 @section('content')
     @include('parts.modal-form')
     <x-flex-card title="Teams" titlecounts="{{ count($enableTeams) }}" iconurl="{{ asset('icons/Teams.svg') }}" />
-    @can('isSuperAdmin')
+    {{-- @can('isSuperAdmin') --}}
         <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Team</button>
-    @endcan
+    {{-- @endcan --}}
     @if (count($enableTeams) > 0)
         <h2 class="text-center text-xl border-y-4 py-3  mt-5">Enabled Teams</h2>
     @endif

@@ -529,18 +529,16 @@ class AdminController extends Controller
 
     public function teams($id = null): View
     {
-        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-            $userId = Auth::id();
-            $data['disableTeams'] = Team::with('users')->where('disable', true)->orWhereHas('users', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })->get();
-            $data['enableTeams'] = Team::with('users')->where('disable', false)->orWhereHas('users', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })->get();
-            $data['teams'] = Team::with('users')->whereHas('users', function ($query) use ($userId) {
-                $query->where('user_id', $userId);
-            })->get();
-            $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        $admin = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
+        $data['disableTeams'] = $admin->teamsOwnend()->with('users')->where('disable', true)->orWhereHas('users', function ($query) use ($admin) {
+            $query->where('user_id', $admin->id);
+        })->get();
+        $data['enableTeams'] = $admin->teamsOwnend()->where('disable', false)->orWhereHas('users', function ($query) use ($admin) {
+            $query->where('user_id', $admin->id);
+        })->get();
+        $data['teams'] = $admin->teamsOwnend()->with('users')->whereHas('users', function ($query) use ($admin) {
+            $query->where('user_id', $admin->id);
+        })->get();
         return view('admin.newpages.teams', $data);
     }
 
