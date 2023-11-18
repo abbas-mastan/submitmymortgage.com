@@ -107,15 +107,15 @@ class AdminService
     private static function validateCurrentUser($attribute, $value, $fail)
     {
         $role = Auth::user()->role;
-        if ($role === 'Processor' && $value === 'Processor' || $value === 'admin') {
+        if ($role === 'Processor' && $value === 'Processor' || $value === 'Admin') {
             $fail('The selected ' . $attribute . ' is invalid');
         }
 
-        if ($role === 'Associate' && ($value === 'Associate' || $value === 'admin' || $value === 'Processor')) {
+        if ($role === 'Associate' && ($value === 'Associate' || $value === 'Admin' || $value === 'Processor')) {
             $fail('The selected ' . $attribute . ' is invalid');
         }
 
-        if ($role === 'Junior Associate' && ($value === 'Junior Associate' || $value === 'admin' || $value === 'Processor' || $value === 'Associate')) {
+        if ($role === 'Junior Associate' && ($value === 'Junior Associate' || $value === 'Admin' || $value === 'Processor' || $value === 'Associate')) {
             $fail('The selected ' . $attribute . ' is invalid');
         }
 
@@ -176,7 +176,7 @@ class AdminService
     {
         $cat = str_replace('-', '/', $cat);
         $data['user'] = User::find($id);
-        $media = $data['user']->media()->where('category', $cat)->get();
+        $media = $data['user']->media()->with('uploadedBy')->where('category', $cat)->get();
         $data['id'] = $id;
         $data['cat'] = $cat;
         $data['files'] = $media;
@@ -240,7 +240,7 @@ class AdminService
 
     public static function allLeads()
     {
-        if (session('role') == 'Admin') {
+        if (session('role') == 'Super Admin') {
             $data['leads'] = Info::all();
         } else {
             $data['leads'] = Auth::user()->createdUsers()->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();

@@ -2,7 +2,6 @@
 @section('head')
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
-
     <style>
         #file {
             display: none;
@@ -35,7 +34,6 @@
             background-color: rgb(192, 192, 191);
             padding: 3px 8px;
             border-radius: 5px;
-
         }
     </style>
 @endsection
@@ -44,9 +42,9 @@
         @include('parts.project-modal-form')
     @endif
     <x-flex-card title="Deals" titlecounts="{{ count($projects) }}" iconurl="{{ asset('icons/Deals.svg') }}" />
-    @can('isAdmin')
+    @if(Gate::check('isSuperAdmin') || Gate::check('isAdmin'))
         <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Deal</button>
-    @endcan
+    @endif
     @if (count($enableProjects) > 0)
         <h2 class="text-center text-xl border-y-4 py-3  mt-5">Enable Deals</h2>
     @endif
@@ -95,8 +93,8 @@
                                 @php
                                     $serialNumber = 1;
                                 @endphp
-                                @foreach ($project->users as $processor)
-                                    @if ($processor->email_verified_at !== null)
+                                @foreach ($project->users as $user)
+                                    @if ($user->email_verified_at !== null)
                                         <tr class="border-none">
                                             <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
                                                 {{ $serialNumber }}
@@ -104,41 +102,41 @@
                                             <td class=" pl-2 tracking-wide border border-l-0">
                                                 <a title="Click to view files uploaded by this user"
                                                     class="text-blue-500 inline"
-                                                    href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $processor->id) }}">
-                                                    {{ $processor->name }}
+                                                    href="{{ url(getRoutePrefix() . ($user->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $user->id) }}">
+                                                    {{ $user->name }}
                                                 </a>
                                                 {{-- <a title="Edit this user"
-                                                    href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
+                                                    href="{{ url(getRoutePrefix() . '/add-user/' . $user->id) }}">
                                                     <img src="{{ asset('icons/pencil.svg') }}" alt=""
                                                         class="inline ml-5">
                                                 </a> --}}
                                             </td>
                                             <td class=" pl-2 tracking-wide border border-l-0">
-                                                {{ $processor->email }}
+                                                {{ $user->email }}
                                             </td>
                                             <td class=" pl-2 tracking-wide border border-l-0">
-                                                {{ $processor->role }}
+                                                {{ $user->role }}
                                             </td>
                                             <td class=" pl-2 tracking-wide border border-l-0">
-                                                @if ($processor->created_by)
-                                                    {{ $processor->createdBy->name }}
+                                                @if ($user->created_by)
+                                                    {{ $user->createdBy->name }}
                                                     |
-                                                    {{ $processor->createdBy->role }}
+                                                    {{ $user->createdBy->role }}
                                                 @endif
                                             </td>
                                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                                                 <a data="Delete" class="delete"
-                                                    href='{{ url(getAdminRoutePrefix() . "/delete-project-user/$project->id/" . $processor->id) }}'>
+                                                    href='{{ url(getRoutePrefix() . "/delete-project-user/$project->id/" . $user->id) }}'>
                                                     <button
                                                         class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
                                                         <img src="{{ asset('icons/trash.svg') }}" alt="">
                                                     </button>
                                                 </a>
-                                                @if (session('role') == 'Admin')
+                                                @if (Auth::user()->role === 'Super Admin')
                                                     <form method="POST"
-                                                        action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                                        action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                         @csrf
-                                                        <input type="hidden" name="user_id" value="{{ $processor->id }}">
+                                                        <input type="hidden" name="user_id" value="{{ $user->id }}">
                                                         <span class="loginBtn">
                                                             <button type="submit"
                                                                 class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
@@ -183,9 +181,9 @@
                                         @endif
                                     </td>
                                     <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                        @if (session('role') == 'Admin')
+                                        @if (Auth::user()->role === 'Super Admin')
                                             <form method="POST"
-                                                action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                                action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                 @csrf
                                                 <input type="hidden" name="user_id" value="{{ $project->borrower->id }}">
                                                 <span class="loginBtn">
@@ -212,6 +210,8 @@
         </div>
     @empty
     @endforelse
+
+@can('isSuperAdmin')
     @if (count($disableProjects) > 0)
         <h2 class="text-center text-xl border-y-4 py-3  mt-5">Disable Deals</h2>
     @endif
@@ -261,8 +261,8 @@
                                 @php
                                     $serialNumber = 1;
                                 @endphp
-                                @foreach ($project->users as $key => $processor)
-                                    @if ($processor->email_verified_at !== null)
+                                @foreach ($project->users as $key => $user)
+                                    @if ($user->email_verified_at !== null)
                                         <tr class="border-none">
                                             <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
                                                 {{ $serialNumber }}
@@ -270,42 +270,42 @@
                                             <td class=" pl-2 tracking-wide border border-l-0">
                                                 <a title="Click to view files uploaded by this user"
                                                     class="text-blue-500 inline"
-                                                    href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $processor->id) }}">
-                                                    {{ $processor->name }}
+                                                    href="{{ url(getRoutePrefix() . ($user->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $user->id) }}">
+                                                    {{ $user->name }}
                                                 </a>
                                                 {{-- <a title="Edit this user"
-                                                href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
+                                                href="{{ url(getRoutePrefix() . '/add-user/' . $user->id) }}">
                                                 <img src="{{ asset('icons/pencil.svg') }}" alt=""
                                                     class="inline ml-5">
                                             </a> --}}
                                             </td>
                                             <td class=" pl-2 tracking-wide border border-l-0">
-                                                {{ $processor->email }}
+                                                {{ $user->email }}
                                             </td>
                                             <td class=" pl-2 tracking-wide border border-l-0">
-                                                {{ $processor->role }}
+                                                {{ $user->role }}
                                             </td>
                                             <td class=" pl-2 tracking-wide border border-l-0">
-                                                @if ($processor->created_by)
-                                                    {{ $processor->createdBy->name }}
+                                                @if ($user->created_by)
+                                                    {{ $user->createdBy->name }}
                                                     |
-                                                    {{ $processor->createdBy->role }}
+                                                    {{ $user->createdBy->role }}
                                                 @endif
                                             </td>
                                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                                                 <a data="Delete" class="delete"
-                                                    href='{{ url(getAdminRoutePrefix() . "/delete-project-user/$project->id/" . $processor->id) }}'>
+                                                    href='{{ url(getRoutePrefix() . "/delete-project-user/$project->id/" . $user->id) }}'>
                                                     <button
                                                         class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
                                                         <img src="{{ asset('icons/trash.svg') }}" alt="">
                                                     </button>
                                                 </a>
-                                                @if (session('role') == 'Admin')
+                                                @if (Auth::user()->role === 'Super Admin')
                                                     <form method="POST"
-                                                        action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                                        action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                         @csrf
                                                         <input type="hidden" name="user_id"
-                                                            value="{{ $processor->id }}">
+                                                            value="{{ $user->id }}">
                                                         <span class="loginBtn">
                                                             <button type="submit"
                                                                 class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
@@ -350,9 +350,9 @@
                                         @endif
                                     </td>
                                     <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                        @if (session('role') == 'Admin')
+                                        @if (Auth::user()->role === 'Super Admin')
                                             <form method="POST"
-                                                action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                                action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                 @csrf
                                                 <input type="hidden" name="user_id"
                                                     value="{{ $project->borrower->id }}">
@@ -430,8 +430,8 @@
                                 @php
                                     $serialNumber = 1;
                                 @endphp
-                                @foreach ($project->users as $key => $processor)
-                                    @if ($processor->email_verified_at !== null)
+                                @foreach ($project->users as $key => $user)
+                                    @if ($user->email_verified_at !== null)
                                         <tr class="border-none">
                                             <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
                                                 {{ $serialNumber }}
@@ -439,42 +439,42 @@
                                             <td class=" pl-2 tracking-wide border border-l-0">
                                                 <a title="Click to view files uploaded by this user"
                                                     class="text-blue-500 inline"
-                                                    href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $processor->id) }}">
-                                                    {{ $processor->name }}
+                                                    href="{{ url(getRoutePrefix() . ($user->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $user->id) }}">
+                                                    {{ $user->name }}
                                                 </a>
                                                 {{-- <a title="Edit this user"
-                                                href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
+                                                href="{{ url(getRoutePrefix() . '/add-user/' . $user->id) }}">
                                                 <img src="{{ asset('icons/pencil.svg') }}" alt=""
                                                     class="inline ml-5">
                                             </a> --}}
                                             </td>
                                             <td class=" pl-2 tracking-wide border border-l-0">
-                                                {{ $processor->email }}
+                                                {{ $user->email }}
                                             </td>
                                             <td class=" pl-2 tracking-wide border border-l-0">
-                                                {{ $processor->role }}
+                                                {{ $user->role }}
                                             </td>
                                             <td class=" pl-2 tracking-wide border border-l-0">
-                                                @if ($processor->created_by)
-                                                    {{ $processor->name }}
+                                                @if ($user->created_by)
+                                                    {{ $user->name }}
                                                     |
-                                                    {{ $processor->role }}
+                                                    {{ $user->role }}
                                                 @endif
                                             </td>
                                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                                                 <a data="Delete" class="delete"
-                                                    href='{{ url(getAdminRoutePrefix() . "/delete-project-user/$project->id/" . $processor->id) }}'>
+                                                    href='{{ url(getRoutePrefix() . "/delete-project-user/$project->id/" . $user->id) }}'>
                                                     <button
                                                         class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
                                                         <img src="{{ asset('icons/trash.svg') }}" alt="">
                                                     </button>
                                                 </a>
-                                                @if (session('role') == 'Admin')
+                                                @if (Auth::user()->role == 'Super Admin')
                                                     <form method="POST"
-                                                        action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                                        action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                         @csrf
                                                         <input type="hidden" name="user_id"
-                                                            value="{{ $processor->id }}">
+                                                            value="{{ $user->id }}">
                                                         <span class="loginBtn">
                                                             <button type="submit"
                                                                 class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
@@ -519,9 +519,9 @@
                                     @endif
                                     </td>
                                     <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                        @if (session('role') == 'Admin')
+                                        @if (Auth::user()->role === 'Super Admin')
                                             <form method="POST"
-                                                action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                                action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                 @csrf
                                                 <input type="hidden" name="user_id"
                                                     value="{{ $project->borrower->id }}">
@@ -549,6 +549,8 @@
         </div>
     @empty
     @endforelse
+@endcan
+
 @endsection
 @section('foot')
     @include('parts.js.project-script')

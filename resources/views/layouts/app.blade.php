@@ -82,6 +82,9 @@
         @include('parts.footer')
     </div>
     <script src="{{ asset('js/app.js') }}"></script>
+    <script>
+        window.returnBack = "{{url(getRoutePrefix().'/redirect/back/file-uploaded-successfully')}}";
+    </script>
     @yield('foot')
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script>

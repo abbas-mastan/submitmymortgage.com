@@ -98,12 +98,16 @@ function uploadToPHPServer(checkedValues = null) {
             $("#file-name-percent").text(progress);
             return;
         }
-        $("#start-upload-div").toggleClass("hidden");
-        $("#file-progress").toggleClass("hidden");
-        $("#filename").text("");
-        $('#default-modal').addClass('hidden');
-        $('.alertbox').removeClass('hidden');
-        $('.alerttextbox').text('File uploaded successfully');
+        window.location.href = window.returnBack;            
+        // $("#start-upload-div").toggleClass("hidden");
+        // $("#file-progress").toggleClass("hidden");
+        // $("#filename").text("");
+        // $('#file').empty();
+        // $('#filename').empty();
+        // $("#start-upload-div").removeClass("hidden");
+        // $('#default-modal').addClass('hidden');
+        // $('.alertbox').removeClass('hidden');
+        // $('.alerttextbox').text('File uploaded successfully');
     });
 }
 function makeXMLHttpRequest(url, data, callback) {
@@ -111,7 +115,6 @@ function makeXMLHttpRequest(url, data, callback) {
     request.onreadystatechange = function () {
         if (request.readyState == 4 && request.status == 200) {
             var data = JSON.parse(request.responseText);
-            console.log(data);
             if (data.status === 'success') {
                 callback('upload-ended');
                 uploaded_path = data.url;
@@ -126,28 +129,28 @@ function makeXMLHttpRequest(url, data, callback) {
             }
         }
     }
+    request.upload.onloadstart = function () {
+        //callback('Upload started...');
+    };
+    request.upload.onprogress = function (event) {
+        callback(Math.round(event.loaded / event.total * 100) + "%");
+    };
+    request.upload.onload = function () {
+        // callback('progress-about-to-end');
+    };
+    request.upload.onload = function () {
+        // callback('Getting File URL..');
+    };
+    request.upload.onerror = function (error) {
+        // callback('Failed to upload to server');
+    };
+    request.upload.onabort = function (error) {
+        // callback('Upload aborted.');
+    };
+    request.open('POST', url);
+    request.send(data);
 };
-request.upload.onloadstart = function () {
-    //callback('Upload started...');
-};
-request.upload.onprogress = function (event) {
-    callback(Math.round(event.loaded / event.total * 100) + "%");
-};
-request.upload.onload = function () {
-    // callback('progress-about-to-end');
-};
-request.upload.onload = function () {
-    // callback('Getting File URL..');
-};
-request.upload.onerror = function (error) {
-    // callback('Failed to upload to server');
-};
-request.upload.onabort = function (error) {
-    // callback('Upload aborted.');
-};
-request.open('POST', url);
-request.send(data);
-}
+
 var file;
 function dropHandler(ev) {
     console.log('File(s) dropped');

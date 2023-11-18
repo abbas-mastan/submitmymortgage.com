@@ -50,6 +50,9 @@ class RouteServiceProvider extends ServiceProvider
             //Admin routes
             Route::middleware('web')
                 ->namespace($this->namespace)
+                ->group(base_path('routes/superadmin.php'));
+            Route::middleware('web')
+                ->namespace($this->namespace)
                 ->group(base_path('routes/admin.php'));
 
             Route::middleware('web')

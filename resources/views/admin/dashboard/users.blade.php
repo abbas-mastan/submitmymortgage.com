@@ -158,7 +158,7 @@
                                     {{ $borrower->name }}
                                 </a>
                                 <a title="Edit this user"
-                                    href="{{ url(getAdminRoutePrefix() . '/add-user/' . $borrower->id) }}">
+                                    href="{{ url(getRoutePrefix() . '/add-user/' . $borrower->id) }}">
                                     <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
                                 </a>
                             </td>

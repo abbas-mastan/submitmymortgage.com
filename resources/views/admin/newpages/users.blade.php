@@ -137,7 +137,7 @@
                                     </button>
                                 </a>
                                 @if (session('role') == 'Admin')
-                                    <form method="POST" action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
+                                    <form method="POST" action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                         @csrf
                                         <input type="hidden" name="user_id" value="{{ $processor->id }}">
                                         <span class="loginBtn">

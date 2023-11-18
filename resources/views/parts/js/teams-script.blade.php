@@ -123,7 +123,7 @@
                 showError('team')
             } else {
                 $('#teamForm').attr('action',
-                    `{{ url(getAdminRoutePrefix() . '/teams') }}/${$('#selecTeam').find(':checked').val()}`
+                    `{{ url(getRoutePrefix() . '/teams') }}/${$('#selecTeam').find(':checked').val()}`
                 )
                 removeError('name');
                 $('.modalTitle').text('Add an Processor');
@@ -171,7 +171,7 @@
             $(".associateDropdown").empty();
             $(document).ready(function() {
                 $.ajax({
-                    url: `{{ getAdminRoutePrefix() }}/getUsersByProcessor/${selectedProcessorValues}/${teamid}`, // Replace with the actual URL for retrieving users by team
+                    url: `{{ getRoutePrefix() }}/getUsersByProcessor/${selectedProcessorValues}/${teamid}`, // Replace with the actual URL for retrieving users by team
                     type: 'GET',
                     success: function(data) {
                         if (data == 'processorerror') {
@@ -228,7 +228,7 @@
             $(".jrAssociateDropdown").empty();
             $(document).ready(function() {
                 $.ajax({
-                    url: `{{ getAdminRoutePrefix() }}/getUsersByProcessor/${selectedAssociateValues}/${teamid}`, // Replace with the actual URL for retrieving users by team
+                    url: `{{ getRoutePrefix() }}/getUsersByProcessor/${selectedAssociateValues}/${teamid}`, // Replace with the actual URL for retrieving users by team
                     type: 'GET',
                     success: function(data) {
                         if (data == 'processorerror') {
