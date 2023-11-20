@@ -57,9 +57,7 @@
                         <!-- Checkboxes for options -->
                         @if (Auth::user()->role === 'Super Admin')
                             @foreach ($users as $user)
-                                @if ($user->role !== 'Processor')
-                                    @continue
-                                @endif
+                                @continue($user->role !== 'Processor')
                                 <input type="hidden" name="count" class="processorcount" value="{{ $loop->index }}">
                                 <div class="py-1">
                                     <label
@@ -111,10 +109,24 @@
                 </div>
                 <!-- Dropdown panel -->
                 <div class="associateDropdown hidden absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
-                role="listbox" aria-labelledby="multiselect-toggle" id="multiselect-dropdown1">
-                
-            </div>
-            <button class="text-red-700 my-3  addNewAssociate">+ Add Associate</button>
+                    role="listbox" aria-labelledby="multiselect-toggle" id="multiselect-dropdown1">
+                    @if (Auth::user()->role === 'Super Admin')
+                        @foreach ($users as $user)
+                            @continue($user->role !== 'Associate')
+                            <div class="py-1">
+                                <label
+                                    class="processorLabel flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                                    role="option">
+                                    <input type="checkbox" name="associate[]"
+                                        class="associateInput form-checkbox h-4 w-4 text-blue-600 mr-2"
+                                        value="{{ $user->id }}">
+                                    {{ $user->name }}
+                                </label>
+                            </div>
+                        @endforeach
+                    @endif
+                </div>
+                <button class="text-red-700 my-3  addNewAssociate">+ Add Associate</button>
             </div>
             <span class="text-red-700" id="associate_error"></span>
             <div class="my-3 flex justify-between">
@@ -141,6 +153,20 @@
                 <!-- Dropdown panel -->
                 <div class="jrAssociateDropdown hidden z-10 absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
                     role="listbox" aria-labelledby="multiselect-toggle" id="multiselect-dropdown1">
+                    @if (Auth::user()->role === 'Super Admin')
+                        @foreach ($users as $user)
+                            @continue($user->role !== 'Junior Associate')
+                            <div class="py-1">
+                                <label
+                                    class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                                    role="option">
+                                    <input type="checkbox" name="jrAssociate[]"
+                                        class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="{{ $user->id }}">
+                                    {{ $user->name }}
+                                </label>
+                            </div>
+                        @endforeach
+                    @endif
                 </div>
             </div>
             <span class="text-red-700" id="jrAssociate_error"></span>
@@ -153,7 +179,7 @@
         </div>
     </form>
 
-    <form action="{{getRoutePrefix().'/do-associate'}}" class="associateForm hidden">
+    <form action="{{ getRoutePrefix() . '/do-associate' }}" class="associateForm hidden">
         @csrf
         <x-form.input name="AssociateName" label="Associate Name" class="mb-5" />
         <x-form.input name="AssociateEmail" type="email" label="Assoicate Email" class="mb-5" />
