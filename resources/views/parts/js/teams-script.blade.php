@@ -12,13 +12,36 @@
         $(`select[name="{{ Str::slug($team->name) }}-table{{ $team->id }}_length"]`).addClass('mb-3');
     </script>
 @endforeach
+
+@can('isSuperAdmin')
+    <script>
+        if($('.associateDropdown > div').length > 5){
+            $('.associateDropdown').addClass('h-56 overflow-y-auto');
+        }
+        if($('.jrAssociateDropdown > div').length > 5){
+            $('.jrAssociateDropdown').addClass('h-56 overflow-y-auto');
+        }
+        $('.associateContinue').click(function(e) {
+            e.preventDefault();
+            $('.modalTitle').text('Add an Jr Associate');
+            $('.associate').addClass('hidden');
+            $('.jrAssociate').removeClass('hidden');
+        });
+        $('.processorContinue').click(function(e) {
+            e.preventDefault();
+            $('.modalTitle').text('Add an Associate');
+            $('.processor').addClass('hidden');
+            $('.associate').removeClass('hidden');
+        });
+    </script>
+@endcan
 <script>
     $('.addNewAssociate ,.backToAssociate').click(function(e) {
         e.preventDefault();
-       handleNewAssociate();
+        handleNewAssociate();
     });
 
-    function handleNewAssociate() { 
+    function handleNewAssociate() {
         $('.associate').toggleClass('hidden');
         $('.associateForm').toggleClass('hidden');
         if ($('.associateForm').hasClass('hidden')) {
@@ -27,7 +50,7 @@
             $('.modalTitle').text('Create New Associate');
         }
         $('.associateForm input').attr('required', true);
-     }
+    }
 
     $('.associateForm').submit(function(e) {
         e.preventDefault();
@@ -42,8 +65,9 @@
             data: $(this).serialize(),
             success: function(response) {
                 if (response === 'success') {
-                  handleNewAssociate();  
-                  $('.associate').before(`<span class="text-green-700">Associate created successfully!</span>`);
+                    handleNewAssociate();
+                    $('.associate').before(
+                        `<span class="text-green-700">Associate created successfully!</span>`);
                 }
                 $.each(response.error, function(index, error) {
                     var fieldId = `#${error.field}_error`;
@@ -154,7 +178,7 @@
             }
         }
     });
-
+@if (Auth::user()->role !== 'Super Admin')
     $('.processorContinue').click(function(e) {
         e.preventDefault();
         var selectedProcessorValues = [];
@@ -270,6 +294,8 @@
             });
         }
     });
+
+@endif
 
     function showError(id, error = " field is required") {
         $('#' + id).addClass('border-red-700 border-2');
