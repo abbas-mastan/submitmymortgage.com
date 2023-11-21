@@ -86,11 +86,11 @@
 
 
 
-    <form action="{{url(getRoutePrefix().'/pdfform')}}">
+    {{-- <form action="{{url(getRoutePrefix().'/pdfform')}}">
     @csrf
     <iframe class="w-full h-screen" src="{{asset('Loan.pdf')}}" frameborder="0"></iframe>
     <button type="submit">Submit</button>
-    </form>
+    </form> --}}
 
 @endsection
 @section('foot')

@@ -243,7 +243,7 @@ class AdminService
         if (session('role') == 'Super Admin') {
             $data['leads'] = Info::all();
         } else {
-            $data['leads'] = Auth::user()->createdUsers()->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+            $data['leads'] = Auth::user()->createdUsers()->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])->get();
         }
 
         return $data;
