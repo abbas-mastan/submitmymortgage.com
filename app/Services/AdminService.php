@@ -137,7 +137,7 @@ class AdminService
 
     public static function filesCat(Request $request, $id)
     {
-        $user = User::with(['info', 'media', 'categories', 'project'])->find($id);
+        $user = User::with(['info', 'media', 'categories', 'project','assistants'])->find($id);
         $data['user'] = $user;
         $data['id'] = $id;
         $data['info'] = $user->info;
