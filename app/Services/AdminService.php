@@ -137,7 +137,7 @@ class AdminService
 
     public static function filesCat(Request $request, $id)
     {
-        $user = User::with(['info', 'media', 'categories', 'project'])->find($id);
+        $user = User::with(['info', 'media', 'categories', 'project','assistants'])->find($id);
         $data['user'] = $user;
         $data['id'] = $id;
         $data['info'] = $user->info;
@@ -241,9 +241,20 @@ class AdminService
     public static function allLeads()
     {
         if (session('role') == 'Super Admin') {
-            $data['leads'] = Info::all();
+            $data['leads'] = Info::with('user')->get();
         } else {
-            $data['leads'] = Auth::user()->createdUsers()->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])->get();
+            $user = User::find(Auth::id());
+
+            $data['leads'] = $user
+                ->createdUsers()
+                ->with(['createdBy','info'])
+                ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
+                ->orWhereHas('createdBy', function ($query) {
+                    // Add conditions for the createdBy relationship
+                    $query->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower']);
+                })
+                ->get();
+            
         }
 
         return $data;

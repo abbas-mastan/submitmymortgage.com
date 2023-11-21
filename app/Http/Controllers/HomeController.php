@@ -63,9 +63,10 @@ class HomeController extends Controller
         $user = Auth::user();
         $data['usersCount'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->count();
         $data['users'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
-           $data['projects'] = Project::whereHas('users', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->get();
+        $data['projects'] = Project::where('created_by', $user->id)
+            ->orWhereHas('users', function ($query) use ($user) {
+                $query->where('users.id', $user->id);
+            })->get();
         $data['closedProjects'] = Project::where('status','close')->whereHas('users', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })->get();
@@ -80,9 +81,11 @@ class HomeController extends Controller
         })->get();
         $data['usersCount'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->count();
         $data['users'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
-        $data['projects'] = Project::whereHas('users', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
-        })->get();
+        $data['projects'] = Project::where('created_by', $user->id)
+        ->orWhereHas('users', function ($query) use ($user) {
+            $query->where('users.id', $user->id);
+        })
+        ->get();
         $data['closedProjects'] = Project::where('status','close')->whereHas('users', function ($query) use ($user) {
             $query->where('user_id', $user->id);
         })->get();
