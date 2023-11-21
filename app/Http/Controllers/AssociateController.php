@@ -3,11 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationRequest;
-use App\Models\{UserCategory,User,Team,Project,Info,Application,Contact};
-use App\Services\{UserService,CommonService,AdminService};
-use Illuminate\Http\Request,RedirectResponse;
-use Illuminate\Support\Facades\{Auth,Validator};
-use Illuminate\View\View;
+
+use App\Models\Application;
+use App\Models\Contact;
+use App\Models\Info;
+use App\Models\Project;
+use App\Models\Team;
+use App\Models\User;
+use App\Models\UserCategory;
+
+use App\Services\AdminService;
+use App\Services\CommonService;
+use App\Services\UserService;
+use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Auth;
+
+use Illuminate\Support\Facades\Validator;use Illuminate\View\View;
+use RedirectResponse;
 
 class AssociateController extends Controller
 {
@@ -265,9 +278,12 @@ class AssociateController extends Controller
         })->get();
 
         $data['borrowers'] = User::with('projects')->where('role', 'Borrower')->get(['id', 'name']);
-        $data['projects'] = Project::with(['team','users.createdBy','borrower.createdBy'])->whereHas('users', function ($query) use ($admin) {
-            $query->where('user_id', $admin->id);
-        })->get();
+        $data['projects'] = Project::where('created_by', $admin->id)
+        ->orWhereHas('users', function ($query) use ($admin) {
+            $query->where('users.id', $admin->id);
+        })
+        ->with(['team', 'users.createdBy', 'borrower.createdBy'])
+        ->get();
         $data['enableProjects'] = $data['projects'];
 
         $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
@@ -307,7 +323,7 @@ class AssociateController extends Controller
     public function deleteContact(Contact $contact)
     {
         $contact->delete();
-        return back()->with(['success','contact deleted successfully']);
+        return back()->with(['success', 'contact deleted successfully']);
     }
 
     public function ProjectOverview(Request $request, $id = -1)
@@ -318,18 +334,20 @@ class AssociateController extends Controller
         }
         $data = AdminService::filesCat($request, $id);
         $data['categories'] = config('smm.file_category');
-$user = User::find($id);
-$data['assistants'] = $user->assistants;
+        $user = User::find($id);
+        $data['assistants'] = $user->assistants;
         return view('admin.newpages.project-overview', $data);
     }
     public function teams($id = null): View
     {
 
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-        $userId = Auth::id();
-        $data['teams'] = Team::whereHas('users', function ($query) use ($userId) {
-            $query->where('associates', $userId);
-        })->get();
+        $data['teams'] = Team::where('owner_id', $admin->id)
+            ->orWhereHas('users', function ($query) use ($admin) {
+                $query->where('user_id', $admin->id);
+            })
+            ->get();
+        $data['enableTeams'] = $data['teams'];
 
         $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         return view('admin.newpages.teams', $data);

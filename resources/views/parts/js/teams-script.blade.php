@@ -13,16 +13,17 @@
     </script>
 @endforeach
 
-@can('isSuperAdmin')
+@if (Auth::user()->role === 'Super Admin' || Auth::user()->role === 'Admin')
     <script>
-        if($('.associateDropdown > div').length > 5){
+        if ($('.associateDropdown > div').length > 5) {
             $('.associateDropdown').addClass('h-56 overflow-y-auto');
         }
-        if($('.jrAssociateDropdown > div').length > 5){
+        if ($('.jrAssociateDropdown > div').length > 5) {
             $('.jrAssociateDropdown').addClass('h-56 overflow-y-auto');
         }
         $('.associateContinue').click(function(e) {
             e.preventDefault();
+            $('.associcateSuccess').empty();
             $('.modalTitle').text('Add an Jr Associate');
             $('.associate').addClass('hidden');
             $('.jrAssociate').removeClass('hidden');
@@ -34,7 +35,7 @@
             $('.associate').removeClass('hidden');
         });
     </script>
-@endcan
+@endif
 <script>
     $('.addNewAssociate ,.backToAssociate').click(function(e) {
         e.preventDefault();
@@ -66,8 +67,10 @@
             success: function(response) {
                 if (response === 'success') {
                     handleNewAssociate();
+                    getAssociates();
                     $('.associate').before(
-                        `<span class="text-green-700">Associate created successfully!</span>`);
+                        `<span class="associcateSuccess text-green-700">Associate created successfully!</span>`
+                        );
                 }
                 $.each(response.error, function(index, error) {
                     var fieldId = `#${error.field}_error`;
@@ -77,6 +80,43 @@
             }
         });
     });
+
+    function getAssociates() {
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            type: "post",
+            url: "{{ getRoutePrefix() . '/get-associates' }}",
+            data: {},
+            success: function(data) {
+                $('.associateDropdown').empty();
+                var associates = [];
+                $.each(data, function(index, associate) {
+                    if (associate.role === 'Associate') {
+                        associates.push(associate);
+                    }
+                });
+                $.each(associates, function(index, associate) {
+                    if (index > 3) {
+                        $('.associateDropdown').addClass(
+                            'h-56 overflow-y-auto')
+                    }
+                    $(".associateDropdown").append(`<div class="py-1">
+                            <label
+                                class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                                role="option">
+                                <input type="checkbox" name="associate[]"
+                                    class="associateinput form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
+                                ${associate.name }
+                            </label>
+                        </div>`);
+                });
+            }
+        });
+    }
 
     $.each(['associate', 'processor', 'jrAssociate'], function(indexInArray, input) {
         $(document).on('change', "input[name='" + input + "[]']", function(e) {
@@ -178,124 +218,125 @@
             }
         }
     });
-@if (Auth::user()->role !== 'Super Admin')
-    $('.processorContinue').click(function(e) {
-        e.preventDefault();
-        var selectedProcessorValues = [];
-        $('input[name="processor[]"]:checked').each(function() {
-            selectedProcessorValues.push($(this).val());
-        });
-        var selectedProcessors = $('input[name="processor[]"]:checked');
-        if (selectedProcessors.length === 0) {
-            $('#processor_error').text('Please select at least one processor');
-            return;
-        } else {
-            $('.associateButtonText').text('Select Associate');
-            $('#processor_error').text('');
-            $(".associateDropdown").empty();
-            $(document).ready(function() {
-                $.ajax({
-                    url: `{{ getRoutePrefix() }}/getUsersByProcessor/${selectedProcessorValues}/${teamid}`, // Replace with the actual URL for retrieving users by team
-                    type: 'GET',
-                    success: function(data) {
-                        if (data == 'processorerror') {
-                            $('#processor_error').text(
-                                'this processor is already exists');
-                        } else {
-                            var associates = [];
-                            $.each(data, function(index, associate) {
-                                if (associate.role === 'Associate') {
-                                    associates.push(associate);
-                                }
-                            });
-                            $.each(associates, function(index, associate) {
-                                if (index > 3) {
-                                    $('.associateDropdown').addClass(
-                                        'h-56 overflow-y-auto')
-                                }
-                                $(".associateDropdown").append(`<div class="py-1">
-                            <label
-                                class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
-                                role="option">
-                                <input type="checkbox" name="associate[]"
-                                    class="associateinput form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
-                                ${associate.name }
-                            </label>
-                        </div>`);
-                            });
+    // @if (Auth::user()->role !== 'Super Admin' || Auth::user()->role !== 'Admin')
+    //     $('.processorContinue').click(function(e) {
+    //         e.preventDefault();
+    //         var selectedProcessorValues = [];
+    //         $('input[name="processor[]"]:checked').each(function() {
+    //             selectedProcessorValues.push($(this).val());
+    //         });
+    //         var selectedProcessors = $('input[name="processor[]"]:checked');
+    //         if (selectedProcessors.length === 0) {
+    //             $('#processor_error').text('Please select at least one processor');
+    //             return;
+    //         } else {
+    //             $('.associateButtonText').text('Select Associate');
+    //             $('#processor_error').text('');
+    //             $(".associateDropdown").empty();
+    //             $(document).ready(function() {
+    //                 $.ajax({
+    //                     url: `{{ getRoutePrefix() }}/getUsersByProcessor/${selectedProcessorValues}/${teamid}`, // Replace with the actual URL for retrieving users by team
+    //                     type: 'GET',
+    //                     success: function(data) {
+    //                         if (data == 'processorerror') {
+    //                             $('#processor_error').text(
+    //                                 'this processor is already exists');
+    //                         } else {
+    //                             var associates = [];
+    //                             $.each(data, function(index, associate) {
+    //                                 if (associate.role === 'Associate') {
+    //                                     associates.push(associate);
+    //                                 }
+    //                             });
+    //                             $.each(associates, function(index, associate) {
+    //                                 if (index > 3) {
+    //                                     $('.associateDropdown').addClass(
+    //                                         'h-56 overflow-y-auto')
+    //                                 }
+    //                                 $(".associateDropdown").append(`<div class="py-1">
+    //                             <label
+    //                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+    //                                 role="option">
+    //                                 <input type="checkbox" name="associate[]"
+    //                                     class="associateinput form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
+    //                                 ${associate.name }
+    //                             </label>
+    //                         </div>`);
+    //                             });
 
-                            $('.modalTitle').text('Add an Associate');
-                            $('.processor').addClass('hidden');
-                            $('.associate').removeClass('hidden');
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                });
-            });
-        }
-    });
+    //                             $('.modalTitle').text('Add an Associate');
+    //                             $('.processor').addClass('hidden');
+    //                             $('.associate').removeClass('hidden');
+    //                         }
+    //                     },
+    //                     error: function(error) {
+    //                         console.log(error);
+    //                     }
+    //                 });
+    //             });
+    //         }
+    //     });
 
-    $('.associateContinue').click(function(e) {
-        e.preventDefault();
-        var selectedAssociateValues = [];
-        $('input[name="associate[]"]:checked').each(function() {
-            selectedAssociateValues.push($(this).val());
-        });
-        var selectedAssociates = $('input[name="associate[]"]:checked');
-        if (selectedAssociates.length === 0) {
-            $('#associate_error').text('Please select at least one associate');
-            return;
-        } else {
-            $('#associate_error').text('');
-            $(".jrAssociateDropdown").empty();
-            $(document).ready(function() {
-                $.ajax({
-                    url: `{{ getRoutePrefix() }}/getUsersByProcessor/${selectedAssociateValues}/${teamid}`, // Replace with the actual URL for retrieving users by team
-                    type: 'GET',
-                    success: function(data) {
-                        if (data == 'processorerror') {
-                            $('.associateContinue').attr('disabled', 'disabled');
-                            $('#associate_error').text(
-                                'this associate is already exists');
-                        } else {
-                            var jrassociates = [];
-                            $.each(data, function(index, associate) {
-                                if (associate.role === 'Junior Associate') {
-                                    jrassociates.push(associate);
-                                }
-                            });
-                            $.each(jrassociates, function(index, associate) {
-                                if (index > 3) {
-                                    $('.jrAssociateDropdown').addClass(
-                                        'h-56 overflow-y-auto')
-                                }
-                                $(".jrAssociateDropdown").append(`<div class="py-1">
-                            <label
-                                class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
-                                role="option">
-                                <input type="checkbox" name="jrAssociate[]"
-                                    class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
-                                ${associate.name }
-                            </label>
-                        </div>`);
-                            });
+    //     $('.associateContinue').click(function(e) {
+    //         e.preventDefault();
+    //         $('.associcateSuccess').empty();
+    //         var selectedAssociateValues = [];
+    //         $('input[name="associate[]"]:checked').each(function() {
+    //             selectedAssociateValues.push($(this).val());
+    //         });
+    //         var selectedAssociates = $('input[name="associate[]"]:checked');
+    //         if (selectedAssociates.length === 0) {
+    //             $('#associate_error').text('Please select at least one associate');
+    //             return;
+    //         } else {
+    //             $('#associate_error').text('');
+    //             $(".jrAssociateDropdown").empty();
+    //             $(document).ready(function() {
+    //                 $.ajax({
+    //                     url: `{{ getRoutePrefix() }}/getUsersByProcessor/${selectedAssociateValues}/${teamid}`, // Replace with the actual URL for retrieving users by team
+    //                     type: 'GET',
+    //                     success: function(data) {
+    //                         if (data == 'processorerror') {
+    //                             $('.associateContinue').attr('disabled', 'disabled');
+    //                             $('#associate_error').text(
+    //                                 'this associate is already exists');
+    //                         } else {
+    //                             var jrassociates = [];
+    //                             $.each(data, function(index, associate) {
+    //                                 if (associate.role === 'Junior Associate') {
+    //                                     jrassociates.push(associate);
+    //                                 }
+    //                             });
+    //                             $.each(jrassociates, function(index, associate) {
+    //                                 if (index > 3) {
+    //                                     $('.jrAssociateDropdown').addClass(
+    //                                         'h-56 overflow-y-auto')
+    //                                 }
+    //                                 $(".jrAssociateDropdown").append(`<div class="py-1">
+    //                             <label
+    //                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+    //                                 role="option">
+    //                                 <input type="checkbox" name="jrAssociate[]"
+    //                                     class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
+    //                                 ${associate.name }
+    //                             </label>
+    //                         </div>`);
+    //                             });
 
-                            $('.modalTitle').text('Add an Jr Associate');
-                            $('.associate').addClass('hidden');
-                            $('.jrAssociate').removeClass('hidden');
-                        }
-                    },
-                    error: function(error) {
-                        console.log(error);
-                    }
-                });
-            });
-        }
-    });
+    //                             $('.modalTitle').text('Add an Jr Associate');
+    //                             $('.associate').addClass('hidden');
+    //                             $('.jrAssociate').removeClass('hidden');
+    //                         }
+    //                     },
+    //                     error: function(error) {
+    //                         console.log(error);
+    //                     }
+    //                 });
+    //             });
+    //         }
+    //     });
 
-@endif
+    // @endif
 
     function showError(id, error = " field is required") {
         $('#' + id).addClass('border-red-700 border-2');
@@ -358,6 +399,7 @@
 
     $('.backToCreateProcessor').click(function(e) {
         e.preventDefault();
+        $('.associcateSuccess').empty();
         $('.modalTitle').text('Create New Processor');
         $('.processor').removeClass('hidden');
         $('.associate').addClass('hidden');

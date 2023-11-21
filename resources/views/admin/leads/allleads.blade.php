@@ -30,26 +30,26 @@
                 <table class="w-full pt-3" id="user-table">
                     @include('components.table-head')
                     <tbody>
-                        @if (Auth::user()->role == 'Super Admin')
+                        {{-- @if (Auth::user()->role == 'Super Admin') --}}
                             @foreach ($leads as $lead)
                                 <tr class="text-center">
                                     <td class=" pl-2 tracking-wide border border-l-0">
                                         <input class="mr-4 checkbox" type="checkbox" name="contact[]"
-                                            value="{{ $lead->id }}">
+                                            value="{{ $lead->info->id }}">
                                         {{ $loop->iteration }}
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
                                         <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                            href="{{ url(getRoutePrefix() . '/lead/' . $lead->user->id) }}">
-                                            {{ $lead->user->name }}
+                                            href="{{ url(getRoutePrefix() . '/lead/' . $lead->id) }}">
+                                            {{ $lead->name }}
                                         </a>
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
-                                        {{ $lead->user->email }}
+                                        {{ $lead->email }}
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-r-0">
                                         <a data="Delete" class="delete"
-                                            href="{{ url(getRoutePrefix() . '/delete-lead/' . $lead->id) }}">
+                                            href="{{ url(getRoutePrefix() . '/delete-lead/' . $lead->info->id) }}">
                                             <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                                                 <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
                                             </button>
@@ -57,8 +57,8 @@
                                     </td>
                                 </tr>
                             @endforeach
-                        @endif
-                        @if (Auth::user()->role == 'Processor' || Auth::user()->role == 'Associate' || Auth::user()->role == 'Junior Associate')
+                        {{-- @endif --}}
+                        {{-- @if (Auth::user()->role == 'Processor' || Auth::user()->role == 'Associate' || Auth::user()->role == 'Junior Associate')
                             @php $serialNo = 1; @endphp
                             @foreach ($leads as $processor)
                                 @if ($processor->infos)
@@ -217,7 +217,7 @@
                                     @endforeach
                                 @endforeach
                             @endforeach
-                        @endif
+                        @endif --}}
                     </tbody>
                 </table>
 

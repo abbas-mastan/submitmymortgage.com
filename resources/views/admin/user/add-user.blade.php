@@ -66,16 +66,16 @@
                     <select required name="role" id="role"
                         class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
                         <option disabled value="">Choose a type</option>
-                        @foreach (config('smm.roles') as $role)
-                        {{-- The roles are shown depending on the logged-in user --}}
-                        @if (
-                            !(
-                                (Auth::user()->role == 'Processor' && $role == 'Processor') ||
-                                (Auth::user()->role == 'Associate' && in_array($role, ['Associate', 'Processor'])) ||
-                                (Auth::user()->role == 'Junior Associate' && in_array($role, ['Junior Associate', 'Associate', 'Processor'])) ||
-                                (in_array(Auth::user()->role, ['Processor', 'Associate', 'Junior Associate']) && $role == 'Admin')
+                        @php
+                            $roles = config('smm.roles');
+                            if(Auth::user()->role === 'Super Admin') array_unshift($roles, 'Admin'); 
+                        @endphp
+                        @foreach ($roles as $role)
+                        @if (!((Auth::user()->role == 'Processor' && $role == 'Processor') ||
+                            (Auth::user()->role == 'Associate' && in_array($role, ['Associate', 'Processor'])) ||
+                            (Auth::user()->role == 'Junior Associate' && in_array($role, ['Junior Associate', 'Associate', 'Processor'])) ||
+                            (in_array(Auth::user()->role, ['Processor', 'Associate', 'Junior Associate']) && $role == 'Admin'))
                             )
-                        )
                             <option {{ old('role', $user->role) == $role ? 'selected' : '' }}
                                 value="{{ $role }}">
                                 {{ $role }}

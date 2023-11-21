@@ -362,13 +362,19 @@ class AdminController extends Controller
     public function projects($id = null): View
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-        $data['teams'] = Team::whereHas('users', function ($query) use ($admin) {
-            $query->where('user_id', $admin->id);
-        })->get();
+        $data['teams'] = Team::where('owner_id', $admin->id)
+            ->orWhereHas('users', function ($query) use ($admin) {
+                $query->where('user_id', $admin->id);
+            })
+            ->get();
+
         $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
-        $data['projects'] = Project::with(['team', 'users.createdBy', 'borrower.createdBy'])->whereHas('users', function ($query) use ($admin) {
-            $query->where('user_id', $admin->id);
-        })->get();
+        $data['projects'] = Project::where('created_by', $admin->id)
+            ->orWhereHas('users', function ($query) use ($admin) {
+                $query->where('users.id', $admin->id);
+            })
+            ->with(['team', 'users.createdBy', 'borrower.createdBy'])
+            ->get();
         $data['enableProjects'] = $data['projects'];
         return view('admin.newpages.projects', $data);
     }
@@ -533,12 +539,19 @@ class AdminController extends Controller
         $data['disableTeams'] = $admin->teamsOwnend()->with('users')->where('disable', true)->orWhereHas('users', function ($query) use ($admin) {
             $query->where('user_id', $admin->id);
         })->get();
-        $data['enableTeams'] = $admin->teamsOwnend()->where('disable', false)->orWhereHas('users', function ($query) use ($admin) {
+        $data['enableTeams'] = $admin->teamsOwnend()->with('users')->where('disable', false)->orWhereHas('users', function ($query) use ($admin) {
             $query->where('user_id', $admin->id);
         })->get();
         $data['teams'] = $admin->teamsOwnend()->with('users')->whereHas('users', function ($query) use ($admin) {
             $query->where('user_id', $admin->id);
         })->get();
+        $data['users'] = $admin->createdUsers()
+            ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
+            ->orWhereHas('createdBy', function ($query) use ($admin) {
+                $query->where('created_by', $admin->id);
+            })
+            ->get();
+
         return view('admin.newpages.teams', $data);
     }
 
@@ -674,6 +687,37 @@ class AdminController extends Controller
         ]);
         $user = AdminService::doUser($request, -1);
         return response()->json('success', 200);
+    }
+
+    public function getAssociate()
+    {
+        $user = User::find(Auth::id());
+        if ($user->role === 'Super Admin') {
+            $users = User::where('role', 'Associate')->get();
+            foreach ($users as $user) {
+                $associates[] = [
+                    'role' => $user->role,
+                    'id' => $user->id,
+                    'name' => $user->name,
+                ];
+            }
+        } else {
+
+            $users = $data['users'] = $user->createdUsers()
+                ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
+                ->orWhereHas('createdBy', function ($query) use ($user) {
+                    $query->where('created_by', $user->id);
+                })
+                ->get();
+            foreach ($users as $user) {
+                $associates[] = [
+                    'role' => $user->role,
+                    'id' => $user->id,
+                    'name' => $user->name,
+                ];
+            }
+        }
+        return response()->json($associates);
     }
 
 }
