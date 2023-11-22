@@ -58,7 +58,7 @@
                         @endforeach
                     </tbody>
                 @endcan
-                @unless (Auth::user()->role === 'Super Admin')    
+                @unless ($currentrole === 'Super Admin')    
                 @foreach ($leads as $lead)
                     @if ($lead->info)
                             <tr class="lead text-center">
@@ -93,7 +93,7 @@
                 @endforeach
                 @endunless
 
-                {{-- @if (Auth::user()->role == 'Processor' || Auth::user()->role == 'Associate' || Auth::user()->role == 'Junior Associate')
+                {{-- @if ($currentrole == 'Processor' || $currentrole == 'Associate' || $currentrole == 'Junior Associate')
                             @php $serialNo = 1; @endphp
                             @foreach ($leads as $processor)
                                 @if ($processor->infos)

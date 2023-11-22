@@ -13,7 +13,7 @@
     </script>
 @endforeach
 
-@if (Auth::user()->role === 'Super Admin' || Auth::user()->role === 'Admin')
+@if ($currentrole === 'Super Admin' || $currentrole === 'Admin' || $currentrole === 'Processor' )
     <script>
         if ($('.associateDropdown > div').length > 5) {
             $('.associateDropdown').addClass('h-56 overflow-y-auto');
@@ -218,7 +218,7 @@
             }
         }
     });
-    // @if (Auth::user()->role !== 'Super Admin' || Auth::user()->role !== 'Admin')
+    // @if ($currentrole !== 'Super Admin' || $currentrole !== 'Admin')
     //     $('.processorContinue').click(function(e) {
     //         e.preventDefault();
     //         var selectedProcessorValues = [];

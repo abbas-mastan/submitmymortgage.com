@@ -68,13 +68,13 @@
                         <option disabled value="">Choose a type</option>
                         @php
                             $roles = config('smm.roles');
-                            if(Auth::user()->role === 'Super Admin') array_unshift($roles, 'Admin'); 
+                            if($currentrole === 'Super Admin') array_unshift($roles, 'Admin'); 
                         @endphp
                         @foreach ($roles as $role)
-                        @if (!((Auth::user()->role == 'Processor' && $role == 'Processor') ||
-                            (Auth::user()->role == 'Associate' && in_array($role, ['Associate', 'Processor'])) ||
-                            (Auth::user()->role == 'Junior Associate' && in_array($role, ['Junior Associate', 'Associate', 'Processor'])) ||
-                            (in_array(Auth::user()->role, ['Processor', 'Associate', 'Junior Associate']) && $role == 'Admin'))
+                        @if (!(($currentrole == 'Processor' && $role == 'Processor') ||
+                            ($currentrole == 'Associate' && in_array($role, ['Associate', 'Processor'])) ||
+                            ($currentrole == 'Junior Associate' && in_array($role, ['Junior Associate', 'Associate', 'Processor'])) ||
+                            (in_array($currentrole, ['Processor', 'Associate', 'Junior Associate']) && $role == 'Admin'))
                             )
                             <option {{ old('role', $user->role) == $role ? 'selected' : '' }}
                                 value="{{ $role }}">

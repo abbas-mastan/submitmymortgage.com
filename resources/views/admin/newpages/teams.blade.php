@@ -37,7 +37,7 @@
 
     @include('parts.modal-form')
     <x-flex-card title="Teams" titlecounts="{{ count($enableTeams) }}" iconurl="{{ asset('icons/Teams.svg') }}" />
-    @if(Auth::user()->role === 'Super Admin' || Auth::user()->role === 'Admin')
+    @if($currentrole === 'Super Admin' || $currentrole === 'Admin')
     <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Team</button>
     @endif
     @if (count($enableTeams) > 0)
@@ -82,7 +82,7 @@
                                     {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}>
                                     {{ $user->name }}
                                 </a>
-                                @if (Auth::user()->role === 'Super Admin')
+                                @if ($currentrole === 'Super Admin')
                                     <a title="Edit this user" href="{{ url(getRoutePrefix() . '/add-user/' . $user->id) }}">
                                         <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
                                     </a>
@@ -185,7 +185,7 @@
                                             {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}>
                                             {{ $user->name }}
                                         </a>
-                                        @if (Auth::user()->role === 'Super Admin')
+                                        @if ($currentrole === 'Super Admin')
                                             <a title="Edit this user"
                                                 href="{{ url(getRoutePrefix() . '/add-user/' . $user->id) }}">
                                                 <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">

@@ -38,7 +38,7 @@
     </style>
 @endsection
 @section('content')
-    @if (Auth::user()->role !== 'Borrower')
+    @if ($currentrole !== 'Borrower')
         @include('parts.project-modal-form')
     @endif
     <x-flex-card title="Deals" titlecounts="{{ count($projects) }}" iconurl="{{ asset('icons/Deals.svg') }}" />
@@ -102,7 +102,7 @@
                                             <td class=" pl-2 tracking-wide border border-l-0">
                                                 <a title="Click to view files uploaded by this user"
                                                 class="text-blue-500 inline"
-                                                @if(Auth::user()->role === 'Super Admin') 
+                                                @if($currentrole === 'Super Admin') 
                                                 href="{{ url(getRoutePrefix() . ($user->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $user->id) }}"
                                                 @endif
                                                 >
@@ -128,7 +128,7 @@
                                                 @endif
                                             </td>
                                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                                @if (Auth::user()->role === 'Super Admin')
+                                                @if ($currentrole === 'Super Admin')
                                                     <a data="Delete" class="delete"
                                                         href='{{ url(getRoutePrefix() . "/delete-project-user/$project->id/" . $user->id) }}'>
                                                         <button
@@ -184,7 +184,7 @@
                                         @endif
                                     </td>
                                     <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                        @if (Auth::user()->role === 'Super Admin')
+                                        @if ($currentrole === 'Super Admin')
                                             <form method="POST"
                                                 action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                 @csrf
@@ -303,7 +303,7 @@
                                                             <img src="{{ asset('icons/trash.svg') }}" alt="">
                                                         </button>
                                                     </a>
-                                                    @if (Auth::user()->role === 'Super Admin')
+                                                    @if ($currentrole === 'Super Admin')
                                                         <form method="POST"
                                                             action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                             @csrf
@@ -353,7 +353,7 @@
                                             @endif
                                         </td>
                                         <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                            @if (Auth::user()->role === 'Super Admin')
+                                            @if ($currentrole === 'Super Admin')
                                                 <form method="POST"
                                                     action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                     @csrf
@@ -472,7 +472,7 @@
                                                             <img src="{{ asset('icons/trash.svg') }}" alt="">
                                                         </button>
                                                     </a>
-                                                    @if (Auth::user()->role == 'Super Admin')
+                                                    @if ($currentrole == 'Super Admin')
                                                         <form method="POST"
                                                             action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                             @csrf
@@ -522,7 +522,7 @@
                                             @endif
                                         </td>
                                         <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                            @if (Auth::user()->role === 'Super Admin')
+                                            @if ($currentrole === 'Super Admin')
                                                 <form method="POST"
                                                     action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                     @csrf
