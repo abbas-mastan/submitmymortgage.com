@@ -4,6 +4,7 @@ use Carbon\Carbon;
 use App\Models\{Media};
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 /* 
  * To change this license header, choose License Headers in Project Properties.

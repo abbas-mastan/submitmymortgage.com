@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,8 +26,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //change the default length of string column
         Model::preventLazyLoading(! $this->app->isProduction());
+        //change the default length of string column
         Schema::defaultStringLength(191);
+
+        View()->composer('*',function($view){
+            $view->with('currentrole',Auth::user()->role);
+            $view->with('superadminrole',config('constants.SUPER_ADMIN_ROLE'));
+        });
+
     }
 }

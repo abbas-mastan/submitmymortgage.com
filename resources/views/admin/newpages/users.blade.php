@@ -44,19 +44,16 @@
             <div class="my-3">
                 <label for="role" class="text-sm text-dark-500 leading-6 font-bold"> User's Role
                 </label>
-                @php
-                    $role = Auth::user()->role;
-                @endphp
                 <select
                     class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
                     ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                     sm:text-sm sm:leading-6"
                     name="role" id="role">
                     <option value="Select Role">Select Role</option>
-                    @if ($role === 'Admin')
+                    @if ($currentrole === 'Admin')
                         <option value="Processor">Processor</option>
                     @endif
-                    @if ($role === 'Processor' || $role === 'Admin')
+                    @if ($currentrole === 'Processor' || $currentrole === 'Admin' || $currentrole === $superadminrole)
                         <option value="Associcate">Associate</option>
                     @endif
                     <option value="JrAssociate">Jr.Associate</option>
@@ -129,7 +126,7 @@
                                 @endif
                             </td>
                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                <a data="Delete" class="delete"
+                                <a data="{{$currentrole === $superadminrole ? 'temporary' :'Delete'}}" class="delete"
                                     href="{{ url(getRoutePrefix() . '/delete-user/' . $processor->id) }}">
                                     <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                                         <img style="-webkit-writing-mode: vertical-lr;" src="{{ asset('icons/trash.svg') }}"

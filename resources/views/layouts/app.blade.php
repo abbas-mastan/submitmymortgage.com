@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -61,6 +62,7 @@
     </script>
     @yield('head')
 </head>
+
 <body class="font-graphik" style="font-family: graphik, sans-serif !important">
     @include('user.file-upload.upload-modal')
     @include('user.file-upload.category-modal')
@@ -83,7 +85,7 @@
     </div>
     <script src="{{ asset('js/app.js') }}"></script>
     <script>
-        window.returnBack = "{{url(getRoutePrefix().'/redirect/back/file-uploaded-successfully')}}";
+        window.returnBack = "{{ url(getRoutePrefix() . '/redirect/back/file-uploaded-successfully') }}";
     </script>
     @yield('foot')
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
@@ -115,34 +117,33 @@
         });
 
         $('.delete').click(function(e) {
+
             function getPopupText(text) {
-                if (text == 'Accept')
-                    return 'Accepted!';
-                if (text == 'Reject')
-                    return 'Rejected!';
-                if (text == 'restore')
-                    return 'Restored!';
-                if (text == 'Hide')
-                    return 'Hidden!';
-                if (text == 'Enable')
-                    return 'Enabled!';
-                if (text == 'Disable')
-                    return 'Disabled!';
-                if (text == 'Unhide')
-                    return 'Showed!';
-                else
-                    return 'Deleted!'
+                if (text == 'Accept') return 'Accepted!';
+                if (text == 'Reject') return 'Rejected!';
+                if (text == 'Restore') return 'Restored!';
+                if (text == 'Hide') return 'Hidden!';
+                if (text == 'Enable') return 'Enabled!';
+                if (text == 'Disable') return 'Disabled!';
+                if (text == 'Unhide') return 'Showed!';
+                else return 'Deleted!'
             }
             var textClass = $(this).attr('data');
             if (textClass) {
                 var titleText = 'Are you sure to ' + textClass.toLowerCase() + ' it?';
             }
-
+            
             if (textClass == 'Hide' || textClass == 'Unhide' || textClass == 'Disable' || textClass == 'Enable' ||
-                textClass == 'restore') {
+            textClass == 'Restore') {
                 middleSentenceOfModal = null;
             } else {
-                var middleSentenceOfModal = "You won't be able to revert this!"
+                if (textClass == 'temporary') {
+                    middleSentenceOfModal = 'This is not a permanent delete. You can restore it from deleted users anytime';
+                    titleText = 'Are you sure to delete this user?';
+                    textClass = "Delete";
+                } else {
+                    middleSentenceOfModal = "You won't be able to revert this!"
+                }
             }
             e.preventDefault();
             Swal.fire({
@@ -152,14 +153,14 @@
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: "Yes, " + (textClass ?? 'Delete') + " it!"
+                confirmButtonText: textClass,
             }).then((result) => {
                 if (result.isConfirmed) {
                     location.href = $(this).attr('href');
                     Swal.fire(
                         getPopupText(textClass),
                         'Your' + (textClass == 'Disable' || textClass == 'Enable' ? ' team ' :
-                        ' file ') +
+                            ' file ') +
                         ' has been ' + getPopupText(textClass) + ' .',
                         'success'
                     )

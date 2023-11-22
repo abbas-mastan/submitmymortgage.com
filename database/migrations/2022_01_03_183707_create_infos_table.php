@@ -60,7 +60,7 @@ class CreateInfosTable extends Migration
             $table->string('cashout')->nullable();
             $table->integer('cashout_amount')->nullable();
             $table->string('purpose')->nullable();
-            $table->bigInteger('user_id');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->softDeletes();
             $table->timestamps();
         });

@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
             'name' => "Babar Ali",
             'email' => 'admin@test.com',
             'password' => Hash::make('a'),
-            'role' => 'Admin',
+            'role' => 'Super Admin',
             'pic' => 'img/profile-default.svg',
             'email_verified_at' => now(),
         ]);

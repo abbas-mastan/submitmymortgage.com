@@ -533,7 +533,7 @@ class SuperAdminController extends Controller
     public function teams($id = null): View
     {
         $data['teams'] = Team::with('users')->get();
-        $data['enableTeams'] = Team::with('users')->where('disable', false)->get();
+        $data['enableTeams'] = Team::with('users.createdBy')->where('disable', false)->get();
         $data['disableTeams'] = Team::with('users')->where('disable', true)->get();
         $data['users'] = User::where('role', '!=', 'Admin')
             ->whereIn('role', ['Associate', 'Processor', 'Junior Associate'])

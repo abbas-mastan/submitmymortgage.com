@@ -98,14 +98,14 @@
                             @endif
                         </td>
                         <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                            <a data="Delete" class="delete"
+                            <a data="{{$currentrole === $superadminrole ? 'temporary' :'Delete'}}" class="delete"
                                 href="{{ url(getRoutePrefix() . '/delete-user/' . $processor->id) }}">
                                 <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                                     <img style="-webkit-writing-mode: vertical-lr;" src="{{ asset('icons/trash.svg') }}"
                                         alt="" class="p-1 w-7">
                                 </button>
                             </a>
-                            @if (session('role') == 'Super Admin')
+                            @if ($currentrole === $superadminrole)
                                 <form method="POST" action="{{ url(getSuperAdminRoutePrefix() . '/login-as-this-user') }}">
                                     @csrf
                                     <input type="hidden" name="user_id" value="{{ $processor->id }}">
@@ -184,7 +184,7 @@
                             @endif
                         </td>
                         <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                            <a data="Delete" class="delete"
+                            <a data="{{$currentrole === $superadminrole ? 'temporary' :'Delete'}}" class="delete"
                                 href="{{ url(getRoutePrefix() . '/delete-user/' . $processor->id) }}">
                                 <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                                     <img style="-webkit-writing-mode: vertical-lr;" src="{{ asset('icons/trash.svg') }}"
@@ -192,18 +192,6 @@
 
                                 </button>
                             </a>
-                            {{-- @if (session('role') == 'Admin')
-                                    <form method="POST" action="{{ url(getAdminRoutePrefix() . '/login-as-this-user') }}">
-                                        @csrf
-                                        <input type="hidden" name="user_id" value="{{ $processor->id }}">
-                                        <span class="loginBtn">
-                                            <button type="submit"
-                                                class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
-                                                <img src="{{ asset('icons/user.svg') }}" alt="">
-                                            </button>
-                                        </span>
-                                    </form>
-                                @endif --}}
                         </td>
                     </tr>
                     @php
@@ -268,13 +256,13 @@
                             @endif
                         </td>
                         <td class="flex justify-center pl-2 tracking-wide border border-r-0">
-                            <a data="restore" class="delete loginBtn"
+                            <a data="Restore" class="delete loginBtn"
                                 href="{{ url(getRoutePrefix() . '/restore-user/' . $processor->id) }}">
                                 <button class="bg-themered tracking-wide font-semibold capitalize p-1 text-xl w-7">
                                     <img src="{{ asset('icons/restore.svg') }}" alt="" class="filter ">
                                 </button>
                             </a>
-                            <a data="Permanent Delete" class="delete loginBtn ml-2"
+                            <a data="Delete" class="delete ml-2"
                                 href="{{ url(getRoutePrefix() . '/delete-user-permenant/' . $processor->id) }}">
                                 <button class="bg-themered tracking-wide font-semibold capitalize p-1 text-xl w-7">
                                     <img src="{{ asset('icons/trash.svg') }}" alt="" class="filter ">

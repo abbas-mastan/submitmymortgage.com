@@ -15,7 +15,7 @@ class CreateAssistantsTable extends Migration
     {
         Schema::create('assistants', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('assistant_id');
             $table->json('categories');
             $table->timestamps();

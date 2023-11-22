@@ -21,7 +21,7 @@ class CreateAttachmentsTable extends Migration
                 $table->string('file_size');
                 $table->string('file_extension');
                 $table->string('uploaded_by');
-                $table->bigInteger('user_id');
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
                 $table->timestamps();
             });
         }

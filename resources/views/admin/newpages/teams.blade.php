@@ -95,10 +95,10 @@
                                 {{ $user->role }}
                             </td>
                             <td class=" pl-2 tracking-wide border border-l-0">
-                                @if ($user->created_by)
-                                    {{ \App\Models\User::where('id', $user->created_by)->first()->name }}
+                                @if ($user->createdBy)
+                                    {{ $user->createdBy->name }}
                                     |
-                                    {{ \App\Models\User::where('id', $user->created_by)->first()->role }}
+                                    {{ $user->createdBy->role}}
                                 @endif
                             </td>
                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">

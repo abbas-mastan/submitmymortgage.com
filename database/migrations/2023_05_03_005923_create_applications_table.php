@@ -62,7 +62,7 @@ class CreateApplicationsTable extends Migration
                 $table->string('goal')->nullable();
                 $table->longText('note')->nullable();
                 $table->integer('status')->default(0);
-                $table->bigInteger('user_id')->constrained();
+                $table->foreignId('user_id')->constrained()->onDelete('cascade');
                 $table->timestamps();
             });
         }
