@@ -399,7 +399,7 @@ class SuperAdminController extends Controller
             $data['categories'] = config('smm.file_category');
             sort($data['categories']); // Sort the array in ascending order
         }
-        $data['assistants'] = User::find($id)->assistants; // Initialize the array
+        $data['assistants'] = $data['user']->assistants;
         $data['catCount'] = [];
         $data['categories'] = array_unique($data['categories']);
         foreach ($data['categories'] as $category) {

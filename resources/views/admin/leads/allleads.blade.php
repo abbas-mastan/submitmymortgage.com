@@ -14,51 +14,86 @@
     </style>
 @endsection
 @section('content')
-
     <div class="flex-wrap flex-shrink-0 w-full">
-        @if (Auth::user()->role != 'Borrower')
-            <x-flex-card title="Contacts" titlecounts="{{ count($leads) }}" iconurl="{{ asset('icons/user.svg') }}" />
-            <form method="POST" action="{{ url(getRoutePrefix() . '/export-contacts') }}">
-                @csrf
-                @if (count($leads) > 0)
-                    <div class="absolute z-20 ml-[45px] pl-7 mb-3 leading-6">
-                        <input type="checkbox" name="select-all" id="selectall">
-                        <label class="leading-6" for="selectall">Select All</label>
-                    </div>
-                @endif
 
-                <table class="w-full pt-3" id="user-table">
-                    @include('components.table-head')
-                    <tbody>
-                        @if (Auth::user()->role == 'Super Admin')
-                            @foreach ($leads as $lead)
-                                <tr class="text-center">
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        <input class="mr-4 checkbox" type="checkbox" name="contact[]"
-                                            value="{{ $lead->id }}">
-                                        {{ $loop->iteration }}
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                            href="{{ url(getRoutePrefix() . '/lead/' . $lead->user->id) }}">
-                                            {{ $lead->user->name }}
-                                        </a>
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        {{ $lead->user->email }}
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-r-0">
-                                        <a data="Delete" class="delete"
-                                            href="{{ url(getRoutePrefix() . '/delete-lead/' . $lead->id) }}">
-                                            <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
-                                                <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
-                                            </button>
-                                        </a>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        @endif
-                        @if (Auth::user()->role == 'Processor' || Auth::user()->role == 'Associate' || Auth::user()->role == 'Junior Associate')
+        <x-flex-card id="contact" title="Contacts" titlecounts="0" iconurl="{{ asset('icons/user.svg') }}" />
+        <form method="POST" action="{{ url(getRoutePrefix() . '/export-contacts') }}">
+            @csrf
+            <div class="hidden absolute z-20 ml-[45px] pl-7 mb-3 leading-6">
+                <input type="checkbox" name="select-all" id="selectall">
+                <label class="leading-6" for="selectall">Select All</label>
+            </div>
+            <table class="w-full pt-3" id="user-table">
+                @php
+                    $serialNo = 1;
+                @endphp
+                @include('components.table-head')
+                <tbody>
+                    @can('isSuperAdmin')
+                        @foreach ($leads as $lead)
+                            <tr class="lead text-center">
+                                <td class=" pl-2 tracking-wide border border-l-0">
+                                    <input class="mr-4 checkbox" type="checkbox" name="contact[]" value="{{ $lead->id }}">
+                                    {{ $serialNo }}
+                                </td>
+                                <td class=" pl-2 tracking-wide border border-l-0">
+                                    <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
+                                        href="{{ url(getRoutePrefix() . '/lead/' . $lead->id) }}">
+                                        {{ $lead->b_fname }} {{ $lead->b_lname }}
+                                    </a>
+                                </td>
+                                <td class=" pl-2 tracking-wide border border-l-0">
+                                    {{ $lead->user->email }}
+                                </td>
+                                <td class=" pl-2 tracking-wide border border-r-0">
+                                    <a data="Delete" class="delete"
+                                        href="{{ url(getRoutePrefix() . '/delete-lead/' . $lead->id) }}">
+                                        <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
+                                            <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7 inline">
+                                        </button>
+                                    </a>
+                                </td>
+                            </tr>
+                            @php $serialNo++; @endphp
+                        @endforeach
+                    </tbody>
+                @endcan
+                @unless (Auth::user()->role === 'Super Admin')    
+                @foreach ($leads as $lead)
+                    @if ($lead->info)
+                            <tr class="lead text-center">
+                                <td class=" pl-2 tracking-wide border border-l-0">
+                                    <input class="mr-4 checkbox" type="checkbox" name="contact[]"
+                                        value="{{ $lead->info->id }}">
+                                    {{ $serialNo }}
+                                </td>
+                                <td class=" pl-2 tracking-wide border border-l-0">
+                                    <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
+                                        href="{{ url(getRoutePrefix() . '/lead/' . $lead->id) }}">
+                                        {{ $lead->info->b_fname }} {{ $lead->info->b_lname }}
+                                    </a>
+                                </td>
+                                <td class=" pl-2 tracking-wide border border-l-0">
+                                    {{ $lead->email }}
+                                </td>
+                                <td class=" pl-2 tracking-wide border border-r-0">
+                                    <a data="Delete" class="delete"
+                                        href="{{ url(getRoutePrefix() . '/delete-lead/' . $lead->info->id) }}">
+                                        <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
+                                            <img src="{{ asset('icons/trash.svg') }}" alt=""
+                                                class="p-1 w-7 inline">
+                                        </button>
+                                    </a>
+                                </td>
+                            </tr>
+                            @php
+                                $serialNo++;
+                            @endphp
+                    @endif
+                @endforeach
+                @endunless
+
+                {{-- @if (Auth::user()->role == 'Processor' || Auth::user()->role == 'Associate' || Auth::user()->role == 'Junior Associate')
                             @php $serialNo = 1; @endphp
                             @foreach ($leads as $processor)
                                 @if ($processor->infos)
@@ -217,21 +252,17 @@
                                     @endforeach
                                 @endforeach
                             @endforeach
-                        @endif
-                    </tbody>
-                </table>
+                        @endif --}}
 
-                @if (count($leads) > 0)
-                    <button type="submit" disabled
-                        class="dark:bg-white submitButton bg-gray-200 
+            </table>
+            <button type="submit" disabled
+                class="export hidden dark:bg-white submitButton bg-gray-200 
                     cursor-not-allowed text-gray-500 shadow-md hover:shadow-none
                     rounded-md px-3 py-2 hover:text-blue-500 ">
-                        Export Selected
-                        <img src="{{ asset('icons/download.svg') }}" class="ml-2" width="20px" alt="">
-                    </button>
-                @endif
-            </form>
-        @endif
+                Export Selected
+                <img src="{{ asset('icons/download.svg') }}" class="ml-2 inline" width="20px" alt="">
+            </button>
+        </form>
     </div>
 @endsection
 @section('foot')
@@ -239,6 +270,20 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <script>
+     $(document).ready(function() {
+    var leadCount = $('.lead').length;
+    
+    console.log('Number of elements with class "lead":', leadCount);
+
+    // Now you can use leadCount as needed
+    if (leadCount > 0) {
+        $('.export').removeClass('hidden');
+        $('#selectall').parent().removeClass('hidden');
+        $('#contact').text(leadCount);
+    }
+});
+
+
         var checkboxes = $('.checkbox');
         var submitButton = $('.submitButton');
         $('#selectall').click(function(e) {
