@@ -3,19 +3,14 @@
 namespace App\Services;
 
 use App\Models\Application;
-
 use App\Models\Attachment;
-
 use App\Models\Info;
-
 use App\Models\Media;
 use App\Models\Project;
-
 use App\Models\User;use App\Notifications\FileUploadNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-
 use Illuminate\Support\Facades\Storage;use Illuminate\Validation\ValidationException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;use PhpOffice\PhpSpreadsheet\Writer\Xls;
@@ -326,6 +321,32 @@ class CommonService
     public static function markAsRead($id)
     {
         Auth::user()->notifications->where('id', $id)->markAsRead();
+    }
+
+    public static function getAssociates()
+    {
+        $admin = User::find(Auth::id());
+        if ($admin->role === 'Super Admin') {
+            $users = User::where('role','Associate')->get();
+        } else {
+            $users = $admin->createdUsers()
+                ->with(['createdBy', 'info'])
+                ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
+                ->orWhereHas('createdBy', function ($query) {
+                    // Add conditions for the createdBy relationship
+                    $query->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower']);
+                })->get();
+        }
+        foreach ($users as $user) {
+            $associates[] = [
+                'role' => $user->role,
+                'id' => $user->id,
+                'name' => $user->name,
+            ];
+        }
+
+        return $associates;
+
     }
 
 }

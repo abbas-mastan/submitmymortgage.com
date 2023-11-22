@@ -98,6 +98,7 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
     Route::get('/remove-access/{user}', [SuperAdminController::class, 'removeAcess']);
     Route::post('/submit-intake-form', [SuperAdminController::class, 'submitIntakeForm']);
     Route::post('/do-associate', [SuperAdminController::class, 'doAssociate']);
+    Route::post('/get-associates', [SuperAdminController::class, 'getAssociates']);
     Route::get('/redirect/{route}/{message}', [SuperAdminController::class, 'redirectTo']);
     
 });

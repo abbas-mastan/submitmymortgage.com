@@ -689,34 +689,9 @@ class AdminController extends Controller
         return response()->json('success', 200);
     }
 
-    public function getAssociate()
+    public function getAssociates()
     {
-        $user = User::find(Auth::id());
-        if ($user->role === 'Super Admin') {
-            $users = User::where('role', 'Associate')->get();
-            foreach ($users as $user) {
-                $associates[] = [
-                    'role' => $user->role,
-                    'id' => $user->id,
-                    'name' => $user->name,
-                ];
-            }
-        } else {
-
-            $users = $data['users'] = $user->createdUsers()
-                ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
-                ->orWhereHas('createdBy', function ($query) use ($user) {
-                    $query->where('created_by', $user->id);
-                })
-                ->get();
-            foreach ($users as $user) {
-                $associates[] = [
-                    'role' => $user->role,
-                    'id' => $user->id,
-                    'name' => $user->name,
-                ];
-            }
-        }
+        $associates = CommonService::getAssociates();
         return response()->json($associates);
     }
 

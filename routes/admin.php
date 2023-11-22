@@ -98,7 +98,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::get('/remove-access/{user}', [AdminController::class, 'removeAcess']);
     Route::post('/submit-intake-form', [AdminController::class, 'submitIntakeForm']);
     Route::post('/do-associate', [AdminController::class, 'doAssociate']);
-    Route::post('/get-associates', [AdminController::class, 'getAssociate']);
+    Route::post('/get-associates', [AdminController::class, 'getAssociates']);
     Route::get('/redirect/{route}/{message}', [AdminController::class, 'redirectTo']);
     
 });

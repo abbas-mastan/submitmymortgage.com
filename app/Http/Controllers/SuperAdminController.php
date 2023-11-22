@@ -60,7 +60,7 @@ class SuperAdminController extends Controller
         $request->session()->regenerate();
         $request->session()->put('role', $user->role);
         $request->session()->put('reLogin', $id);
-        $request->session()->put('url',url()->previous());
+        $request->session()->put('url', url()->previous());
         return redirect('/dashboard');
     }
 
@@ -282,7 +282,7 @@ class SuperAdminController extends Controller
         if ($user->role === 'Super Admin') {
             $data['role'] = $user->role;
             $data['users'] = User::with(['createdBy', 'createdUsers'])
-            ->where('role', '!=', 'Super Admin')
+                ->where('role', '!=', 'Super Admin')
                 ->get(['id', 'name', 'email', 'created_by', 'role', 'email_verified_at']);
             $data['trashed'] = User::withTrashed()
                 ->with('createdBy')
@@ -403,7 +403,10 @@ class SuperAdminController extends Controller
         $data['catCount'] = [];
         $data['categories'] = array_unique($data['categories']);
         foreach ($data['categories'] as $category) {
-            if ($category === 'Credit Report') continue;
+            if ($category === 'Credit Report') {
+                continue;
+            }
+
             $data['catCount'][$category] = [
                 $data['user']->media()->where('category', $category)->count(),
             ];
@@ -533,7 +536,7 @@ class SuperAdminController extends Controller
     public function teams($id = null): View
     {
         $data['teams'] = Team::with('users')->get();
-        $data['enableTeams'] = Team::with('users.createdBy')->where('disable', false)->get();
+        $data['enableTeams'] = Team::with('users')->where('disable', false)->get();
         $data['disableTeams'] = Team::with('users')->where('disable', true)->get();
         $data['users'] = User::where('role', '!=', 'Admin')
             ->whereIn('role', ['Associate', 'Processor', 'Junior Associate'])
@@ -675,4 +678,9 @@ class SuperAdminController extends Controller
         return response()->json('success', 200);
     }
 
+    public function getAssociates()
+    {
+        $associates = CommonService::getAssociates();
+        return response()->json($associates);
+    }
 }
