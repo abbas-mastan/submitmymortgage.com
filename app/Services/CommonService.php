@@ -183,10 +183,10 @@ class CommonService
     public static function uploadFiles($request)
     {
         $request->validate([
-            'file' => 'required',
-            'file.*' => 'mimes:png,jpg,jpeg,pdf,docx,doc',
+            'files' => 'required',
+            'files.*' => 'mimes:png,jpg,jpeg,pdf,docx,doc',
         ]);
-        foreach ($request->file('file') as $file) {
+        foreach ($request->file('files') as $file) {
             $filename = $file->getClientOriginalName();
             $newAattachment = new Attachment();
             $newAattachment->file_name = $filename;

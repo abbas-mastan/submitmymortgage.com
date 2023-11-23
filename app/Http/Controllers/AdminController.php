@@ -327,7 +327,8 @@ class AdminController extends Controller
 
     public function uploadFilesView()
     {
-        return view('admin.file.upload-files');
+        $user = User::with('attachments.user')->find(Auth::id());
+       return view('admin.file.upload-files',compact('user'));
     }
     public function uploadFiles(Request $request)
     {

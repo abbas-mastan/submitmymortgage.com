@@ -10,15 +10,20 @@
             enctype="multipart/form-data">
             @csrf
             <div class="mt-10 mx-auto">
-                <div class=" text-left mr-12">
+                <div class="text-left mr-12">
                     <label for="file" class="">Select File</label>
                 </div>
                 <div class="mt-2">
-                    <input type="file" accept="image/*,.docx,.pdf" multiple
-                        class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                        name="file[]" id="file" required>
+                    <span id="LicensefilesList">
+                        <span id="license-files-names"></span>
+                    </span>
+                    <input type="file" name="files[]" id="license"
+                        class="block my-8 w-full focus:outline-none"
+                        multiple accept="image/*,.docx,.pdf">
+                        {{-- <label for="license" class="flex mt-5 rounded bg-gray-400 text-white px-5 py-3 w-full">Browse Files</label> --}}
+
                 </div>
-                @error('file')
+                @error('files')
                     <span class="text-red-700">{{ $message }}</span>
                 @enderror
             </div>
@@ -31,7 +36,6 @@
         </form>
     </div>
 
-
     <table class="w-full mt-10" id="files-table">
         <thead class="bg-gray-300">
             <tr>
@@ -41,7 +45,6 @@
                 <th class="">
                     File Title
                 </th>
-
                 <th class="">
                     Upload Date
                 </th>
@@ -86,19 +89,69 @@
                                 </button>
                             </a>
                         </div>
-                        {{-- <div class="flex justify-center">
-                            <form id="status-form" action="{{ url(getRoutePrefix().'/update-file-status/'.$file->id) }}" class="">
-                                <select name="status" id="status" required class="p-0">
-                                    <option value="">Change the status</option>
-                                    <option {{ $file->status === 'Complete' ? 'selected' : '' }} value="Complete">Complete</option>
-                                    <option {{ $file->status === 'Incomplete' ? 'selected' : '' }} value="Incomplete">Incomplete</option>
-                                </select>
-                            </form>
-                        </div> --}}
                     </td>
                 </tr>
             @endforeach
-
         </tbody>
     </table>
+@endsection
+@section('foot')
+    <script>
+        $(document).ready(function() {
+            // Function to handle file inputs
+            function handleFileInput(inputId, filesListId, filesNamesId) {
+                const dt = new DataTransfer();
+                $(inputId).on('change', function(e) {
+                    for (var i = 0; i < this.files.length; i++) {
+                        let fileBloc = $('<span/>', {
+                                class: 'file-block'
+                            }),
+                            fileName = $('<span/>', {
+                                class: 'name badge',
+                                text: this.files.item(i).name
+                            });
+                        fileBloc.append('<span class="close file-delete"><span class="hover:text-red-700">x</span></span>')
+                            .append(fileName);
+                        $(filesListId).find(filesNamesId).append(fileBloc);
+                    };
+                    for (let file of this.files) {
+                        dt.items.add(file);
+                    }
+                    this.files = dt.files;
+                    $('span.file-delete').click(function() {
+                        let name = $(this).next('span.name').text();
+                        $(this).parent().remove();
+                        for (let i = 0; i < dt.items.length; i++) {
+                            if (name === dt.items[i].getAsFile().name) {
+                                dt.items.remove(i);
+                                continue;
+                            }
+                        }
+                        $(inputId).get(0).files = dt.files;
+                    });
+                });
+            }
+            handleFileInput("#license", "#LicensefilesList", "#license-files-names");
+        });
+    </script>
+
+    <style>
+        .badge {
+            margin-right: 5px;
+            display: inline-block;
+            padding: 2px 12px;
+            background-color: #9ca3af;
+            color: #fff;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .close {
+            padding: 6px 0 6px 8px;
+            border-radius: 8px 0 0 8px;
+            color: #f0f0f0;
+            background: #9ca3af;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
 @endsection

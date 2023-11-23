@@ -23,7 +23,7 @@
                     <span class="text-red-700" id="loantype_error"></span>
                 </div>
                 <div class="my-3 flex justify-end mt-5">
-                    <button class="bg-red-800 text-white px-8 py-2 text-xs font-thin" type="submit">Continue</button>
+                    <button class="bg-red-800 text-white px-8 py-2 text-xs font-thin" type="submit">Create</button>
                 </div>
             </div>
         </form>

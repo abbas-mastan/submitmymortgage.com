@@ -2,25 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ApplicationRequest;
-
-use App\Models\Application;
-use App\Models\Contact;
 use App\Models\Info;
-use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Contact;
+use App\Models\Project;
+use App\Models\Application;
 use App\Models\UserCategory;
-
+use Illuminate\Http\Request;
+use App\Services\UserService;
 use App\Services\AdminService;
 use App\Services\CommonService;
-use App\Services\UserService;
-use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\ApplicationRequest;
 use Illuminate\Support\Facades\Validator;use Illuminate\View\View;
-use RedirectResponse;
 
 class AssociateController extends Controller
 {
@@ -248,7 +244,8 @@ class AssociateController extends Controller
 
     public function uploadFilesView()
     {
-        return view('admin.file.upload-files');
+        $user = User::with('attachments.user')->find(Auth::id());
+        return view('admin.file.upload-files', compact('user'));
     }
     public function uploadFiles(Request $request)
     {
@@ -279,11 +276,11 @@ class AssociateController extends Controller
 
         $data['borrowers'] = User::with('projects')->where('role', 'Borrower')->get(['id', 'name']);
         $data['projects'] = Project::where('created_by', $admin->id)
-        ->orWhereHas('users', function ($query) use ($admin) {
-            $query->where('users.id', $admin->id);
-        })
-        ->with(['team', 'users.createdBy', 'borrower.createdBy'])
-        ->get();
+            ->orWhereHas('users', function ($query) use ($admin) {
+                $query->where('users.id', $admin->id);
+            })
+            ->with(['team', 'users.createdBy', 'borrower.createdBy'])
+            ->get();
         $data['enableProjects'] = $data['projects'];
 
         $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();

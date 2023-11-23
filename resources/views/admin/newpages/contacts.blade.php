@@ -108,7 +108,7 @@
             $('#email').val($(this).attr('data-contact-email'));
             $('#loanamount').val($(this).attr('data-contact-loanamount'));
             var loantypeValue = $(this).attr('data-contact-loantype');
-
+            $('.contactForm button[type="submit"]').text('Update');
             // Find the option with the matching value and set it as selected
             $('#loantype option').filter(function() {
                 return $(this).val() == loantypeValue;
@@ -119,6 +119,7 @@
     <script>
         $('.newProject, .closeModal').click(function(e) {
             e.preventDefault();
+            $('.contactForm button[type="submit"]').text('Create');
             $('#name').val('');
             $('#email').val('');
             $('#loanamount').val('');
