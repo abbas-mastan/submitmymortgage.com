@@ -182,6 +182,11 @@ class SuperAdminController extends Controller
         $msg = AdminService::deleteFile($request, $id);
         return back()->with($msg['msg_type'], $msg['msg_value']);
     }
+    public function deleteAttachment(Request $request, $id)
+    {
+        $msg = AdminService::deleteAttachment($request, $id);
+        return back()->with($msg['msg_type'], $msg['msg_value']);
+    }
     //Uploads a files
     public function fileUpload(Request $request)
     {
@@ -336,7 +341,8 @@ class SuperAdminController extends Controller
 
     public function uploadFilesView()
     {
-        return view('admin.file.upload-files');
+        $user = User::with('attachments.user')->find(Auth::id());
+       return view('admin.file.upload-files',compact('user'));
     }
     public function uploadFiles(Request $request)
     {

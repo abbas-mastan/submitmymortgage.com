@@ -69,6 +69,8 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
     Route::post('/spreadsheet', [SuperAdminController::class, 'spreadsheet']);
     Route::get('/upload-files', [SuperAdminController::class, 'uploadFilesView']);
     Route::post('/upload-files', [SuperAdminController::class, 'uploadFiles']);
+    Route::get('/delete-attachment/{id}', [SuperAdminController::class, 'deleteAttachment']);
+
     Route::post('/export-contacts', [SuperAdminController::class, 'exportContactsToExcel']);
 
     //=============================================

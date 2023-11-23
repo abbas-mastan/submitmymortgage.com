@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Mail\AssistantMail;
 use App\Models\Assistant;
+use App\Models\Attachment;
 use App\Models\Info;
 use App\Models\Media;
 use App\Models\Team;
@@ -229,8 +230,16 @@ class AdminService
     //Saves the record of a newly inserted user in database
     public static function deleteFile(Request $request, $id)
     {
-
         $media = Media::find($id);
+        if ($media->delete()) {
+            Storage::delete($media->file_path);
+            return ['msg_type' => 'msg_success', 'msg_value' => 'File deleted.'];
+        }
+        return ['msg_type' => 'msg_error', 'msg_value' => 'An error occured while deleting the file.'];
+    }
+    public static function deleteAttachment(Request $request, $id)
+    {
+        $media = Attachment::find($id);
         if ($media->delete()) {
             Storage::delete($media->file_path);
             return ['msg_type' => 'msg_success', 'msg_value' => 'File deleted.'];
