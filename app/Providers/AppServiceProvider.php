@@ -30,10 +30,12 @@ class AppServiceProvider extends ServiceProvider
         //change the default length of string column
         Schema::defaultStringLength(191);
 
-        View()->composer('*',function($view){
-            $view->with('currentrole',Auth::user()->role);
-            $view->with('superadminrole',config('constants.SUPER_ADMIN_ROLE'));
+        View()->composer('*', function ($view) {
+            if (Auth::check()) $view->with('currentrole', Auth::user()->role);
+            else $view->with('currentrole', null);
+            $view->with('superadminrole', config('constants.SUPER_ADMIN_ROLE'));
         });
+        
 
     }
 }
