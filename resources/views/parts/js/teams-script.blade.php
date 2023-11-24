@@ -197,8 +197,6 @@
         } else {
             if ($('#name').val() === '') {
                 showError('name');
-            } else if ($('#name').val().length < 8) {
-                showError('name', ' must be at least 8 characters');
             } else {
                 // Iterate through teamsData to check for name existence
                 var nameExists = false;
