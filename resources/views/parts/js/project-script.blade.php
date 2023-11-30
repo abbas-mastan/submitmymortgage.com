@@ -242,7 +242,7 @@
 
                     if (response === 'success') {
                         window.location.href =
-                    "{{ url(getRoutePrefix() . '/redirect/back/link-shared-successfully') }}";
+                    "{{ url(getRoutePrefix() . '/redirect/back/project-created-successfully') }}";
                 
                     }
                     $.each(response.error, function(index, error) {
