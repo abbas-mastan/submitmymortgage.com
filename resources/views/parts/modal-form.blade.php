@@ -1,5 +1,6 @@
 @component('components.modal-background', ['title' => 'Create New Team'])
     <form action="{{ url(getRoutePrefix() . '/teams') }}" id="teamForm" method="post">
+        <x-jq-loader />
         @csrf
         <div class="createTeam">
             @if (count($enableTeams) > 0)

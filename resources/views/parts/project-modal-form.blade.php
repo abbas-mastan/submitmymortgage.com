@@ -1,6 +1,7 @@
 @component('components.modal-background', ['title' => 'Create New Deal'])
     <div>
         <form class="projectForm" method="post">
+            <x-jq-loader />
             @csrf
             <div class="namepart">
                 <x-form.input name="name" label="Borrower's Name" />

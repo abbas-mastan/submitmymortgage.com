@@ -55,6 +55,7 @@
 
     $('.associateForm').submit(function(e) {
         e.preventDefault();
+        $('.jq-loader-for-ajax').removeClass('hidden');
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -65,6 +66,8 @@
             url: $(this).attr('action'),
             data: $(this).serialize(),
             success: function(response) {
+            $('.jq-loader-for-ajax').addClass('hidden');
+
                 if (response === 'success') {
                     handleNewAssociate();
                     getAssociates();
@@ -82,16 +85,19 @@
     });
 
     function getAssociates() {
+        $('.jq-loader-for-ajax').removeClass('hidden');
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
+        $('.jq-loader-for-ajax').removeClass('hidden');
         $.ajax({
             type: "post",
             url: "{{ getRoutePrefix() . '/get-associates' }}",
             data: {},
             success: function(data) {
+                $('.jq-loader-for-ajax').addClass('hidden');
                 $('.associateDropdown').empty();
                 var associates = [];
                 $.each(data, function(index, associate) {

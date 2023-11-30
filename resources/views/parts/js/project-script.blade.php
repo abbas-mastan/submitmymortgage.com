@@ -221,6 +221,7 @@
                 'loantype',
                 'team', 'associate', 'juniorAssociate'
             ];
+        $('.jq-loader-for-ajax').removeClass('hidden');
 
             $.each(errors, function(index, error) {
                 var field = `#${error}_error`;
@@ -237,6 +238,8 @@
                 data: $('.projectForm').serialize(),
                 success: function(response) {
                     console.log(response);
+                    $('.jq-loader-for-ajax').addClass('hidden');
+
                     if (response === 'success') {
                         window.location.href =
                     "{{ url(getRoutePrefix() . '/redirect/back/link-shared-successfully') }}";

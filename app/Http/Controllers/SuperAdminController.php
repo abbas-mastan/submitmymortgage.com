@@ -463,8 +463,10 @@ class SuperAdminController extends Controller
             foreach ($request->juniorAssociate as $associate_id) {
                 $project->users()->attach($associate_id);
             }
-            foreach ($request->processor as $associate_id) {
-                $project->users()->attach($associate_id);
+            if($request->processor){
+                foreach ($request->processor as $associate_id) {
+                    $project->users()->attach($associate_id);
+                }
             }
 
             $message = "Created new Deal by name : $request->borroweraddress";
