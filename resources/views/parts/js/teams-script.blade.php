@@ -357,10 +357,10 @@
     $('.jrAssociateContinue').click(function(e) {
         e.preventDefault();
         var selectedAssociates = $('input[name="jrAssociate[]"]:checked');
-        if (selectedAssociates.length === 0) {
-            $('#jrAssociate_error').text('Please select at least one associate');
-            return;
-        } else removeError('jrAssociate');
+        // if (selectedAssociates.length === 0) {
+        //     $('#jrAssociate_error').text('Please select at least one associate');
+        //     return;
+        // } else removeError('jrAssociate');
 
         if ($('#jrAssociateManager').val() === '') {
             showError('jrAssociateManager');

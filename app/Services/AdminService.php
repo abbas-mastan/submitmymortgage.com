@@ -287,9 +287,9 @@ class AdminService
     {
         $teamData = $request->validate([
             'name' => 'required',
-            'processor' => 'required|exists:users,id',
-            'associate' => 'required|exists:users,id',
-            'jrAssociate' => 'required|exists:users,id',
+            // 'processor' => 'required|exists:users,id',
+            // 'associate' => 'required|exists:users,id',
+            // 'jrAssociate' => 'required|exists:users,id',
             'jrAssociateManager' => 'required',
         ]);
 
@@ -303,17 +303,22 @@ class AdminService
         }
         $team->owner()->associate(Auth::id());
         $team->save();
-
-        foreach ($teamData['processor'] as $processorId) {
-            $team->users()->attach($processorId);
+        if ($request->processor) {
+            foreach ($request->processor as $processorId) {
+                $team->users()->attach($processorId);
+            }
         }
         
-        foreach ($teamData['associate'] as $associateId) {
-            $team->users()->attach($associateId);
+        if ($request->associate) {
+            foreach ($request->associate as $associateId) {
+                $team->users()->attach($associateId);
+            }
         }
         
-        foreach ($teamData['jrAssociate'] as $jrAssociateId) {
+        if ($request->jrAssociate) {
+        foreach ($request->jrAssociate as $jrAssociateId) {
             $team->users()->attach($jrAssociateId);
+        }
         }
         CommonService::storeNotification("Created new team by name : $request->name", Auth::id());
     }
