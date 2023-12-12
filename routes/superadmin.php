@@ -28,6 +28,7 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
     Route::get('/delete-user/{userId}', [SuperAdminController::class, 'deleteUser']);
     Route::get('/delete-user-permenant/{user}', [SuperAdminController::class, 'deleteUserPermenant'])->withTrashed();
     Route::get('/restore-user/{user}', [SuperAdminController::class, 'restoreUser'])->withTrashed();
+    Route::get('/verify-user/{user}', [SuperAdminController::class, 'verifyUser']);
     //==============================
     //==========Files related routes
     //==============================

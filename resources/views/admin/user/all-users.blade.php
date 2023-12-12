@@ -192,6 +192,9 @@
 
                                 </button>
                             </a>
+                            @if($currentrole === $superadminrole || $currentrole === 'Admin')
+                            <a href="{{url(getRoutePrefix().'/verify-user/'.$processor->id)}}" class="bg-themered text-white px-2.5 py-0.5 ml-1">Verify</a>
+                            @endif
                         </td>
                     </tr>
                     @php

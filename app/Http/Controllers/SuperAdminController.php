@@ -341,7 +341,7 @@ class SuperAdminController extends Controller
     public function uploadFilesView()
     {
         $user = User::with('attachments.user')->find(Auth::id());
-       return view('admin.file.upload-files',compact('user'));
+        return view('admin.file.upload-files', compact('user'));
     }
     public function uploadFiles(Request $request)
     {
@@ -463,7 +463,7 @@ class SuperAdminController extends Controller
             foreach ($request->juniorAssociate as $associate_id) {
                 $project->users()->attach($associate_id);
             }
-            if($request->processor){
+            if ($request->processor) {
                 foreach ($request->processor as $associate_id) {
                     $project->users()->attach($associate_id);
                 }
@@ -689,5 +689,12 @@ class SuperAdminController extends Controller
     {
         $associates = CommonService::getAssociates();
         return response()->json($associates);
+    }
+
+    public function verifyUser(User $user)
+    {
+        $user->email_verified_at= now();
+        $user->save();
+        return back()->with('msg_success','User verified successfully');
     }
 }

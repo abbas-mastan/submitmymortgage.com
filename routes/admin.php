@@ -28,6 +28,8 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::get('/delete-user/{userId}', [AdminController::class, 'deleteUser']);
     Route::get('/delete-user-permenant/{user}', [AdminController::class, 'deleteUserPermenant'])->withTrashed();
     Route::get('/restore-user/{user}', [AdminController::class, 'restoreUser'])->withTrashed();
+    Route::get('/verify-user/{user}', [AdminController::class, 'verifyUser']);
+
     //==============================
     //==========Files related routes
     //==============================
