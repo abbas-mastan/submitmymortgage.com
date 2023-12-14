@@ -48,9 +48,6 @@ class AdminService
     public static function doUser(Request $request, $id)
     {
         $isNewUser = ($id == -1);
-        if ($request->ajax()) {
-            return response()->json('asdfasdf');
-        }
         if (!$request->ajax()) {
             $request->validate([
                 'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",

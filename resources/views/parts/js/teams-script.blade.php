@@ -2,7 +2,7 @@
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
 
-@foreach ($teams as $team)
+@foreach ($enableTeams as $team)
     <script>
         new DataTable("#{{ Str::slug($team->name) }}-table{{ $team->id }}");
         $("#{{ Str::slug($team->name) }}-table{{ $team->id }}_length").css('display', 'none');
@@ -67,7 +67,6 @@
             data: $(this).serialize(),
             success: function(response) {
             $('.jq-loader-for-ajax').addClass('hidden');
-
                 if (response === 'success') {
                     handleNewAssociate();
                     getAssociates();

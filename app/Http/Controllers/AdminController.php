@@ -664,6 +664,7 @@ class AdminController extends Controller
     {
         $validator = Validator::make($request->only(['AssociateName', 'AssociateEmail']), [
             'AssociateEmail' => 'required|email:rfc,dns|unique:users,email',
+            'AssociateName' => ''
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
@@ -681,7 +682,7 @@ class AdminController extends Controller
 
         $request->merge(['email' => $request->AssociateEmail, 'role' => 'Associate', 'name' => $request->AssociateName,
         ]);
-        $user = AdminService::doUser($request, -1);
+        AdminService::doUser($request, -1);
         return response()->json('success', 200);
     }
 

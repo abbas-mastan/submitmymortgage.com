@@ -326,17 +326,20 @@ class CommonService
     public static function getAssociates()
     {
         $admin = User::find(Auth::id());
-        if ($admin->role === 'Super Admin') {
-            $users = User::where('role','Associate')->get();
-        } else {
-            $users = $admin->createdUsers()
-                ->with(['createdBy', 'info'])
-                ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
-                ->orWhereHas('createdBy', function ($query) {
-                    // Add conditions for the createdBy relationship
-                    $query->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower']);
-                })->get();
-        }
+        $currentUserId = auth()->id();
+
+        $users = $admin->createdUsers()
+        ->with(['createdBy', 'info'])
+        ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
+        ->where(function ($query) use ($currentUserId) {
+            // Associates directly created by the current user
+            $query->where('created_by', $currentUserId);
+            // Associates created by users who were created by the current user
+            $query->orWhereHas('createdBy', function ($nestedQuery) use ($currentUserId) {
+                $nestedQuery->where('created_by', $currentUserId);
+            });
+        })
+        ->get();
         foreach ($users as $user) {
             $associates[] = [
                 'role' => $user->role,
@@ -349,7 +352,7 @@ class CommonService
 
     }
 
-    public  static function redirectTo($route, $message)
+    public static function redirectTo($route, $message)
     {
         $message = ucfirst(str_replace('-', ' ', $message));
         if ($route === 'back') {
