@@ -73,12 +73,18 @@
     </style>
 @endsection
 @section('content')
-<div class="alertbox hidden mt-5 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-    <span class="block sm:inline alerttextbox"></span>
-    <span class="closealertbox absolute top-0 bottom-0 right-0 px-4 py-3">
-      <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
-    </span>
-  </div>
+    <div class="alertbox hidden mt-5 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative"
+        role="alert">
+        <span class="block sm:inline alerttextbox"></span>
+        <span class="closealertbox absolute top-0 bottom-0 right-0 px-4 py-3">
+            <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20">
+                <title>Close</title>
+                <path
+                    d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+            </svg>
+        </span>
+    </div>
     <x-flex-card title="Files Uploaded" titlecounts="{{ $filesCount }}" iconurl="{{ asset('icons/disk.svg') }}" />
     @component('components.modal-background', ['title' => 'Add Items to Share', 'width' => 'max-w-md'])
         <div class="firstTable">
@@ -149,21 +155,21 @@
             </span>
             <form action="{{ url(getRoutePrefix() . '/share-items') }}" method="POST">
                 @csrf
-               <x-jq-loader />
+                <x-jq-loader />
                 <input type="email" name="email"
                     class="bg-transperent w-full py-3 focus:bg-transperent focus:ring-2 focus:border-0 focus:ring-red-700 rounded-md">
                 <h3 class="mt-3 text-xl font-bold">People With access</h3>
                 @forelse($assistants as $assistant)
-                    @if($assistant->assistant->active !== 0 || $assistant->assistant->active !== 2)
-                    <div class="flex justify-between items-center mt-3">
-                        <div>
-                            <h3 class="text-xl font-normal">{{ $assistant->assistant->name }}</h3>
-                            <p class="text-gray-600">{{ $assistant->assistant->email }}</p>
+                    @if ($assistant->assistant->active !== 0 || $assistant->assistant->active !== 2)
+                        <div class="flex justify-between items-center mt-3">
+                            <div>
+                                <h3 class="text-xl font-normal">{{ $assistant->assistant->name }}</h3>
+                                <p class="text-gray-600">{{ $assistant->assistant->email }}</p>
+                            </div>
+                            <a class="removeAccess" href="#" data-id="{{ $assistant->assistant->id }}">
+                                <img class="icon w-10" src="{{ asset('icons/trash.svg') }}" alt="">
+                            </a>
                         </div>
-                        <a class="removeAccess" href="#" data-id="{{ $assistant->assistant->id }}">
-                            <img class="icon w-10" src="{{ asset('icons/trash.svg') }}" alt="">
-                        </a>
-                    </div>
                     @endif
                 @empty
                     <div class="text-center text-xl font-bold">Sorry! no data available</div>
@@ -175,6 +181,11 @@
             </form>
         </div>
     @endcomponent
+    @if ($user->project())
+        <h2 class="text-center text-2xl mb-5 text-red-700"> Deal name: {{ $user->project->name }} |
+            {{ $user->project->team->name }} </h2>
+    @endif
+
     <div class="">
         @include('elems.upload-btn')
         <div class="flex justify-between">
@@ -203,6 +214,7 @@
                 @endisset
             </div>
             <div class="inline-block">
+                @if ($currentrole === $superadminrole || $user->project->created_by === Auth::id())
                 <div class="relative dropdownButton">
                     <button class=" bg-red-800 px-5 py-2 text-white flex" id="menu-button" aria-expanded="true"
                         aria-haspopup="true">Move To
@@ -212,23 +224,24 @@
                                 <g>
                                     <path style="fill:#ffffff;"
                                         d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
-                                                                                                                                                                                                                                c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
-                                                                                                                                                                                                                                c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                                                                                                                                                                                                                    c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
+                                                                                                                                                                                                                                    c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
                                 </g>
                             </g>
                         </svg>
                     </button>
                     <div class="dropdownMenu hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
                         <div class="py-1">
-                          <a href="{{ url(getRoutePrefix() . '/project/disable/' . $user->project->id) }}"
-                                class="text-gray-700 block px-4 py-2 text-sm {{$user->project->status === 'disable' ? 'bg-red-800 text-white':''}}" role="menuitem" tabindex="-1"
-                                id="menu-item-0">Disable Deal</a>
+                            <a href="{{ url(getRoutePrefix() . '/project/disable/' . $user->project->id) }}"
+                                class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'disable' ? 'bg-red-800 text-white' : '' }}"
+                                role="menuitem" tabindex="-1" id="menu-item-0">Disable Deal</a>
                             <a href="{{ url(getRoutePrefix() . '/project/close/' . $user->project->id) }}"
-                                class="text-gray-700 block px-4 py-2 text-sm {{$user->project->status === 'close' ? 'bg-red-800 text-white':''}}" role="menuitem" tabindex="-1"
-                                id="menu-item-1">Close Deal</a>
+                                class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'close' ? 'bg-red-800 text-white' : '' }}"
+                                role="menuitem" tabindex="-1" id="menu-item-1">Close Deal</a>
                         </div>
                     </div>
                 </div>
+                @endif
             </div>
         </div>
         @include('admin.file.info-table')
@@ -237,7 +250,7 @@
         @include('admin.file.category-wise-files-table')
     </div>
     <div class="">
-        @if ($files)
+        @if (count($files) > 0)
             <div class="flex justify-between mb-5">
                 <div class="relative categoryContainer">
                     <button class="categoryButton bg-red-800 px-5 py-1 text-white flex">Sort By</button>
@@ -291,7 +304,8 @@
                                             <!-- File Name -->
                                             <div class="mb-2">
                                                 <a href="{{ asset($file->file_path) }}" class="text-blue-500 inline">
-                                                    {{ $file->file_name }} <img class="w-5 inline" src="{{asset('icons/download.svg')}}" alt="">
+                                                    {{ $file->file_name }} <img class="w-5 inline"
+                                                        src="{{ asset('icons/download.svg') }}" alt="">
                                                 </a>
                                             </div>
                                             <!-- Category -->

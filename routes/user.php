@@ -51,6 +51,6 @@ Route::middleware(['auth', 'user', 'verified'])->prefix(getUserRoutePrefix())->g
 //===========Publically accessible course purchasing routes
 //================================
 
-Route::prefix(getUserRoutePrefix())->group(function () {
-    Route::get('/course-selection', [StudentController::class, 'courseSelection']);
-});
+// Route::prefix(getUserRoutePrefix())->group(function () {
+//     Route::get('/course-selection', [StudentController::class, 'courseSelection']);
+// });
