@@ -696,4 +696,10 @@ class AdminController extends Controller
         return response()->json($associates);
     }
 
+    public function verifyUser(User $user)
+    {
+        $user->email_verified_at= now();
+        $user->save();
+        return back()->with('msg_success','User verified successfully');
+    }
 }

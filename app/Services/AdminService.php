@@ -48,11 +48,15 @@ class AdminService
     public static function doUser(Request $request, $id)
     {
         $isNewUser = ($id == -1);
+        if ($request->ajax()) {
+            return response()->json('asdfasdf');
+        }
         if (!$request->ajax()) {
             $request->validate([
                 'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
                 'name' => "required",
-                'password' => 'sometimes:required|confirmed|min:8',
+                'sendemail' => '',
+                'password' => $request->sendemail ? '' : 'required|min:8|confirmed',
                 'role' =>
                 #This is the custom Rule. Less than Admin Role Can't add User with the role === admin OR Processor
                 function ($attribute, $value, $fail) {
@@ -138,7 +142,7 @@ class AdminService
 
     public static function filesCat(Request $request, $id)
     {
-        $user = User::with(['info', 'media', 'categories', 'project','assistants'])->find($id);
+        $user = User::with(['info', 'media', 'categories', 'project', 'assistants'])->find($id);
         $data['user'] = $user;
         $data['id'] = $id;
         $data['info'] = $user->info;
@@ -256,14 +260,14 @@ class AdminService
 
             $data['leads'] = $user
                 ->createdUsers()
-                ->with(['createdBy','info'])
+                ->with(['createdBy', 'info'])
                 ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
                 ->orWhereHas('createdBy', function ($query) {
                     // Add conditions for the createdBy relationship
                     $query->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower']);
                 })
                 ->get();
-            
+
         }
 
         return $data;
@@ -308,17 +312,17 @@ class AdminService
                 $team->users()->attach($processorId);
             }
         }
-        
+
         if ($request->associate) {
             foreach ($request->associate as $associateId) {
                 $team->users()->attach($associateId);
             }
         }
-        
+
         if ($request->jrAssociate) {
-        foreach ($request->jrAssociate as $jrAssociateId) {
-            $team->users()->attach($jrAssociateId);
-        }
+            foreach ($request->jrAssociate as $jrAssociateId) {
+                $team->users()->attach($jrAssociateId);
+            }
         }
         CommonService::storeNotification("Created new team by name : $request->name", Auth::id());
     }
