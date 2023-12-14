@@ -264,7 +264,7 @@
         var id = $span.attr('data-id');
         $.ajax({
             type: "get",
-            url: `/admin/remove-access/${id}`,
+            url: "{{url(getRoutePrefix())}}"+`/remove-access/${id}`,
             data: $span
                 .serialize(), // Note: serialize() is typically used with forms, so this may not be necessary
             success: function(response) {
