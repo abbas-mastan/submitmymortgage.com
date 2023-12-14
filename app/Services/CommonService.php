@@ -349,4 +349,13 @@ class CommonService
 
     }
 
+    public  static function redirectTo($route, $message)
+    {
+        $message = ucfirst(str_replace('-', ' ', $message));
+        if ($route === 'back') {
+            return back()->with('msg_success', "$message.");
+        }
+
+        return redirect(getRoutePrefix() . "/$route")->with('msg_success', "$message.");
+    }
 }

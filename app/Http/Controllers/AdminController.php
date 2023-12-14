@@ -657,12 +657,7 @@ class AdminController extends Controller
 
     public function redirectTo($route, $message)
     {
-        $message = ucfirst(str_replace('-', ' ', $message));
-        if ($route === 'back') {
-            return back()->with('msg_success', "$message.");
-        }
-
-        return redirect(getRoutePrefix() . "/$route")->with('msg_success', "$message.");
+     return CommonService::redirectTo($route,$message);
     }
 
     public function doAssociate(Request $request)

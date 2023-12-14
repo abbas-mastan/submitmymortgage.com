@@ -43,6 +43,8 @@ Route::middleware(['auth', 'user', 'verified'])->prefix(getUserRoutePrefix())->g
     Route::get('projects', [UserController::class, 'projects']);
     Route::get('contacts', [UserController::class, 'contacts']);
     Route::post('/do-contact', [UserController::class, 'doContact']);
+    Route::get('/redirect/{route}/{message}', [UserController::class, 'redirectTo']);
+
 
 });
 //================================

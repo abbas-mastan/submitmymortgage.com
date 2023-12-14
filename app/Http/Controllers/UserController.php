@@ -148,6 +148,11 @@ class UserController extends Controller
         return redirect('/dashboard')->with("msg_success", "Google Disconnected Successfully.");
     }
 
+    public function redirectTo($route, $message)
+    {
+     return CommonService::redirectTo($route,$message);
+    }
+
     private function validateFunction($request)
     {
         return $request->validate([

@@ -335,6 +335,11 @@ class AssociateController extends Controller
         $data['assistants'] = $user->assistants;
         return view('admin.newpages.project-overview', $data);
     }
+    public function redirectTo($route, $message)
+    {
+     return CommonService::redirectTo($route,$message);
+    }
+    
     public function teams($id = null): View
     {
 

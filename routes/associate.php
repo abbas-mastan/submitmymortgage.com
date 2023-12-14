@@ -64,6 +64,8 @@ Route::group(
         Route::post('/do-contact/{id?}', 'doContact');
         Route::get('project-overview/{id?}', 'projectOverview');
         Route::get('/mark-as-read/{id}','markAsRead');
+        Route::get('/redirect/{route}/{message}','redirectTo');
+
 
     }
 );
