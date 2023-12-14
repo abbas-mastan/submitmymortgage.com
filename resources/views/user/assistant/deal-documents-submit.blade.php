@@ -89,13 +89,24 @@
 @section('content')
     <div class="child mt-24 mx-16 w-full shadow-2xl bg-white p-10 rounded-2xl">
         <div class="my-5 flex justify-end ">
-            <a href="{{ url('/logout') }}" class="rounded-md bg-red-700 px-5 py-2 text-white">Logout</a>
+            @if (session('reLogin'))
+                <form method="POST" action="{{ url('/logout-from-this-user') }}">
+                    @csrf
+                    <input type="hidden" name="user_id" value="{{ session('reLogin') }}">
+                    <button title="login as this user" type="submit"
+                        class="rounded-md bg-red-700 px-5 py-2 text-white">
+                        Logout from this user
+                    </button>
+                </form>
+            @else
+                <a href="{{ url('/logout') }}" class="rounded-md bg-red-700 px-5 py-2 text-white">Logout</a>
+            @endif
         </div>
         <header class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white rounded-t-2xl p-4">
             <h1 class="text-2xl text-center font-bold">Submit Documents for Your Mortgage Deal </h1>
         </header>
-        <form class="my-3" action="{{ url(getAssistantRoutePrefix() . '/submit-document') }}" enctype="multipart/form-data"
-            method="post">
+        <form class="my-3" action="{{ url(getAssistantRoutePrefix() . '/submit-document') }}"
+            enctype="multipart/form-data" method="post">
             @csrf
             <div class="flex items-center h-10 bg-gradient-to-b from-gradientStart to-gradientEnd text-white">
                 <div class="w-1/5 border-e-2 pl-5">Item</div>
@@ -106,7 +117,8 @@
                 <div class="flex mt-3">
                     <div class="flex w-1/5 h-8 py-7 items-center px-3">{{ $item }}</div>
                     <div class="flex h-8 py-7 items-center w-full ">
-                        <p id="{{ $id }}-files-area" class="menu w-[90%] pl-10 h-16 overflow-y-auto flex items-center">
+                        <p id="{{ $id }}-files-area"
+                            class="menu w-[90%] pl-10 h-16 overflow-y-auto flex items-center">
                             <span id="{{ $id }}filesList">
                                 <span class="grid grid-cols-5 items-end">
                                     @forelse(\App\Models\Media::where('uploaded_by',Auth::id())->get() as $file)
@@ -165,7 +177,7 @@
                     console.log(response);
                     if (response == 'file delete') {
                         $span.parent().parent()
-                    .remove(); // Use the stored reference to remove the parent element
+                            .remove(); // Use the stored reference to remove the parent element
                     }
                 }
             });

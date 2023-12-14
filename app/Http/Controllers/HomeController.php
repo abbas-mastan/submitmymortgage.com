@@ -28,13 +28,13 @@ class HomeController extends Controller
     }
     public function dashboard(Request $request)
     {
-
+        if(Gate::allows('isAssistant')) return redirect(getRoutePrefix().'/submit-document');
+        
         $data = match (true) {
             Gate::allows('isSuperAdmin') => $this->getSuperAdminDashboard(),
             Gate::allows('isAdmin') => $this->getAdminDashboard(),
             Gate::allows('isUser') => $this->getUserDashboard(),
             Gate::allows('isAssociate') => $this->getAssociateDashboard(),
-            Gate::allows('isAssistant') => $this->getAssistantDashboard(),
             default => []
         };
 
@@ -97,8 +97,4 @@ class HomeController extends Controller
         return UserService::getUserDashboard();
     }
 
-    private function getAssistantDashboard()
-    {
-        return $data['user'] = Auth::user();
-    }
 }
