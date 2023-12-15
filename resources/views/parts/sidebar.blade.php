@@ -1,6 +1,6 @@
-<div class=" flex-shrink flex-grow-0 bg-gradient-to-b from-gradientStart to-gradientEnd">
+<div class="sticky top-0 h-screen flex-shrink flex-grow-0 bg-gradient-to-b from-gradientStart to-gradientEnd">
     <div
-        class="sticky top-0 py-3 my-1 bg-white rounded-xl w-full h-full bg-gradient-to-b from-gradientStart to-gradientEnd">
+        class="py-3 my-1 bg-white rounded-xl w-full h-full bg-gradient-to-b from-gradientStart to-gradientEnd">
         <ul class="flex justify-start gap-2 sm:gap-0 sm:flex-col overflow-hidden sm:content-center sm:justify-center">
             <li class="py-3 my-1 sm:px-24 mt-5 hidden sm:block ">
                 <a class="truncate flex flex-col items-center" href="{{ url('/dashboard') }}">
