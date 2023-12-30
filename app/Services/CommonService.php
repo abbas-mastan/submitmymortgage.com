@@ -2,18 +2,19 @@
 
 namespace App\Services;
 
-use App\Models\Application;
-use App\Models\Attachment;
 use App\Models\Info;
 use App\Models\Media;
+use App\Models\Contact;
 use App\Models\Project;
-use App\Models\User;use App\Notifications\FileUploadNotification;
-use Illuminate\Http\Request;
+use App\Models\Attachment;
+use App\Models\Application;
 use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;use Illuminate\Validation\ValidationException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use App\Models\User;use App\Notifications\FileUploadNotification;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use Illuminate\Support\Facades\Storage;use Illuminate\Validation\ValidationException;
 
 class CommonService
 {
@@ -350,6 +351,23 @@ class CommonService
 
         return $associates;
 
+    }
+
+    public  static function doContact($request,$id)
+    {
+        $req = $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'loanamount' => 'nullable',
+            'loantype' => 'required',
+        ]);
+        $contact = $id > 0 ? Contact::find($id) : new Contact();
+        $contact->name = $request->name;
+        $contact->email = $req['email'];
+        $contact->loanamount = $req['loanamount'];
+        $contact->loantype = $req['loantype'];
+        $contact->user_id = $contact->user_id ?? Auth::id();
+        $contact->save();
     }
 
     public static function redirectTo($route, $message)

@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\{UserController,HomeController,SuperAdminController,};
+use App\Http\Controllers\{UserController,HomeController,SuperAdminController,CompanyController};
 
 /*
 |--------------------------------------------------------------------------
@@ -104,6 +104,11 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
     Route::post('/get-associates', [SuperAdminController::class, 'getAssociates']);
     Route::get('/redirect/{route}/{message}', [SuperAdminController::class, 'redirectTo']);
     
+    Route::get('/companies',[CompanyController::class,'index']);
+    Route::post('/do-company/{id?}',[CompanyController::class,'store']);
+    Route::get('/delete-company/{company}',[CompanyController::class,'destroy']);
+
+
 });
 Route::prefix(getRoutePrefix())->group(function () {
     //==============================

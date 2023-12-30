@@ -2,25 +2,26 @@
 
 namespace App\Services;
 
-use App\Mail\AssistantMail;
-use App\Models\Assistant;
-use App\Models\Attachment;
+use Faker\Factory;
 use App\Models\Info;
-use App\Models\Media;
 use App\Models\Team;
 use App\Models\User;
-use Faker\Factory;
-use Illuminate\Auth\Events\Registered;
+use App\Models\Media;
+use App\Models\Contact;
+use App\Models\Assistant;
+use App\Models\Attachment;
+use App\Mail\AssistantMail;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
 
 class AdminService
 {
@@ -61,7 +62,6 @@ class AdminService
                 },
             ]);
         }
-
         $user = $isNewUser ? new User() : User::findOrFail($id);
         if ($isNewUser && $request->sendmail) {
             $msg = "Registered. A verification link has been sent. You need to verify your email before login. Please, check your email.";
@@ -90,8 +90,7 @@ class AdminService
 
         $user->created_by = $user->created_by ?? optional(Auth::user())->id;
         $user->email_verified_at = !$request->sendemail ? now() : null;
-
-        if ($user->save() && $request->sendemail) {
+if ($user->save() && $request->sendemail) {
             if (session('role') != null && $isNewUser) {
                 Password::sendResetLink($request->only('email'));
                 Password::RESET_LINK_SENT;
@@ -99,7 +98,14 @@ class AdminService
                 event(new Registered($user));
             }
         }
-
+        if ($request->role === 'Borrower') {
+            $contact = new Contact;
+            $contact->name = $request->name;
+            $contact->email = $request->email;
+            $contact->loantype = $request->loan_type;
+            $contact->user_id = Auth::id();
+            $contact->save();
+        }
         if ($request->ajax()) {
             return $user->id;
         }

@@ -511,26 +511,13 @@ class SuperAdminController extends Controller
 
     public function contacts()
     {
-        $data['contacts'] = Contact::get();
+        $data['contacts'] = Contact::with('user')->get();
         return view('admin.newpages.contacts', $data);
     }
 
     public function doContact(Request $request, $id = 0)
     {
-        // dd($request);
-        $req = $request->validate([
-            'name' => 'required',
-            'email' => 'required',
-            'loanamount' => 'required',
-            'loantype' => 'required',
-        ]);
-        $contact = $id ? Contact::find($id) : new Contact();
-        $contact->name = $req['name'];
-        $contact->email = $req['email'];
-        $contact->loanamount = $req['loanamount'];
-        $contact->loantype = $req['loantype'];
-        $contact->user_id = Auth::id();
-        $contact->save();
+        CommonService::doContact($request,$id);
         return back()->with('success', 'Contact ' . ($id ? 'updated' : 'created') . ' successfully');
     }
 

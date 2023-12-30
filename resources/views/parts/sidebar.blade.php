@@ -9,8 +9,24 @@
                 </a>
             </li>
             @if(Gate::check('isAdmin') || Gate::check('isSuperAdmin'))
+
                 <!-- Sidebar for Admin starts -->
+                @if($currentrole === $superadminrole)
                 <li class="mt-10 py-3 my-1 sm:px-24 flex flex-row">
+                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                    <a class="truncate ml-4" href="{{ url(getSuperAdminRoutePrefix() . '/companies') }}">
+                        <span class="tracking-wide sm:block  capitalize text-white">Companies</span>
+                    </a>
+                </li>
+                <li class="-mt-4 hidden sm:block">
+                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
+                        &nbsp;
+                    </span>
+                </li>
+                @endif
+                <li class="pb-3 mb-1 sm:px-24 flex flex-row">
                     <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
