@@ -14,8 +14,7 @@ class DropJrAssociateFromTeamUserTable extends Migration
     public function up()
     {
         Schema::table('team_user', function (Blueprint $table) {
-            $table->dropColumn('associates');
-            $table->dropColumn('jrAssociateManager');
+            $table->dropColumn(['associates','jrAssociateManager']);
         });
     }
 

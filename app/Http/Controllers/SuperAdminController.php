@@ -511,7 +511,7 @@ class SuperAdminController extends Controller
 
     public function contacts()
     {
-        $data['contacts'] = Contact::where('user_id', Auth::id())->get();
+        $data['contacts'] = Contact::get();
         return view('admin.newpages.contacts', $data);
     }
 
