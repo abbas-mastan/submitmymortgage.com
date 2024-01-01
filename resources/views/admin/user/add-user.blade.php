@@ -65,25 +65,39 @@
                 <div class="mt-2">
                     <select required name="role" id="role"
                         class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                        <option disabled value="">Choose a type</option>
+                        <option value="">Choose a type</option>
                         @php
                             $roles = config('smm.roles');
-                            if($currentrole === 'Super Admin') array_unshift($roles, 'Admin'); 
+                            if ($currentrole === 'Super Admin') array_unshift($roles, 'Admin');
                         @endphp
                         @foreach ($roles as $role)
-                        @if (!(($currentrole == 'Processor' && $role == 'Processor') ||
-                            ($currentrole == 'Associate' && in_array($role, ['Associate', 'Processor'])) ||
-                            ($currentrole == 'Junior Associate' && in_array($role, ['Junior Associate', 'Associate', 'Processor'])) ||
-                            (in_array($currentrole, ['Processor', 'Associate', 'Junior Associate']) && $role == 'Admin'))
-                            )
-                            <option {{ old('role', $user->role) == $role ? 'selected' : '' }}
-                                value="{{ $role }}">
-                                {{ $role }}
+                            @if (!(($currentrole == 'Processor' && $role == 'Processor') ||
+                                    ($currentrole == 'Associate' && in_array($role, ['Associate', 'Processor'])) ||
+                                    ($currentrole == 'Junior Associate' && in_array($role, ['Junior Associate', 'Associate', 'Processor'])) ||
+                                    (in_array($currentrole, ['Processor', 'Associate', 'Junior Associate']) && $role == 'Admin')
+                                ))
+                                <option {{ old('role', $user->role) == $role ? 'selected' : '' }}
+                                    value="{{ $role }}">
+                                    {{ $role }}
+                                </option>
+                            @endif
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="mt-3 mx-auto">
+                <div class=" text-left mr-12">
+                    <label for="role" class="">Company Name</label>
+                </div>
+                <div class="mt-2">
+                    <select name="company" id="company"
+                        class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
+                        <option value="">Choose a company</option>
+                        @foreach ($companies as $company)
+                            <option {{ old('company', $user->company_id) == $company->id ? 'selected' : '' }} value="{{ $company->id }}">
+                                {{ $company->name }}
                             </option>
-                        @endif
-                    @endforeach
-                    
-                    
+                        @endforeach
                     </select>
                 </div>
             </div>
@@ -129,7 +143,7 @@
                 </div>
             @endif
             @if (empty($user->password))
-            <span id="passwordParent">
+                <span id="passwordParent">
                     <div class="mt-3 mx-auto">
                         <div class=" text-left mr-12">
                             <label for="password" class="">Create Password</label>
@@ -201,7 +215,8 @@
         let loanDiv = document.querySelector('#loan_type_div');
         let financeType = document.querySelector('#finance_type');
         role.addEventListener("change", function() {
-            if (this.value === 'Processor' || this.value === 'Associate' || this.value === 'Junior Associate' || this.value === 'Admin') {
+            if (this.value === 'Processor' || this.value === 'Associate' || this.value === 'Junior Associate' ||
+                this.value === 'Admin') {
                 financeDiv.style.display = 'none';
                 loanDiv.style.display = 'none';
                 financeType.removeAttribute('required');

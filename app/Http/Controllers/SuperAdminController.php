@@ -35,7 +35,6 @@ class SuperAdminController extends Controller
     public function users(Request $request)
     {
         $data = AdminService::users($request);
-
         return view('admin.user.users', $data);
     }
 
@@ -287,6 +286,7 @@ class SuperAdminController extends Controller
             $data['role'] = $user->role;
             $data['users'] = User::with(['createdBy', 'createdUsers'])
                 ->where('role', '!=', 'Super Admin')
+                ->latest()
                 ->get(['id', 'name', 'email', 'created_by', 'role', 'email_verified_at']);
             $data['trashed'] = User::withTrashed()
                 ->with('createdBy')
@@ -297,6 +297,7 @@ class SuperAdminController extends Controller
             $data['users'] = $user->createdUsers()
                 ->with(['createdUsers', 'createdBy'])
                 ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
+                ->latest()
                 ->get();
         }
         return view('admin.user.all-users', $data);

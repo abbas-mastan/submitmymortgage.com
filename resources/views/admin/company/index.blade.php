@@ -20,7 +20,7 @@
         <button class="absolute z-10 py-2 text-white bg-red-800 px-8 newProject">
             Add New Company
         </button>
-        <table class="w-full pt-7" id="deleted-table">
+        <table class="w-full pt-7" id="completed-table">
             <thead class="bg-gray-300">
                 <tr>
                     <th class=" pl-2 tracking-wide">
@@ -36,12 +36,60 @@
             </thead>
             <tbody>
                 @foreach ($companies as $company)
-                    <tr class="text-center">
+                    @if(!$company->trashed())   
+                <tr class="text-center {{$company->trashed() ? 'text-red-700' : ''}}">
                         <td class=" pl-2 tracking-wide border border-l-0">
                             {{ date('d/m/y', strtotime($company->created_at)) }}
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
-                            <a title="Click to edit company" class="text-blue-500 inline"
+                            <a title="Click to edit company" class="inline"
+                                {{-- href="{{ url(getRoutePrefix() . '/contact/' . $company->id) }}" --}}>
+                                {{ $company->name }}
+                                <button class="editcontact" data-contact-id="{{ $company->id }}"
+                                    data-contact-name="{{ $company->name }}" >
+                                    <img src="{{ asset('icons/pencil.svg') }}" alt="edit-icon">
+                                </button>
+                            </a>
+                        </td>
+                        <td class=" pl-2 tracking-wide border border-r-0">
+                            <a data="temporary" class="delete"
+                                href="{{ url(getRoutePrefix() . '/delete-company/' . $company->id) }}">
+                                <button title="temporary delete" class="bg-themered  tracking-wide font-semibold capitalize text-xl">
+                                    <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
+                                </button>
+                            </a>
+                            
+                        </td>
+                    </tr>
+                    @endif
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+    <div class="flex-wrap flex-shrink-0 w-full">
+        <x-flex-card title="Deleted Contacts" titlecounts="{{ count($trashed) }}" iconurl="{{ asset('icons/Marketing.svg') }}" />
+        <table class="w-full pt-7" id="deleted-table">
+            <thead class="bg-gray-300">
+                <tr>
+                    <th class=" pl-2 tracking-wide">
+                        Created on
+                    </th>
+                    <th class="">
+                        Name
+                    </th>
+                    <th class="">
+                        Actions
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($trashed as $company)
+                <tr class="text-center {{$company->trashed() ? 'text-red-700' : ''}}">
+                        <td class=" pl-2 tracking-wide border border-l-0">
+                            {{ date('d/m/y', strtotime($company->created_at)) }}
+                        </td>
+                        <td class=" pl-2 tracking-wide border border-l-0">
+                            <a title="Click to edit company" class="inline"
                                 {{-- href="{{ url(getRoutePrefix() . '/contact/' . $company->id) }}" --}}>
                                 {{ $company->name }}
                                 <button class="editcontact" data-contact-id="{{ $company->id }}"
@@ -52,9 +100,15 @@
                         </td>
                         <td class=" pl-2 tracking-wide border border-r-0">
                             <a data="Delete" class="delete"
-                                href="{{ url(getRoutePrefix() . '/delete-company/' . $company->id) }}">
-                                <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
+                                href="{{ url(getRoutePrefix() . '/delete-company-permanent/' . $company->id) }}">
+                                <button title="permanent delete" class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                                     <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
+                                </button>
+                            </a>
+                            <a data="Restore" class="delete"
+                                href="{{ route('company.restore',$company->id) }}">
+                                <button title="Restore" class="bg-themered  tracking-wide font-semibold capitalize text-xl">
+                                    <img src="{{ asset('icons/restore.svg') }}" alt="" class="p-1 w-7">
                                 </button>
                             </a>
                         </td>

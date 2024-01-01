@@ -26,7 +26,7 @@
                     </span>
                 </li>
                 @endif
-                <li class="pb-3 mb-1 sm:px-24 flex flex-row">
+                <li class="pb-3 mb-1 sm:px-24 flex flex-row {{$currentrole !== $superadminrole ? 'mt-10':''}}">
                     <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>

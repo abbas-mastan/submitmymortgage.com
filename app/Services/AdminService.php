@@ -11,6 +11,7 @@ use App\Models\Contact;
 use App\Models\Assistant;
 use App\Models\Attachment;
 use App\Mail\AssistantMail;
+use App\Models\Company;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\URL;
@@ -40,6 +41,7 @@ class AdminService
         } else {
             $user = User::find($id);
         }
+        if(Auth::user()->role === 'Super Admin') $data['companies'] = Company::get();
         $data['user'] = $user;
         $data["active"] = "user";
         return $data;
@@ -49,12 +51,13 @@ class AdminService
     public static function doUser(Request $request, $id)
     {
         $isNewUser = ($id == -1);
-        if (!$request->ajax()) {
+        if (!$request->ajax()) { 
             $request->validate([
                 'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
                 'name' => "required",
+                'company' => 'required_if:role,Admin',
                 'sendemail' => '',
-                'password' => $request->sendemail ? '' : 'required|min:8|confirmed',
+                'password' => ($isNewUser && !$request->sendemail) ? 'required|min:8|confirmed' : '',
                 'role' =>
                 #This is the custom Rule. Less than Admin Role Can't add User with the role === admin OR Processor
                 function ($attribute, $value, $fail) {
@@ -90,7 +93,7 @@ class AdminService
 
         $user->created_by = $user->created_by ?? optional(Auth::user())->id;
         $user->email_verified_at = !$request->sendemail ? now() : null;
-if ($user->save() && $request->sendemail) {
+        if ($user->save() && $request->sendemail) {
             if (session('role') != null && $isNewUser) {
                 Password::sendResetLink($request->only('email'));
                 Password::RESET_LINK_SENT;

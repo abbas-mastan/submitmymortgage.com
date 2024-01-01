@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminCompanyController;
 use App\Http\Controllers\{UserController,HomeController,SuperAdminController,CompanyController};
 
 /*
@@ -104,9 +105,11 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
     Route::post('/get-associates', [SuperAdminController::class, 'getAssociates']);
     Route::get('/redirect/{route}/{message}', [SuperAdminController::class, 'redirectTo']);
     
-    Route::get('/companies',[CompanyController::class,'index']);
-    Route::post('/do-company/{id?}',[CompanyController::class,'store']);
-    Route::get('/delete-company/{company}',[CompanyController::class,'destroy']);
+    Route::get('/restore-company/{company}',[AdminCompanyController::class,'restore'])->withTrashed()->name('company.restore');
+    Route::get('/delete-company-permanent/{company}',[AdminCompanyController::class,'permanent'])->withTrashed();
+    Route::get('/companies',[AdminCompanyController::class,'index']);
+    Route::post('/do-company/{id?}',[AdminCompanyController::class,'store']);
+    Route::get('/delete-company/{company}',[AdminCompanyController::class,'destroy']);
 
 
 });

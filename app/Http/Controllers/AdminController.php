@@ -505,6 +505,7 @@ class AdminController extends Controller
 
     public function contacts()
     {
+        abort_if(auth()->user()->role !== 'Admin',403,'You are not allowed to this part of the world');
         $data['contacts'] = Contact::where('user_id', Auth::id())->get();
         return view('admin.newpages.contacts', $data);
     }
