@@ -228,7 +228,7 @@
                     <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
-                    <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/leads') }}">
+                    <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/contacts') }}">
                         <span class="tracking-wide sm:block  capitalize text-white">Contacts</span>
                     </a>
                 </li>

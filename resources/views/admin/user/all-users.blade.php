@@ -76,7 +76,7 @@
                         <td class=" pl-2 tracking-wide border border-l-0">
                             <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
                                 href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}">
-                                {{ $processor->name }}
+                                {{ $processor->name }} {{$processor->company_id}}
                             </a>
                             <a title="Edit this user" href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
                                 <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">

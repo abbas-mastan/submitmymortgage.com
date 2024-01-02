@@ -113,7 +113,12 @@ class AssociateController extends Controller
     public function allUsers($id = null)
     {
         $user = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-        $data['users'] = $user->createdUsers()->with('createdBy')->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+        $role = $user->role;
+        $data['users'] = $user->createdUsers()
+        ->with('createdBy')->orWhere('company_id',$user->company_id)
+        ->whereIn('role', [($role === 'Associate' || $role === 'Junior Associate'  ? '':'Associate'), 
+        ($role === 'Junior Associate'  ? '':'Junior Associate'), 'Borrower'])
+        ->with('createdUsers')->get();
         $data['role'] = $user->role;
         return view('admin.user.all-users', $data);
     }

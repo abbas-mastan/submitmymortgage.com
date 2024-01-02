@@ -36,11 +36,8 @@ class AdminService
     //Shows input for adding a user
     public static function addUser(Request $request, $id)
     {
-        if ($id == -1) {
-            $user = new User();
-        } else {
-            $user = User::find($id);
-        }
+        if ($id == -1) $user = new User();
+        else $user = User::find($id);
         if(Auth::user()->role === 'Super Admin') $data['companies'] = Company::get();
         $data['user'] = $user;
         $data["active"] = "user";
@@ -51,11 +48,12 @@ class AdminService
     public static function doUser(Request $request, $id)
     {
         $isNewUser = ($id == -1);
+        $authrole = Auth::user()->role;
         if (!$request->ajax()) { 
             $request->validate([
                 'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
                 'name' => "required",
-                'company' => 'required_if:role,Admin',
+                'company' => ($authrole == 'Super Admin') ? 'required': '',
                 'sendemail' => '',
                 'password' => ($isNewUser && !$request->sendemail) ? 'required|min:8|confirmed' : '',
                 'role' =>
@@ -68,11 +66,8 @@ class AdminService
         $user = $isNewUser ? new User() : User::findOrFail($id);
         if ($isNewUser && $request->sendmail) {
             $msg = "Registered. A verification link has been sent. You need to verify your email before login. Please, check your email.";
-        } elseif ($isNewUser && !$request->sendmail) {
-            $msg = "User created successfully";
-        } else {
-            $msg = "User updated successfully";
-        }
+        } elseif ($isNewUser && !$request->sendmail) $msg = "User created successfully";
+         else $msg = "User updated successfully";
 
         $user->fill($request->only(['email', 'name']));
         $user->password = $request->filled('password') ?
@@ -91,16 +86,21 @@ class AdminService
             $user->loan_type = $request->loan_type;
         }
 
+        if(!$request->company && Auth::user()->role !== 'Super Admin') {
+            $user->company_id = Auth::user()->company_id;
+        }else{
+            $user->company_id = $request->company;
+        }
+
         $user->created_by = $user->created_by ?? optional(Auth::user())->id;
         $user->email_verified_at = !$request->sendemail ? now() : null;
         if ($user->save() && $request->sendemail) {
             if (session('role') != null && $isNewUser) {
                 Password::sendResetLink($request->only('email'));
                 Password::RESET_LINK_SENT;
-            } else {
-                event(new Registered($user));
-            }
+            } else event(new Registered($user));
         }
+
         if ($request->role === 'Borrower') {
             $contact = new Contact;
             $contact->name = $request->name;
@@ -109,9 +109,7 @@ class AdminService
             $contact->user_id = Auth::id();
             $contact->save();
         }
-        if ($request->ajax()) {
-            return $user->id;
-        }
+        if ($request->ajax()) return $user->id;
         return ['msg_type' => 'msg_success', 'msg_value' => $msg];
     }
 

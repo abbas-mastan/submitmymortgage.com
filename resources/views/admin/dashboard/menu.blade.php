@@ -39,7 +39,6 @@
                     </div>
                     <p class="text-center font-bold">Users</p>
                 </a>
-                @if(auth()->user()->role === ['Admin','SuperAdmin'])
             <a href="{{ url(getRoutePrefix() . '/contacts') }}" class="flex justify-center align-center flex-col">
                 <div
                     class="h-16 w-auto flex justify-center align-center rounded px-7 py-2 bg-gradient-to-b from-gradientStart to-gradientEnd">
@@ -48,7 +47,7 @@
                 </div>
                 <p class="text-center font-bold">Contacts</p>
             </a>
-            @endif
+  
         </div>
         @if ($currentrole !== 'Borrower')
             <div class="px-8 py-5 flex rounded justify-between w-full mt-8 

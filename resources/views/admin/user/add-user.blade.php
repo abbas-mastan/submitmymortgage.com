@@ -85,22 +85,25 @@
                     </select>
                 </div>
             </div>
-            <div class="mt-3 mx-auto">
-                <div class=" text-left mr-12">
-                    <label for="role" class="">Company Name</label>
+            @isset($companies)
+                <div class="mt-3 mx-auto">
+                    <div class=" text-left mr-12">
+                        <label for="role" class="">Company Name</label>
+                    </div>
+                    <div class="mt-2">
+                        <select name="company" id="company"
+                            class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
+                            <option value="">Choose a company</option>
+                            @foreach ($companies as $company)
+                                <option {{ old('company', $user->company_id) == $company->id ? 'selected' : '' }}
+                                    value="{{ $company->id }}">
+                                    {{ $company->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
                 </div>
-                <div class="mt-2">
-                    <select name="company" id="company"
-                        class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                        <option value="">Choose a company</option>
-                        @foreach ($companies as $company)
-                            <option {{ old('company', $user->company_id) == $company->id ? 'selected' : '' }} value="{{ $company->id }}">
-                                {{ $company->name }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-            </div>
+            @endisset
             <div class="mt-3 mx-auto" id="finance-div"
                 style="{{ in_array($user->role, ['Processor', 'Associate', 'Junior Associate']) ? 'display: none' : '' }}">
                 <div class=" text-left mr-12">

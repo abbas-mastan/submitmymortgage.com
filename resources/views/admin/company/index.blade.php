@@ -16,7 +16,7 @@
 @section('content')
 @include('parts.company-modal-form')
     <div class="flex-wrap flex-shrink-0 w-full">
-        <x-flex-card title="Contacts" titlecounts="{{ count($companies) }}" iconurl="{{ asset('icons/Marketing.svg') }}" />
+        <x-flex-card title="Companies" titlecounts="{{ count($companies) }}" iconurl="{{ asset('icons/Marketing.svg') }}" />
         <button class="absolute z-10 py-2 text-white bg-red-800 px-8 newProject">
             Add New Company
         </button>
@@ -67,7 +67,7 @@
         </table>
     </div>
     <div class="flex-wrap flex-shrink-0 w-full">
-        <x-flex-card title="Deleted Contacts" titlecounts="{{ count($trashed) }}" iconurl="{{ asset('icons/Marketing.svg') }}" />
+        <x-flex-card title="Deleted Companies" titlecounts="{{ count($trashed) }}" iconurl="{{ asset('icons/Marketing.svg') }}" />
         <table class="w-full pt-7" id="deleted-table">
             <thead class="bg-gray-300">
                 <tr>

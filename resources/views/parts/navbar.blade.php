@@ -4,26 +4,18 @@
             @can('isSuperAdmin')
                 <div class="pl-20">
                     <span class="text-xl font-semibold">
-                        @if (request()->routeIs('dashboard'))
-                            {{ session('role') === 'Processor' ? 'Processor ' : 'Super Admin' }}Dashboard
-                        @else
-                            <a href="{{ url(getRoutePrefix() . '/dashboard') }}">
-                                {{ session('role') === 'Processor' ? 'Processor ' : 'Super Admin ' }}Dashboard
-                            </a>
-                        @endif
+                        <a href="{{ url(getRoutePrefix() . '/dashboard') }}">
+                            Super Admin Dashboard
+                        </a>
                     </span>
                 </div>
             @endcan
             @can('isAdmin')
                 <div class="pl-20">
                     <span class="text-xl font-semibold">
-                        @if (request()->routeIs('dashboard'))
-                            {{ session('role') === 'Processor' ? 'Processor ' : 'Admin' }}Dashboard
-                        @else
-                            <a href="{{ url(getRoutePrefix() . '/dashboard') }}">
-                                {{ session('role') === 'Processor' ? 'Processor ' : 'Admin ' }}Dashboard
-                            </a>
-                        @endif
+                        <a href="{{ url(getRoutePrefix() . '/dashboard') }}">
+                            {{ session('role') === 'Processor' ? 'Processor ' : 'Admin' }}&nbsp;Dashboard
+                        </a>
                     </span>
                 </div>
             @endcan
@@ -39,7 +31,8 @@
                 <div class="pl-10">
                     <a href="{{ url('/dashboard') }}">
                         <span class="text-xl font-semibold">
-                            {{ session('role') === 'Associate' ? 'Associate  Dashboard' : 'Junior Associate  Dashboard' }}
+                            {{ session('role') === 'Associate' ? 'Associate' : 'Junior Associate' }}
+                            &nbsp;Dashboard
                         </span>
                     </a>
                 </div>
@@ -50,7 +43,8 @@
         <div class="flex mr-3">
             <div class="">
                 <a href="{{ url(getRoutePrefix() . '/profile') }}" class="">
-                    <img class="rounded-full w-12 h-12" src="{{ asset(auth()->user()->pic ?? 'img/profile-default.svg')  }}" alt=""
+                    <img class="rounded-full w-12 h-12"
+                        src="{{ asset(auth()->user()->pic ?? 'img/profile-default.svg') }}" alt=""
                         srcset="">
                 </a>
             </div>
@@ -64,7 +58,8 @@
             </a>
             @php($unreadNotifications = count(Auth::user()->unreadnotifications))
             @if ($unreadNotifications > 0)
-                <span class="absolute bg-themered text-white rounded-full text-xs ml-4 px-1.5 py-0.5">{{$unreadNotifications > 9 ? "9+" : $unreadNotifications }}</span>
+                <span
+                    class="absolute bg-themered text-white rounded-full text-xs ml-4 px-1.5 py-0.5">{{ $unreadNotifications > 9 ? '9+' : $unreadNotifications }}</span>
             @endif
         </div>
         <div class=" mr-20 pt-3 ">

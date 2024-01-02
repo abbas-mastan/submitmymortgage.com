@@ -279,12 +279,15 @@ class AdminController extends Controller
 
     public function allUsers($id = null)
     {
+        
         $user = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
         $data['role'] = $user->role;
+        $role = $user->role;
         $data['users'] = $user
             ->createdUsers()
             ->with(['createdBy'])
-            ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
+            ->orWhere('company_id',$user->company_id)
+            ->whereIn('role', [($role === 'Processor' ? '':'Processor'),'Associate', 'Junior Associate', 'Borrower'])
             ->get();
         return view('admin.user.all-users', $data);
     }
@@ -297,7 +300,7 @@ class AdminController extends Controller
     }
 
     public function hideCategory(User $user, $cat)
-    {
+    {  
         $msg = CommonService::hideCategory($user, $cat);
         return back()->with($msg['msg_type'], $msg['msg_value']);
     }
@@ -505,14 +508,22 @@ class AdminController extends Controller
 
     public function contacts()
     {
-        abort_if(auth()->user()->role !== 'Admin',403,'You are not allowed to this part of the world');
-        $data['contacts'] = Contact::where('user_id', Auth::id())->get();
+        if(Auth::user()->role === 'Admin'){
+
+            $data['contacts'] = Contact::with('user')->where('user_id', Auth::id())
+            ->orWhereHas('user', function ($query) {
+            $query->where('created_by', Auth::id());
+        })
+        ->get();
+    }else{
+        $data['contacts'] = Contact::with('user')->where('user_id',Auth::id())->get();
+    }
+
         return view('admin.newpages.contacts', $data);
     }
 
     public function doContact(Request $request, $id = 0)
     {
-        // dd($request);
         $req = $request->validate([
             'name' => 'required',
             'email' => 'required',
