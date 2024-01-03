@@ -19,6 +19,9 @@
                         User ID
                     </th>
                     <th class="">
+                        Role
+                    </th>
+                    <th class="">
                    Created By
                     </th>
                     <th class="">
@@ -40,6 +43,9 @@
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
                             {{ $connection->email }}
+                        </td>
+                        <td class=" pl-2 tracking-wide border border-l-0">
+                            {{ $connection->role }}
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
                             {{ $connection->createdBy->name ?? null }} | {{$connection->createdBy->role ?? null}}
