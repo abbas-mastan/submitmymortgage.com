@@ -31,8 +31,7 @@ class AssociateController extends Controller
 
     public function basicInfo()
     {
-        $data['info'] = new Info();
-        return view('user.info.basic-info', $data);
+        return view('user.info.basic-info', ['info' => new Info()]);
     }
 
     public function application(Request $request, $id = -1)
@@ -61,27 +60,21 @@ class AssociateController extends Controller
     {
         if ($cat == "Loan Application") {
             $user = User::find($id)->application()->first();
-            if ($user != null) {
-                return redirect(getAssociateRoutePrefix() . "/application-show/" . $user->id);
-            } else {
-                return redirect(getAssociateRoutePrefix() . "/application/" . $id);
-            }
-        } else {
-            $data = AdminService::docs($request, $id, $cat);
-            return view("admin.file.single-cat-docs", $data);
-        }
+            return redirect(getAssociateRoutePrefix() .($user ? "/application-show/$user->id":"/application/$id"));
+        } 
+        $data = AdminService::docs($request, $id, $cat);
+        return view("admin.file.single-cat-docs", $data);
+        
     }
 
     public function applicationShow(Application $application)
     {
-        $data['application'] = $application;
-        return view('admin.applications.show', $data);
+        return view('admin.applications.show', $application);
     }
 
     public function applicationEdit(Application $application)
     {
-        $data['application'] = $application;
-        return view('admin.applications.show', $data);
+        return view('admin.applications.show', $application);
     }
 
     public function applicationUpdate(ApplicationRequest $request, Application $application)
@@ -246,15 +239,13 @@ class AssociateController extends Controller
     public function spreadsheet(Request $request)
     {
         $msg = CommonService::insertFromExcel($request);
-        return redirect(getRoutePrefix() . '/all-users')
-            ->with($msg['msg_type'], $msg['msg_value']);
+        return redirect(getRoutePrefix() . '/all-users')->with($msg['msg_type'], $msg['msg_value']);
     }
 
     public function exportContactsToExcel(Request $request): RedirectResponse
     {
         $msg = CommonService::exportContactsToExcel($request);
-        return redirect(getRoutePrefix() . '/leads')
-            ->with($msg['msg_type'], $msg['msg_value']);
+        return redirect(getRoutePrefix() . '/leads')->with($msg['msg_type'], $msg['msg_value']);
     }
 
     public function projects($id = null): View
@@ -327,7 +318,7 @@ class AssociateController extends Controller
     }
     public function redirectTo($route, $message)
     {
-     return CommonService::redirectTo($route,$message);
+        return CommonService::redirectTo($route,$message);
     }
     
     public function teams($id = null): View

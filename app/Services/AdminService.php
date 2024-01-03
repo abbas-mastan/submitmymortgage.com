@@ -26,7 +26,6 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminService
 {
-
     public static function users(Request $request)
     {
         $data['users'] = User::where('role', 'Borrower')->get();
@@ -133,9 +132,7 @@ class AdminService
     public static function deleteUser(Request $request, $id)
     {
         $user = User::find($id);
-        if ($user->delete()) {
-            return ['msg_type' => 'msg_success', 'msg_value' => 'User deleted.'];
-        }
+        if ($user->delete()) return ['msg_type' => 'msg_success', 'msg_value' => 'User deleted.'];
         return ['msg_type' => 'msg_error', 'msg_value' => 'An error occured while deleting the user.'];
     }
     //============================
@@ -158,13 +155,11 @@ class AdminService
     public static function files(Request $request, $id)
     {
         if ($id !== -1) {
-            $users = User::where('role', 'user')
-                ->where('id', $id)
-                ->get();
+            $users = User::with('media')->where('role','Borrower')->where('id', $id)->get();
             $data['id'] = $id;
             $data['info'] = User::find($id)->info;
         } else {
-            $users = User::where('role', 'user')->get();
+            $users = User::with('media')->where('role','Borrower')->get();
         }
         $filesIds = [];
         foreach ($users as $user) {
@@ -198,16 +193,13 @@ class AdminService
         $media = Media::find($id);
         $media->status = $request->status;
         $media->comments = $request->comments;
-        if ($media->save()) {
-            return ['msg_type' => 'msg_success', 'msg_value' => 'Status updated.'];
-        }
+        if ($media->save()) return ['msg_type' => 'msg_success', 'msg_value' => 'Status updated.'];
         return ['msg_type' => 'msg_error', 'msg_value' => 'An error occured while udpate the status of the file.'];
     }
 
     //Saves the record of a newly inserted user in database
     public static function updateCategoryStatus($request)
     {
-
         if (Media::where('user_id', $request->user_id)
             ->where('category', $request->category)
             ->update([
@@ -225,9 +217,7 @@ class AdminService
         $cat = str_replace('-', '/', $cat);
         $updated = Media::where('user_id', $request->user_id)
             ->where('category', $cat)
-            ->update([
-                "cat_comments" => $request->cat_comments,
-            ]);
+            ->update(["cat_comments" => $request->cat_comments]);
         if ($updated) {
             CommonService::storeNotification("commented on $cat category", $request->user_id);
             return ['msg_type' => 'msg_success', 'msg_value' => 'Category comments saved.'];

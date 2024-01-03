@@ -2,25 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ApplicationRequest;
-use App\Http\Requests\IntakeFormRequest;
-use App\Models\Application;
-use App\Models\Contact;
-use App\Models\Info;
-use App\Models\IntakeForm;
-use App\Models\Project;
-use App\Models\Team;
-use App\Models\User;
-use App\Models\UserCategory;
+use App\Http\Requests\{ApplicationRequest,IntakeFormRequest};
+use App\Models\{Application,Contact,Info,IntakeForm,Project,Team,User,UserCategory};
 use App\Notifications\FileUploadNotification;
-use App\Services\AdminService;
-use App\Services\CommonService;
-use App\Services\UserService;
+use App\Services\{AdminService,CommonService,UserService};
 use Faker\Factory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\{Password,Validator,Auth};
 use Illuminate\View\View;
 
 class SuperAdminController extends Controller
@@ -112,37 +100,19 @@ class SuperAdminController extends Controller
         return view('admin.file.files', $data);
     }
 
-    //Showing documents for a user in specified category
-    // public function docs(Request $request, $id, $cat)
-    // {
-    //     if ($cat === "Loan Application") {
-    //         $id = User::find($id)->application()->first()->id;
-    //         return redirect(getAdminRoutePrefix() . '/application-show/' . $id);
-    //     } else {
-    //         $data = AdminService::docs($request, $id, $cat);
-    //         return view("admin.file.single-cat-docs", $data);
-    //     }
-    // }
-
     public function doApplication(ApplicationRequest $request)
     {
         $data = CommonService::doApplication($request);
         return redirect('/dashboard')->with($data['msg_type'], $data['msg_value']);
     }
-
     public function docs(Request $request, $id, $cat)
     {
         if ($cat == "Loan Application") {
             $user = User::find($id)->application()->first();
-            if ($user != null) {
-                return redirect(getAssociateRoutePrefix() . "/application-show/" . $user->id);
-            } else {
-                return redirect(getAssociateRoutePrefix() . "/application/" . $id);
-            }
-        } else {
-            $data = AdminService::docs($request, $id, $cat);
-            return view("admin.file.single-cat-docs", $data);
+            return redirect(getAssociateRoutePrefix() . ($user ? "/application-show/$user->id" :"/application/$id"));
         }
+        $data = AdminService::docs($request, $id, $cat);
+        return view("admin.file.single-cat-docs", $data);
     }
     //Updates the status of  a files
     public function updateFileStatus(Request $request, $id)
@@ -159,9 +129,7 @@ class SuperAdminController extends Controller
     //Updates the category comments of a file category
     public function updateCatComments(Request $request, $cat)
     {
-        $request->validate([
-            'user_id' => 'required',
-        ]);
+        $request->validate(['user_id' => 'required']);
         $msg = AdminService::updateCatComments($request, $cat);
         return back()->with($msg['msg_type'], $msg['msg_value']);
     }
