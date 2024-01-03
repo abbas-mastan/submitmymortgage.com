@@ -16,7 +16,8 @@ use App\Notifications\FileUploadNotification;
 use App\Services\AdminService;
 use App\Services\CommonService;
 use App\Services\UserService;
-use Faker\Factory;use Illuminate\Http\Request;
+use Faker\Factory;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
@@ -279,15 +280,15 @@ class AdminController extends Controller
 
     public function allUsers($id = null)
     {
-        
+
         $user = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
         $data['role'] = $user->role;
         $role = $user->role;
         $data['users'] = $user
             ->createdUsers()
             ->with(['createdBy'])
-            ->orWhere('company_id',$user->company_id)
-            ->whereIn('role', [($role === 'Processor' ? '':'Processor'),'Associate', 'Junior Associate', 'Borrower'])
+            ->orWhere('company_id', $user->company_id ?? -1)
+            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
             ->get();
         return view('admin.user.all-users', $data);
     }
@@ -300,7 +301,7 @@ class AdminController extends Controller
     }
 
     public function hideCategory(User $user, $cat)
-    {  
+    {
         $msg = CommonService::hideCategory($user, $cat);
         return back()->with($msg['msg_type'], $msg['msg_value']);
     }
@@ -331,7 +332,7 @@ class AdminController extends Controller
     public function uploadFilesView()
     {
         $user = User::with('attachments.user')->find(Auth::id());
-       return view('admin.file.upload-files',compact('user'));
+        return view('admin.file.upload-files', compact('user'));
     }
     public function uploadFiles(Request $request)
     {
@@ -508,18 +509,34 @@ class AdminController extends Controller
 
     public function contacts()
     {
-        if(Auth::user()->role === 'Admin'){
+        if (Auth::user()->role === 'Admin') {
 
             $data['contacts'] = Contact::with('user')->where('user_id', Auth::id())
-            ->orWhereHas('user', function ($query) {
-            $query->where('created_by', Auth::id());
-        })
-        ->get();
-    }else{
-        $data['contacts'] = Contact::with('user')->where('user_id',Auth::id())->get();
-    }
+                ->orWhereHas('user', function ($query) {
+                    $query->where('created_by', Auth::id());
+                })
+                ->get();
+        } else {
+            $data['contacts'] = Contact::with('user')->where('user_id', Auth::id())->get();
+        }
 
         return view('admin.newpages.contacts', $data);
+    }
+    public function connections()
+    {
+        $user = User::find(Auth::id()); // Assuming you have authenticated the admin
+        abort_if($user->role !== 'Admin',403,'You are not allowed to this part of the world!');
+        if (Auth::user()->role === 'Admin') {
+            $data['role'] = $user->role;
+            $data['connections'] = $user
+                ->createdUsers()
+                ->with(['createdBy'])
+                ->orWhere('company_id', $user->company_id ?? -1)
+                ->whereNotIn('role',['Admin','Super Admin'])
+                ->get(['name','email','created_by']);
+        }
+        return view('admin.newpages.connections', $data);
+
     }
 
     public function doContact(Request $request, $id = 0)
@@ -669,14 +686,14 @@ class AdminController extends Controller
 
     public function redirectTo($route, $message)
     {
-     return CommonService::redirectTo($route,$message);
+        return CommonService::redirectTo($route, $message);
     }
 
     public function doAssociate(Request $request)
     {
         $validator = Validator::make($request->only(['AssociateName', 'AssociateEmail']), [
             'AssociateEmail' => 'required|email:rfc,dns|unique:users,email',
-            'AssociateName' => ''
+            'AssociateName' => '',
         ]);
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
@@ -706,8 +723,8 @@ class AdminController extends Controller
 
     public function verifyUser(User $user)
     {
-        $user->email_verified_at= now();
+        $user->email_verified_at = now();
         $user->save();
-        return back()->with('msg_success','User verified successfully');
+        return back()->with('msg_success', 'User verified successfully');
     }
 }

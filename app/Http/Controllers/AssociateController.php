@@ -2,30 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Info;
-use App\Models\Team;
-use App\Models\User;
-use App\Models\Contact;
-use App\Models\Project;
-use App\Models\Application;
-use App\Models\UserCategory;
-use Illuminate\Http\Request;
-use App\Services\UserService;
-use App\Services\AdminService;
-use App\Services\CommonService;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\RedirectResponse;
+use App\Models\{Info,Team,User,Contact,Project,Application,UserCategory};
+use App\Services\{UserService,AdminService,CommonService};
+use Illuminate\Support\Facades\{Auth,Validator};
+use Illuminate\Http\{Request,RedirectResponse};
 use App\Http\Requests\ApplicationRequest;
-use Illuminate\Support\Facades\Validator;use Illuminate\View\View;
+use Illuminate\View\View;
 
 class AssociateController extends Controller
 {
-    public function profile(Request $request)
-    {
-        $data[''] = '';
-        return view('admin.profile.profile', $data);
-    }
-
     public function doProfile(Request $request)
     {
         $msg = CommonService::doProfile($request);
@@ -112,7 +97,7 @@ class AssociateController extends Controller
 
     public function allUsers($id = null)
     {
-        $user = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
+        $user = $id ? User::where('id', $id)->first() : Auth::user();
         $role = $user->role;
         $data['users'] = $user->createdUsers()
         ->with('createdBy')->orWhere('company_id',$user->company_id)

@@ -87,6 +87,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::get('delete-team/{team}', [AdminController::class, 'deleteTeam']);
     Route::get('new-users', [AdminController::class, 'newusers']);
     Route::get('contacts', [AdminController::class, 'contacts']);
+    Route::get('connections', [AdminController::class, 'connections']);
     Route::post('savepdf', [AdminController::class, 'savepdf']);
     Route::get('/delete-contact/{contact}', [AdminController::class, 'deleteContact']);
     Route::post('/do-contact/{id?}', [AdminController::class, 'doContact']);

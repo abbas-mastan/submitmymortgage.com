@@ -680,4 +680,11 @@ class SuperAdminController extends Controller
         $user->save();
         return back()->with('msg_success','User verified successfully');
     }
+
+    public function connections()
+    {
+        $data['connections'] = User::with('createdBy')->whereNotIn('role',['Admin','Super Admin'])->get(['name','email','created_by']);
+        return view('admin.newpages.connections', $data);
+
+    }
 }
