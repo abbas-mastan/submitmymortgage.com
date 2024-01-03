@@ -4,7 +4,8 @@
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
  @endsection
 @section('content')
-    <div class="flex-wrap flex-shrink-0 w-full">
+@include('parts.connection-modal-form')
+<div class="flex-wrap flex-shrink-0 w-full">
         <x-flex-card title="Connections" titlecounts="{{ count($connections) }}" iconurl="{{ asset('icons/Marketing.svg') }}" />
         <table class="w-full pt-7" id="deleted-table">
             <thead class="bg-gray-300">
@@ -36,9 +37,14 @@
                             {{$loop->index+1}}
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
-                            <a title="Click to edit contact" class="text-blue-500 inline"
+                            <a title="Click to edit connection" class="text-blue-500 inline"
                                 {{-- href="{{ url(getRoutePrefix() . '/contact/' . $connection->id) }}" --}}>
                                 {{ $connection->name }}
+                                <button class="editConnection" data-connection-id="{{ $connection->id }}"
+                                    data-connection-name="{{ $connection->name }}" data-connection-email="{{ $connection->email }}"
+                                    data-connection-role="{{ $connection->role }}">
+                                    <img src="{{ asset('icons/pencil.svg') }}" alt="edit-icon">
+                                </button>
                             </a>
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
@@ -70,4 +76,21 @@
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <script>
+        $('.editConnection ,.closeModal').click(function(e) {
+            $('#newProjectModal').toggleClass('hidden');
+            e.preventDefault();
+
+            $('.contactForm').attr('action', $('.contactForm').attr('action') + "/" + $(this).attr(
+                'data-connection-id'));
+            $('#name').val($(this).attr('data-connection-name'));
+            $('#email').val($(this).attr('data-connection-email'));
+            var role = $('#role').val($(this).attr('data-connection-role'));
+            $('.contactForm button[type="submit"]').text('Update');
+            // Find the option with the matching value and set it as selected
+            $('#role option').filter(function() {
+                return $(this).val() == role;
+            }).prop('selected', true);
+        });
+    </script>
 @endsection

@@ -21,93 +21,91 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     //==============================
     //==========User related routes
     //==============================
-    Route::get('/users', [AdminController::class, 'users']);
-    Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
-    Route::get('/add-user/{userId}', [AdminController::class, 'addUser']);
-    Route::post('/do-user/{userId}', [AdminController::class, 'doUser']);
-    Route::get('/delete-user/{userId}', [AdminController::class, 'deleteUser']);
-    Route::get('/delete-user-permenant/{user}', [AdminController::class, 'deleteUserPermenant'])->withTrashed();
-    Route::get('/restore-user/{user}', [AdminController::class, 'restoreUser'])->withTrashed();
-    Route::get('/verify-user/{user}', [AdminController::class, 'verifyUser']);
+    Route::group(['controller'=> AdminController::class],function(){
 
+        Route::get('/users', 'users');
+        Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+        Route::get('/add-user/{userId}', 'addUser');
+        Route::post('/do-user/{userId}', 'doUser');
+        Route::get('/delete-user/{userId}', 'deleteUser');
+        Route::get('/delete-user-permenant/{user}', 'deleteUserPermenant')->withTrashed();
+    Route::get('/restore-user/{user}', 'restoreUser')->withTrashed();
+    Route::get('/verify-user/{user}', 'verifyUser');
+    
     //==============================
     //==========Files related routes
     //==============================
-    Route::get('/file-cat/{id}', [AdminController::class, 'filesCat']);
-    Route::get('/files/{id?}', [AdminController::class, 'files']);
-    Route::get('/docs/{id}/{cat}', [AdminController::class, 'docs']);
-    Route::get('/update-file-status/{fileId}', [AdminController::class, 'updateFileStatus']);
-    Route::post('/update-category-status', [AdminController::class, 'updateCategoryStatus']);
-    Route::post('/update-cat-comments/{cat}', [AdminController::class, 'updateCatComments']);
-    Route::get('/delete-file/{id}', [AdminController::class, 'deleteFile']);
-    Route::post('/file-upload', [AdminController::class, 'fileUpload']);
-    Route::get('/application/{id?}', [AdminController::class, 'application']);
-    Route::get('/applications', [AdminController::class, 'applications']);
-    Route::post('/do-application', [AdminController::class, 'doApplication']);
-    Route::get('/application-show/{application}', [AdminController::class, 'applicationShow']);
-    Route::get('/application-edit/{application}', [AdminController::class, 'applicationEdit']);
-    Route::post('/application-update/{application}', [AdminController::class, 'applicationUpdate']);
-    Route::get('/application-update-status/{application}/{status?}', [AdminController::class, 'applicationUpdateStatus']);
-    Route::get('/application-delete/{application}', [AdminController::class, 'deleteApplication']);
-    Route::get('/leads', [AdminController::class, 'allLeads']);
-    Route::get('/lead/{user}', [AdminController::class, 'lead']);
-    Route::get('/delete-lead/{info}', [AdminController::class, 'deleteLead']);
-    Route::get('/basic-info', [AdminController::class, 'basicInfo']);
+    Route::get('/file-cat/{id}', 'filesCat');
+    Route::get('/files/{id?}', 'files');
+    Route::get('/docs/{id}/{cat}', 'docs');
+    Route::get('/update-file-status/{fileId}', 'updateFileStatus');
+    Route::post('/update-category-status', 'updateCategoryStatus');
+    Route::post('/update-cat-comments/{cat}', 'updateCatComments');
+    Route::get('/delete-file/{id}', 'deleteFile');
+    Route::post('/file-upload', 'fileUpload');
+    Route::get('/application/{id?}', 'application');
+    Route::get('/applications', 'applications');
+    Route::post('/do-application', 'doApplication');
+    Route::get('/application-show/{application}', 'applicationShow');
+    Route::get('/application-edit/{application}', 'applicationEdit');
+    Route::post('/application-update/{application}', 'applicationUpdate');
+    Route::get('/application-update-status/{application}/{status?}', 'applicationUpdateStatus');
+    Route::get('/application-delete/{application}', 'deleteApplication');
+    Route::get('/leads', 'allLeads');
+    Route::get('/lead/{user}', 'lead');
+    Route::get('/delete-lead/{info}', 'deleteLead');
+    Route::get('/basic-info', 'basicInfo');
     Route::post('/do-info', [UserController::class, 'doInfo']);
     #all users
-    Route::get('/all-users/{id?}', [AdminController::class, 'allUsers']);
-    Route::get('/hide-cat/{user}/{cat}', [AdminController::class, 'hideCategory'])->where('cat', '(.*)');
-    Route::post('/login-as-this-user', [AdminController::class, 'LoginAsThisUser']);
-    Route::post('/add-category/{user?}', [AdminController::class, 'addCategoryToUser']);
-    Route::get('/delete-category/{user?}/{cat}', [AdminController::class, 'deleteCategory']);
+    Route::get('/all-users/{id?}', 'allUsers');
+    Route::get('/hide-cat/{user}/{cat}', 'hideCategory')->where('cat', '(.*)');
+    Route::post('/login-as-this-user', 'LoginAsThisUser');
+    Route::post('/add-category/{user?}', 'addCategoryToUser');
+    Route::get('/delete-category/{user?}/{cat}', 'deleteCategory');
     //==============================
     //==========Profile related routes
     //==============================
-    Route::get('/profile', [AdminController::class, 'profile']);
-    Route::post('/do-profile', [AdminController::class, 'doProfile']);
-
-    Route::get('/disconnect-google', [AdminController::class, 'disconnectGoogle'])->name('disconnect.google');
-    Route::get('/excel', [AdminController::class, 'excel']);
-    Route::post('/spreadsheet', [AdminController::class, 'spreadsheet']);
-    Route::get('/upload-files', [AdminController::class, 'uploadFilesView']);
-    Route::post('/upload-files', [AdminController::class, 'uploadFiles']);
-    Route::post('/export-contacts', [AdminController::class, 'exportContactsToExcel']);
-
+    Route::get('/profile', 'profile');
+    Route::post('/do-profile', 'doProfile');
+    
+    Route::get('/disconnect-google', 'disconnectGoogle')->name('disconnect.google');
+    Route::get('/excel', 'excel');
+    Route::post('/spreadsheet', 'spreadsheet');
+    Route::get('/upload-files', 'uploadFilesView');
+    Route::post('/upload-files', 'uploadFiles');
+    Route::post('/export-contacts', 'exportContactsToExcel');
+    
     //=============================================
     //=============> new Design Routes
     //=============================================
-    Route::get('projects', [AdminController::class, 'projects']);
-    Route::post('store-project', [AdminController::class, 'storeProject']);
-    Route::get('/getUsersByTeam/{team}', [AdminController::class, 'getUsersByTeam']);
-    Route::get('/getUsersByProcessor/{id}/{teamid}', [AdminController::class, 'getUsersByProcessor']);
-    Route::get('teams', [AdminController::class, 'teams']);
-    Route::get('delete-user-from-team/{team}/{user}', [AdminController::class, 'deleteTeamMember']);
-    Route::get('delete-project-user/{project}/{user}', [AdminController::class, 'deleteProjectUser']);
-    Route::post('teams/{id?}', [AdminController::class, 'storeteam']);
-    Route::get('delete-team/{team}', [AdminController::class, 'deleteTeam']);
-    Route::get('new-users', [AdminController::class, 'newusers']);
-    Route::get('contacts', [AdminController::class, 'contacts']);
-    Route::get('connections', [AdminController::class, 'connections']);
-    Route::post('savepdf', [AdminController::class, 'savepdf']);
-    Route::get('/delete-contact/{contact}', [AdminController::class, 'deleteContact']);
-    Route::post('/do-contact/{id?}', [AdminController::class, 'doContact']);
-    Route::get('project-overview/{id?}', [AdminController::class, 'projectOverview']);
-    Route::post('/share-items', [AdminController::class, 'shareItemWithAssistant']);
-    Route::get('sortby/{id?}/{sortby?}', [AdminController::class, 'projectOverview']);
+    Route::get('projects', 'projects');
+    Route::post('store-project', 'storeProject');
+    Route::get('/getUsersByTeam/{team}', 'getUsersByTeam');
+    Route::get('/getUsersByProcessor/{id}/{teamid}', 'getUsersByProcessor');
+    Route::get('teams', 'teams');
+    Route::get('delete-user-from-team/{team}/{user}', 'deleteTeamMember');
+    Route::get('delete-project-user/{project}/{user}', 'deleteProjectUser');
+    Route::post('teams/{id?}', 'storeteam');
+    Route::get('delete-team/{team}', 'deleteTeam');
+    Route::get('new-users', 'newusers');
+    Route::get('contacts', 'contacts');
+    Route::get('connections', 'connections');
+    Route::get('/delete-connection/{user}', 'deleteConnection');
+    Route::post('savepdf', 'savepdf');
+    Route::get('/delete-contact/{contact}', 'deleteContact');
+    Route::post('/do-contact/{id?}', 'doContact');
+    Route::get('project-overview/{id?}', 'projectOverview');
+    Route::post('/share-items', 'shareItemWithAssistant');
+    Route::get('sortby/{id?}/{sortby?}', 'projectOverview');
     // this route is for updating status to disable or close the project
-    Route::get('project/{status}/{project}', [AdminController::class, 'changeProjectStatus']);
+    Route::get('project/{status}/{project}', 'changeProjectStatus');
     // this route is for mark as read the notification
-    Route::get('/mark-as-read/{id}', [AdminController::class, 'markAsRead']);
-    Route::get('/remove-access/{user}', [AdminController::class, 'removeAcess']);
-    Route::post('/submit-intake-form', [AdminController::class, 'submitIntakeForm']);
-    Route::post('/do-associate', [AdminController::class, 'doAssociate']);
-    Route::post('/get-associates', [AdminController::class, 'getAssociates']);
-    Route::get('/redirect/{route}/{message}', [AdminController::class, 'redirectTo']);
+    Route::get('/mark-as-read/{id}', 'markAsRead');
+    Route::get('/remove-access/{user}', 'removeAcess');
+    Route::post('/submit-intake-form', 'submitIntakeForm');
+    Route::post('/do-associate', 'doAssociate');
+    Route::post('/get-associates', 'getAssociates');
+    Route::get('/redirect/{route}/{message}', 'redirectTo');
     
 });
-Route::prefix(getAdminRoutePrefix())->group(function () {
-    //==============================
-    //==========Ajax routes
-    //==============================
-    //College related stuff
 });

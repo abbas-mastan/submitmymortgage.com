@@ -48,12 +48,11 @@ class AdminService
     public static function doUser(Request $request, $id)
     {
         $isNewUser = ($id == -1);
-        $authrole = Auth::user()->role;
         if (!$request->ajax()) { 
             $request->validate([
                 'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
                 'name' => "required",
-                'company' => ($authrole == 'Super Admin') ? 'required': '',
+                'company' => (Auth::user()->role == 'Super Admin') ? 'sometimes:required': '',
                 'sendemail' => '',
                 'password' => ($isNewUser && !$request->sendemail) ? 'required|min:8|confirmed' : '',
                 'role' =>

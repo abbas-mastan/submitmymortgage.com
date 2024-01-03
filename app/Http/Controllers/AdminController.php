@@ -533,10 +533,16 @@ class AdminController extends Controller
                 ->with(['createdBy'])
                 ->orWhere('company_id', $user->company_id ?? -1)
                 ->whereNotIn('role',['Admin','Super Admin'])
-                ->get(['name','email','role','created_by']);
+                ->get(['id','name','email','role','created_by']);
         }
         return view('admin.newpages.connections', $data);
 
+    }
+    public function deleteConnection(User $user) 
+    {
+        abort_if(Auth::user()->role !== 'Admin',403,'You are not allowed to this part of the world!');
+        $user->delete();
+        return back()->with('msg_success','Connection deleted successfully');
     }
 
     public function doContact(Request $request, $id = 0)

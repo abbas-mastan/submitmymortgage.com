@@ -53,12 +53,11 @@ class SuperAdminController extends Controller
 
     public function LoginAsThisUser(Request $request)
     {
-        $id = Auth::id();
         $user = User::where('id', $request->user_id)->where('role', '<>', 'Super Admin')->first();
         Auth::login($user);
         $request->session()->regenerate();
         $request->session()->put('role', $user->role);
-        $request->session()->put('reLogin', $id);
+        $request->session()->put('reLogin', Auth::id());
         $request->session()->put('url', url()->previous());
         return redirect('/dashboard');
     }
@@ -66,10 +65,7 @@ class SuperAdminController extends Controller
     public function ReLoginFrom(Request $request)
     {
         $user = User::where('id', $request->user_id)->where('role', 'Super Admin')->first();
-        if (!$user) {
-            abort(403, 'You are not allowed to this part of the world!');
-        }
-
+        abort_if(!$user,403, 'You are not allowed to this part of the world!');
         Auth::login($user);
         $request->session()->forget('reLogin');
         $request->session()->regenerate();
@@ -85,19 +81,14 @@ class SuperAdminController extends Controller
 
     public function restoreUser(User $user)
     {
-        if (Auth::user()->role !== 'Super Admin') {
-            abort(403, 'you are not allowed to restore user');
-        }
-
+        abort_if(Auth::user()->role !== 'Super Admin',403, 'you are not allowed to restore user');
         $user->restore();
         return back()->with('msg_success', 'User restored successfully');
     }
 
     public function deleteUserPermenant(User $user)
     {
-        if (Auth::user()->role !== 'Super Admin') {
-            abort(403, 'you are not allowed to to permenantly delete user');
-        }
+        abort_if(Auth::user()->role !== 'Super Admin',403, 'you are not allowed to to permenantly delete user');
         $user->forceDelete();
         return back()->with('msg_success', 'User permenantly deleted successfully');
     }
@@ -683,8 +674,15 @@ class SuperAdminController extends Controller
 
     public function connections()
     {
-        $data['connections'] = User::with('createdBy')->whereNotIn('role',['Admin','Super Admin'])->get(['name','email','role','created_by']);
+        $data['connections'] = User::with('createdBy')
+        ->whereNotIn('role',['Admin','Super Admin'])
+        ->get(['id','name','email','role','company_id','created_by']);
         return view('admin.newpages.connections', $data);
+    }
 
+    public function deleteConnection(User $user) 
+    {
+        $user->delete();
+        return back()->with('msg_success','Connection deleted successfully');
     }
 }
