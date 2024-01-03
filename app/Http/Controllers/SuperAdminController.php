@@ -683,7 +683,7 @@ class SuperAdminController extends Controller
 
     public function connections()
     {
-        $data['connections'] = User::with('createdBy')->whereNotIn('role',['Admin','Super Admin'])->get(['name','email','created_by']);
+        $data['connections'] = User::with('createdBy')->whereNotIn('role',['Admin','Super Admin'])->get(['name','email','role','created_by']);
         return view('admin.newpages.connections', $data);
 
     }
