@@ -2,17 +2,7 @@
 @section('head')
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="//cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
-    <style>
-        #file {
-            display: none;
-        }
-
-        #deleted-table_length,
-        #user-table_length {
-            display: none;
-        }
-    </style>
-@endsection
+ @endsection
 @section('content')
     <div class="flex-wrap flex-shrink-0 w-full">
         <x-flex-card title="Connections" titlecounts="{{ count($connections) }}" iconurl="{{ asset('icons/Marketing.svg') }}" />
@@ -52,7 +42,7 @@
                             {{ $connection->email }}
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
-                            {{ $connection->createdBy->name }} | {{$connection->createdBy->role}}
+                            {{ $connection->createdBy->name ?? null }} | {{$connection->createdBy->role ?? null}}
                         </td>
                         <td class=" pl-2 tracking-wide border border-r-0">
                             <a data="Delete" class="delete"
