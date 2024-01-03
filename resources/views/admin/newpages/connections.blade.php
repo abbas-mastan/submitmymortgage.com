@@ -49,7 +49,9 @@
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
                             @if($connection->createdBy())
-                            {{ $connection->createdBy->name ?? null }}{{$connection->createdBy->name !== null ? ' | ':''}}{{$connection->createdBy->role ?? null}}
+                            {{ $connection->createdBy->name ?? null }}
+                            {{$connection->createdBy->name !== null ? ' | ':''}}
+                            {{$connection->createdBy->role ?? null}}
                             @endif
                         </td>
                         <td class=" pl-2 tracking-wide border border-r-0">
