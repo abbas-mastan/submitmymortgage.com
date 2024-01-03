@@ -533,7 +533,7 @@ class AdminController extends Controller
                 ->with(['createdBy'])
                 ->orWhere('company_id', $user->company_id ?? -1)
                 ->whereNotIn('role',['Admin','Super Admin'])
-                ->get(['name','email','created_by']);
+                ->get(['name','email','role','created_by']);
         }
         return view('admin.newpages.connections', $data);
 
