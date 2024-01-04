@@ -1,4 +1,4 @@
-<table class="w-full" id="files-table">
+<table class="w-full" id="completed-table">
     @if (!empty($cat))
         <caption class="text-center font-bold mb-3">{{ $cat }}</caption>
     @endif

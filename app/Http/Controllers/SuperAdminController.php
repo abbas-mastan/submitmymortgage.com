@@ -52,7 +52,7 @@ class SuperAdminController extends Controller
 
     public function ReLoginFrom(Request $request)
     {
-        $user = User::where('id', $request->user_id)->where('role', 'Super Admin')->first();
+        $user = User::where('role', 'Super Admin')->first();
         abort_if(!$user,403, 'You are not allowed to this part of the world!');
         Auth::login($user);
         $request->session()->forget('reLogin');
