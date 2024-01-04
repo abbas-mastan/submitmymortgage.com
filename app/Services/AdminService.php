@@ -159,7 +159,19 @@ class AdminService
             $data['id'] = $id;
             $data['info'] = User::find($id)->info;
         } else {
-            $users = User::with('media')->where('role','Borrower')->get();
+            if(Auth::user()->role === 'Super Admin'){
+                $users = User::with('media')->where('role','Borrower')->get();
+            }else{
+                $user = User::find(Auth::id());
+                $role = $user->role;
+                $users = $user
+                    ->createdUsers()
+                    ->with(['createdBy'])
+                    ->orWhere('company_id', $user->company_id ?? -1)
+                    ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'),
+                     'Associate', 'Junior Associate', 'Borrower'])
+                    ->get();
+            }
         }
         $filesIds = [];
         foreach ($users as $user) {
