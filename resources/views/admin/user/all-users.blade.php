@@ -237,13 +237,15 @@
                         <td class="deletedSerial pl-2 tracking-wide border border-l-0">{{ $serialNumber }}
                         </td>
                         <td class="pl-2 tracking-wide border border-l-0">
-                            <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}">
+                            <a title="Click to view files uploaded by this user" 
+                            class="text-blue-500 inline"
+                                {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}
+                                >
                                 {{ $processor->name }}
                             </a>
-                            <a title="Edit this user" href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
+                            {{-- <a title="Edit this user" href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
                                 <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
-                            </a>
+                            </a> --}}
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
                             {{ $processor->email }}

@@ -241,7 +241,7 @@ class SuperAdminController extends Controller
     public function allUsers($id = null)
     {
         $user = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
-        if ($user->role === 'Super Admin') {
+        if ($user && $user->role === 'Super Admin') {
             $data['role'] = $user->role;
             $data['users'] = User::with(['createdBy', 'createdUsers'])
                 ->where('role', '!=', 'Super Admin')
