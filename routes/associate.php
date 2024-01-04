@@ -25,6 +25,7 @@ Route::group(
 
         Route::get('/delete-user/{userId}', 'deleteUser');
         Route::post('/file-upload', 'fileUpload');
+        Route::get('/files/{id?}', 'files');
         Route::post('/update-category-status', 'updateCategoryStatus');
         Route::get('/delete-file/{id}', 'deleteFile');
         Route::get('/disconnect-google', 'disconnectGoogle')->name('disconnect.google');

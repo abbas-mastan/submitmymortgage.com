@@ -161,16 +161,31 @@ class AdminService
         } else {
             if(Auth::user()->role === 'Super Admin'){
                 $users = User::with('media')->where('role','Borrower')->get();
-            }else{
+            }elseif(Auth::user()->role === 'Admin'){
                 $user = User::find(Auth::id());
                 $role = $user->role;
                 $users = $user
                     ->createdUsers()
-                    ->with(['createdBy'])
+                    ->with(['createdBy','media'])
                     ->orWhere('company_id', $user->company_id ?? -1)
-                    ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'),
-                     'Associate', 'Junior Associate', 'Borrower'])
+                    ->whereIn('role', [
+                        ($role === 'Super Admin' || $role === 'Admin' ?'Processor' : ''),
+                        ($role === 'Super Admin' || $role === 'Admin' || $role === 'Processor' ?'Associate':''),
+                        ($role === 'Super Admin' || $role === 'Admin' || $role === 'Processor' || $role === 'Associate' ? 'Junior Associate' : ''), 'Borrower'])
                     ->get();
+            }else{
+                $admin = Auth::user();
+                $teams = Team::where('owner_id', $admin->id)
+                ->with(['users.createdBy','users.media'])
+                ->orWhereHas('users', function ($query) use ($admin) {
+                    $query->where('user_id', $admin->id);
+                })
+                ->get();
+                $users = [];
+                foreach ($teams as $team) {
+                    $users = $team->users;
+                }
+            
             }
         }
         $filesIds = [];

@@ -101,6 +101,11 @@ class AssociateController extends Controller
         return view('admin.user.all-users', $data);
     }
 
+    public function files(Request $request, $id = -1)
+    {
+        $data = AdminService::files($request, $id);
+        return view('admin.file.files', $data);
+    }
     public function deleteUser(Request $request, $id)
     {
         $msg = AdminService::deleteUser($request, $id);
