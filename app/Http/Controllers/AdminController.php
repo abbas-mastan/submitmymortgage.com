@@ -287,7 +287,7 @@ class AdminController extends Controller
         $data['users'] = $user
             ->createdUsers()
             ->with(['createdBy'])
-            ->orWhere('company_id', $user->company_id ?? -1)
+            ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
             ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
             ->get();
         return view('admin.user.all-users', $data);
