@@ -372,13 +372,6 @@
         //     $('#jrAssociate_error').text('Please select at least one associate');
         //     return;
         // } else removeError('jrAssociate');
-
-        if ($('#jrAssociateManager').val() === '') {
-            showError('jrAssociateManager');
-            return;
-        } else {
-            removeError('jrAssociateManager');
-        }
         $('#teamForm').submit();
     });
 

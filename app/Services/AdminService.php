@@ -2,27 +2,28 @@
 
 namespace App\Services;
 
-use Faker\Factory;
-use App\Models\Info;
-use App\Models\Team;
-use App\Models\User;
-use App\Models\Media;
-use App\Models\Contact;
+use App\Mail\AssistantMail;
 use App\Models\Assistant;
 use App\Models\Attachment;
-use App\Mail\AssistantMail;
 use App\Models\Company;
-use Illuminate\Support\Str;
+use App\Models\Contact;
+use App\Models\Info;
+use App\Models\Media;
+use App\Models\Project;
+use App\Models\Team;
+use App\Models\User;
+use Faker\Factory;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 
 class AdminService
 {
@@ -35,9 +36,16 @@ class AdminService
     //Shows input for adding a user
     public static function addUser(Request $request, $id)
     {
-        if ($id == -1) $user = new User();
-        else $user = User::find($id);
-        if(Auth::user()->role === 'Super Admin') $data['companies'] = Company::get();
+        if ($id == -1) {
+            $user = new User();
+        } else {
+            $user = User::find($id);
+        }
+
+        if (Auth::user()->role === 'Super Admin') {
+            $data['companies'] = Company::get();
+        }
+
         $data['user'] = $user;
         $data["active"] = "user";
         return $data;
@@ -47,11 +55,11 @@ class AdminService
     public static function doUser(Request $request, $id)
     {
         $isNewUser = ($id == -1);
-        if (!$request->ajax()) { 
+        if (!$request->ajax()) {
             $request->validate([
                 'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
                 'name' => "required",
-                'company' => (Auth::user()->role == 'Super Admin') ? 'sometimes:required': '',
+                'company' => (Auth::user()->role == 'Super Admin') ? 'sometimes:required' : '',
                 'sendemail' => '',
                 'password' => ($isNewUser && !$request->sendemail) ? 'required|min:8|confirmed' : '',
                 'role' =>
@@ -64,8 +72,11 @@ class AdminService
         $user = $isNewUser ? new User() : User::findOrFail($id);
         if ($isNewUser && $request->sendmail) {
             $msg = "Registered. A verification link has been sent. You need to verify your email before login. Please, check your email.";
-        } elseif ($isNewUser && !$request->sendmail) $msg = "User created successfully";
-         else $msg = "User updated successfully";
+        } elseif ($isNewUser && !$request->sendmail) {
+            $msg = "User created successfully";
+        } else {
+            $msg = "User updated successfully";
+        }
 
         $user->fill($request->only(['email', 'name']));
         $user->password = $request->filled('password') ?
@@ -84,9 +95,9 @@ class AdminService
             $user->loan_type = $request->loan_type;
         }
 
-        if(!$request->company && Auth::user()->role !== 'Super Admin') {
+        if (!$request->company && Auth::user()->role !== 'Super Admin') {
             $user->company_id = Auth::user()->company_id;
-        }else{
+        } else {
             $user->company_id = $request->company;
         }
 
@@ -96,7 +107,10 @@ class AdminService
             if (session('role') != null && $isNewUser) {
                 Password::sendResetLink($request->only('email'));
                 Password::RESET_LINK_SENT;
-            } else event(new Registered($user));
+            } else {
+                event(new Registered($user));
+            }
+
         }
 
         if ($request->role === 'Borrower') {
@@ -107,7 +121,10 @@ class AdminService
             $contact->user_id = Auth::id();
             $contact->save();
         }
-        if ($request->ajax()) return $user->id;
+        if ($request->ajax()) {
+            return $user->id;
+        }
+
         return ['msg_type' => 'msg_success', 'msg_value' => $msg];
     }
 
@@ -132,7 +149,10 @@ class AdminService
     public static function deleteUser(Request $request, $id)
     {
         $user = User::find($id);
-        if ($user->delete()) return ['msg_type' => 'msg_success', 'msg_value' => 'User deleted.'];
+        if ($user->delete()) {
+            return ['msg_type' => 'msg_success', 'msg_value' => 'User deleted.'];
+        }
+
         return ['msg_type' => 'msg_error', 'msg_value' => 'An error occured while deleting the user.'];
     }
     //============================
@@ -154,38 +174,47 @@ class AdminService
     //Shows input for adding a user
     public static function files(Request $request, $id)
     {
+        $role = Auth::user()->role;
         if ($id !== -1) {
-            $users = User::with('media')->where('role','Borrower')->where('id', $id)->get();
+            $users = User::with('media')->where('role', 'Borrower')->where('id', $id)->get();
             $data['id'] = $id;
             $data['info'] = User::find($id)->info;
         } else {
-            if(Auth::user()->role === 'Super Admin'){
-                $users = User::with('media')->where('role','Borrower')->get();
-            }elseif(Auth::user()->role === 'Admin'){
+            if (Auth::user()->role === 'Super Admin') {
+                $users = User::with('media')->where('role', 'Borrower')->get();
+            } elseif ($role === 'Admin') {
                 $user = User::find(Auth::id());
                 $role = $user->role;
                 $users = $user
                     ->createdUsers()
-                    ->with(['createdBy','media'])
+                    ->with(['createdBy', 'media'])
                     ->orWhere('company_id', $user->company_id ?? -1)
-                    ->whereIn('role', [
-                        ($role === 'Super Admin' || $role === 'Admin' ?'Processor' : ''),
-                        ($role === 'Super Admin' || $role === 'Admin' || $role === 'Processor' ?'Associate':''),
-                        ($role === 'Super Admin' || $role === 'Admin' || $role === 'Processor' || $role === 'Associate' ? 'Junior Associate' : ''), 'Borrower'])
+                    ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
                     ->get();
-            }else{
+            } elseif ($role === 'Processor') {
                 $admin = Auth::user();
                 $teams = Team::where('owner_id', $admin->id)
-                ->with(['users.createdBy','users.media'])
-                ->orWhereHas('users', function ($query) use ($admin) {
-                    $query->where('user_id', $admin->id);
-                })
-                ->get();
+                    ->with(['users.createdBy', 'users.media'])
+                    ->orWhereHas('users', function ($query) use ($admin) {
+                        $query->where('user_id', $admin->id);
+                    })
+                    ->get();
                 $users = [];
                 foreach ($teams as $team) {
-                    $users = $team->users;
+                    $users[] = $team->users;
                 }
-            
+            } else {
+                $admin = Auth::user();
+                $projects = Project::where('created_by', $admin->id)
+                    ->orWhereHas('users', function ($query) use ($admin) {
+                        $query->where('users.id', $admin->id);
+                    })
+                    ->with(['users.createdBy', 'borrower.createdBy','users.media'])
+                    ->get();
+                $users = [];
+                foreach ($projects as $project) {
+                    $users[] = $project->borrower;
+                }
             }
         }
         $filesIds = [];
@@ -220,7 +249,10 @@ class AdminService
         $media = Media::find($id);
         $media->status = $request->status;
         $media->comments = $request->comments;
-        if ($media->save()) return ['msg_type' => 'msg_success', 'msg_value' => 'Status updated.'];
+        if ($media->save()) {
+            return ['msg_type' => 'msg_success', 'msg_value' => 'Status updated.'];
+        }
+
         return ['msg_type' => 'msg_error', 'msg_value' => 'An error occured while udpate the status of the file.'];
     }
 
@@ -314,7 +346,7 @@ class AdminService
             // 'processor' => 'required|exists:users,id',
             // 'associate' => 'required|exists:users,id',
             // 'jrAssociate' => 'required|exists:users,id',
-            'jrAssociateManager' => 'required',
+            // 'jrAssociateManager' => 'required',
         ]);
 
         if ($id) {
