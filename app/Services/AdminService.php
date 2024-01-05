@@ -181,7 +181,7 @@ class AdminService
             $data['info'] = User::find($id)->info;
         } else {
             if (Auth::user()->role === 'Super Admin') {
-                $users = User::with(['media','user'])->where('role', 'Borrower')->get();
+                $users = User::with(['media.user',])->where('role', 'Borrower')->get();
             } elseif ($role === 'Admin') {
                 $user = User::find(Auth::id());
                 $role = $user->role;
@@ -200,7 +200,6 @@ class AdminService
                     })
                     ->get();
                     $users = collect(); // Initialize a collection to store users
-
                     foreach ($teams as $team) {
                         $users = $users->merge($team->users); // Merge users into the collection
                     }
