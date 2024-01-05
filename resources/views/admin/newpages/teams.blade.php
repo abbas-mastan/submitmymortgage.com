@@ -128,7 +128,7 @@
                     @endforeach
                 </tbody>
             </table>
-            @if ($team->owner_id === Auth::id() || $currentrole === $superadminrole)
+            @if ($team->owner_id == Auth::id() || $currentrole === $superadminrole)
             <div class="mt-5">
                 <a data="{{ $team->disable ? 'Enable' : 'Disable' }}" class="delete"
                     href="{{ url(getRoutePrefix() . '/delete-team/' . $team->id) }}">
