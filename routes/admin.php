@@ -106,6 +106,9 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::post('/do-associate', 'doAssociate');
     Route::post('/get-associates', 'getAssociates');
     Route::get('/redirect/{route}/{message}', 'redirectTo');
+
+
+    Route::get('/delete-attachment/{id}', 'deleteAttachment');
     
 });
 });

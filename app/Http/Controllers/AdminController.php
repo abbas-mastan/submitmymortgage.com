@@ -310,7 +310,11 @@ class AdminController extends Controller
         $msg = CommonService::deleteCategory($user, $cat);
         return back()->with($msg['msg_type'], $msg['msg_value']);
     }
-
+    public function deleteAttachment(Request $request, $id)
+    {
+        $msg = AdminService::deleteAttachment($request, $id);
+        return back()->with($msg['msg_type'], $msg['msg_value']);
+    }
     public function addCategoryToUser(Request $request, User $user)
     {
         if (in_array(ucwords($request->name), config('smm.file_category')) || $request->name == "id/driver's license") {
