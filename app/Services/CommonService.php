@@ -52,7 +52,7 @@ class CommonService
                 $media->file_extension = $attachment->file_extension;
                 $media->category = $request->input('category');
                 $media->user_id = $request->input('id') ?? $attachment->user_id;
-                $media->uploaded_by = $attachment->uploaded_by;
+                $media->uploaded_by = Auth::id();
                 try {
                     Storage::copy($attachment->file_path, getFileDirectory() . $uniqueName);
                     self::storeNotification("Uploaded $request->category", $request->id ?? $attachment->user_id);

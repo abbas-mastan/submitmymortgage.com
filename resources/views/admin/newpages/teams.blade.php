@@ -102,13 +102,14 @@
                                 @endif
                             </td>
                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                @if (session('role') === 'Super Admin')
+                                @if ($team->owner_id == Auth::id() || $currentrole === $superadminrole || $currentrole === 'Admin' || $currentrole === 'Processor' && $user->role !== 'Processor')
                                     <a data="Delete" disabaled class="delete"
                                         href="{{ url(getRoutePrefix() . "/delete-user-from-team/$team->id/" . $user->id) }}">
                                         <button class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
                                             <img src="{{ asset('icons/trash.svg') }}" alt="">
                                         </button>
                                     </a>
+                                    @if ($currentrole === $superadminrole)
                                     <form method="POST" action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                         @csrf
                                         <input type="hidden" name="user_id" value="{{ $user->id }}">
@@ -119,6 +120,7 @@
                                             </button>
                                         </span>
                                     </form>
+                                    @endif
                                 @endif
                             </td>
                         </tr>

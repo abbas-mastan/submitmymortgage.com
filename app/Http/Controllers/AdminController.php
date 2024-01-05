@@ -52,34 +52,6 @@ class AdminController extends Controller
         return redirect('/dashboard')->with($msg['msg_type'], $msg['msg_value']);
     }
 
-    public function LoginAsThisUser(Request $request)
-    {
-        if (session('role') != 'Super Admin') {
-            abort(403, 'You are not allowed to this part of the world!');
-        }
-        $id = Auth::id();
-        $user = User::where('id', $request->user_id)->where('role', '<>', 'Admin')->first();
-        Auth::login($user);
-        $request->session()->regenerate();
-        $request->session()->put('role', $user->role);
-        $request->session()->put('reLogin', $id);
-        return redirect('/dashboard');
-    }
-
-    public function ReLoginFrom(Request $request)
-    {
-        $user = User::where('id', $request->user_id)->where('role', 'Super Admin')->first();
-        if (!$user) {
-            abort(403, 'You are not allowed to this part of the world!');
-        }
-
-        Auth::login($user);
-        $request->session()->forget('reLogin');
-        $request->session()->regenerate();
-        $request->session()->put('role', $user->role);
-        return redirect()->intended();
-    }
-
     public function deleteUser(Request $request, $id)
     {
         $msg = AdminService::deleteUser($request, $id);
