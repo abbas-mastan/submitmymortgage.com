@@ -44,7 +44,7 @@
 
                 </td>
                 <td class=" pl-2 tracking-wide border border-l-0 capitalize">
-                    {{ $file->uploadedBy->name   ?? null}}
+                    {{ $file->uploadedBy->name  ?? $file->user->name}}
 
 
                 </td>
