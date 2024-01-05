@@ -354,7 +354,7 @@ class AdminService
         } else {
             $team = new Team([
                 'name' => $teamData['name'],
-                'jrAssociateManager' => $teamData['jrAssociateManager'],
+                'jrAssociateManager' => $teamData['jrAssociateManager'] ?? null,
             ]);
         }
         $team->owner()->associate(Auth::id());
