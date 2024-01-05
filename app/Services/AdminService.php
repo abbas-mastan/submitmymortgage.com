@@ -225,8 +225,8 @@ class AdminService
             }
         }
         $filesIds = array_unique($filesIds);
-        $data['files'] = Media::find($filesIds);
-        $data['filesCount'] = Media::find($filesIds)->count();
+        $data['files'] = Media::with('user')->find($filesIds);
+        $data['filesCount'] = Media::with('user')->find($filesIds)->count();
         $data["active"] = "file";
         return $data;
     }
