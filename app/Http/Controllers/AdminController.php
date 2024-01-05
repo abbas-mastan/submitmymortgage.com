@@ -585,7 +585,7 @@ class AdminController extends Controller
         $data['enableTeams'] = $admin->teamsOwnend()
         ->with('users.createdBy')
         ->where('disable', false)
-        ->orWhere('company_id',$admin->id)
+        ->orWhere('company_id',$admin->company_id)
         ->orWhereHas('users', function ($query) use ($admin) {
             $query->where('user_id', $admin->id);
         })->get();
