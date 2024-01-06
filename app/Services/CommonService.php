@@ -158,11 +158,18 @@ class CommonService
     {
         $data['role'] = Auth::user()->role;
         $data['tables'] = ['Pending Applications', 'Completed Deals', 'Incomplete Deals', 'Deleted Deals'];
-        if ($data['role'] == 'Super Admin' || $data['role'] === 'Processor' || $data['role'] === 'Admin') {
+
+        if ($data['role'] == 'Super Admin') {
             $data['applications'] = Application::all();
         } else {
             $data['tables'] = array_diff($data['tables'], ['Deleted Deals']);
-            $data['applications'] = Auth::user()->createdUsers()->with(['applications', 'application'])->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
+            $user = User::find(auth()->id());
+            $data['applications'] =  Application::with('user')->whereIn('user_id', function ($query) use ($user) {
+                $query->select('id')
+                    ->from('users')
+                    ->where('created_by', $user->id)
+                    ->orWhere('id', $user->id);
+            })->get();
         }
         return $data;
     }

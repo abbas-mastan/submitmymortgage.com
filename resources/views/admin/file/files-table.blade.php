@@ -10,7 +10,6 @@
             <th class="">
                 File Title
             </th>
-
             <th class="">
                 Upload Date
             </th>
@@ -36,26 +35,17 @@
                     <a href="{{ asset($file->file_path) }}" class="hover:text-blue-500 inline" download>
                         <img src="{{ asset('icons/download.svg') }}" alt="" class="w-6 h-8 ml-5 inline">
                     </a>
-
                 </td>
-
                 <td class=" pl-2 tracking-wide border border-l-0 capitalize">
                     {{ convertDBDateUSFormat($file->created_at) }}
-
                 </td>
                 <td class=" pl-2 tracking-wide border border-l-0 capitalize">
-                    {{ $file->uploadedBy->name  ?? $file->user->name}} |
-                    {{ $file->uploadedBy->role  ?? $file->user->role}}
-
-
+                    {{ $file->uploadedBy->name ?? $file->user->name }} |
+                    {{ $file->uploadedBy->role ?? $file->user->role }}
                 </td>
                 <td class=" pl-2 tracking-wide border border-l-0">
                     {{ $file->user->email }}
-
                 </td>
-
-
-
                 <td class=" pl-2 tracking-wide border border-r-0">
                     <div class="flex justify-center">
                         <a class="delete" data="Delete" title="Delete this file"
@@ -65,7 +55,6 @@
                             </button>
                         </a>
                     </div>
-
                     {{-- <div class="flex justify-center">
                         <form id="status-form" action="{{ url(getRoutePrefix().'/update-file-status/'.$file->id) }}" class="">
                             <select name="status" id="status" required class="p-0">
@@ -78,6 +67,5 @@
                 </td>
             </tr>
         @endforeach
-
     </tbody>
 </table>

@@ -251,19 +251,31 @@ class AdminController extends Controller
     }
 
     public function allUsers($id = null)
-    {
+{
+    $user = $id ? User::find($id) : Auth::user();
 
-        $user = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
-        $data['role'] = $user->role;
-        $role = $user->role;
-        $data['users'] = $user
-            ->createdUsers()
-            ->with(['createdBy'])
-            ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
-            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
-            ->get();
-        return view('admin.user.all-users', $data);
-    }
+    $data['role'] = $user->role;
+    $role = $user->role;
+
+    // Fetch users created directly by the user
+    $directlyCreatedUsers = $user->createdUsers()
+        ->with(['createdBy'])
+        ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
+        ->get();
+
+    $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
+        ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
+        ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
+        ->get();
+
+    // Combine the directly and indirectly created users
+    $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
+
+    $data['users'] = $allUsers;
+
+    return view('admin.user.all-users', $data);
+}
+
 
     #disconnect from google
     public function disconnectGoogle(Request $request)

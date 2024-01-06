@@ -10,6 +10,9 @@
             User ID
         </th>
         <th class="">
+            Created By
+        </th>
+        <th class="">
             Actions
         </th>
     </tr>

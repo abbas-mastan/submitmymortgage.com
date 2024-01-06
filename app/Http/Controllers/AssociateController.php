@@ -89,17 +89,30 @@ class AssociateController extends Controller
     }
 
     public function allUsers($id = null)
-    {
-        $user = $id ? User::where('id', $id)->first() : Auth::user();
-        $role = $user->role;
-        $data['users'] = $user->createdUsers()
-        ->with('createdBy')->orWhere('company_id',$user->company_id)
-        ->whereIn('role', [($role === 'Associate' || $role === 'Junior Associate'  ? '':'Associate'), 
-        ($role === 'Junior Associate'  ? '':'Junior Associate'), 'Borrower'])
-        ->with('createdUsers')->get();
-        $data['role'] = $user->role;
-        return view('admin.user.all-users', $data);
-    }
+{
+    $user = $id ? User::find($id) : Auth::user();
+
+    $data['role'] = $user->role;
+    $role = $user->role;
+
+    // Fetch users created directly by the user
+    $directlyCreatedUsers = $user->createdUsers()
+        ->with(['createdBy'])
+        ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
+        ->get();
+
+    $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
+        ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
+        ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
+        ->get();
+
+    // Combine the directly and indirectly created users
+    $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
+
+    $data['users'] = $allUsers;
+
+    return view('admin.user.all-users', $data);
+}
 
     public function files(Request $request, $id = -1)
     {

@@ -14,6 +14,9 @@
     <td class=" pl-2 tracking-wide border border-l-0">
         {{ $application->email }}
     </td>
+    <td class=" pl-2 tracking-wide border border-l-0">
+        {{ $application->user->email }}
+    </td>
     <td class="text-center pl-2 tracking-wide border border-r-0">
         @if($key !== 3)
         <a class="delete" data="Delete" title="Click to Delete this application"
