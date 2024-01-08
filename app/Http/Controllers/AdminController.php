@@ -575,17 +575,20 @@ class AdminController extends Controller
         ->orWhereHas('users', function ($query) use ($admin) {
             $query->where('user_id', $admin->id);
         })
-        ->where('disable', true)
+        ->where('disable','!==',0)
         ->get();
+
+        
         $data['enableTeams'] = $admin->teamsOwnend()
         ->with('users.createdBy')
-        ->where('disable', false)
         ->orWhereHas('users',function($query)use ($admin){
             $query->where('company_id',$admin->company_id);
         })
         ->orWhereHas('users', function ($query) use ($admin) {
             $query->where('user_id', $admin->id);
-        })->get();
+        })
+        ->where('disable','!==', 1)
+        ->get();
 
         $data['teams'] = $admin->teamsOwnend()
         ->with('users')
