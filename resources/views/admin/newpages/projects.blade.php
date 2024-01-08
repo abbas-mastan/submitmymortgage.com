@@ -204,11 +204,11 @@
                                 @endif
                             </tbody>
                         </table>
-                        <div class="flex justify-between">
+                        {{-- <div class="flex justify-between">
                             <a href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}"
-                                class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a>
+                                class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a> --}}
                             {{-- <button class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New Member</button> --}}
-                        </div>
+                        {{-- </div> --}}
                         </p>
                     </details>
                 </div>
