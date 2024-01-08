@@ -93,6 +93,17 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(User::class, 'created_by');
     }
+    public function allCreatedApplications()
+    {
+        $this->load('applications', 'createdUsers');
+
+        // Merge the applications of the current user with applications from created users
+        return $this->applications->merge(
+            $this->createdUsers->flatMap(function ($user) {
+                return $user->allCreatedApplications();
+            })
+        );
+    }
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');

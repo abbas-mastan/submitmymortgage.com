@@ -163,14 +163,24 @@ class CommonService
             $data['applications'] = Application::all();
         } else {
             $data['tables'] = array_diff($data['tables'], ['Deleted Deals']);
-            $user = User::find(auth()->id());
-            $data['applications'] =  Application::with('user')->whereIn('user_id', function ($query) use ($user) {
-                $query->select('id')
-                    ->from('users')
-                    ->where('created_by', $user->id)
-                    ->orWhere('id', $user->id);
-            })->get();
+            $user = User::with('allCreatedApplications')->find(auth()->id());
+            $userApplications = Application::where('user_id', $user->id)->get();
+            $allCreatedApplications = $user->allCreatedApplications;
+
+            $mergedApplications = $userApplications->merge($allCreatedApplications);
+
+            // Now, $mergedApplications contains all applications created by the user or users directly or indirectly created by the user
+            $data['applications'] = $mergedApplications;
+
+
+            // $data['applications'] =  Application::with('user')->whereIn('user_id', function ($query) use ($user) {
+            //     $query->select('id')
+            //         ->from('users')
+            //         ->where('created_by', $user->id)
+            //         ->orWhere('id', $user->id);
+            // })->get();
         }
+
         return $data;
     }
 

@@ -57,62 +57,10 @@
                     <tbody class="text-center">
                         <x-table-head />
                         @php $serialNo = 1; @endphp
-                        @foreach ($applications as $processor)
-                            @if ($processor->application)
-                                @foreach ($processor->applications as $application)
-                                    @if ($application->status == $key)
-                                        @include('components.table-row')
-                                    @endif
-                                @endforeach
+                        @foreach ($applications as $application)
+                            @if ($application->status == $key)
+                                @include('components.table-row')
                             @endif
-                            @php
-                                $associates = $processor
-                                    ->createdUsers()
-                                    ->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])
-                                    ->with('createdUsers')
-                                    ->get();
-                            @endphp
-                            @foreach ($associates as $associate)
-                                @if ($associate->application)
-                                    @foreach ($associate->applications as $application)
-                                        @if ($application->status == $key)
-                                            @include('components.table-row')
-                                        @endif
-                                    @endforeach
-                                @endif
-                                @php
-                                    $juniorAssociates = $associate
-                                        ->createdUsers()
-                                        ->whereIn('role', ['junior Associate', 'Borrower'])
-                                        ->with('createdUsers')
-                                        ->get();
-                                @endphp
-                                @foreach ($juniorAssociates as $jassociate)
-                                    @if ($jassociate->application)
-                                        @foreach ($jassociate->applications as $application)
-                                            @if ($application->status == $key)
-                                                @include('components.table-row')
-                                            @endif
-                                        @endforeach
-                                    @endif
-                                    @php
-                                        $borrowers = $jassociate
-                                            ->createdUsers()
-                                            ->where('role', 'Borrower')
-                                            ->with('createdUsers')
-                                            ->get();
-                                    @endphp
-                                    @foreach ($borrowers as $borrower)
-                                        @if ($borrower->application)
-                                            @foreach ($borrower->application as $application)
-                                                @if ($application->status == $key)
-                                                    @include('components.table-row')
-                                                @endif
-                                            @endforeach
-                                        @endif
-                                    @endforeach
-                                @endforeach
-                            @endforeach
                         @endforeach
                     </tbody>
                 </table>
