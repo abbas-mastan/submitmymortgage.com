@@ -72,7 +72,7 @@
             <thead class="bg-gray-300">
                 <tr>
                     <th class=" pl-2 tracking-wide">
-                        Created on
+                        Deleted on
                     </th>
                     <th class="">
                         Name
@@ -86,7 +86,7 @@
                 @foreach ($trashed as $company)
                 <tr class="text-center {{$company->trashed() ? 'text-red-700' : ''}}">
                         <td class=" pl-2 tracking-wide border border-l-0">
-                            {{ date('d/m/y', strtotime($company->created_at)) }}
+                            {{ date('d/m/y', strtotime($company->deleted_at)) }}
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
                             <a title="Click to edit company" class="inline"
