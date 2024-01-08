@@ -161,7 +161,7 @@
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
                                         <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                            href="{{ url(getRoutePrefix() . ($project->borrower->role ?? null == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}">
+                                            href="{{ url(getRoutePrefix() . ($project->borrower->role ?? null == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id ?? null) }}">
                                             {{ $project->borrower->name }}
                                         </a>
                                         {{-- <a title="Edit this user"
