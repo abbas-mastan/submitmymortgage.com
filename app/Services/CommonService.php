@@ -163,7 +163,7 @@ class CommonService
             $data['applications'] = Application::all();
         } else {
             $data['tables'] = array_diff($data['tables'], ['Deleted Deals']);
-            $user = User::with('allCreatedApplications')->find(auth()->id());
+            $user = User::with('application')->find(auth()->id());
             $userApplications = Application::where('user_id', $user->id)->get();
             $allCreatedApplications = $user->allCreatedApplications;
 
