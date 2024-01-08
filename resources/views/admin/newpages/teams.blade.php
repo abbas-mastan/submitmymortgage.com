@@ -34,7 +34,6 @@
     </style>
 @endsection
 @section('content')
-
     @include('parts.modal-form')
     <x-flex-card title="Teams" titlecounts="{{ count($enableTeams) }}" iconurl="{{ asset('icons/Teams.svg') }}" />
     @if($currentrole === 'Super Admin' || $currentrole === 'Admin')
@@ -143,7 +142,7 @@
         @endcomponent
     @endforeach
 
-    @can('isSuperAdmin')
+
         @if (count($disableTeams) > 0)
             <h2 class="text-center text-xl border-y-4 py-3  mt-5">Disabled Teams</h2>
         @endif
@@ -246,7 +245,6 @@
                 @endcomponent
             @endif
         @endforeach
-    @endcan
 @endsection
 @section('foot')
     @include('parts.js.teams-script')
