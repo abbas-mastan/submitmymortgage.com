@@ -155,7 +155,7 @@
                                         @endphp
                                     @endif
                                 @endforeach
-                                @if ($project->borrower->id)
+                                @if ($project->borrower->id !== null)
                                 <tr class="border-none">
                                     <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
                                         {{ $serialNumber }}
