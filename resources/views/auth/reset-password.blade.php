@@ -57,5 +57,7 @@
 $(document).ready(function () {
 $('.body-first-div').addClass('bg-gradient-to-b from-gradientStart to-gradientEnd');
 });
+$('.body-first-div').removeClass('h-full');
+$('.body-first-div').addClass('h-screen');
 </script>
 @endsection
