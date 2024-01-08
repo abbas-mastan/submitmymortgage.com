@@ -155,9 +155,8 @@
                                         @endphp
                                     @endif
                                 @endforeach
-                                @if ($project->borrower())
-                                <tr>@dump($project->borrower->id ?? 'noId')</tr>
-                                {{-- <tr class="border-none">
+                                @if ($project->borrower->id)
+                                <tr class="border-none">
                                     <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
                                         {{ $serialNumber }}
                                     </td>
@@ -165,13 +164,13 @@
                                         <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
                                             href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}">
                                             {{ $project->borrower->name }}
-                                        </a> --}}
+                                        </a>
                                         {{-- <a title="Edit this user"
                                             href="{{ url(getRoutePrefix() . '/add-user/' . $borrower->id) }}">
                                             <img src="{{ asset('icons/pencil.svg') }}" alt=""
                                                 class="inline ml-5">
                                         </a> --}}
-                                    {{-- </td>
+                                    </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
                                         {{ $project->borrower->email }}
                                     </td>
@@ -183,8 +182,8 @@
                                             {{ $project->borrower->createdBy->name }}
                                             |
                                             {{ $project->borrower->createdBy->role }}
-                                        @endif --}}
-                                    {{-- </td>
+                                        @endif
+                                    </td>
                                     <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                                         @if ($currentrole === 'Super Admin')
                                             <form method="POST"
@@ -200,15 +199,17 @@
                                             </form>
                                         @endif
                                     </td>
-                                </tr> --}}
+                                </tr>
                                 @endif
                             </tbody>
                         </table>
-                        {{-- <div class="flex justify-between">
+                        @if ($project->borrower->id)
+                        <div class="flex justify-between">
                             <a href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}"
-                                class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a> --}}
+                                class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a>
                             {{-- <button class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New Member</button> --}}
-                        {{-- </div> --}}
+                        </div>
+                        @endif
                         </p>
                     </details>
                 </div>
