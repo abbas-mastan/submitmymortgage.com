@@ -160,7 +160,8 @@
                     class="bg-transperent w-full py-3 focus:bg-transperent focus:ring-2 focus:border-0 focus:ring-red-700 rounded-md">
                 <h3 class="mt-3 text-xl font-bold">People With access</h3>
                 @forelse($assistants as $assistant)
-                    @if ($assistant->assistant() && $assistant->assistant->active !== 0 || $assistant->assistant->active !== 2)
+                {{$assistant->id}}
+                    {{-- @if ($assistant->assistant() && $assistant->assistant->active !== 0 || $assistant->assistant->active !== 2)
                         <div class="flex justify-between items-center mt-3">
                             <div>
                                 <h3 class="text-xl font-normal">{{ $assistant->assistant->name }}</h3>
@@ -170,7 +171,7 @@
                                 <img class="icon w-10" src="{{ asset('icons/trash.svg') }}" alt="">
                             </a>
                         </div>
-                    @endif
+                    @endif --}}
                 @empty
                     <div class="text-center text-xl font-bold">Sorry! no data available</div>
                 @endforelse
