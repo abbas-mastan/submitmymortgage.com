@@ -67,7 +67,7 @@
                             @endif
                             @php
                                 $associates = $processor
-                                    // ->createdUsers()
+                                    ->createdUsers()
                                     ->whereIn('role', ['Associate', 'Junior Associate', 'Borrower'])
                                     ->with('createdUsers')
                                     ->get();
@@ -82,7 +82,7 @@
                                 @endif
                                 @php
                                     $juniorAssociates = $associate
-                                        // ->createdUsers()
+                                        ->createdUsers()
                                         ->whereIn('role', ['junior Associate', 'Borrower'])
                                         ->with('createdUsers')
                                         ->get();
@@ -97,7 +97,7 @@
                                     @endif
                                     @php
                                         $borrowers = $jassociate
-                                            // ->createdUsers()
+                                            ->createdUsers()
                                             ->where('role', 'Borrower')
                                             ->with('createdUsers')
                                             ->get();
