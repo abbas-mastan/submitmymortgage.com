@@ -128,14 +128,16 @@
                                                 @endif
                                             </td>
                                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                                @if ($currentrole === 'Super Admin')
-                                                    <a data="Delete" class="delete"
+                                                @if ($project->created_by == Auth::id() || $currentrole === $superadminrole || $currentrole === 'Admin' || $currentrole === 'Processor' && $user->role !== 'Processor')
+                                                <a data="Delete" class="delete"
                                                         href='{{ url(getRoutePrefix() . "/delete-project-user/$project->id/" . $user->id) }}'>
                                                         <button
                                                             class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
                                                             <img src="{{ asset('icons/trash.svg') }}" alt="">
                                                         </button>
                                                     </a>
+                                                    @endif
+                                                    @if ($currentrole === 'Super Admin')
                                                     <form method="POST"
                                                         action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                         @csrf

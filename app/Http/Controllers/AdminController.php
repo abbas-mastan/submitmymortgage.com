@@ -251,30 +251,31 @@ class AdminController extends Controller
     }
 
     public function allUsers($id = null)
-{
-    $user = $id ? User::find($id) : Auth::user();
+    {
+        $user = $id ? User::find($id) : Auth::user();
 
-    $data['role'] = $user->role;
-    $role = $user->role;
+        $data['role'] = $user->role;
+        $role = $user->role;
 
-    // Fetch users created directly by the user
-    $directlyCreatedUsers = $user->createdUsers()
-        ->with(['createdBy'])
-        ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
-        ->get();
+        // Fetch users created directly by the user
+        $directlyCreatedUsers = $user->createdUsers()
+            ->with(['createdBy'])
+            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
+            ->get();
 
-    $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
-        ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
-        ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
-        ->get();
+        $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
+            ->with('createdBy')
+            ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
+            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
+            ->get();
 
-    // Combine the directly and indirectly created users
-    $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
+        // Combine the directly and indirectly created users
+        $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
 
-    $data['users'] = $allUsers;
+        $data['users'] = $allUsers;
 
-    return view('admin.user.all-users', $data);
-}
+        return view('admin.user.all-users', $data);
+    }
 
 
     #disconnect from google
@@ -450,14 +451,20 @@ class AdminController extends Controller
                 'created_by' => Auth::id(),
             ]);
 
+            if($request->associate){
             foreach ($request->associate as $associate_id) {
                 $project->users()->attach($associate_id);
             }
-            foreach ($request->juniorAssociate as $associate_id) {
-                $project->users()->attach($associate_id);
             }
+            if($request->juniorAssociate){
+                foreach ($request->juniorAssociate as $associate_id) {
+                    $project->users()->attach($associate_id);
+                }
+            }
+            if($request->processor){
             foreach ($request->processor as $associate_id) {
                 $project->users()->attach($associate_id);
+            }
             }
 
             $message = "Created new Deal by name : $request->borroweraddress";
@@ -578,6 +585,7 @@ class AdminController extends Controller
         ->orWhereHas('users', function ($query) use ($admin) {
             $query->where('user_id', $admin->id);
         })->get();
+        
         $data['teams'] = $admin->teamsOwnend()
         ->with('users')
         ->orWhereHas('users',function($query)use ($admin){
@@ -586,6 +594,7 @@ class AdminController extends Controller
         ->whereHas('users', function ($query) use ($admin) {
             $query->where('user_id', $admin->id);
         })->get();
+
         $data['users'] = $admin->createdUsers()
         ->orWhere('company_id',$admin->company_id)
         ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])

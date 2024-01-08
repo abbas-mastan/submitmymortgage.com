@@ -341,15 +341,22 @@ class AssociateController extends Controller
     
     public function teams($id = null): View
     {
-
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
         $data['teams'] = Team::where('owner_id', $admin->id)
             ->with('users.createdBy')
+            ->where('disable', false)
             ->orWhereHas('users', function ($query) use ($admin) {
                 $query->where('user_id', $admin->id);
             })
             ->get();
-        $data['enableTeams'] = $data['teams'];
+            $data['disableTeams'] = Team::where('owner_id', $admin->id)
+                ->with('users.createdBy')
+                ->where('disable', true)
+                ->orWhereHas('users', function ($query) use ($admin) {
+                    $query->where('user_id', $admin->id);
+                })
+                ->get();
+            $data['enableTeams'] = $data['teams'];
 
         $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with(['createdUsers','createdBy'])->get();
         return view('admin.newpages.teams', $data);
