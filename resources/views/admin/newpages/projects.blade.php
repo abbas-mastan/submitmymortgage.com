@@ -155,13 +155,14 @@
                                         @endphp
                                     @endif
                                 @endforeach
+                                @if ($project->borrower())
                                 <tr class="border-none">
                                     <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
                                         {{ $serialNumber }}
                                     </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
                                         <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                            href="{{ url(getRoutePrefix() . ($project->borrower->role ?? null == 'Borrower' ? '/project-overview/' : '/all-users/') . ($project->borrower->id ?? null)) }}">
+                                            href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}">
                                             {{ $project->borrower->name }}
                                         </a>
                                         {{-- <a title="Edit this user"
@@ -199,6 +200,7 @@
                                         @endif
                                     </td>
                                 </tr>
+                                @endif
                             </tbody>
                         </table>
                         <div class="flex justify-between">
