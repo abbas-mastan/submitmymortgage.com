@@ -95,11 +95,11 @@ class User extends Authenticatable implements MustVerifyEmail
     }
     public function allCreatedApplications()
     {
-        return $this->applications->merge(
-            $this->createdUsers->flatMap(function ($user) {
-                return $user->allCreatedApplications();
-            })
-        );
+        $applications = $this->applications;
+        foreach ($this->createdUsers as $createdUser) {
+            $applications = $applications->merge($createdUser->allCreatedApplications());
+        }
+        return $applications;
     }
     public function createdBy()
     {
