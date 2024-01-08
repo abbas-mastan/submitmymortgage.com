@@ -99,12 +99,12 @@
                             </a>
                         </td>
                         <td class=" pl-2 tracking-wide border border-r-0">
-                            <a data="Delete" class="delete"
+                            {{-- <a data="Delete" class="delete"
                                 href="{{ url(getRoutePrefix() . '/delete-company-permanent/' . $company->id) }}">
                                 <button title="permanent delete" class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                                     <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
                                 </button>
-                            </a>
+                            </a> --}}
                             <a data="Restore" class="delete"
                                 href="{{ route('company.restore',$company->id) }}">
                                 <button title="Restore" class="bg-themered  tracking-wide font-semibold capitalize text-xl">
