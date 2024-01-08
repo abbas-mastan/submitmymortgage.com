@@ -156,7 +156,8 @@
                                     @endif
                                 @endforeach
                                 @if ($project->borrower())
-                                <tr class="border-none">
+                                <tr>@dump($project->borrower->id)</tr>
+                                {{-- <tr class="border-none">
                                     <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
                                         {{ $serialNumber }}
                                     </td>
@@ -164,13 +165,13 @@
                                         <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
                                             href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}">
                                             {{ $project->borrower->name }}
-                                        </a>
+                                        </a> --}}
                                         {{-- <a title="Edit this user"
                                             href="{{ url(getRoutePrefix() . '/add-user/' . $borrower->id) }}">
                                             <img src="{{ asset('icons/pencil.svg') }}" alt=""
                                                 class="inline ml-5">
                                         </a> --}}
-                                    </td>
+                                    {{-- </td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
                                         {{ $project->borrower->email }}
                                     </td>
@@ -182,8 +183,8 @@
                                             {{ $project->borrower->createdBy->name }}
                                             |
                                             {{ $project->borrower->createdBy->role }}
-                                        @endif
-                                    </td>
+                                        @endif --}}
+                                    {{-- </td>
                                     <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                                         @if ($currentrole === 'Super Admin')
                                             <form method="POST"
@@ -199,7 +200,7 @@
                                             </form>
                                         @endif
                                     </td>
-                                </tr>
+                                </tr> --}}
                                 @endif
                             </tbody>
                         </table>
