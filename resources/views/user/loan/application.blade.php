@@ -33,7 +33,7 @@
                     <div class="mt-2">
                         <input value="{{ old('email', $application->email) }}" type="email"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                            name="email" id="email" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Client's Name">
+                            name="email" id="email" placeholder="&nbsp;&nbsp;&nbsp;&nbsp; {{ session('role') == 'Borrower' ? 'Client\'s Name' : 'Email Address' }}">
                         @error('email')
                             <span class="text-red-700">
                                 {{ $message }}
@@ -66,7 +66,7 @@
                     <div class="mt-2">
                         <input value="{{ old('name', $application->name) }}" type="text"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                            name="name" id="name" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email Address">
+                            name="name" id="name" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;{{ session('role') === 'Borrower' ? 'Email Address' : 'Client\'s Name' }}">
                         @error('name')
                             <span class="text-red-700">
                                 {{ $message }}

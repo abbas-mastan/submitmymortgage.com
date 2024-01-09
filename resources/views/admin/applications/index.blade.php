@@ -44,6 +44,9 @@
                         @foreach ($applications as $application)
                             @if ($application->status == $key)
                                 @include('components.table-row')
+                                @php
+                                $serialNo++;
+                            @endphp
                             @endif
                         @endforeach
                     </tbody>
@@ -58,9 +61,9 @@
                         <x-table-head />
                         @php $serialNo = 1; @endphp
                         @foreach ($users as $user)
-                            @if ($user->application)
-                                @php $application = $user->application @endphp
-                                @if ($application->status == $key)
+                        @if ($user->application)
+                        @php $application = $user->application @endphp
+                        @if ($application->status == $key)
                                     @include('components.table-row')
                                     @php
                                         $serialNo++;

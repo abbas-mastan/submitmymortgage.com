@@ -2,19 +2,19 @@
 
 namespace App\Services;
 
+use App\Models\Application;
+use App\Models\Attachment;
+use App\Models\Contact;
 use App\Models\Info;
 use App\Models\Media;
-use App\Models\Contact;
 use App\Models\Project;
-use App\Models\Attachment;
-use App\Models\Application;
-use Illuminate\Support\Arr;
+use App\Models\User;
+use App\Notifications\FileUploadNotification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use App\Models\User;use App\Notifications\FileUploadNotification;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;use PhpOffice\PhpSpreadsheet\Writer\Xls;
-use Illuminate\Support\Facades\Storage;use Illuminate\Validation\ValidationException;
 
 class CommonService
 {
@@ -160,21 +160,25 @@ class CommonService
         $data['tables'] = ['Pending Applications', 'Completed Deals', 'Incomplete Deals', 'Deleted Deals'];
 
         if ($data['role'] == 'Super Admin') {
-            $data['applications'] = Application::all();
+            $data['applications'] = Application::with(['user' => function ($query) {
+                $query->withTrashed();
+            }])->get();
         } else {
             $data['tables'] = array_diff($data['tables'], ['Deleted Deals']);
-            
+
             $user = User::find(auth()->id());
             $role = $user->role;
             // Fetch users created directly by the user
             $directlyCreatedUsers = $user->createdUsers()
-                ->with(['createdBy','application.user'])
+                ->with(['createdBy', 'application.user'])
+                ->withTrashed()
                 ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
                 ->get();
 
             $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers
-                ->pluck('id'))
+                    ->pluck('id'))
                 ->with('application.user')
+                ->withTrashed()
                 ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
                 ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
                 ->get();
@@ -350,17 +354,17 @@ class CommonService
         $currentUserId = auth()->id();
 
         $users = $admin->createdUsers()
-        ->with(['createdBy', 'info'])
-        ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
-        ->where(function ($query) use ($currentUserId) {
-            // Associates directly created by the current user
-            $query->where('created_by', $currentUserId);
-            // Associates created by users who were created by the current user
-            $query->orWhereHas('createdBy', function ($nestedQuery) use ($currentUserId) {
-                $nestedQuery->where('created_by', $currentUserId);
-            });
-        })
-        ->get();
+            ->with(['createdBy', 'info'])
+            ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
+            ->where(function ($query) use ($currentUserId) {
+                // Associates directly created by the current user
+                $query->where('created_by', $currentUserId);
+                // Associates created by users who were created by the current user
+                $query->orWhereHas('createdBy', function ($nestedQuery) use ($currentUserId) {
+                    $nestedQuery->where('created_by', $currentUserId);
+                });
+            })
+            ->get();
         foreach ($users as $user) {
             $associates[] = [
                 'role' => $user->role,
@@ -373,7 +377,7 @@ class CommonService
 
     }
 
-    public  static function doContact($request,$id)
+    public static function doContact($request, $id)
     {
         $req = $request->validate([
             'name' => 'required',
