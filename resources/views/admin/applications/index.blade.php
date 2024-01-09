@@ -20,7 +20,7 @@
                         <div class="w-1/2 p-4 pl-8">
                             <span class="text-white text-lg block text-left">Applications</span>
                             <span class="text-white text-2xl block text-left font-bold mt-1">
-                                {{ $applications->count() }}
+                                {{-- {{ $applications->count() }} --}}
                             </span>
                         </div>
                         <div class="w-1/2 pt-7 pr-7">
@@ -34,7 +34,7 @@
                 </a>
             </div>
         </div>
-        @if ($role == 'Super Admin' || $role == 'Processor' || $role == 'Admin')
+        @if ($role == 'Super Admin')
             @foreach ($tables as $key => $table)
                 @php $serialNo = 1; @endphp
                 <h2 class="text-center text-themered text-2xl font-semibold">{{ $table }}</h2>
@@ -50,16 +50,22 @@
                 </table>
             @endforeach
         @endif
-        @if ($role === 'Associate' || $role === 'Junior Associate')
+        @if ($role === 'Associate' || $role === 'Junior Associate' || $role == 'Processor' || $role == 'Admin')
             @foreach ($tables as $key => $table)
                 <h2 class="text-center text-themered text-2xl font-semibold">{{ $table }}</h2>
                 <table class="w-full display" id="{{ getTableId($key) }}">
                     <tbody class="text-center">
                         <x-table-head />
                         @php $serialNo = 1; @endphp
-                        @foreach ($applications as $application)
-                            @if ($application->status == $key)
-                                @include('components.table-row')
+                        @foreach ($users as $user)
+                            @if ($user->application)
+                                @php $application = $user->application @endphp
+                                @if ($application->status == $key)
+                                    @include('components.table-row')
+                                    @php
+                                        $serialNo++;
+                                    @endphp
+                                @endif
                             @endif
                         @endforeach
                     </tbody>

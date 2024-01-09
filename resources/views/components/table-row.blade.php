@@ -1,5 +1,5 @@
 <tr>
-    <td class=" pl-2 tracking-wide border border-l-0">{{ $loop->index+1 }}</td>
+    <td class=" pl-2 tracking-wide border border-l-0">{{ $serialNo }}</td>
     <td class=" pl-2 tracking-wide border border-l-0">
         <a title="Click to view this application" class="text-blue-500 inline"
             href="{{ url(getRoutePrefix() . '/application-show/' . $application->id) }}">

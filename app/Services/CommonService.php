@@ -163,22 +163,25 @@ class CommonService
             $data['applications'] = Application::all();
         } else {
             $data['tables'] = array_diff($data['tables'], ['Deleted Deals']);
-            $user = User::with('application')->find(auth()->id());
-            $userApplications = Application::where('user_id', $user->id)->get();
-            $allCreatedApplications = $user->allCreatedApplications;
+            
+            $user = User::find(auth()->id());
+            $role = $user->role;
+            // Fetch users created directly by the user
+            $directlyCreatedUsers = $user->createdUsers()
+                ->with(['createdBy','application.user'])
+                ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
+                ->get();
 
-            $mergedApplications = $userApplications->merge($allCreatedApplications);
+            $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers
+                ->pluck('id'))
+                ->with('application.user')
+                ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
+                ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
+                ->get();
+            // Combine the directly and indirectly created users
+            $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
+            $data['users'] = $allUsers;
 
-            // Now, $mergedApplications contains all applications created by the user or users directly or indirectly created by the user
-            $data['applications'] = $mergedApplications;
-
-
-            // $data['applications'] =  Application::with('user')->whereIn('user_id', function ($query) use ($user) {
-            //     $query->select('id')
-            //         ->from('users')
-            //         ->where('created_by', $user->id)
-            //         ->orWhere('id', $user->id);
-            // })->get();
         }
 
         return $data;

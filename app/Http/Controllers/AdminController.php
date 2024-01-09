@@ -569,27 +569,22 @@ class AdminController extends Controller
         $admin = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
         $data['disableTeams'] = $admin->teamsOwnend()
         ->with('users')
+        ->where('disable', true)
         ->orWhereHas('users',function($query)use ($admin){
             $query->where('company_id',$admin->company_id);
         })
         ->orWhereHas('users', function ($query) use ($admin) {
             $query->where('user_id', $admin->id);
-        })
-        ->where('disable','!==',0)
-        ->get();
-
-        
+        })->get();
         $data['enableTeams'] = $admin->teamsOwnend()
         ->with('users.createdBy')
+        ->where('disable', false)
         ->orWhereHas('users',function($query)use ($admin){
             $query->where('company_id',$admin->company_id);
         })
         ->orWhereHas('users', function ($query) use ($admin) {
             $query->where('user_id', $admin->id);
-        })
-        ->where('disable','!==', 1)
-        ->get();
-
+        })->get();
         $data['teams'] = $admin->teamsOwnend()
         ->with('users')
         ->orWhereHas('users',function($query)use ($admin){
@@ -598,7 +593,7 @@ class AdminController extends Controller
         ->whereHas('users', function ($query) use ($admin) {
             $query->where('user_id', $admin->id);
         })->get();
-
+        
         $data['users'] = $admin->createdUsers()
         ->orWhere('company_id',$admin->company_id)
         ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])

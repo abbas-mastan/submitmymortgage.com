@@ -2,11 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Info,Team,User,Contact,Project,Application,UserCategory};
-use App\Services\{UserService,AdminService,CommonService};
-use Illuminate\Support\Facades\{Auth,Validator};
-use Illuminate\Http\{Request,RedirectResponse};
 use App\Http\Requests\ApplicationRequest;
+use App\Models\Application;
+use App\Models\Contact;
+use App\Models\Info;
+use App\Models\Project;
+use App\Models\Team;
+use App\Models\User;
+
+use App\Models\UserCategory;
+use App\Services\AdminService;
+use App\Services\CommonService;
+
+use App\Services\UserService;
+use Illuminate\Http\RedirectResponse;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class AssociateController extends Controller
@@ -60,11 +74,11 @@ class AssociateController extends Controller
     {
         if ($cat == "Loan Application") {
             $user = User::find($id)->application()->first();
-            return redirect(getAssociateRoutePrefix() .($user ? "/application-show/$user->id":"/application/$id"));
-        } 
+            return redirect(getAssociateRoutePrefix() . ($user ? "/application-show/$user->id" : "/application/$id"));
+        }
         $data = AdminService::docs($request, $id, $cat);
         return view("admin.file.single-cat-docs", $data);
-        
+
     }
 
     public function applicationShow(Application $application)
@@ -89,30 +103,28 @@ class AssociateController extends Controller
     }
 
     public function allUsers($id = null)
-{
-    $user = $id ? User::find($id) : Auth::user();
+    {
+        $user = $id ? User::find($id) : Auth::user();
+        $data['role'] = $user->role;
+        $role = $user->role;
+// Fetch users created directly by the user
+        $directlyCreatedUsers = $user->createdUsers()
+            ->with(['createdBy'])
+            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
+            ->get();
 
-    $data['role'] = $user->role;
-    $role = $user->role;
+        $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
+            ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
+            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
+            ->get();
 
-    // Fetch users created directly by the user
-    $directlyCreatedUsers = $user->createdUsers()
-        ->with(['createdBy'])
-        ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
-        ->get();
+        // Combine the directly and indirectly created users
+        $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
 
-    $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
-        ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
-        ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
-        ->get();
+        $data['users'] = $allUsers;
 
-    // Combine the directly and indirectly created users
-    $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
-
-    $data['users'] = $allUsers;
-
-    return view('admin.user.all-users', $data);
-}
+        return view('admin.user.all-users', $data);
+    }
 
     public function files(Request $request, $id = -1)
     {
@@ -336,9 +348,9 @@ class AssociateController extends Controller
     }
     public function redirectTo($route, $message)
     {
-        return CommonService::redirectTo($route,$message);
+        return CommonService::redirectTo($route, $message);
     }
-    
+
     public function teams($id = null): View
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
@@ -349,16 +361,16 @@ class AssociateController extends Controller
                 $query->where('user_id', $admin->id);
             })
             ->get();
-            $data['disableTeams'] = Team::where('owner_id', $admin->id)
-                ->with('users.createdBy')
-                ->where('disable', true)
-                ->orWhereHas('users', function ($query) use ($admin) {
-                    $query->where('user_id', $admin->id);
-                })
-                ->get();
-            $data['enableTeams'] = $data['teams'];
+        $data['disableTeams'] = Team::where('owner_id', $admin->id)
+            ->with('users.createdBy')
+            ->where('disable', true)
+            ->orWhereHas('users', function ($query) use ($admin) {
+                $query->where('user_id', $admin->id);
+            })
+            ->get();
+        $data['enableTeams'] = $data['teams'];
 
-        $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with(['createdUsers','createdBy'])->get();
+        $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with(['createdUsers', 'createdBy'])->get();
         return view('admin.newpages.teams', $data);
     }
 
