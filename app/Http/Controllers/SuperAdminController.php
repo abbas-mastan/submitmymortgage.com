@@ -2,13 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\{ApplicationRequest,IntakeFormRequest};
-use App\Models\{Application,Contact,Info,IntakeForm,Project,Team,User,UserCategory};
+use App\Http\Requests\ApplicationRequest;
+use App\Http\Requests\IntakeFormRequest;
+
+use App\Models\Application;
+use App\Models\Contact;
+use App\Models\Info;
+use App\Models\IntakeForm;
+use App\Models\Project;
+use App\Models\Team;
+use App\Models\User;
+use App\Models\UserCategory;
 use App\Notifications\FileUploadNotification;
-use App\Services\{AdminService,CommonService,UserService};
+
+use App\Services\AdminService;
+use App\Services\CommonService;
+use App\Services\UserService;
 use Faker\Factory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\{Password,Validator,Auth};
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class SuperAdminController extends Controller
@@ -53,7 +68,7 @@ class SuperAdminController extends Controller
     public function ReLoginFrom(Request $request)
     {
         $user = User::where('role', 'Super Admin')->first();
-        abort_if(!$user,403, 'You are not allowed to this part of the world!');
+        abort_if(!$user, 403, 'You are not allowed to this part of the world!');
         Auth::login($user);
         $request->session()->forget('reLogin');
         $request->session()->regenerate();
@@ -69,14 +84,14 @@ class SuperAdminController extends Controller
 
     public function restoreUser(User $user)
     {
-        abort_if(Auth::user()->role !== 'Super Admin',403, 'you are not allowed to restore user');
+        abort_if(Auth::user()->role !== 'Super Admin', 403, 'you are not allowed to restore user');
         $user->restore();
         return back()->with('msg_success', 'User restored successfully');
     }
 
     public function deleteUserPermenant(User $user)
     {
-        abort_if(Auth::user()->role !== 'Super Admin',403, 'you are not allowed to to permenantly delete user');
+        abort_if(Auth::user()->role !== 'Super Admin', 403, 'you are not allowed to to permenantly delete user');
         $user->forceDelete();
         return back()->with('msg_success', 'User permenantly deleted successfully');
     }
@@ -109,7 +124,7 @@ class SuperAdminController extends Controller
     {
         if ($cat == "Loan Application") {
             $user = User::find($id)->application()->first();
-            return redirect(getAssociateRoutePrefix() . ($user ? "/application-show/$user->id" :"/application/$id"));
+            return redirect(getAssociateRoutePrefix() . ($user ? "/application-show/$user->id" : "/application/$id"));
         }
         $data = AdminService::docs($request, $id, $cat);
         return view("admin.file.single-cat-docs", $data);
@@ -471,13 +486,15 @@ class SuperAdminController extends Controller
 
     public function contacts()
     {
-        $data['contacts'] = Contact::with('user')->get();
+        $data['contacts'] = Contact::with(['user' => function ($query) {
+            $query->withTrashed();
+        }])->get();
         return view('admin.newpages.contacts', $data);
     }
 
     public function doContact(Request $request, $id = 0)
     {
-        CommonService::doContact($request,$id);
+        CommonService::doContact($request, $id);
         return back()->with('success', 'Contact ' . ($id ? 'updated' : 'created') . ' successfully');
     }
 
@@ -599,7 +616,7 @@ class SuperAdminController extends Controller
 
     public function redirectTo($route, $message)
     {
-     return CommonService::redirectTo($route,$message);
+        return CommonService::redirectTo($route, $message);
     }
 
     public function doAssociate(Request $request)
@@ -635,22 +652,22 @@ class SuperAdminController extends Controller
 
     public function verifyUser(User $user)
     {
-        $user->email_verified_at= now();
+        $user->email_verified_at = now();
         $user->save();
-        return back()->with('msg_success','User verified successfully');
+        return back()->with('msg_success', 'User verified successfully');
     }
 
     public function connections()
     {
         $data['connections'] = User::with('createdBy')
-        ->whereNotIn('role',['Admin','Super Admin'])
-        ->get(['id','name','email','role','company_id','created_by']);
+            ->whereNotIn('role', ['Admin', 'Super Admin'])
+            ->get(['id', 'name', 'email', 'role', 'company_id', 'created_by']);
         return view('admin.newpages.connections', $data);
     }
 
-    public function deleteConnection(User $user) 
+    public function deleteConnection(User $user)
     {
         $user->delete();
-        return back()->with('msg_success','Connection deleted successfully');
+        return back()->with('msg_success', 'Connection deleted successfully');
     }
 }

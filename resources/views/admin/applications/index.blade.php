@@ -6,6 +6,10 @@
         #file {
             display: none;
         }
+
+        .dataTables_empty {
+            display: none;
+        }
     </style>
 @endsection
 @section('content')
@@ -45,8 +49,8 @@
                             @if ($application->status == $key)
                                 @include('components.table-row')
                                 @php
-                                $serialNo++;
-                            @endphp
+                                    $serialNo++;
+                                @endphp
                             @endif
                         @endforeach
                     </tbody>
@@ -61,9 +65,9 @@
                         <x-table-head />
                         @php $serialNo = 1; @endphp
                         @foreach ($users as $user)
-                        @if ($user->application)
-                        @php $application = $user->application @endphp
-                        @if ($application->user && $application->status == $key)
+                            @if ($user->application)
+                                @php $application = $user->application @endphp
+                                @if ($application->user && $application->status == $key)
                                     @include('components.table-row')
                                     @php
                                         $serialNo++;
@@ -85,15 +89,26 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <script>
+        var verifiedSerialText = $('.verifiedSerial').text();
+
+
+
         $('[data="Reject"]').attr('title', 'Reject This Deal');
         $('[data="Accept"]').attr('title', 'Accept This Deal');
         $('[title="Delete this user"]').attr('title', 'Delete This Deal');
-        $(document).ready(function() {
-            $('#user-table').DataTable({
-                pageLength: 30,
-                lengthMenu: [10, 20, 30, 50, 100, 200],
-            });
-        });
-        $('.no-footer').addClass('w-full');
+        // $(document).ready(function() {
+        //     $('#user-table').DataTable({
+        //         pageLength: 30,
+        //         lengthMenu: [10, 20, 30, 50, 100, 200],
+        //     });
+        // });
+        // $('.no-footer').addClass('w-full');
+        var verifiedSerialText = $('.verifiedSerial').text();
+
+        if (verifiedSerialText.length > 0) {
+            $('.dataTables_empty').css('display:none');
+        } else {
+            $('.dataTables_empty').css('display:block');
+        }
     </script>
 @endsection
