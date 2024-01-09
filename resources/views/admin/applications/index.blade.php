@@ -63,7 +63,7 @@
                         @foreach ($users as $user)
                         @if ($user->application)
                         @php $application = $user->application @endphp
-                        @if ($application->status == $key)
+                        @if ($application->user && $application->status == $key)
                                     @include('components.table-row')
                                     @php
                                         $serialNo++;
