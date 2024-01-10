@@ -1,6 +1,6 @@
 <?php
 return[
-    'roles'=> ["Processor","Associate","Junior Associate","Borrower"],
+    'roles'=> ["Processor","Associate","Junior Associate","Assistant","Borrower"],
     'file_category' => ["Credit Report","Loan Application","Bank Statements",
     "Pay Stubs","Tax Returns","ID/Driver's License","1003 Form","Mortgage Statement","Evidence of Insurance","Purchase Agreement","Miscellaneous"],
     'states' => [

@@ -258,10 +258,11 @@ class SuperAdminController extends Controller
         $user = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
         if ($user && $user->role === 'Super Admin') {
             $data['role'] = $user->role;
-            $data['users'] = User::with(['createdBy', 'createdUsers'])
+            $data['users'] = User::with(['createdBy', 'createdUsers','company'])
                 ->where('role', '!=', 'Super Admin')
+                ->orWhere('role', '!=', 'Super Admin')
                 ->latest()
-                ->get(['id', 'name', 'email', 'created_by', 'role', 'email_verified_at']);
+                ->get();
             $data['trashed'] = User::withTrashed()
                 ->with('createdBy')
                 ->whereNotNull('deleted_at')
@@ -269,7 +270,7 @@ class SuperAdminController extends Controller
         } else {
             $data['role'] = $user->role;
             $data['users'] = $user->createdUsers()
-                ->with(['createdUsers', 'createdBy'])
+                ->with(['createdUsers','createdBy','company'])
                 ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
                 ->latest()
                 ->get();

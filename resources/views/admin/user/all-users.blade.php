@@ -57,6 +57,12 @@
                     Role
                 </th>
                 <th class="">
+                    Company
+                </th>
+                <th class="">
+                    Status
+                </th>
+                <th class="">
                     Created By
                 </th>
                 <th class="">
@@ -65,11 +71,9 @@
             </tr>
         </thead>
         <tbody>
-            @php
-                $serialNumber = 1;
-            @endphp
+            @php $serialNumber = 1; @endphp
             @foreach ($users as $processor)
-                @if ($processor->email_verified_at !== null)
+            @if ($processor->email_verified_at !== null)
                     <tr>
                         <td class="verifiedSerial pl-2 tracking-wide border border-l-0">{{ $serialNumber }}
                         </td>
@@ -87,6 +91,14 @@
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
                             {{ $processor->role }}
+                        </td>
+                        <td class=" pl-2 tracking-wide border border-l-0">
+                            @if($processor->company_id)
+                            {{ $processor->company->name ?? null }}
+                            @endif
+                        </td>
+                        <td class=" pl-2 tracking-wide border border-l-0">
+                            {{ $processor->active ? 'Enabled':'Disable'}}
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
                             @if ($processor->createdBy)

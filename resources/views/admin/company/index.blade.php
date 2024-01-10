@@ -52,10 +52,11 @@
                             </a>
                         </td>
                         <td class=" pl-2 tracking-wide border border-r-0">
-                            <a data="temporary" class="delete"
+                            <a data="Disable" class="delete"
                                 href="{{ url(getRoutePrefix() . '/delete-company/' . $company->id) }}">
-                                <button title="temporary delete" class="bg-themered  tracking-wide font-semibold capitalize text-xl">
-                                    <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
+                                <button title="temporary delete" class="bg-themered  tracking-wide capitalize text-white px-2">
+                                    {{-- <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7"> --}}
+                                    Disable
                                 </button>
                             </a>
                             
@@ -105,10 +106,11 @@
                                     <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
                                 </button>
                             </a> --}}
-                            <a data="Restore" class="delete"
+                            <a data="Enable" class="delete"
                                 href="{{ route('company.restore',$company->id) }}">
-                                <button title="Restore" class="bg-themered  tracking-wide font-semibold capitalize text-xl">
-                                    <img src="{{ asset('icons/restore.svg') }}" alt="" class="p-1 w-7">
+                                <button title="restore" class="bg-themered  tracking-wide capitalize text-white px-2">
+                                    {{-- <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7"> --}}
+                                    Enable
                                 </button>
                             </a>
                         </td>
