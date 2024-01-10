@@ -13,19 +13,19 @@
     </script>
 @endforeach
 @can('isSuperAdmin')
-@foreach ($disableTeams as $team)
-<script>
-        new DataTable("#{{ Str::slug($team->name) }}-table{{ $team->id }}");
-        $("#{{ Str::slug($team->name) }}-table{{ $team->id }}_length").css('display', 'none');
-        $("#{{ Str::slug($team->name) }}-table{{ $team->id }}_filter").css('display', 'none');
-        $("#{{ Str::slug($team->name) }}-table{{ $team->id }}_wrapper").css('box-shadow', '0px 0px 11px 0px gray');
-        $(`select[name="{{ Str::slug($team->name) }}-table{{ $team->id }}_length"]`).addClass('w-16');
-        $(`select[name="{{ Str::slug($team->name) }}-table{{ $team->id }}_length"]`).addClass('mb-3');
+    @foreach ($disableTeams as $team)
+        <script>
+            new DataTable("#{{ Str::slug($team->name) }}-table{{ $team->id }}");
+            $("#{{ Str::slug($team->name) }}-table{{ $team->id }}_length").css('display', 'none');
+            $("#{{ Str::slug($team->name) }}-table{{ $team->id }}_filter").css('display', 'none');
+            $("#{{ Str::slug($team->name) }}-table{{ $team->id }}_wrapper").css('box-shadow', '0px 0px 11px 0px gray');
+            $(`select[name="{{ Str::slug($team->name) }}-table{{ $team->id }}_length"]`).addClass('w-16');
+            $(`select[name="{{ Str::slug($team->name) }}-table{{ $team->id }}_length"]`).addClass('mb-3');
         </script>
-@endforeach
+    @endforeach
 @endcan
 
-@if ($currentrole === 'Super Admin' || $currentrole === 'Admin' || $currentrole === 'Processor' )
+@if ($currentrole === 'Super Admin' || $currentrole === 'Admin' || $currentrole === 'Processor')
     <script>
         if ($('.associateDropdown > div').length > 5) {
             $('.associateDropdown').addClass('h-56 overflow-y-auto');
@@ -54,6 +54,90 @@
         handleNewAssociate();
     });
 
+    $('.addMembers').click(function(e) {
+        e.preventDefault();
+        $('#newProjectModal').toggleClass('hidden');
+        $('#newProjectModal').toggleClass('items-center');
+        $('#newProjectModal div:first').toggleClass('md:top-44 max-sm:top-44 sm:top-36');
+        var EditTeamId = $(this).attr('id');
+        $('#teamForm').attr('action', `{{ url(getRoutePrefix() . '/teams') }}/${EditTeamId}`);
+        $('input[name="name"]').val($(this).attr('name'));
+        $('.modalTitle').text('Add an Processor');
+        $('.createTeam').addClass('hidden');
+        $('.processor').removeClass('hidden');
+
+        $.ajax({
+            url: `{{ getRoutePrefix() }}/getUsersByCompany/${$(this).attr('company')}`, // Replace with the actual URL for retrieving users by team
+            type: 'GET',
+            success: function(data) {
+                var associates = [];
+                var juniorAssociates = [];
+                var processors = [];
+                $.each(data, function(index, associate) {
+                    console.log(associate.role);
+                    if (associate.role === 'Associate') {
+                        associates.push(associate);
+                    } else if (associate.role === 'Junior Associate') {
+                        juniorAssociates.push(associate);
+                    } else if (associate.role === 'Processor') {
+                        processors.push(associate);
+                    }
+                });
+                $.each(associates, function(index, associate) {
+                        if (index > 3) {
+                            $('.associateDropdown').addClass(
+                                'h-56 overflow-y-auto')
+                        }
+                        $(".associateDropdown").append(`<div class="py-1">
+                            <label
+                                class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                                role="option">
+                                <input type="checkbox" name="associate[]"
+                                    class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
+                                ${associate.name}
+                            </label>
+                        </div>`);
+                    });
+
+                    // Populate the "selectJuniorAssociate" select with Junior Associate options
+                    $.each(juniorAssociates, function(index, associate) {
+                        if (index > 3) {
+                            $('.jrAssociateDropdown').addClass(
+                                'h-56 overflow-y-auto')
+                        }
+                        $(".jrAssociateDropdown").append(`<div class="py-1">
+                            <label
+                                class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                                role="option">
+                                <input type="checkbox" name="juniorAssociate[]"
+                                    class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
+                                ${associate.name}
+                            </label>
+                        </div>`);
+                    });
+                    $.each(processors, function(index, associate) {
+                        if (index > 3) {
+                            $('.processorDropdown').addClass(
+                                'h-56 overflow-y-auto')
+                        }
+                        $(".processorDropdown").append(`<div class="py-1">
+                            <label
+                                class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                                role="option">
+                                <input type="checkbox" name="processor[]"
+                                    class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
+                                ${associate.name}
+                            </label>
+                        </div>`);
+                    });
+                },
+                error: function(error) {
+                    console.log(error);
+                }
+        });
+    });
+
+
     function handleNewAssociate() {
         $('.associate').toggleClass('hidden');
         $('.associateForm').toggleClass('hidden');
@@ -78,13 +162,13 @@
             url: $(this).attr('action'),
             data: $(this).serialize(),
             success: function(response) {
-            $('.jq-loader-for-ajax').addClass('hidden');
+                $('.jq-loader-for-ajax').addClass('hidden');
                 if (response === 'success') {
                     handleNewAssociate();
                     getAssociates();
                     $('.associate').before(
                         `<span class="associcateSuccess text-green-700">Associate created successfully!</span>`
-                        );
+                    );
                 }
                 $.each(response.error, function(index, error) {
                     var fieldId = `#${error.field}_error`;
@@ -144,7 +228,8 @@
                 $(buttonText).empty(); // Clear existing content
                 $selectedItems.each(function() {
                     var $btnText = $(this).parent().text();
-                    var button = `<span class="inputLabel mr-1">${$btnText}</span>`;
+                    var button =
+                        `<span class="inputLabel mr-1">${$btnText}</span>`;
                     $(button).appendTo(buttonText);
                 });
             } else {
@@ -155,6 +240,7 @@
     });
 
     var teamsData = {!! json_encode($teams) !!};
+
     $('.newProject, .closeModal').click(function(e) {
         e.preventDefault();
         $('#newProjectModal').toggleClass('hidden');
@@ -178,11 +264,14 @@
 
     $(document).ready(function() {
         function closeDropdowns() {
-            $('.associateDropdown, .jrAssociateDropdown, .processorDropdown').addClass('hidden');
+            $('.associateDropdown, .jrAssociateDropdown, .processorDropdown').addClass(
+                'hidden');
         }
         $(document).on('click', function(e) {
-            if (!$(e.target).closest('.associateButton, .jrAssociateButton, .processorButton').length &&
-                !$(e.target).closest('.associateDropdown, .jrAssociateDropdown, .processorDropdown')
+            if (!$(e.target).closest(
+                    '.associateButton, .jrAssociateButton, .processorButton').length &&
+                !$(e.target).closest(
+                    '.associateDropdown, .jrAssociateDropdown, .processorDropdown')
                 .length) {
                 closeDropdowns();
             }
@@ -212,6 +301,14 @@
                 $('.processor').removeClass('hidden');
             }
         } else {
+            @if ($currentrole === $superadminrole)
+                if ($('#company').find(':checked').html() === "Select Company") {
+                    showError('company');
+                    return false
+                } else {
+                    removeError('company');
+                }
+            @endif
             if ($('#name').val() === '') {
                 showError('name');
             } else {
@@ -380,7 +477,8 @@
             $('#new').removeClass('hidden');
             $('#existing').addClass('hidden');
             $('#new input').removeAttr('disabled'); // Correct the selector and method
-            $('#existing select').attr('disabled', 'disabled'); // Correct the selector and method
+            $('#existing select').attr('disabled',
+                'disabled'); // Correct the selector and method
         }
     });
 
@@ -420,10 +518,10 @@
     });
 
     $(document).ready(function() {
-        $('#user-table').DataTable({
-            pageLength: 30,
-            lengthMenu: [10, 20, 30, 50, 100, 200],
-        });
+        // $('#user-table').DataTable({
+        //     pageLength: 30,
+        //     lengthMenu: [10, 20, 30, 50, 100, 200],
+        // });
         $('#unverified').html($('.unverifiedSerial:last').html());
         $('#verified').html($('.verifiedSerial:last').html());
         $('#deleted').html($('.deletedSerial:last').html());

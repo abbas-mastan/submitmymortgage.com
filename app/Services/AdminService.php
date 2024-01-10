@@ -60,7 +60,7 @@ class AdminService
                 'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
                 'name' => "required",
                 'company' => (Auth::user()->role == 'Super Admin') ? 'sometimes:required' : '',
-                'sendemail' => '',
+                 'sendemail' => '',
                 'password' => ($isNewUser && !$request->sendemail) ? 'required|min:8|confirmed' : '',
                 'role' =>
                 #This is the custom Rule. Less than Admin Role Can't add User with the role === admin OR Processor
@@ -181,7 +181,7 @@ class AdminService
             $data['info'] = User::find($id)->info;
         } else {
             if (Auth::user()->role === 'Super Admin') {
-                $users = User::with(['media.user',])->where('role', 'Borrower')->get();
+                $users = User::with(['media.user'])->where('role', 'Borrower')->get();
             } elseif ($role === 'Admin') {
                 $user = User::find(Auth::id());
                 $role = $user->role;
@@ -199,17 +199,17 @@ class AdminService
                         $query->where('user_id', $admin->id);
                     })
                     ->get();
-                    $users = collect(); // Initialize a collection to store users
-                    foreach ($teams as $team) {
-                        $users = $users->merge($team->users); // Merge users into the collection
-                    }
+                $users = collect(); // Initialize a collection to store users
+                foreach ($teams as $team) {
+                    $users = $users->merge($team->users); // Merge users into the collection
+                }
             } else {
                 $admin = Auth::user();
                 $projects = Project::where('created_by', $admin->id)
                     ->orWhereHas('users', function ($query) use ($admin) {
                         $query->where('users.id', $admin->id);
                     })
-                    ->with(['users.createdBy', 'borrower.createdBy','users.media'])
+                    ->with(['users.createdBy', 'borrower.createdBy', 'users.media'])
                     ->get();
                 $users = [];
                 foreach ($projects as $project) {
@@ -225,8 +225,8 @@ class AdminService
             }
         }
         $filesIds = array_unique($filesIds);
-        $data['files'] = Media::with(['uploadedBy','user'])->find($filesIds);
-        $data['filesCount'] = Media::with(['uploadedBy','user'])->find($filesIds)->count();
+        $data['files'] = Media::with(['uploadedBy', 'user'])->find($filesIds);
+        $data['filesCount'] = Media::with(['uploadedBy', 'user'])->find($filesIds)->count();
         $data["active"] = "file";
         return $data;
     }
@@ -309,7 +309,6 @@ class AdminService
             $data['leads'] = Info::with('user')->get();
         } else {
             $user = User::find(Auth::id());
-
             $data['leads'] = $user
                 ->createdUsers()
                 ->with(['createdBy', 'info'])
@@ -343,6 +342,7 @@ class AdminService
     {
         $teamData = $request->validate([
             'name' => 'required',
+            'company' => (Auth::user()->role == 'Super Admin') ? 'sometimes:required' : '',
             // 'processor' => 'required|exists:users,id',
             // 'associate' => 'required|exists:users,id',
             // 'jrAssociate' => 'required|exists:users,id',
@@ -354,28 +354,39 @@ class AdminService
         } else {
             $team = new Team([
                 'name' => $teamData['name'],
+                'company_id' => Auth::user()->role == 'Super Admin' ? $teamData['company'] : Auth::user()->company_id,
                 'jrAssociateManager' => $teamData['jrAssociateManager'] ?? null,
             ]);
         }
         $team->owner()->associate(Auth::id());
         $team->save();
+        // Attach processors
         if ($request->processor) {
             foreach ($request->processor as $processorId) {
-                $team->users()->attach($processorId);
+                if (!$team->users->contains($processorId)) {
+                    $team->users()->attach($processorId);
+                }
             }
         }
 
+// Attach associates
         if ($request->associate) {
             foreach ($request->associate as $associateId) {
-                $team->users()->attach($associateId);
+                if (!$team->users->contains($associateId)) {
+                    $team->users()->attach($associateId);
+                }
             }
         }
 
+// Attach junior associates
         if ($request->jrAssociate) {
             foreach ($request->jrAssociate as $jrAssociateId) {
-                $team->users()->attach($jrAssociateId);
+                if (!$team->users->contains($jrAssociateId)) {
+                    $team->users()->attach($jrAssociateId);
+                }
             }
         }
+
         CommonService::storeNotification("Created new team by name : $request->name", Auth::id());
     }
 

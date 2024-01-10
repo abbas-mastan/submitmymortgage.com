@@ -116,4 +116,6 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
     Route::get('/companies', [AdminCompanyController::class, 'index']);
     Route::post('/do-company/{id?}', [AdminCompanyController::class, 'store']);
     Route::get('/delete-company/{company}', [AdminCompanyController::class, 'destroy']);
+    Route::get('/getUsersByCompany/{company}', [AdminCompanyController::class, 'getUsersByCompany']);
+
 });

@@ -13,18 +13,11 @@ class AssistantController extends Controller
 
     public function assistantRegister(Request $request)
     {
-        if (!$request->hasValidSignature()) {
-            abort(401);
-        }
+        abort_if(!$request->hasValidSignature(),403);
         $id = Crypt::decryptString($request->user);
         $user = User::where('id', $id)->select(['id', 'active', 'email'])->first();
-        if ($user->active === 1) {
-            return redirect('/login');
-        }
-        if($user->active === 2){
-            abort(403, 'Sorry, your account has been disabled!');
-        }
-
+        abort_if($user->active === 2,403, 'Sorry, your account has been disabled!');
+        if ($user->active === 1) return redirect('/login');
         return view("user.assistant.deal-register", compact('user'));
     }
     public function doAssistant(Request $request, User $user)
@@ -76,10 +69,7 @@ class AssistantController extends Controller
         $success = true;
 
         foreach ($request->all() as $key => $file) {
-            if ($key === '_token') {
-                continue;
-            }
-
+            if ($key === '_token') continue;
             $catName = $this->catName($key);
             $cat = $catName ? $catName : ucwords(str_replace('-', ' ', $key));
 
@@ -109,11 +99,9 @@ class AssistantController extends Controller
             }
         }
 
-        if ($success) {
-            return back()->with('msg_success', "Files Upload Successfully");
-        } else {
-            return back()->with('msg_error', "Files Upload Failed");
-        }
+        if ($success) return back()->with('msg_success', "Files Upload Successfully");
+        return back()->with('msg_error', "Files Upload Failed");
+        
     }
 
     public function deleteFile($id)

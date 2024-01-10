@@ -2,29 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ApplicationRequest;
-use App\Http\Requests\IntakeFormRequest;
-
-use App\Models\Application;
-use App\Models\Contact;
+use Faker\Factory;
 use App\Models\Info;
-use App\Models\IntakeForm;
-use App\Models\Project;
+
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Company;
+use App\Models\Contact;
+use App\Models\Project;
+use Illuminate\View\View;
+use App\Models\IntakeForm;
+use App\Models\Application;
 use App\Models\UserCategory;
-use App\Notifications\FileUploadNotification;
 
+use Illuminate\Http\Request;
+use App\Services\UserService;
 use App\Services\AdminService;
 use App\Services\CommonService;
-use App\Services\UserService;
-use Faker\Factory;
-use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Auth;
+
+use App\Http\Requests\IntakeFormRequest;
 use Illuminate\Support\Facades\Password;
+use App\Http\Requests\ApplicationRequest;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\View\View;
+use App\Notifications\FileUploadNotification;
 
 class SuperAdminController extends Controller
 {
@@ -510,6 +511,8 @@ class SuperAdminController extends Controller
         $data['teams'] = Team::with('users')->get();
         $data['enableTeams'] = Team::with('users.createdBy')->where('disable', false)->get();
         $data['disableTeams'] = Team::with('users')->where('disable', true)->get();
+        $data['companies'] = Company::where('enable', true)->get();
+
         $data['users'] = User::where('role', '!=', 'Admin')
             ->whereIn('role', ['Associate', 'Processor', 'Junior Associate'])
             ->get(['id', 'email', 'name', 'role']);

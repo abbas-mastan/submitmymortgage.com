@@ -28,7 +28,21 @@
                 <span class="text-red-700" id="team_error"></span>
             </div>
             <div id="new">
-                <x-form.input name="name" label="Group Name" class="mb-10" />
+                <x-form.input name="name" label="Group Name" class="mb-5" />
+                <label for="company" class="mt-1 text-sm text-dark-500 leading-6 font-bold">
+                    Select Company
+                </label>
+                <select
+                    class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
+                ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
+                sm:text-sm sm:leading-6"
+                    name="company" id="company">
+                    <option>Select Company</option>
+                    @foreach ($companies as $company)
+                        <option value="{{ $company->id }}">{{ $company->name }}</option>
+                    @endforeach
+                </select>
+                <span class="text-red-700" id="company_error"></span>
             </div>
 
             <div class="my-3 flex justify-end mt-5">
@@ -56,19 +70,21 @@
                     <div class="processorDropdown hidden absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
                         role="listbox" aria-labelledby="multiselect-toggle" id="multiselect-dropdown">
                         <!-- Checkboxes for options -->
-                        @foreach ($users as $user)
-                            @continue($user->role !== 'Processor')
-                            <input type="hidden" name="count" class="processorcount" value="{{ $loop->index }}">
-                            <div class="py-1">
-                                <label
-                                    class="processorLabel flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
-                                    role="option">
-                                    <input type="checkbox" name="processor[]"
-                                        class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="{{ $user->id }}">
-                                    {{ $user->name }}
-                                </label>
-                            </div>
-                        @endforeach
+                        @if ($currentrole !== 'Super Admin')
+                            @foreach ($users as $user)
+                                @continue($user->role !== 'Processor')
+                                <input type="hidden" name="count" class="processorcount" value="{{ $loop->index }}">
+                                <div class="py-1">
+                                    <label
+                                        class="processorLabel flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                                        role="option">
+                                        <input type="checkbox" name="processor[]"
+                                            class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="{{ $user->id }}">
+                                        {{ $user->name }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        @endif
                     </div>
                 </div>
                 <span class="text-red-700" id="processor_error"></span>
@@ -97,19 +113,21 @@
                 <!-- Dropdown panel -->
                 <div class="associateDropdown hidden absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
                     role="listbox" aria-labelledby="multiselect-toggle" id="multiselect-dropdown1">
-                    @foreach ($users as $user)
-                        @continue($user->role !== 'Associate')
-                        <div class="py-1">
-                            <label
-                                class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
-                                role="option">
-                                <input type="checkbox" name="associate[]"
-                                    class="associateInput form-checkbox h-4 w-4 text-blue-600 mr-2"
-                                    value="{{ $user->id }}">
-                                {{ $user->name }}
-                            </label>
-                        </div>
-                    @endforeach
+                    @if ($currentrole !== 'Super Admin')
+                        @foreach ($users as $user)
+                            @continue($user->role !== 'Associate')
+                            <div class="py-1">
+                                <label
+                                    class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                                    role="option">
+                                    <input type="checkbox" name="associate[]"
+                                        class="associateInput form-checkbox h-4 w-4 text-blue-600 mr-2"
+                                        value="{{ $user->id }}">
+                                    {{ $user->name }}
+                                </label>
+                            </div>
+                        @endforeach
+                    @endif
                 </div>
                 <button class="text-red-700 my-3  addNewAssociate">+ Add Associate</button>
             </div>
@@ -138,7 +156,7 @@
                 <!-- Dropdown panel -->
                 <div class="jrAssociateDropdown hidden z-10 absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
                     role="listbox" aria-labelledby="multiselect-toggle" id="multiselect-dropdown1">
-                   
+                    @if ($currentrole !== 'Super Admin')
                         @foreach ($users as $user)
                             @continue($user->role !== 'Junior Associate')
                             <div class="py-1">
@@ -151,6 +169,7 @@
                                 </label>
                             </div>
                         @endforeach
+                    @endif
                 </div>
             </div>
             <span class="text-red-700" id="jrAssociate_error"></span>

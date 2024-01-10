@@ -45,6 +45,20 @@ class AdminCompanyController extends Controller
         User::where('company_id', $company_id)->update(['active' => $active]);
     }
 
+    public function getUsersByCompany(Company $company)
+    {
+        $users = $company->users()->get();
+        $associates = [];
+        foreach ($users as $user) {
+            $associates[] = [
+                'role' => $user->role,
+                'name' => $user->name,
+                'id' => $user->id,
+            ];
+        }
+        return response()->json($associates, 200);
+    }
+
     // public function permanent(Company $company)
     // {
     //     $company->forceDelete();

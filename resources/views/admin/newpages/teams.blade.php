@@ -135,11 +135,16 @@
                 </tbody>
             </table>
             @if ($team->owner_id == Auth::id() || $currentrole === $superadminrole)
-                <div class="mt-5">
+                <div class="flex justify-between mt-5">
                     <a data="{{ $team->disable ? 'Enable' : 'Disable' }}" class="delete"
                         href="{{ url(getRoutePrefix() . '/delete-team/' . $team->id) }}">
                         <button class="bg-red-800 px-5 py-2 text-white">
                             {{ $team->disable ? 'Enable' : 'Disable' }} Team
+                        </button>
+                    </a>
+                    <a class="addMembers" company="{{$team->company_id}}"  name="{{$team->name}}" id="{{$team->id}}">
+                        <button class="bg-red-800 px-5 py-2 text-white"> 
+                            Add Members
                         </button>
                     </a>
                 </div>
