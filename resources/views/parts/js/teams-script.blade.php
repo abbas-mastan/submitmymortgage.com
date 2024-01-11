@@ -164,7 +164,7 @@
         if ($('.associateForm').hasClass('hidden')) {
             $('.modalTitle').text('Add an Associate');
         } else {
-            @if(Auth::user()->role === 'Super Admin')
+            @if (Auth::user()->role === 'Super Admin')
                 companyid = ($('#company').find(':checked').val());
                 $('.associateForm').append(`<input type="hidden" name="company" value="${companyid}">`);
             @endif
@@ -175,8 +175,9 @@
 
     $('.associateForm').submit(function(e) {
         e.preventDefault();
-        @if(Auth::user()->role === 'Super Admin')
-        companyid = {{ Auth::user()->role === 'Super Admin' ? $('#company').find(':checked').val() : Auth::user()->company_id}};
+        @if (Auth::user()->role === 'Super Admin')
+            var companyId = {!! Auth::user()->role === 'Super Admin' ? "$('#company').find(':checked').val()" : Auth::user()->company_id !!};
+        @endif
         $('.jq-loader-for-ajax').removeClass('hidden');
         $.ajaxSetup({
             headers: {
@@ -216,7 +217,7 @@
         $('.jq-loader-for-ajax').removeClass('hidden');
         $.ajax({
             type: "post",
-            url: "{{ getRoutePrefix() . '/get-associates' }}"+'/'+${companyid},
+            url: "{{ getRoutePrefix() . '/get-associates' }}" + '/' + companyid,
             data: {},
             success: function(data) {
                 $('.jq-loader-for-ajax').addClass('hidden');
@@ -231,17 +232,20 @@
                     if (index > 3) {
                         $('.associateDropdown').addClass(
                             'h-56 overflow-y-auto')
-                    }
-                    $(".associateDropdown").append(`<div class="py-1">
+                        }
+                        $(".associateDropdown").append(`<div class="py-1">
                             <label
-                                class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
-                                role="option">
-                                <input type="checkbox" name="associate[]"
+                            class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                            role="option">
+                            <input type="checkbox" name="associate[]"
                                     class="associateinput form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
                                 ${associate.name }
                             </label>
                         </div>`);
-                });
+                    });
+            },
+            error: function(error) {
+                $('.jq-loader-for-ajax').addClass('hidden');
             }
         });
     }
