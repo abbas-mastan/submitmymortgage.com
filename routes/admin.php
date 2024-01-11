@@ -104,7 +104,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::get('/remove-access/{user}', 'removeAcess');
     Route::post('/submit-intake-form', 'submitIntakeForm');
     Route::post('/do-associate', 'doAssociate');
-    Route::post('/get-associates/{company}', 'getAssociates');
+    Route::post('/get-associates/{company?}', 'getAssociates');
     Route::get('/redirect/{route}/{message}', 'redirectTo');
 
 

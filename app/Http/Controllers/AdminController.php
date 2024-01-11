@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ApplicationRequest;
-use App\Http\Requests\IntakeFormRequest;
-use App\Models\Application;
-use App\Models\Contact;
+use Faker\Factory;
 use App\Models\Info;
-use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Company;
+use App\Models\Contact;
+use App\Models\Project;
+use Illuminate\View\View;
+use App\Models\Application;
 use App\Models\UserCategory;
-use App\Notifications\FileUploadNotification;
+use Illuminate\Http\Request;
+use App\Services\UserService;
 use App\Services\AdminService;
 use App\Services\CommonService;
-use App\Services\UserService;
-use Faker\Factory;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\IntakeFormRequest;
+use App\Http\Requests\ApplicationRequest;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\View\View;
+use App\Notifications\FileUploadNotification;
 
 class AdminController extends Controller
 {
@@ -257,12 +258,12 @@ class AdminController extends Controller
 
         // Fetch users created directly by the user
         $directlyCreatedUsers = $user->createdUsers()
-            ->with(['createdBy'])
+            ->with(['createdBy','company'])
             ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
             ->get();
 
         $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
-            ->with('createdBy')
+            ->with(['createdBy','company'])
             ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
             ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
             ->get();
@@ -593,13 +594,12 @@ class AdminController extends Controller
         })->get();
         
         $data['users'] = $admin->createdUsers()
-        ->orWhere('company_id',$admin->company_id)
+        ->orWhere('company_id',$admin->company_id ?? -1)
         ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
         ->orWhereHas('createdBy', function ($query) use ($admin) {
                 $query->where('created_by', $admin->id);
         })
         ->get();
-
         return view('admin.newpages.teams', $data);
     }
 
@@ -697,9 +697,9 @@ class AdminController extends Controller
         return response()->json('success', 200);
     }
 
-    public function getAssociates()
+    public function getAssociates(Company $company)
     {
-        $associates = CommonService::getAssociates();
+        $associates = CommonService::getAssociates($company);
         return response()->json($associates);
     }
 

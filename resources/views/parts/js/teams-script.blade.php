@@ -25,6 +25,8 @@
     @endforeach
 @endcan
 
+
+
 @if ($currentrole === 'Super Admin' || $currentrole === 'Admin' || $currentrole === 'Processor')
     <script>
         if ($('.associateDropdown > div').length > 5) {
@@ -49,6 +51,18 @@
     </script>
 @endif
 <script>
+    if($('.processorcount').val() === undefined){
+        $('.processorDropdown').append(`
+        <span class="text-red-700 text-sm text-center p-1">No data available</span>`);
+    }
+    if($('.associatecount').val() === undefined){
+        $('.associateDropdown').append(`
+        <span class="text-red-700 text-sm text-center p-1">No data available</span>`);
+    }
+    if($('.juniorassociatecount').val() === undefined){
+        $('.jrAssociateDropdown').append(`
+        <span class="text-red-700 text-sm text-center p-1">No data available</span>`);
+    }
     $('.addNewAssociate ,.backToAssociate').click(function(e) {
         e.preventDefault();
         handleNewAssociate();
@@ -119,7 +133,6 @@
                                 </div>`);
                 });
 
-                // Populate the "selectJuniorAssociate" select with Junior Associate options
                 $.each(juniorAssociates, function(index, associate) {
                     if (index > 3) {
                         $('.jrAssociateDropdown').addClass(
@@ -176,7 +189,7 @@
     $('.associateForm').submit(function(e) {
         e.preventDefault();
         @if (Auth::user()->role === 'Super Admin')
-            var companyId = {!! Auth::user()->role === 'Super Admin' ? "$('#company').find(':checked').val()" : Auth::user()->company_id !!};
+            var companyid = {!! Auth::user()->role === 'Super Admin' ? "$('#company').find(':checked').val()" : Auth::user()->company_id !!};
         @endif
         $('.jq-loader-for-ajax').removeClass('hidden');
         $.ajaxSetup({
@@ -208,6 +221,8 @@
     });
 
     function getAssociates(companyid) {
+        companyid = companyid ?? @json(Auth::user()->company_id);
+        console.log(companyid);
         $('.jq-loader-for-ajax').removeClass('hidden');
         $.ajaxSetup({
             headers: {
