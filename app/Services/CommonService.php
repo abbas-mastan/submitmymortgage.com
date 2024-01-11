@@ -175,7 +175,7 @@ class CommonService
                 $query->withTrashed();
             }])->get();
         } else {
-            $data['tables'] = array_diff($data['tables'], ['Deleted Deals']);
+            $data['tables'] = array_diff($data['tables'], ['Deleted Applications']);
 
             $user = User::find(auth()->id());
             $role = $user->role;
