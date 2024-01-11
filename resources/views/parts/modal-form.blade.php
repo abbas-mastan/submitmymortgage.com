@@ -28,7 +28,7 @@
                 <span class="text-red-700" id="team_error"></span>
             </div>
             <div id="new">
-                <x-form.input name="name" label="Group Name" class="mb-5" />
+                <x-form.input name="name" label="Team Name" class="mb-5" />
                 @if ($currentrole === 'Super Admin')
                     <label for="company" class="mt-1 text-sm text-dark-500 leading-6 font-bold">
                         Select Company
