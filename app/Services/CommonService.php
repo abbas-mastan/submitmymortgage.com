@@ -168,7 +168,7 @@ class CommonService
     public static function applications()
     {
         $data['role'] = Auth::user()->role;
-        $data['tables'] = ['Pending Applications', 'Completed Deals', 'Incomplete Deals', 'Deleted Deals'];
+        $data['tables'] = ['Pending Applications', 'Completed Applications', 'Incomplete Applications', 'Deleted Applications'];
 
         if ($data['role'] == 'Super Admin') {
             $data['applications'] = Application::with(['user' => function ($query) {
