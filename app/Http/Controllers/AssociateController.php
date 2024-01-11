@@ -2,26 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ApplicationRequest;
-use App\Models\Application;
-use App\Models\Contact;
 use App\Models\Info;
-use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Contact;
+use App\Models\Project;
+use Illuminate\View\View;
+use App\Models\Application;
 
 use App\Models\UserCategory;
+use Illuminate\Http\Request;
+use App\Services\UserService;
+
 use App\Services\AdminService;
 use App\Services\CommonService;
 
-use App\Services\UserService;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-
+use App\Http\Requests\IntakeFormRequest;
+use App\Http\Requests\ApplicationRequest;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\View\View;
 
 class AssociateController extends Controller
 {
@@ -377,5 +378,10 @@ class AssociateController extends Controller
     public static function markAsRead($id)
     {
         Auth::user()->notifications->where('id', $id)->markAsRead();
+    }
+
+    public function submitIntakeForm(IntakeFormRequest $request)
+    {
+       CommonService::submitIntakeForm($request);
     }
 }

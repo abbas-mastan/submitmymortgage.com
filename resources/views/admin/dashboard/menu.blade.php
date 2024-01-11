@@ -1,6 +1,6 @@
-@if($currentrole === $superadminrole || $currentrole === 'Admin')
+{{-- @if($currentrole === $superadminrole || $currentrole === 'Admin') --}}
 <x-form.intake-modal-form />
-@endif
+{{-- @endif --}}
 <div class="flex justify-evenly gap-8 align-center">
     <div class="sm:w-2/3 w-full">
         <div @class([
@@ -70,13 +70,13 @@
                 </div>
             </div>
         @endif
-        @if($currentrole === $superadminrole || $currentrole === 'Admin')
+        {{-- @if($currentrole === $superadminrole || $currentrole === 'Admin') --}}
             <div class="mt-8">
                 <button class="newProject underline text-2xl mt-5 text-red-700 capitalize font-bold">
                     intake form submission
                 </button>
             </div>
-        @endif
+        {{-- @endif --}}
     </div>
     @if ($currentrole !== 'Borrower' && count(Auth::user()->notifications) > 0)
         <div class="pl-5 pr-1 shadow-lg rounded-xl md:w-1/3 w-full mt-8 bg-white">

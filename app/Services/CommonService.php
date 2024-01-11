@@ -2,22 +2,33 @@
 
 namespace App\Services;
 
-use App\Models\Application;
-use App\Models\Attachment;
-use App\Models\Contact;
 use App\Models\Info;
-use App\Models\Media;
-use App\Models\Project;
 use App\Models\User;
-use App\Notifications\FileUploadNotification;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Password;
+use App\Models\Media;
+use App\Models\Company;
+use App\Models\Contact;
+use App\Models\Project;
+use App\Models\Attachment;
+use App\Models\IntakeForm;
+use App\Models\Application;
 use Illuminate\Support\Arr;
+use Faker\Factory;
+use Illuminate\Http\Request;
+use App\Notifications\FileUploadNotification;
 use Illuminate\Support\Facades\Auth;use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\ValidationException;use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use Illuminate\Validation\ValidationException;use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class CommonService
 {
+
+    protected $faker;
+    public function __construct()
+    {
+        $this->faker = Factory::create();
+    }
+
     //Updates profile picture of the user
     public static function doProfile(Request $request)
     {
@@ -348,12 +359,14 @@ class CommonService
         Auth::user()->notifications->where('id', $id)->markAsRead();
     }
 
-    public static function getAssociates()
+    public static function getAssociates(Company $company)
     {
         $admin = User::find(Auth::id());
-        $currentUserId = auth()->id();
-
-        $users = $admin->createdUsers()
+        if($admin->role === 'Super Admin' || $admin->role === 'Admin'){
+            $users = $company->users()->get();
+        }else{
+            $currentUserId = $admin->id();
+            $users = $admin->createdUsers()
             ->with(['createdBy', 'info'])
             ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
             ->where(function ($query) use ($currentUserId) {
@@ -365,6 +378,7 @@ class CommonService
                 });
             })
             ->get();
+        }
         foreach ($users as $user) {
             $associates[] = [
                 'role' => $user->role,
@@ -402,5 +416,47 @@ class CommonService
         }
 
         return redirect(getRoutePrefix() . "/$route")->with('msg_success', "$message.");
+    }
+
+    public  static function submitIntakeForm(Request $request)
+    {
+        $user = new User;
+        $faker = Factory::create();
+        $user->name = $request->first_name . ' ' . $request->last_name;
+        $user->email = $request->email;
+        $user->role = 'Borrower';
+        $user->created_by = Auth::id();
+        $user->password = bcrypt($faker->password(8));
+        if ($user->save()) {
+            Password::sendResetLink($request->only('email'));
+            Password::RESET_LINK_SENT;
+        }
+
+        IntakeForm::create([
+            'user_id' => $user->id,
+            'name' => $request->first_name ?? null . '' . $request->last_name,
+            'email' => $request->email ?? null,
+            'address' => $request->address ?? null,
+            'phone' => $request->phone ?? null,
+            'address' => $request->address . ' ' . $request->address_two ?? null,
+            'city' => $request->city ?? null,
+            'state' => $request->state ?? null,
+            'zip' => $request->zip ?? null,
+            'loan_type' => $request->loan_type ?? null,
+            'purchase_price' => $request->purchase_price ?? null,
+            'property_value' => $request->property_value ?? null,
+            'down_payment' => $request->down_payment ?? null,
+            'current_loan_amount' => $request->current_loan_amount ?? null,
+            'closing_date' => $request->closing_date ?? null,
+            'current_lender' => $request->current_lender ?? null,
+            'rate' => $request->rate ?? null,
+            'is_it_rental_property' => $request->is_it_rental_property ?? null,
+            'monthly_rental_income' => $request->monthly_rental_income ?? null,
+            'cashout_amount' => $request->cashout_amount ?? null,
+            'is_repair_finance_needed' => $request->is_repair_finance_needed ?? null,
+            'how_much' => $request->how_much ?? null,
+            'note' => $request->note ?? null,
+        ]);
+        return response()->json('success', 200);
     }
 }

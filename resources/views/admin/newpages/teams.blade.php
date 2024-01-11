@@ -142,8 +142,8 @@
                             {{ $team->disable ? 'Enable' : 'Disable' }} Team
                         </button>
                     </a>
-                    <a class="addMembers" company="{{$team->company_id}}"  name="{{$team->name}}" id="{{$team->id}}">
-                        <button class="bg-red-800 px-5 py-2 text-white"> 
+                    <a>
+                        <button class="addMembers bg-red-800 px-5 py-2 text-white" company="{{$team->company_id}}"  name="{{$team->name}}" id="{{$team->id}}"> 
                             Add Members
                         </button>
                     </a>

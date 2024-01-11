@@ -60,7 +60,7 @@ class AdminService
                 'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
                 'name' => "required",
                 'company' => (Auth::user()->role == 'Super Admin') ? 'sometimes:required' : '',
-                 'sendemail' => '',
+                'sendemail' => '',
                 'password' => ($isNewUser && !$request->sendemail) ? 'required|min:8|confirmed' : '',
                 'role' =>
                 #This is the custom Rule. Less than Admin Role Can't add User with the role === admin OR Processor

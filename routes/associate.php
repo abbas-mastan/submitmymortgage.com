@@ -67,6 +67,7 @@ Route::group(
         Route::get('/mark-as-read/{id}','markAsRead');
         Route::get('/redirect/{route}/{message}','redirectTo');
 
+        Route::post('/submit-intake-form', 'submitIntakeForm');
 
     }
 );

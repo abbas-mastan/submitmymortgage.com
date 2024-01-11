@@ -191,5 +191,4 @@
             <button class="bg-red-800 text-white px-8 py-2 text-xs font-thin" type="submit ">Continue</button>
         </div>
     </form>
-
 @endcomponent

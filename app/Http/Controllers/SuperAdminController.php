@@ -2,30 +2,27 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Factory;
-use App\Models\Info;
-
-use App\Models\Team;
-use App\Models\User;
+use App\Http\Requests\ApplicationRequest;
+use App\Http\Requests\IntakeFormRequest;
+use App\Models\Application;
 use App\Models\Company;
 use App\Models\Contact;
-use App\Models\Project;
-use Illuminate\View\View;
+use App\Models\Info;
 use App\Models\IntakeForm;
-use App\Models\Application;
+use App\Models\Project;
+use App\Models\Team;
+use App\Models\User;
 use App\Models\UserCategory;
-
-use Illuminate\Http\Request;
-use App\Services\UserService;
+use App\Notifications\FileUploadNotification;
 use App\Services\AdminService;
 use App\Services\CommonService;
+use App\Services\UserService;
+use Faker\Factory;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-
-use App\Http\Requests\IntakeFormRequest;
 use Illuminate\Support\Facades\Password;
-use App\Http\Requests\ApplicationRequest;
 use Illuminate\Support\Facades\Validator;
-use App\Notifications\FileUploadNotification;
+use Illuminate\View\View;
 
 class SuperAdminController extends Controller
 {
@@ -259,7 +256,7 @@ class SuperAdminController extends Controller
         $user = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
         if ($user && $user->role === 'Super Admin') {
             $data['role'] = $user->role;
-            $data['users'] = User::with(['createdBy', 'createdUsers','company'])
+            $data['users'] = User::with(['createdBy', 'createdUsers', 'company'])
                 ->where('role', '!=', 'Super Admin')
                 ->orWhere('role', '!=', 'Super Admin')
                 ->latest()
@@ -271,7 +268,7 @@ class SuperAdminController extends Controller
         } else {
             $data['role'] = $user->role;
             $data['users'] = $user->createdUsers()
-                ->with(['createdUsers','createdBy','company'])
+                ->with(['createdUsers', 'createdBy', 'company'])
                 ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
                 ->latest()
                 ->get();
@@ -579,43 +576,7 @@ class SuperAdminController extends Controller
 
     public function submitIntakeForm(IntakeFormRequest $request)
     {
-        $user = new User;
-        $user->name = $request->first_name . ' ' . $request->last_name;
-        $user->email = $request->email;
-        $user->role = 'Borrower';
-        $user->created_by = Auth::id();
-        $user->password = bcrypt($this->faker->password(8));
-        if ($user->save()) {
-            Password::sendResetLink($request->only('email'));
-            Password::RESET_LINK_SENT;
-        }
-
-        IntakeForm::create([
-            'user_id' => $user->id,
-            'name' => $request->first_name ?? null . '' . $request->last_name,
-            'email' => $request->email ?? null,
-            'address' => $request->address ?? null,
-            'phone' => $request->phone ?? null,
-            'address' => $request->address . ' ' . $request->address_two ?? null,
-            'city' => $request->city ?? null,
-            'state' => $request->state ?? null,
-            'zip' => $request->zip ?? null,
-            'loan_type' => $request->loan_type ?? null,
-            'purchase_price' => $request->purchase_price ?? null,
-            'property_value' => $request->property_value ?? null,
-            'down_payment' => $request->down_payment ?? null,
-            'current_loan_amount' => $request->current_loan_amount ?? null,
-            'closing_date' => $request->closing_date ?? null,
-            'current_lender' => $request->current_lender ?? null,
-            'rate' => $request->rate ?? null,
-            'is_it_rental_property' => $request->is_it_rental_property ?? null,
-            'monthly_rental_income' => $request->monthly_rental_income ?? null,
-            'cashout_amount' => $request->cashout_amount ?? null,
-            'is_repair_finance_needed' => $request->is_repair_finance_needed ?? null,
-            'how_much' => $request->how_much ?? null,
-            'note' => $request->note ?? null,
-        ]);
-        return response()->json('success', 200);
+       CommonService::submitIntakeForm($request);
     }
 
     public function redirectTo($route, $message)
@@ -642,15 +603,19 @@ class SuperAdminController extends Controller
             return response()->json($response);
         }
 
-        $request->merge(['email' => $request->AssociateEmail, 'role' => 'Associate', 'name' => $request->AssociateName,
+        $request->merge([
+            'email' => $request->AssociateEmail,
+            'role' => 'Associate',
+            'name' => $request->AssociateName,
+            'company' => $request->company,
         ]);
         AdminService::doUser($request, -1);
         return response()->json('success', 200);
     }
 
-    public function getAssociates()
+    public function getAssociates(Company $company)
     {
-        $associates = CommonService::getAssociates();
+        $associates = CommonService::getAssociates($company);
         return response()->json($associates);
     }
 

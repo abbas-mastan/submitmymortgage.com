@@ -53,7 +53,7 @@
         e.preventDefault();
         handleNewAssociate();
     });
-
+    var companyid = null;
     $('.addMembers').click(function(e) {
         e.preventDefault();
         $('#newProjectModal').toggleClass('hidden');
@@ -65,16 +65,28 @@
         $('.modalTitle').text('Add an Processor');
         $('.createTeam').addClass('hidden');
         $('.processor').removeClass('hidden');
+        companyid = $(this).attr('company');
+        fetchCompanyUsers(companyid);
+    });
 
+    $('#company').change(function(e) {
+        e.preventDefault();
+        if ($('#company').find(':checked').html() !== "Select Company") {
+            companyid = ($('#company').find(':checked').val());
+            fetchCompanyUsers(companyid);
+        }
+
+    });
+
+    function fetchCompanyUsers(companyid) {
         $.ajax({
-            url: `{{ getRoutePrefix() }}/getUsersByCompany/${$(this).attr('company')}`, // Replace with the actual URL for retrieving users by team
+            url: `{{ getRoutePrefix() }}/getUsersByCompany/${companyid}`, // Replace with the actual URL for retrieving users by team
             type: 'GET',
             success: function(data) {
                 var associates = [];
                 var juniorAssociates = [];
                 var processors = [];
                 $.each(data, function(index, associate) {
-                    console.log(associate.role);
                     if (associate.role === 'Associate') {
                         associates.push(associate);
                     } else if (associate.role === 'Junior Associate') {
@@ -83,29 +95,37 @@
                         processors.push(associate);
                     }
                 });
+
+                function appendEmptyText(dropdown) {
+                    $("." + dropdown).append(
+                        `<span class="text-red-700 text-sm text-center p-1">No data available</span>`);
+                }
+                if (associates < 1) appendEmptyText('associateDropdown');
+                if (juniorAssociates < 1) appendEmptyText('jrAssociateDropdown');
+                if (processors < 1) appendEmptyText('processorDropdown');
                 $.each(associates, function(index, associate) {
-                        if (index > 3) {
-                            $('.associateDropdown').addClass(
-                                'h-56 overflow-y-auto')
-                        }
-                        $(".associateDropdown").append(`<div class="py-1">
+                    if (index > 3) {
+                        $('.associateDropdown').addClass(
+                            'h-56 overflow-y-auto')
+                    }
+                    $(".associateDropdown").append(`<div class="py-1">
                             <label
                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                                 role="option">
                                 <input type="checkbox" name="associate[]"
-                                    class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
+                                class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
                                 ${associate.name}
-                            </label>
-                        </div>`);
-                    });
+                                </label>
+                                </div>`);
+                });
 
-                    // Populate the "selectJuniorAssociate" select with Junior Associate options
-                    $.each(juniorAssociates, function(index, associate) {
-                        if (index > 3) {
-                            $('.jrAssociateDropdown').addClass(
-                                'h-56 overflow-y-auto')
-                        }
-                        $(".jrAssociateDropdown").append(`<div class="py-1">
+                // Populate the "selectJuniorAssociate" select with Junior Associate options
+                $.each(juniorAssociates, function(index, associate) {
+                    if (index > 3) {
+                        $('.jrAssociateDropdown').addClass(
+                            'h-56 overflow-y-auto')
+                    }
+                    $(".jrAssociateDropdown").append(`<div class="py-1">
                             <label
                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                                 role="option">
@@ -114,13 +134,14 @@
                                 ${associate.name}
                             </label>
                         </div>`);
-                    });
-                    $.each(processors, function(index, associate) {
-                        if (index > 3) {
-                            $('.processorDropdown').addClass(
-                                'h-56 overflow-y-auto')
-                        }
-                        $(".processorDropdown").append(`<div class="py-1">
+                });
+                $.each(processors, function(index, associate) {
+
+                    if (index > 3) {
+                        $('.processorDropdown').addClass(
+                            'h-56 overflow-y-auto')
+                    }
+                    $(".processorDropdown").append(`<div class="py-1">
                             <label
                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                                 role="option">
@@ -129,14 +150,13 @@
                                 ${associate.name}
                             </label>
                         </div>`);
-                    });
-                },
-                error: function(error) {
-                    console.log(error);
-                }
+                });
+            },
+            error: function(error) {
+                console.log(error);
+            }
         });
-    });
-
+    }
 
     function handleNewAssociate() {
         $('.associate').toggleClass('hidden');
@@ -144,6 +164,10 @@
         if ($('.associateForm').hasClass('hidden')) {
             $('.modalTitle').text('Add an Associate');
         } else {
+            @if(Auth::user()->role === 'Super Admin')
+                companyid = ($('#company').find(':checked').val());
+                $('.associateForm').append(`<input type="hidden" name="company" value="${companyid}">`);
+            @endif
             $('.modalTitle').text('Create New Associate');
         }
         $('.associateForm input').attr('required', true);
@@ -151,6 +175,8 @@
 
     $('.associateForm').submit(function(e) {
         e.preventDefault();
+        @if(Auth::user()->role === 'Super Admin')
+        companyid = {{ Auth::user()->role === 'Super Admin' ? $('#company').find(':checked').val() : Auth::user()->company_id}};
         $('.jq-loader-for-ajax').removeClass('hidden');
         $.ajaxSetup({
             headers: {
@@ -163,9 +189,10 @@
             data: $(this).serialize(),
             success: function(response) {
                 $('.jq-loader-for-ajax').addClass('hidden');
+                console.log(response);
                 if (response === 'success') {
                     handleNewAssociate();
-                    getAssociates();
+                    getAssociates(companyid);
                     $('.associate').before(
                         `<span class="associcateSuccess text-green-700">Associate created successfully!</span>`
                     );
@@ -179,7 +206,7 @@
         });
     });
 
-    function getAssociates() {
+    function getAssociates(companyid) {
         $('.jq-loader-for-ajax').removeClass('hidden');
         $.ajaxSetup({
             headers: {
@@ -189,7 +216,7 @@
         $('.jq-loader-for-ajax').removeClass('hidden');
         $.ajax({
             type: "post",
-            url: "{{ getRoutePrefix() . '/get-associates' }}",
+            url: "{{ getRoutePrefix() . '/get-associates' }}"+'/'+${companyid},
             data: {},
             success: function(data) {
                 $('.jq-loader-for-ajax').addClass('hidden');
