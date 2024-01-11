@@ -126,6 +126,8 @@
         });
 
         $("#team").change(function() {
+            $('.jq-loader-for-ajax').removeClass('hidden');
+
             $(".processorDropdown").empty();
             $(".associateDropdown").empty();
             $(".jrAssociateDropdown").empty();
@@ -150,8 +152,8 @@
                         if (index > 3) {
                             $('.associateDropdown').addClass(
                                 'h-56 overflow-y-auto')
-                            }
-                            $(".associateDropdown").append(`<div class="py-1">
+                        }
+                        $(".associateDropdown").append(`<div class="py-1">
                                 <label
                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                                 role="option">
@@ -160,13 +162,13 @@
                                 ${associate.name}
                                 </label>
                                 </div>`);
-                            });
-                            $.each(juniorAssociates, function(index, associate) {
-                                if (index > 3) {
-                                    $('.jrAssociateDropdown').addClass(
-                                        'h-56 overflow-y-auto')
-                                    }
-                                    $(".jrAssociateDropdown").append(`<div class="py-1">
+                    });
+                    $.each(juniorAssociates, function(index, associate) {
+                        if (index > 3) {
+                            $('.jrAssociateDropdown').addClass(
+                                'h-56 overflow-y-auto')
+                        }
+                        $(".jrAssociateDropdown").append(`<div class="py-1">
                                         <label
                                         class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                                         role="option">
@@ -175,12 +177,12 @@
                                 ${associate.name}
                                 </label>
                                 </div>`);
-                            });
-                            $.each(processors, function(index, associate) {
-                                if (index > 3) {
-                                    $('.processorDropdown').addClass(
-                                        'h-56 overflow-y-auto')
-                                    }
+                    });
+                    $.each(processors, function(index, associate) {
+                        if (index > 3) {
+                            $('.processorDropdown').addClass(
+                                'h-56 overflow-y-auto')
+                        }
                         $(".processorDropdown").append(`<div class="py-1">
                             <label
                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
@@ -190,15 +192,19 @@
                                 ${associate.name}
                             </label>
                         </div>`);
-                        if (associates < 1) appendEmptyText('associateDropdown');
-                        if (juniorAssociates < 1) appendEmptyText('jrAssociateDropdown');
-                        if (processors < 1) appendEmptyText('processorDropdown');
-                        function appendEmptyText(dropdown) {
-                            $("." + dropdown).append(
-                                `<span class="text-red-700 text-sm text-center p-1">No data available</span>`
-                                );
-                        }
                     });
+                    if (associates < 1) appendEmptyText('associateDropdown');
+                    if (juniorAssociates < 1) appendEmptyText(
+                        'jrAssociateDropdown');
+                    if (processors < 1) appendEmptyText('processorDropdown');
+
+                    function appendEmptyText(dropdown) {
+                        $("." + dropdown).append(
+                            `<span class="text-red-700 text-sm text-center p-1">No data available</span>`
+                        );
+                    }
+                    $('.jq-loader-for-ajax').addClass('hidden');
+
                 },
                 error: function(xhr, status, error) {
                     console.log(xhr.responseText);
