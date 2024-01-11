@@ -16,9 +16,12 @@ use Illuminate\Support\Arr;
 use Faker\Factory;
 use Illuminate\Http\Request;
 use App\Notifications\FileUploadNotification;
-use Illuminate\Support\Facades\Auth;use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;use PhpOffice\PhpSpreadsheet\Writer\Xls;
-use Illuminate\Validation\ValidationException;use PhpOffice\PhpSpreadsheet\IOFactory;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use Illuminate\Validation\ValidationException;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class CommonService
 {
@@ -133,8 +136,27 @@ class CommonService
 
     public static function updateApplicatinStatus($application, $status)
     {
-        $application->status = $status == 'accept' ? 1 : ($status == 'delete' ? 3 : 2);
-        $msg = $status == 'accept' ? "Deal completed." : ($status == 'delete' ? "Deal deleted." : "Deal rejected.");
+        // $application->status = $status == 'accept' ? 1 : ($status == 'delete' ? 3 : 2);
+        // $msg = $status == 'accept' ? "Deal completed." : ($status == 'delete' ? "Deal deleted." : "Deal rejected.");
+
+        if ($status == 'accept') {
+            $application->status = 1;
+            $msg = "Application completed.";
+        } 
+        if ($status == 'delete') {
+            $application->status = 3;
+            $msg = "Application deleted.";
+        }
+        if($status == 'reject') {
+            $application->status = 2;
+            $msg = "Application rejected.";
+        }
+        
+        if($status == 'restore') {
+            abort_if(Auth::user()->role !== 'Super Admin',403,'You are not allowed to restore an Application');
+            $application->status = 0;
+            $msg = "Application Restored.";
+        }
         $application->update();
         return ['msg_value' => $msg, 'msg_type' => 'msg_success'];
     }
