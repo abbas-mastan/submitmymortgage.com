@@ -16,12 +16,6 @@
 
 <script>
     $(document).ready(function() {
-        // $('.AddNewMember').click(function(e) {
-        //     e.preventDefault();
-        //     alert('asdfasdf');
-        //     $('.AddNewMemberModal').removeClass('hidden');
-        // });
-
         $.each(['associate', 'processor', 'juniorAssociate'], function(indexInArray, input) {
             $(document).on('change', "input[name='" + input + "[]']", function(e) {
                 e.preventDefault();
@@ -136,12 +130,13 @@
             $(".associateDropdown").empty();
             $(".jrAssociateDropdown").empty();
             $.ajax({
-                url: `{{ getRoutePrefix() }}/getUsersByTeam/${$(this).val()}`, // Replace with the actual URL for retrieving users by team
+                url: `{{ getRoutePrefix() }}/getUsersByTeam/${$(this).val()}`,
                 type: 'GET',
                 success: function(data) {
                     var associates = [];
                     var juniorAssociates = [];
                     var processors = [];
+
                     $.each(data, function(index, associate) {
                         if (associate.role === 'Associate') {
                             associates.push(associate);
@@ -151,44 +146,41 @@
                             processors.push(associate);
                         }
                     });
-                    // Populate the "selecassociate" select with Associate options
                     $.each(associates, function(index, associate) {
                         if (index > 3) {
                             $('.associateDropdown').addClass(
                                 'h-56 overflow-y-auto')
-                        }
-                        $(".associateDropdown").append(`<div class="py-1">
-                            <label
+                            }
+                            $(".associateDropdown").append(`<div class="py-1">
+                                <label
                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                                 role="option">
                                 <input type="checkbox" name="associate[]"
-                                    class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
+                                class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
                                 ${associate.name}
-                            </label>
-                        </div>`);
-                    });
-
-                    // Populate the "selectJuniorAssociate" select with Junior Associate options
-                    $.each(juniorAssociates, function(index, associate) {
-                        if (index > 3) {
-                            $('.jrAssociateDropdown').addClass(
-                                'h-56 overflow-y-auto')
-                        }
-                        $(".jrAssociateDropdown").append(`<div class="py-1">
-                            <label
-                                class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
-                                role="option">
-                                <input type="checkbox" name="juniorAssociate[]"
-                                    class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
+                                </label>
+                                </div>`);
+                            });
+                            $.each(juniorAssociates, function(index, associate) {
+                                if (index > 3) {
+                                    $('.jrAssociateDropdown').addClass(
+                                        'h-56 overflow-y-auto')
+                                    }
+                                    $(".jrAssociateDropdown").append(`<div class="py-1">
+                                        <label
+                                        class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
+                                        role="option">
+                                        <input type="checkbox" name="juniorAssociate[]"
+                                        class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
                                 ${associate.name}
-                            </label>
-                        </div>`);
-                    });
-                    $.each(processors, function(index, associate) {
-                        if (index > 3) {
-                            $('.processorDropdown').addClass(
-                                'h-56 overflow-y-auto')
-                        }
+                                </label>
+                                </div>`);
+                            });
+                            $.each(processors, function(index, associate) {
+                                if (index > 3) {
+                                    $('.processorDropdown').addClass(
+                                        'h-56 overflow-y-auto')
+                                    }
                         $(".processorDropdown").append(`<div class="py-1">
                             <label
                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
@@ -198,10 +190,20 @@
                                 ${associate.name}
                             </label>
                         </div>`);
+                        if (associates < 1) appendEmptyText('associateDropdown');
+                        if (juniorAssociates < 1) appendEmptyText('jrAssociateDropdown');
+                        if (processors < 1) appendEmptyText('processorDropdown');
+                        function appendEmptyText(dropdown) {
+                            $("." + dropdown).append(
+                                `<span class="text-red-700 text-sm text-center p-1">No data available</span>`
+                                );
+                        }
                     });
                 },
-                error: function(error) {
-                    console.log(error);
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
+                    // Handle the case when there is an AJAX error
+                    $('.jq-loader-for-ajax').addClass('hidden');
                 }
             });
         });
@@ -243,12 +245,12 @@
                 if (response === 'success') {
                     window.location.href =
                         "{{ url(getRoutePrefix() . '/redirect/back/project-created-successfully') }}";
-
                 }
                 $.each(response.error, function(index, error) {
                     var fieldId = `#${error.field}_error`;
                     var errorMessage = error.message;
                     $(fieldId).text(errorMessage);
+                    $(fieldId).addClass('text-xs');
                 });
             },
             error: function(xhr, status, error) {
@@ -258,9 +260,6 @@
             }
         });
     }
-</script>
-
-<script>
     $(document).ready(function() {
         $(document).on('mouseenter', '.loginBtn', function() {
             if ($(this).attr('data') == 'restore') {

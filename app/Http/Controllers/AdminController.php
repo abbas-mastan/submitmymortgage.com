@@ -34,7 +34,6 @@ class AdminController extends Controller
     public function users(Request $request)
     {
         $data = AdminService::users($request);
-
         return view('admin.user.users', $data);
     }
 
@@ -425,7 +424,7 @@ class AdminController extends Controller
             'processor' => 'sometimes:required',
             'associate' => 'required',
             'juniorAssociate' => 'sometimes:required',
-        ]);
+        ],['email.required_with'=>'This fields is required']);
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
             $response = ['error' => []];
@@ -443,30 +442,7 @@ class AdminController extends Controller
                 'role' => 'Borrower',
             ]);
             $user = AdminService::doUser($request, -1);
-            $project = Project::create([
-                'name' => $request->borroweraddress,
-                'borrower_id' => $user,
-                'team_id' => $request->team,
-                'created_by' => Auth::id(),
-            ]);
-
-            if($request->associate){
-            foreach ($request->associate as $associate_id) {
-                $project->users()->attach($associate_id);
-            }
-            }
-            if($request->juniorAssociate){
-                foreach ($request->juniorAssociate as $associate_id) {
-                    $project->users()->attach($associate_id);
-                }
-            }
-            if($request->processor){
-            foreach ($request->processor as $associate_id) {
-                $project->users()->attach($associate_id);
-            }
-            }
-
-            $message = "Created new Deal by name : $request->borroweraddress";
+            $message = CommonService::storeProject($request,$user);
             $admin = User::where('role', 'Super Admin')->first();
             $user = User::find(Auth::id());
             $admin->notify(new FileUploadNotification($user, $message));

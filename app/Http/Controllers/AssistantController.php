@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\{Media,User};
 use Illuminate\Http\Request;
 use App\Services\CommonService;
-use Illuminate\Support\Facades\{Auth,Storage,Crypt};
 use App\Http\Controllers\AdminController;
+use Illuminate\Support\Facades\{Auth,Storage,Crypt};
 
 class AssistantController extends Controller
 {
 
+   
     public function assistantRegister(Request $request)
     {
         abort_if(!$request->hasValidSignature(),403);
@@ -91,7 +92,6 @@ class AssistantController extends Controller
                     if ($media->save()) {
                         CommonService::storeNotification("Uploaded $cat on behalf of $user->name", Auth::id());
                     }
-
                 }
             } else {
                 $success = false;
@@ -113,5 +113,7 @@ class AssistantController extends Controller
         }
         return ['msg_type' => 'msg_error', 'msg_value' => 'An error occured while deleting the file.'];
     }
+
+   
 
 }

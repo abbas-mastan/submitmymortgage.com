@@ -51,18 +51,20 @@
     </script>
 @endif
 <script>
-    if($('.processorcount').val() === undefined){
-        $('.processorDropdown').append(`
+    @if (Auth::user()->role !== 'Super Admin')
+        if ($('.processorcount').val() === undefined) {
+            $('.processorDropdown').append(`
         <span class="text-red-700 text-sm text-center p-1">No data available</span>`);
-    }
-    if($('.associatecount').val() === undefined){
-        $('.associateDropdown').append(`
+        }
+        if ($('.associatecount').val() === undefined) {
+            $('.associateDropdown').append(`
         <span class="text-red-700 text-sm text-center p-1">No data available</span>`);
-    }
-    if($('.juniorassociatecount').val() === undefined){
-        $('.jrAssociateDropdown').append(`
+        }
+        if ($('.juniorassociatecount').val() === undefined) {
+            $('.jrAssociateDropdown').append(`
         <span class="text-red-700 text-sm text-center p-1">No data available</span>`);
-    }
+        }
+    @endif
     $('.addNewAssociate ,.backToAssociate').click(function(e) {
         e.preventDefault();
         handleNewAssociate();
@@ -93,6 +95,9 @@
     });
 
     function fetchCompanyUsers(companyid) {
+        $(".processorDropdown").empty();
+        $(".associateDropdown").empty();
+        $(".jrAssociateDropdown").empty();
         $.ajax({
             url: `{{ getRoutePrefix() }}/getUsersByCompany/${companyid}`, // Replace with the actual URL for retrieving users by team
             type: 'GET',
@@ -247,8 +252,8 @@
                     if (index > 3) {
                         $('.associateDropdown').addClass(
                             'h-56 overflow-y-auto')
-                        }
-                        $(".associateDropdown").append(`<div class="py-1">
+                    }
+                    $(".associateDropdown").append(`<div class="py-1">
                             <label
                             class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                             role="option">
@@ -257,7 +262,7 @@
                                 ${associate.name }
                             </label>
                         </div>`);
-                    });
+                });
             },
             error: function(error) {
                 $('.jq-loader-for-ajax').addClass('hidden');

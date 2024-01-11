@@ -2,30 +2,39 @@
 
 namespace App\Http\Controllers;
 
+use Faker\Factory;
 use App\Models\Info;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\Contact;
 use App\Models\Project;
 use Illuminate\View\View;
-use App\Models\Application;
 
+use App\Models\Application;
 use App\Models\UserCategory;
 use Illuminate\Http\Request;
+
 use App\Services\UserService;
-
 use App\Services\AdminService;
+
 use App\Services\CommonService;
-
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Http\RedirectResponse;
 
+use Illuminate\Http\RedirectResponse;
 use App\Http\Requests\IntakeFormRequest;
 use App\Http\Requests\ApplicationRequest;
 use Illuminate\Support\Facades\Validator;
+use App\Notifications\FileUploadNotification;
 
 class AssociateController extends Controller
 {
+
+    protected $faker;
+    public function __construct()
+    {
+        $this->faker = Factory::create();
+    }
+
     public function doProfile(Request $request)
     {
         $msg = CommonService::doProfile($request);
@@ -280,8 +289,8 @@ class AssociateController extends Controller
     }
 
     public function projects($id = null): View
-    {
-        $admin = Auth::user();
+    {   
+        $admin = User::find(auth()->id());
         $data['teams'] = Team::whereHas('users', function ($query) use ($admin) {
             $query->where('user_id', $admin->id);
         })->get();
@@ -297,6 +306,84 @@ class AssociateController extends Controller
 
         $data['users'] = $admin->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         return view('admin.newpages.projects', $data);
+    }
+
+
+    // public function projects(): View
+    // {
+    //     $id = Auth::id();
+    //     $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
+    //     $data['teams'] = Team::where('owner_id', $admin->id)
+    //         ->orWhereHas('users', function ($query) use ($admin) {
+    //             $query->where('user_id', $admin->id);
+    //         })
+    //         ->get();
+
+    //     $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
+    //     $data['projects'] = Project::where('created_by', $admin->id)
+    //         ->orWhereHas('users', function ($query) use ($admin) {
+    //             $query->where('users.id', $admin->id);
+    //         })
+    //         ->with(['team', 'users.createdBy', 'borrower.createdBy'])
+    //         ->get();
+    //     $data['enableProjects'] = $data['projects'];
+    //     return view('admin.newpages.projects', $data);
+    // }
+    public function storeProject(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'borroweraddress' => 'required',
+            'email' => 'required_with:sendemail|unique:users,email',
+            'name' => 'required',
+            'borroweraddress' => 'required',
+            'financetype' => 'required',
+            'loantype' => 'required',
+            'team' => 'required',
+            'processor' => 'sometimes:required',
+            'associate' => 'required',
+            'juniorAssociate' => 'sometimes:required',
+        ],['email.required_with'=>'This fields is required']);
+        if ($validator->fails()) {
+            $errors = $validator->errors()->toArray();
+            $response = ['error' => []];
+            foreach ($errors as $field => $error) {
+                foreach ($error as $message) {
+                    $response['error'][] = [
+                        'field' => $field,
+                        'message' => $message,
+                    ];
+                }
+            }
+            return response()->json($response);
+        } else {
+            $request->merge(['email' => $request->email ?? $this->faker->unique()->safeEmail,
+                'role' => 'Borrower',
+            ]);
+            $user = AdminService::doUser($request, -1);
+            $message = CommonService::storeProject($request,$user);
+            $admin = User::where('role', 'Super Admin')->first();
+            $user = User::find(Auth::id());
+            $admin->notify(new FileUploadNotification($user, $message));
+            return response()->json('success', 200);
+        }
+    }
+
+    public function getUsersByTeam(Team $team)
+    {
+        $associates = [];
+        if (!$team) {
+            return response()->json([], 404);
+        }
+        // Team not found
+        // Retrieve associates and store them in the $associates array
+        foreach ($team->users as $user) {
+            $associates[] = [
+                'role' => $user->role,
+                'name' => $user->name,
+                'id' => $user->id,
+            ];
+        }
+        return response()->json($associates, 200);
     }
 
     public function newusers($id = null)

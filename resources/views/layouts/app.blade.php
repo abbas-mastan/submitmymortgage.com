@@ -142,6 +142,7 @@
                     titleText = 'Are you sure to delete this user?';
                     textClass = "Delete";
                 } else {
+                    textClass = "Delete";
                     middleSentenceOfModal = "You won't be able to revert this!"
                 }
             }

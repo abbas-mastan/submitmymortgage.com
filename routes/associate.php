@@ -55,7 +55,7 @@ Route::group(
         //=============================================
         Route::get('projects', 'projects');
         Route::post('store-project', 'storeProject');
-        Route::get('/getUsersByTeam/{id}', 'getUsersByTeam');
+        Route::get('/getUsersByTeam/{team}', 'getUsersByTeam');
         Route::get('/getUsersByProcessor/{id}/{teamid}', 'getUsersByProcessor');
         Route::get('teams', 'teams');
         Route::post('teams/{id?}', 'storeteam');

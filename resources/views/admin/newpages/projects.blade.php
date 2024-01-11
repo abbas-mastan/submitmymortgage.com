@@ -42,9 +42,7 @@
         @include('parts.project-modal-form')
     @endif
     <x-flex-card title="Deals" titlecounts="{{ count($projects) }}" iconurl="{{ asset('icons/Deals.svg') }}" />
-    @if (Gate::check('isSuperAdmin') || Gate::check('isAdmin'))
         <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Deal</button>
-    @endif
     @if (count($enableProjects) > 0)
         <h2 class="text-center text-xl border-y-4 py-3  mt-5">Enable Deals</h2>
     @endif

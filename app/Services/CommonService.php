@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class CommonService
@@ -481,4 +482,33 @@ class CommonService
         ]);
         return response()->json('success', 200);
     }
+
+    public  static function storeProject(Request $request,$user)
+    {
+        $project = Project::create([
+            'name' => $request->borroweraddress,
+            'borrower_id' => $user,
+            'team_id' => $request->team,
+            'created_by' => Auth::id(),
+        ]);
+
+        if($request->associate){
+        foreach ($request->associate as $associate_id) {
+            $project->users()->attach($associate_id);
+        }
+        }
+        if($request->juniorAssociate){
+            foreach ($request->juniorAssociate as $associate_id) {
+                $project->users()->attach($associate_id);
+            }
+        }
+        if($request->processor){
+        foreach ($request->processor as $associate_id) {
+            $project->users()->attach($associate_id);
+        }
+        }
+
+        return "Created new Deal by name : $request->borroweraddress";
+    }
+
 }

@@ -8,23 +8,23 @@
         }
 
         /* #completed-table_length,
-                #completed-table_filter,
-                #completed-table>thead,
-                #deleted-table_length,
-                #deleted-table_filter,
-                #deleted-table>thead,
-                #user-table_length,
-                #user-table_filter,
-                #user-table>thead {
-                    display: none !important;
-                }
+                    #completed-table_filter,
+                    #completed-table>thead,
+                    #deleted-table_length,
+                    #deleted-table_filter,
+                    #deleted-table>thead,
+                    #user-table_length,
+                    #user-table_filter,
+                    #user-table>thead {
+                        display: none !important;
+                    }
 
 
-                #completed-table_wrapper,
-                #deleted-table_wrapper,
-                #user-table_wrapper {
-                    box-shadow: 0px 0px 11px 0px gray;
-                } */
+                    #completed-table_wrapper,
+                    #deleted-table_wrapper,
+                    #user-table_wrapper {
+                        box-shadow: 0px 0px 11px 0px gray;
+                    } */
 
         .dataTables_info {
             margin-left: 10px;
@@ -56,9 +56,11 @@
                 <th class="">
                     Role
                 </th>
-                <th class="">
-                    Company
-                </th>
+                @if (auth()->user()->role === 'Super Admin')
+                    <th class="">
+                        Company
+                    </th>
+                @endif
                 <th class="">
                     Status
                 </th>
@@ -73,7 +75,7 @@
         <tbody>
             @php $serialNumber = 1; @endphp
             @foreach ($users as $processor)
-            @if ($processor->email_verified_at !== null)
+                @if ($processor->email_verified_at !== null)
                     <tr>
                         <td class="verifiedSerial pl-2 tracking-wide border border-l-0">{{ $serialNumber }}
                         </td>
@@ -92,13 +94,15 @@
                         <td class=" pl-2 tracking-wide border border-l-0">
                             {{ $processor->role }}
                         </td>
+                        @if (auth()->user()->role === 'Super Admin')
+                            <td class=" pl-2 tracking-wide border border-l-0">
+                                @if ($processor->company_id)
+                                    {{ $processor->company->name ?? null }}
+                                @endif
+                            </td>
+                        @endif
                         <td class=" pl-2 tracking-wide border border-l-0">
-                            @if($processor->company_id)
-                            {{ $processor->company->name ?? null }}
-                            @endif
-                        </td>
-                        <td class=" pl-2 tracking-wide border border-l-0">
-                            {{ $processor->active ? 'Enabled':'Disable'}}
+                            {{ $processor->active ? 'Enabled' : 'Disable' }}
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
                             @if ($processor->createdBy)
@@ -110,7 +114,7 @@
                             @endif
                         </td>
                         <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                            <a data="{{$currentrole === $superadminrole ? 'temporary' :'Delete'}}" class="delete"
+                            <a data="{{ $currentrole === $superadminrole ? 'temporary' : 'Delete' }}" class="delete"
                                 href="{{ url(getRoutePrefix() . '/delete-user/' . $processor->id) }}">
                                 <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                                     <img style="-webkit-writing-mode: vertical-lr;" src="{{ asset('icons/trash.svg') }}"
@@ -118,7 +122,8 @@
                                 </button>
                             </a>
                             @if ($currentrole === $superadminrole)
-                                <form method="POST" action="{{ url(getSuperAdminRoutePrefix() . '/login-as-this-user') }}">
+                                <form method="POST"
+                                    action="{{ url(getSuperAdminRoutePrefix() . '/login-as-this-user') }}">
                                     @csrf
                                     <input type="hidden" name="user_id" value="{{ $processor->id }}">
                                     <span class="loginBtn">
@@ -196,7 +201,7 @@
                             @endif
                         </td>
                         <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                            <a data="{{$currentrole === $superadminrole ? 'temporary' :'Delete'}}" class="delete"
+                            <a data="{{ $currentrole === $superadminrole ? 'temporary' : 'Delete' }}" class="delete"
                                 href="{{ url(getRoutePrefix() . '/delete-user/' . $processor->id) }}">
                                 <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                                     <img style="-webkit-writing-mode: vertical-lr;" src="{{ asset('icons/trash.svg') }}"
@@ -204,8 +209,9 @@
 
                                 </button>
                             </a>
-                            @if($currentrole === $superadminrole || $currentrole === 'Admin')
-                            <a href="{{url(getRoutePrefix().'/verify-user/'.$processor->id)}}" class="bg-themered text-white px-2.5 py-0.5 ml-1">Verify</a>
+                            @if ($currentrole === $superadminrole || $currentrole === 'Admin')
+                                <a href="{{ url(getRoutePrefix() . '/verify-user/' . $processor->id) }}"
+                                    class="bg-themered text-white px-2.5 py-0.5 ml-1">Verify</a>
                             @endif
                         </td>
                     </tr>
@@ -249,10 +255,8 @@
                         <td class="deletedSerial pl-2 tracking-wide border border-l-0">{{ $serialNumber }}
                         </td>
                         <td class="pl-2 tracking-wide border border-l-0">
-                            <a title="Click to view files uploaded by this user" 
-                            class="text-blue-500 inline"
-                                {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}
-                                >
+                            <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
+                                {{-- href="{{ url(getRoutePrefix() . ($processor->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $processor->id) }}" --}}>
                                 {{ $processor->name }}
                             </a>
                             {{-- <a title="Edit this user" href="{{ url(getRoutePrefix() . '/add-user/' . $processor->id) }}">
@@ -279,7 +283,7 @@
                                     <img src="{{ asset('icons/restore.svg') }}" alt="" class="filter ">
                                 </button>
                             </a>
-                            <a data="Delete" class="delete ml-2"
+                            <a data="Permanent Delete" class="delete ml-2"
                                 href="{{ url(getRoutePrefix() . '/delete-user-permenant/' . $processor->id) }}">
                                 <button class="bg-themered tracking-wide font-semibold capitalize p-1 text-xl w-7">
                                     <img src="{{ asset('icons/trash.svg') }}" alt="" class="filter ">
