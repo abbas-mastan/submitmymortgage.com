@@ -38,108 +38,118 @@
             action="{{ empty($user->id) ? url(getRoutePrefix() . '/do-user/-1') : url(getRoutePrefix() . '/do-user/' . $user->id) }}"
             method="post" class=" w-7/8">
             @csrf
-            <div class="mt-10 mx-auto">
-                <div class=" text-left mr-12">
-                    <label for="name" class="">Enter Full Name</label>
-                </div>
-                <div class="mt-2">
-                    <input value="{{ old('name', $user->name) }}" type="text"
-                        class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                        name="name" id="name" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Full Name">
-                </div>
-            </div>
-            <div class="mt-3 mx-auto">
-                <div class=" text-left mr-12">
-                    <label for="email" class="">Email Address</label>
-                </div>
-                <div class="mt-2">
-                    <input value="{{ old('email', $user->email) }}" type="email"
-                        class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                        name="email" id="email" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email Address">
-                </div>
-            </div>
-            <div class="mt-3 mx-auto">
-                <div class=" text-left mr-12">
-                    <label for="role" class="">User Type</label>
-                </div>
-                <div class="mt-2">
-                    <select required name="role" id="role"
-                        class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                        <option value="">Choose a type</option>
-                        @php
-                            $roles = config('smm.roles');
-                            if ($currentrole === 'Super Admin') array_unshift($roles, 'Admin');
-                        @endphp
-                        @foreach ($roles as $role)
-                            @if (!(($currentrole == 'Processor' && $role == 'Processor') ||
-                                    ($currentrole == 'Associate' && in_array($role, ['Associate', 'Processor'])) ||
-                                    ($currentrole == 'Junior Associate' && in_array($role, ['Junior Associate', 'Associate', 'Processor'])) ||
-                                    (in_array($currentrole, ['Processor', 'Associate', 'Junior Associate']) && $role == 'Admin')
-                                ))
-                                <option {{ old('role', $user->role) == $role ? 'selected' : '' }}
-                                    value="{{ $role }}">
-                                    {{ $role }}
-                                </option>
-                            @endif
-                        @endforeach
-                    </select>
-                </div>
-            </div>
-            @isset($companies)
-                <div class="mt-3 mx-auto">
-                    <div class=" text-left mr-12">
-                        <label for="role" class="">Company Name</label>
+            <div class="flex justify-between">
+                <div class="mt-3 w-[49%]">
+                    <div class="text-left mr-12">
+                        <label for="name" class="">Enter Full Name</label>
                     </div>
                     <div class="mt-2">
-                        <select name="company" id="company"
+                        <input value="{{ old('name', $user->name) }}" type="text"
+                            class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            name="name" id="name" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Full Name">
+                    </div>
+                </div>
+                <div class="mt-3 w-[49%]">
+                    <div class="text-left mr-12">
+                        <label for="email" class="">Email Address</label>
+                    </div>
+                    <div class="mt-2">
+                        <input value="{{ old('email', $user->email) }}" type="email"
+                            class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            name="email" id="email" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email Address">
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-between">
+                <div class="mt-3 w-[49%]">
+                    <div class=" text-left mr-12">
+                        <label for="role" class="">User Type</label>
+                    </div>
+                    <div class="mt-2">
+                        <select required name="role" id="role"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                            <option value="">Choose a company</option>
-                            @foreach ($companies as $company)
-                                <option {{ old('company', $user->company_id) == $company->id ? 'selected' : '' }}
-                                    value="{{ $company->id }}">
-                                    {{ $company->name }}
-                                </option>
+                            <option value="">Choose a type</option>
+                            @php
+                                $roles = config('smm.roles');
+                                if ($currentrole === 'Super Admin') {
+                                    array_unshift($roles, 'Admin');
+                                }
+                            @endphp
+                            @foreach ($roles as $role)
+                                @if (
+                                    !(
+                                        ($currentrole == 'Processor' && $role == 'Processor') ||
+                                        ($currentrole == 'Associate' && in_array($role, ['Associate', 'Processor'])) ||
+                                        ($currentrole == 'Junior Associate' && in_array($role, ['Junior Associate', 'Associate', 'Processor'])) ||
+                                        (in_array($currentrole, ['Processor', 'Associate', 'Junior Associate']) && $role == 'Admin')
+                                    ))
+                                    <option {{ old('role', $user->role) == $role ? 'selected' : '' }}
+                                        value="{{ $role }}">
+                                        {{ $role }}
+                                    </option>
+                                @endif
                             @endforeach
                         </select>
                     </div>
                 </div>
-            @endisset
-            <div class="mt-3 mx-auto" id="finance-div"
-                style="{{ in_array($user->role, ['Processor', 'Associate', 'Junior Associate']) ? 'display: none' : '' }}">
-                <div class=" text-left mr-12">
-                    <label for="finance_type" class="">Finance Type</label>
-                </div>
-                <div class="mt-2">
-                    <select id="finance_type" name="finance_type"
-                        class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                        <option value="" class="">Choose a value</option>
-                        <option {{ old('finance_type', $user->finance_type) == 'Purchase' ? 'selected' : '' }}
-                            value="Purchase" class="">Purchase</option>
-                        <option {{ old('finance_type', $user->finance_type) == 'Refinance' ? 'selected' : '' }}
-                            value="Refinance" class="">Refinance</option>
-                    </select>
-                </div>
+                @isset($companies)
+                    <div class="mt-3 w-[49%]">
+                        <div class=" text-left mr-12">
+                            <label for="role" class="">Company Name</label>
+                        </div>
+                        <div class="mt-2">
+                            <select name="company" id="company"
+                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
+                                <option value="">Choose a company</option>
+                                @foreach ($companies as $company)
+                                    <option {{ old('company', $user->company_id) == $company->id ? 'selected' : '' }}
+                                        value="{{ $company->id }}">
+                                        {{ $company->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                @endisset
             </div>
-            <div class="mt-3 mx-auto" id="loan_type_div"
-                style="{{ in_array($user->role, ['Processor', 'Associate', 'Junior Associate']) ? 'display: none' : '' }}">
-                <div class=" text-left mr-12">
-                    <label for="loan_type" class="">Loan Type</label>
+            <div class="flex justify-between">
+                <div class="mt-3 w-[49%]" id="finance-div"
+                    style="{{ in_array($user->role, ['Processor', 'Associate', 'Junior Associate']) ? 'display: none' : '' }}">
+                    <div class=" text-left mr-12">
+                        <label for="finance_type" class="">Finance Type</label>
+                    </div>
+                    <div class="mt-2">
+                        <select id="finance_type" name="finance_type"
+                            class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
+                            <option value="" class="">Choose a value</option>
+                            <option {{ old('finance_type', $user->finance_type) == 'Purchase' ? 'selected' : '' }}
+                                value="Purchase" class="">Purchase</option>
+                            <option {{ old('finance_type', $user->finance_type) == 'Refinance' ? 'selected' : '' }}
+                                value="Refinance" class="">Refinance</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="mt-2">
-                    <select id="loan_type" name="loan_type"
-                        class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                        <option value="" class="">Choose a value</option>
-                        <option {{ old('loan_type', $user->loan_type) == 'Private Loan' ? 'selected' : '' }}
-                            value="Private Loan" class="">Private Loan</option>
-                        <option {{ old('loan_type', $user->loan_type) == 'Full Doc' ? 'selected' : '' }} value="Full Doc"
-                            class="">Full Doc</option>
-                        <option {{ old('loan_type', $user->loan_type) == 'Non QM' ? 'selected' : '' }} value="Non QM"
-                            class="">Non QM</option>
-                    </select>
+                <div class="mt-3 w-[49%]" id="loan_type_div"
+                    style="{{ in_array($user->role, ['Processor', 'Associate', 'Junior Associate']) ? 'display: none' : '' }}">
+                    <div class=" text-left mr-12">
+                        <label for="loan_type" class="">Loan Type</label>
+                    </div>
+                    <div class="mt-2">
+                        <select id="loan_type" name="loan_type"
+                            class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
+                            <option value="" class="">Choose a value</option>
+                            <option {{ old('loan_type', $user->loan_type) == 'Private Loan' ? 'selected' : '' }}
+                                value="Private Loan" class="">Private Loan</option>
+                            <option {{ old('loan_type', $user->loan_type) == 'Full Doc' ? 'selected' : '' }}
+                                value="Full Doc" class="">Full Doc</option>
+                            <option {{ old('loan_type', $user->loan_type) == 'Non QM' ? 'selected' : '' }} value="Non QM"
+                                class="">Non QM</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             @if (empty($user->id))
-                <div class="mt-3 text-left mr-12">
+                <div class="mt-5 text-left mr-12">
                     <input type="checkbox" {{ old('sendemail') == 'on' ? 'checked' : '' }} name="sendemail"
                         id="sendemail">
                     <label for="sendemail">Send Welcome Email</label>
@@ -147,28 +157,30 @@
             @endif
             @if (empty($user->password))
                 <span id="passwordParent">
-                    <div class="mt-3 mx-auto">
-                        <div class=" text-left mr-12">
-                            <label for="password" class="">Create Password</label>
+                    <div class="flex justify-between">
+                        <div class="mt-3 w-[49%]">
+                            <div class=" text-left mr-12">
+                                <label for="password" class="">Create Password</label>
+                            </div>
+                            <div class="mt-2">
+                                <input type="password"
+                                    class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                                    name="password" id="password" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
+                            </div>
+                            @error('password')
+                                <span class="text-red-700">{{ $message }}</span>
+                            @enderror
                         </div>
-                        <div class="mt-2">
-                            <input type="password"
-                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                                name="password" id="password" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
-                        </div>
-                        @error('password')
-                            <span class="text-red-700">{{ $message }}</span>
-                        @enderror
-                    </div>
-                    <div class="mt-3 mx-auto">
-                        <div class=" text-left mr-12">
-                            <label for="password_confirmation" class="">Confirm Password</label>
-                        </div>
-                        <div class="mt-2">
-                            <input type="password"
-                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                                name="password_confirmation" id="password_confirmation"
-                                placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
+                        <div class="mt-3 w-[49%]">
+                            <div class=" text-left mr-12">
+                                <label for="password_confirmation" class="">Confirm Password</label>
+                            </div>
+                            <div class="mt-2">
+                                <input type="password"
+                                    class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                                    name="password_confirmation" id="password_confirmation"
+                                    placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
+                            </div>
                         </div>
                     </div>
                 </span>
@@ -184,16 +196,11 @@
                     </div>
                 </div>
             @endisset
-            <div class="mt-5 grid grid-cols-6">
-                <div class="col-span-2 text-right mr-12">
-                    &nbsp;
-                </div>
-                <div class="col-span-4 ml-1 ">
+            <div class="mt-10">
                     <button type="submit"
-                        class="bg-gradient-to-b from-gradientStart to-gradientEnd capitalize rounded-md px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400 text-white">
+                        class="w-full bg-gradient-to-b from-gradientStart to-gradientEnd capitalize rounded-md px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400 text-white">
                         {{ !empty($user->id) ? 'Update' : 'Create' }}
                     </button>
-                </div>
             </div>
         </form>
     </div>
@@ -218,8 +225,7 @@
         let loanDiv = document.querySelector('#loan_type_div');
         let financeType = document.querySelector('#finance_type');
         role.addEventListener("change", function() {
-            if (this.value === 'Processor' || this.value === 'Associate' || this.value === 'Junior Associate' ||
-                this.value === 'Admin') {
+            if (this.value !== 'Borrower') {
                 financeDiv.style.display = 'none';
                 loanDiv.style.display = 'none';
                 financeType.removeAttribute('required');
@@ -231,15 +237,23 @@
         });
         // Trigger the change event on page load to initialize the display and required attribute
         role.dispatchEvent(new Event('change'));
-
         function showPrompt(form) {
-            if (role.value == 'Processor') {
-                if (confirm('Are you sure you want to add a Processor?')) {
+            if (role.value == 'Processor' || role.value == 'Admin') {
+                if (confirm('Are you sure you want to add a '+role.value+'?')) {
                     form.submit();
                 }
                 return;
             }
             return form.submit();
         }
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#company').change(function (e) { 
+                e.preventDefault();
+                
+            });
+        });
     </script>
 @endsection
