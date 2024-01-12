@@ -79,7 +79,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     //=============> new Design Routes
     //=============================================
     Route::get('projects', 'projects');
-    Route::post('store-project', 'storeProject');
+    Route::post('store-project/{id?}  ', 'storeProject');
     Route::get('/getUsersByTeam/{team}', 'getUsersByTeam');
     Route::get('/getUsersByProcessor/{id}/{teamid}', 'getUsersByProcessor');
     Route::get('teams', 'teams');

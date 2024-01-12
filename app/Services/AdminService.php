@@ -490,8 +490,9 @@ class AdminService
             $faker = Factory::create();
             $request->merge(['email' => $request->email ?? $faker->unique()->safeEmail,
                 'role' => 'Borrower',
+                'company' => $request->team
             ]);
-            $user = AdminService::doUser($request, -1);
+            $user = self::doUser($request, -1);
             $project = Project::create([
                 'name' => $request->borroweraddress,
                 'borrower_id' => $user,

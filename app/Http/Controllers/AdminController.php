@@ -410,44 +410,9 @@ class AdminController extends Controller
         }
         return view('admin.newpages.project-overview', $data);
     }
-
-    public function storeProject(Request $request)
+    public function storeProject(Request $request, $id = -1)
     {
-        $validator = Validator::make($request->all(), [
-            'borroweraddress' => 'required',
-            'email' => 'required_with:sendemail|unique:users,email',
-            'name' => 'required',
-            'borroweraddress' => 'required',
-            'financetype' => 'required',
-            'loantype' => 'required',
-            'team' => 'required',
-            'processor' => 'sometimes:required',
-            'associate' => 'required',
-            'juniorAssociate' => 'sometimes:required',
-        ],['email.required_with'=>'This fields is required']);
-        if ($validator->fails()) {
-            $errors = $validator->errors()->toArray();
-            $response = ['error' => []];
-            foreach ($errors as $field => $error) {
-                foreach ($error as $message) {
-                    $response['error'][] = [
-                        'field' => $field,
-                        'message' => $message,
-                    ];
-                }
-            }
-            return response()->json($response);
-        } else {
-            $request->merge(['email' => $request->email ?? $this->faker->unique()->safeEmail,
-                'role' => 'Borrower',
-            ]);
-            $user = AdminService::doUser($request, -1);
-            $message = CommonService::storeProject($request,$user);
-            $admin = User::where('role', 'Super Admin')->first();
-            $user = User::find(Auth::id());
-            $admin->notify(new FileUploadNotification($user, $message));
-            return response()->json('success', 200);
-        }
+       return AdminService::storeProject($request,$id);
     }
 
     public function getUsersByTeam(Team $team)

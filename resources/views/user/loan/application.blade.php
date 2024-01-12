@@ -31,10 +31,11 @@
                             {{ session('role') == 'Borrower' ? 'Name' : 'Email' }}</label>
                     </div>
                     <div class="mt-2">
-                        <input value="{{ old('email', $application->email) }}" type="email"
+                        <input value="{{ old(session('role') === 'Borrower' ? 'name':'email',
+                        (session('role') === 'Borrower' ? $application->name:$application->email)) }}" type="{{session('role') == 'Borrower' ? 'text':'email'}}"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                            name="email" id="email" placeholder="&nbsp;&nbsp;&nbsp;&nbsp; {{ session('role') == 'Borrower' ? 'Client\'s Name' : 'Email Address' }}">
-                        @error('email')
+                            name="{{session('role') == 'Borrower' ? 'name':'email'}}" id="{{session('role') == 'Borrower' ? 'name':'email'}}" placeholder="&nbsp;&nbsp;&nbsp;&nbsp; {{ session('role') == 'Borrower' ? 'Client\'s Name' : 'Email Address' }}">
+                        @error(session('role') == 'Borrower' ? 'name':'email')
                             <span class="text-red-700">
                                 {{ $message }}
                             </span>
@@ -64,10 +65,11 @@
                             class="">{{ session('role') === 'Borrower' ? 'Email' : 'Name' }}</label>
                     </div>
                     <div class="mt-2">
-                        <input value="{{ old('name', $application->name) }}" type="text"
+                        <input value="{{ old(session('role') === 'Borrower' ? 'email':'name',
+                        (session('role') === 'Borrower' ? $application->email:$application->name)) }}" type="text"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                            name="name" id="name" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;{{ session('role') === 'Borrower' ? 'Email Address' : 'Client\'s Name' }}">
-                        @error('name')
+                            name="{{session('role') === 'Borrower' ? 'email':'name'}}" id="{{session('role') === 'Borrower' ? 'email':'name'}}" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;{{ session('role') === 'Borrower' ? 'Email Address' : 'Client\'s Name' }}">
+                        @error(session('role') === 'Borrower' ? 'email':'name')
                             <span class="text-red-700">
                                 {{ $message }}
                             </span>
