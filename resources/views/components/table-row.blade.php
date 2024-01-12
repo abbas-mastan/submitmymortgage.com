@@ -15,7 +15,7 @@
         {{ $application->email }}
     </td>
     <td class=" pl-2 tracking-wide border border-l-0">
-        {{ $application->user->email }}
+        {{ $application->user->email ?? null }}
     </td>
     <td class="text-center pl-2 tracking-wide border border-r-0">
         @if($key !== 3)
