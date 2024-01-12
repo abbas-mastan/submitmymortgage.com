@@ -42,7 +42,7 @@
         @include('parts.project-modal-form')
     @endif
     <x-flex-card title="Deals" titlecounts="{{ count($projects) }}" iconurl="{{ asset('icons/Deals.svg') }}" />
-        <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Deal</button>
+    <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New Deal</button>
     @if (count($enableProjects) > 0)
         <h2 class="text-center text-xl border-y-4 py-3  mt-5">Enable Deals</h2>
     @endif
@@ -52,22 +52,29 @@
                 <div class="py-2">
                     <details class="group">
                         <summary
-                            class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white py-2 flex text-xl justify-between items-center font-medium cursor-pointer list-none">
+                            class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white py-2  text-xl flex justify-between items-center font-medium cursor-pointer list-none">
                             <span class="px-5"> {{ $project->name }} |
-                                {{ $project->team->name }}</span>
-                            <span class="mr-4 transition group-open:rotate-180">
-                                <svg fill="none" height="35" width="35" shape-rendering="geometricPrecision"
-                                    stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                    viewBox="0 0 24 24">
-                                    <path d="M6 9l6 6 6-6"></path>
-                                </svg>
+                                {{ $project->team->name }}
+                            </span>
+                            <span class="flex justify-between items-center">
+                                <span class="text-md mr-4">
+                                    Created By:
+                                    {{ $project->creater->name }}
+                                </span>
+                                <span class="mr-4 transition group-open:rotate-180">
+                                    <svg fill="none" height="35" width="35" shape-rendering="geometricPrecision"
+                                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1.5" viewBox="0 0 24 24">
+                                        <path d="M6 9l6 6 6-6"></path>
+                                    </svg>
+                                </span>
                             </span>
                         </summary>
                         <p id="toptable1" class="text-neutral-600 group-open:animate-fadeIn">
                         <table class="w-full display shadow-lg" id="{{ Str::slug($project->name . $project->id) }}-table">
-                            <thead class="hidden bg-gray-300">
+                            <thead class="bg-gray-300">
                                 <tr>
-                                    <th class="pl-2 tracking-wide">
+                                    <th class="">
                                         S No.
                                     </th>
                                     <th class="">
@@ -99,13 +106,10 @@
                                             </td>
                                             <td class=" pl-2 tracking-wide border border-l-0">
                                                 <a title="Click to view files uploaded by this user"
-                                                class="text-blue-500 inline"
-                                                @if($currentrole === 'Super Admin') 
-                                                href="{{ url(getRoutePrefix() . ($user->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $user->id) }}"
-                                                @endif
-                                                >
-                                                {{ $user->name }}
-                                            </a>
+                                                    class="text-blue-500 inline"
+                                                    @if ($currentrole === 'Super Admin') href="{{ url(getRoutePrefix() . ($user->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $user->id) }}" @endif>
+                                                    {{ $user->name }}
+                                                </a>
                                                 {{-- <a title="Edit this user"
                                                     href="{{ url(getRoutePrefix() . '/add-user/' . $user->id) }}">
                                                     <img src="{{ asset('icons/pencil.svg') }}" alt=""
@@ -126,16 +130,20 @@
                                                 @endif
                                             </td>
                                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                                @if ($project->created_by == Auth::id() || $currentrole === $superadminrole || $currentrole === 'Admin' || $currentrole === 'Processor' && $user->role !== 'Processor')
-                                                <a data="Delete" class="delete"
+                                                @if (
+                                                    $project->created_by == Auth::id() ||
+                                                        $currentrole === $superadminrole ||
+                                                        $currentrole === 'Admin' ||
+                                                        ($currentrole === 'Processor' && $user->role !== 'Processor'))
+                                                    <a data="Delete" class="delete"
                                                         href='{{ url(getRoutePrefix() . "/delete-project-user/$project->id/" . $user->id) }}'>
                                                         <button
                                                             class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
                                                             <img src="{{ asset('icons/trash.svg') }}" alt="">
                                                         </button>
                                                     </a>
-                                                    @endif
-                                                    @if ($currentrole === 'Super Admin')
+                                                @endif
+                                                @if ($currentrole === 'Super Admin')
                                                     <form method="POST"
                                                         action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                                         @csrf
@@ -156,59 +164,63 @@
                                     @endif
                                 @endforeach
                                 @if ($project->borrower->id ?? false)
-                                <tr class="border-none">
-                                    <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
-                                        {{ $serialNumber }}
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                            href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}">
-                                            {{ $project->borrower->name }}
-                                        </a>
-                                        {{-- <a title="Edit this user"
+                                    <tr class="border-none">
+                                        <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
+                                            {{ $serialNumber }}
+                                        </td>
+                                        <td class=" pl-2 tracking-wide border border-l-0">
+                                            <a title="Click to view files uploaded by this user"
+                                                class="text-blue-500 inline"
+                                                href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}">
+                                                {{ $project->borrower->name }}
+                                            </a>
+                                            {{-- <a title="Edit this user"
                                             href="{{ url(getRoutePrefix() . '/add-user/' . $borrower->id) }}">
                                             <img src="{{ asset('icons/pencil.svg') }}" alt=""
                                                 class="inline ml-5">
                                         </a> --}}
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        {{ $project->borrower->email }}
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        {{ $project->borrower->role }}
-                                    </td>
-                                    <td class=" pl-2 tracking-wide border border-l-0">
-                                        @if ($project->borrower->created_by)
-                                            {{ $project->borrower->createdBy->name }}
-                                            |
-                                            {{ $project->borrower->createdBy->role }}
-                                        @endif
-                                    </td>
-                                    <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                                        @if ($currentrole === 'Super Admin')
-                                            <form method="POST"
-                                                action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
-                                                @csrf
-                                                <input type="hidden" name="user_id" value="{{ $project->borrower->id }}">
-                                                <span class="loginBtn">
-                                                    <button type="submit"
-                                                        class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
-                                                        <img src="{{ asset('icons/user.svg') }}" alt="">
-                                                    </button>
-                                                </span>
-                                            </form>
-                                        @endif
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td class=" pl-2 tracking-wide border border-l-0">
+                                            {{ $project->borrower->email }}
+                                        </td>
+                                        <td class=" pl-2 tracking-wide border border-l-0">
+                                            {{ $project->borrower->role }}
+                                        </td>
+                                        <td class=" pl-2 tracking-wide border border-l-0">
+                                            @if ($project->borrower->created_by)
+                                                {{ $project->borrower->createdBy->name }}
+                                                |
+                                                {{ $project->borrower->createdBy->role }}
+                                            @endif
+                                        </td>
+                                        <td class="flex pl-2 justify-center tracking-wide border border-r-0">
+                                            @if ($currentrole === 'Super Admin')
+                                                <form method="POST"
+                                                    action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
+                                                    @csrf
+                                                    <input type="hidden" name="user_id"
+                                                        value="{{ $project->borrower->id }}">
+                                                    <span class="loginBtn">
+                                                        <button type="submit"
+                                                            class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
+                                                            <img src="{{ asset('icons/user.svg') }}" alt="">
+                                                        </button>
+                                                    </span>
+                                                </form>
+                                            @endif
+                                        </td>
+                                    </tr>
                                 @endif
                             </tbody>
                         </table>
                         @if ($project->borrower->id ?? false)
-                        <div class="flex justify-between">
-                            <a href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}"
-                                class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a>
-                            <button data-team-id="{{$project->team->id}}" data-project-id="{{$project->id}}" class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New Member</button>
-                        </div>
+                            <div class="flex justify-between">
+                                <a href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}"
+                                    class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a>
+                                <button data-team-id="{{ $project->team->id }}" data-project-id="{{ $project->id }}"
+                                    class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New
+                                    Member</button>
+                            </div>
                         @endif
                         </p>
                     </details>
@@ -233,8 +245,8 @@
                                     {{ $project->team->name }}</span>
                                 <span class="mr-4 transition group-open:rotate-180">
                                     <svg fill="none" height="35" width="35" shape-rendering="geometricPrecision"
-                                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                        viewBox="0 0 24 24">
+                                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="1.5" viewBox="0 0 24 24">
                                         <path d="M6 9l6 6 6-6"></path>
                                     </svg>
                                 </span>
@@ -378,7 +390,9 @@
                             <div class="flex justify-between">
                                 <a href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}"
                                     class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a>
-                            <button id="{{$project->team->id}}" class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New Member</button>
+                                <button id="{{ $project->team->id }}"
+                                    class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New
+                                    Member</button>
                             </div>
                             </p>
                         </details>

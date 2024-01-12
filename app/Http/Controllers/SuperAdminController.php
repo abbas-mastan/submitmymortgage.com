@@ -88,6 +88,7 @@ class SuperAdminController extends Controller
     public function deleteUserPermenant(User $user)
     {
         abort_if(Auth::user()->role !== 'Super Admin', 403, 'you are not allowed to to permenantly delete user');
+        if($user->role === 'Borrower') $user->project->delete();
         $user->forceDelete();
         return back()->with('msg_success', 'User permenantly deleted successfully');
     }
@@ -348,7 +349,7 @@ class SuperAdminController extends Controller
     public function projects($id = null): View
     {
         $data['projects'] = Project::with('users')->get();
-        $data['enableProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'enable')->get();
+        $data['enableProjects'] = Project::with(['creater','users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'enable')->get();
         $data['disableProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'disable')->get();
         $data['closeProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'close')->get();
         $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name', 'role']);
