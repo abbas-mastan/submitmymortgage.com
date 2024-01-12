@@ -32,8 +32,7 @@ You are receiving this email to complete your registration process by entering y
             $color = 'primary';
     }
 ?>
-@component('mail::button', ['url' => $actionUrl.'create', 'color' => $color])
-
+@component('mail::button', ['url' => $actionUrl.(Auth::check() ? 'create':''), 'color' => $color])
 {{ Auth::check() ? 'Create Password': $actionText }}
 @endcomponent
 @endisset
@@ -64,9 +63,9 @@ This link will expire in 60 minutes.
     "If you're having trouble clicking the \":actionText\" button, copy and paste the URL below\n".
     'into your web browser:',
     [
-        'actionText' => $actionText,
+        'actionText' => $actionText.(Auth::check() ? 'create':''),
     ]
-) <span class="break-all">[{{ $displayableActionUrl }}]({{ $actionUrl }})</span>
+) <span class="break-all">[{{ $displayableActionUrl }}]({{ $actionUrl.(Auth::check() ? 'create':'') }})</span>
 @endslot
 @endisset
 @endcomponent
