@@ -70,6 +70,7 @@ class AdminService
                 },
             ]);
         }
+        
         $user = $isNewUser ? new User() : User::findOrFail($id);
         if ($isNewUser && $request->sendmail) {
             $msg = "Registered. A verification link has been sent. You need to verify your email before login. Please, check your email.";
@@ -112,6 +113,12 @@ class AdminService
                 event(new Registered($user));
             }
         }
+//         if (Auth::check()&& Auth::user()->role === 'Super Admin' && $request->team) {
+//             $team = Team::find($request->team){
+// $team->users()->attach($user->id);    
+//             }
+//         }
+
 
         if ($request->role === 'Borrower') {
             $contact = new Contact;

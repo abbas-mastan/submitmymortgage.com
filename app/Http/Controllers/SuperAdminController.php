@@ -50,6 +50,12 @@ class SuperAdminController extends Controller
         return redirect('/dashboard')->with($msg['msg_type'], $msg['msg_value']);
     }
 
+    public function getCompanyTeams(Company $company)
+    {
+        $companies = $company->teams;
+        return response()->json($companies,200);
+    }
+
     public function LoginAsThisUser(Request $request)
     {
         $user = User::where('id', $request->user_id)->where('role', '<>', 'Super Admin')->first();

@@ -220,14 +220,14 @@
                             </label>
                         </div>`);
                     });
-                    if (associates < 1) appendEmptyText('associateDropdown');
+                    if (associates < 1) appendEmptyText('associateDropdown',' No Associate available');
                     if (juniorAssociates < 1) appendEmptyText(
-                        'jrAssociateDropdown');
-                    if (processors < 1) appendEmptyText('processorDropdown');
+                        'jrAssociateDropdown',' No Jr.Associate available');
+                    if (processors < 1) appendEmptyText('processorDropdown',' No Processor available');
 
-                    function appendEmptyText(dropdown) {
+                    function appendEmptyText(dropdown,message) {
                         $("." + dropdown).append(
-                            `<span class="text-red-700 text-sm text-center p-1">No data available</span>`
+                            `<span class="text-red-700 text-sm text-center p-1">${message}</span>`
                         );
                     }
                     $('.jq-loader-for-ajax').addClass('hidden');

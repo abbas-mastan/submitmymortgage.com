@@ -41,7 +41,7 @@
     @endcomponent
 
     <x-flex-card title="Verified Users" id="verified" titlecounts="0" iconurl="{{ asset('icons/Users.svg') }}" />
-    <table class="w-full display" id="completed-table">
+    <table class="w-full display verifiedUsersTable mb-26" id="completed-table">
         <thead class="bg-gray-300">
             <tr>
                 <th class="pl-2 tracking-wide">
@@ -146,7 +146,7 @@
 
 
     <x-flex-card title="Unverified Users" id="unverified" titlecounts="" iconurl="{{ asset('icons/Users.svg') }}" />
-    <table class="w-full display" id="user-table">
+    <table class="w-full display unVerifiedUsersTable mb-20" id="user-table">
         <thead class="bg-gray-300">
             <tr>
                 <th class="pl-2 tracking-wide">
@@ -225,7 +225,7 @@
 
     @if ($role === 'Super Admin')
         <x-flex-card title="Deleted Users" id="deleted" titlecounts="0" iconurl="{{ asset('icons/Users.svg') }}" />
-        <table class="w-full display my-5" id="deleted-table">
+        <table class="w-full display my-5 deletedUsersTable" id="deleted-table">
             <thead class="bg-gray-300">
                 <tr>
                     <th class="pl-2 tracking-wide">
@@ -370,6 +370,21 @@
             });
         });
         $('#unverified').html($('.unverifiedSerial:last').html());
+        if($('.unverifiedSerial:last').html() < 11){
+            $('.unVerifiedUsersTable').attr('id', 'asdf');
+        }else{
+            $('.unVerifiedUsersTable').attr('id', 'user-table');
+        }
+        if($('.verifiedSerial:last').html() < 11){
+            $('.verifiedUsersTable').attr('id', 'asdf');
+        }else{
+            $('.unVerifiedUsersTable').attr('id', 'completed-table');
+        }
+        if($('.deletedSerial:last').html() < 11){
+            $('.deletedUsersTable').attr('id', 'asdf');
+        }else{
+            $('.deletedUsersTable').attr('id', 'deleted-table');
+        }
         $('#verified').html($('.verifiedSerial:last').html());
         $('#deleted').html($('.deletedSerial:last').html());
     </script>

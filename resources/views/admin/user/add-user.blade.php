@@ -60,7 +60,7 @@
                     </div>
                 </div>
             </div>
-            <div class="flex justify-between">
+            <div class="flex justify-between company">
                 <div class="mt-3 w-[49%]">
                     <div class=" text-left mr-12">
                         <label for="role" class="">User Type</label>
@@ -100,7 +100,7 @@
                         <div class="mt-2">
                             <select name="company" id="company"
                                 class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                                <option value="">Choose a company</option>
+                                <option value="">Select Company</option>
                                 @foreach ($companies as $company)
                                     <option {{ old('company', $user->company_id) == $company->id ? 'selected' : '' }}
                                         value="{{ $company->id }}">
@@ -111,6 +111,7 @@
                         </div>
                     </div>
                 @endisset
+
             </div>
             <div class="flex justify-between">
                 <div class="mt-3 w-[49%]" id="finance-div"
@@ -197,15 +198,16 @@
                 </div>
             @endisset
             <div class="mt-10 flex justify-center">
-                    <button type="submit"
-                        class="w-[30%] bg-gradient-to-b from-gradientStart to-gradientEnd capitalize rounded-md px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400 text-white">
-                        {{ !empty($user->id) ? 'Update' : 'Create' }}
-                    </button>
+                <button type="submit"
+                    class="w-[30%] bg-gradient-to-b from-gradientStart to-gradientEnd capitalize rounded-md px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400 text-white">
+                    {{ !empty($user->id) ? 'Update' : 'Create' }}
+                </button>
             </div>
         </form>
     </div>
 @endsection
 @section('foot')
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
         $("#sendemail").on('change', function(e) {
             e.preventDefault();
@@ -237,9 +239,10 @@
         });
         // Trigger the change event on page load to initialize the display and required attribute
         role.dispatchEvent(new Event('change'));
+
         function showPrompt(form) {
             if (role.value == 'Processor' || role.value == 'Admin') {
-                if (confirm('Are you sure you want to add a '+role.value+'?')) {
+                if (confirm('Are you sure you want to add a ' + role.value + '?')) {
                     form.submit();
                 }
                 return;
@@ -247,13 +250,52 @@
             return form.submit();
         }
     </script>
-
     <script>
-        $(document).ready(function () {
-            $('#company').change(function (e) { 
-                e.preventDefault();
-                
+        $(document).ready(function() {
+            var arr = ['Admin', 'Borrower', 'Assistant'];
+
+            $('#role').change(function(e) {
+                var role = ($('#role').find(':checked').val());
             });
+            $('#company').change(function(e) {
+                e.preventDefault();
+                var companyid = ($('#company').find(':checked').val());
+                console.log(companyid);
+                console.log($.inArray(role, arr));
+                if ($.inArray(role, arr) === -1 && $('#company').find(':checked').html() !==
+                    "Select Company") {
+                    handleAjax(companyid);
+                }
+            });
+
+            function handleAjax(companyid) {
+                $.ajax({
+                    url: `{{ getRoutePrefix() }}/get-company-teams/${companyid}`, // Replace with the actual URL for retrieving users by team
+                    type: 'GET',
+                    success: function(data) {
+                        var selectOptions = '<option value="">Select Team</option>';
+
+                        data.forEach(function(team) {
+                            selectOptions +=
+                                `<option value="${team.id}">${team.name}</option>`;
+                        });
+                        $('.company').after(`
+                    <div class="mt-3 w-[49%]">
+                        <div class=" text-left mr-12">
+                            <label for="team" class="">Team Name</label>
+                        </div>
+                        <div class="mt-2">
+                            <select name="team" id="team"
+                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
+                                ${selectOptions}
+                            </select>
+                        </div>
+                    </div>
+                `);
+
+                    }
+                });
+            }
         });
     </script>
 @endsection

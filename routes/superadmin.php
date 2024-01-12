@@ -108,7 +108,9 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
         Route::post('/submit-intake-form', 'submitIntakeForm');
         Route::post('/do-associate', 'doAssociate');
         Route::post('/get-associates/{company}', 'getAssociates');
+        Route::get('/get-company-teams/{company}', 'getCompanyTeams');
         Route::get('/redirect/{route}/{message}', 'redirectTo');
+        
     });
 
     Route::get('/restore-company/{company}', [AdminCompanyController::class, 'restore'])->withTrashed()->name('company.restore');
