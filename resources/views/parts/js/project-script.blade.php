@@ -54,12 +54,36 @@
             });
         });
 
-        $('.newProject, .closeModal').click(function(e) {
+        $('.AddNewMember').click(function(e) {
             e.preventDefault();
             $('#newProjectModal').toggleClass('items-center');
             $('#newProjectModal div:first').removeClass('md:top-44 sm:top-36 max-sm:top-44');
             $('#newProjectModal').toggleClass('hidden');
+            $('.namepart').addClass('hidden');
+            $('.teampart').removeClass('hidden');
+            $('.teamDiv').addClass('hidden');
+            $(':submit').addClass('py-2');
+            $('.backTotype').addClass('hidden');
+            $('.modalTitle').text('Add Members');
+            $('.addProcessorDiv').addClass('mt-2');
+            $('.projectForm input[name="projectId"]').remove();
+            $('.projectForm').append(
+                `<input type="hidden" name="projectId" value="${$(this).attr('data-project-id')}">`);
+            fetchUsersForTeam($(this).attr('data-team-id'));
         });
+
+        $('.newProject, .closeModal').click(function(e) {
+            e.preventDefault();
+            $('.teamDiv').removeClass('hidden');
+            $('#newProjectModal').toggleClass('items-center');
+            $('#newProjectModal div:first').removeClass('md:top-44 sm:top-36 max-sm:top-44');
+            $('#newProjectModal').toggleClass('hidden');
+            $('.namepart').removeClass('hidden');
+            $('.teampart').addClass('hidden');
+            $('.projectForm input[name="projectId"]').remove();
+            $('.projectForm').append(`<input type="hidden" name="projectId" value="-1">`);
+        });
+
 
         $('#email').attr('disabed', 'disabled');
         $("#sendemail").change(function(e) {
@@ -126,13 +150,16 @@
         });
 
         $("#team").change(function() {
-            $('.jq-loader-for-ajax').removeClass('hidden');
+            fetchUsersForTeam($(this).val());
+        });
 
+        function fetchUsersForTeam(teamid) {
+            $('.jq-loader-for-ajax').removeClass('hidden');
             $(".processorDropdown").empty();
             $(".associateDropdown").empty();
             $(".jrAssociateDropdown").empty();
             $.ajax({
-                url: `{{ getRoutePrefix() }}/getUsersByTeam/${$(this).val()}`,
+                url: `{{ getRoutePrefix() }}/getUsersByTeam/${teamid}`,
                 type: 'GET',
                 success: function(data) {
                     var associates = [];
@@ -212,61 +239,61 @@
                     $('.jq-loader-for-ajax').addClass('hidden');
                 }
             });
+        }
+
+        $('#sendemail, #email').on('change', function(e) {
+            e.preventDefault();
+            handleAjaxRequest(-1);
         });
-    });
-
-    $('#sendemail, #email').on('change', function(e) {
-        e.preventDefault();
-        handleAjaxRequest();
-    });
-    $('.projectForm').submit(function(e) {
-        e.preventDefault();
-        handleAjaxRequest();
-    });
-
-    function handleAjaxRequest() {
-        var errors = ['borroweraddress', 'email', 'name', 'borroweraddress', 'financetype',
-            'loantype',
-            'team', 'associate', 'juniorAssociate'
-        ];
-        $('.jq-loader-for-ajax').removeClass('hidden');
-
-        $.each(errors, function(index, error) {
-            var field = `#${error}_error`;
-            $(field).empty();
+        $('.projectForm').submit(function(e) {
+            e.preventDefault();
+            handleAjaxRequest($('input[name="projectId"]').val());
         });
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            type: "post",
-            url: "{{ url(getRoutePrefix() . '/store-project') }}",
-            data: $('.projectForm').serialize(),
-            success: function(response) {
-                console.log(response);
-                $('.jq-loader-for-ajax').addClass('hidden');
 
-                if (response === 'success') {
-                    window.location.href =
-                        "{{ url(getRoutePrefix() . '/redirect/back/project-created-successfully') }}";
+        function handleAjaxRequest(projectId) {
+            console.log(projectId);
+            var errors = ['borroweraddress', 'email', 'name', 'borroweraddress', 'financetype',
+                'loantype',
+                'team', 'associate', 'juniorAssociate'
+            ];
+            $('.jq-loader-for-ajax').removeClass('hidden');
+
+            $.each(errors, function(index, error) {
+                var field = `#${error}_error`;
+                $(field).empty();
+            });
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 }
-                $.each(response.error, function(index, error) {
-                    var fieldId = `#${error.field}_error`;
-                    var errorMessage = error.message;
-                    $(fieldId).text(errorMessage);
-                    $(fieldId).addClass('text-xs');
-                });
-            },
-            error: function(xhr, status, error) {
-                console.log(xhr.responseText);
-                // Handle the case when there is an AJAX error
-                $('.jq-loader-for-ajax').addClass('hidden');
-            }
-        });
-    }
-    $(document).ready(function() {
+            });
+            $.ajax({
+                type: "post",
+                url: "{{ url(getRoutePrefix() . '/store-project') }}" + '/' + projectId,
+                data: $('.projectForm').serialize(),
+                success: function(response) {
+                    console.log(response);
+                    $('.jq-loader-for-ajax').addClass('hidden');
+
+                    if (response === 'success') {
+                        window.location.href =
+                            "{{ url(getRoutePrefix() . '/redirect/back/project-created-successfully') }}";
+                    }
+                    $.each(response.error, function(index, error) {
+                        var fieldId = `#${error.field}_error`;
+                        var errorMessage = error.message;
+                        $(fieldId).text(errorMessage);
+                        $(fieldId).addClass('text-sm');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.log(xhr.responseText);
+                    // Handle the case when there is an AJAX error
+                    $('.jq-loader-for-ajax').addClass('hidden');
+                }
+            });
+        }
+
         $(document).on('mouseenter', '.loginBtn', function() {
             if ($(this).attr('data') == 'restore') {
                 var data = $(this).attr('data');

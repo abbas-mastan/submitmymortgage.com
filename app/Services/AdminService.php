@@ -12,6 +12,7 @@ use App\Models\Media;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
+use App\Notifications\FileUploadNotification;
 use Faker\Factory;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
@@ -453,6 +454,87 @@ class AdminService
         $url = function () use ($id) {return Url::signedRoute('assistant.register', ['user' => $id]);};
         Mail::to($request->email)->send(new AssistantMail($url()));
         return response()->json('sucess', 200);
+    }
+
+    public static function storeProject(Request $request, $id)
+    {
+        if ($id == -1) {
+            $validator = Validator::make($request->all(), [
+                'borroweraddress' => 'required',
+                'email' => 'required_with:sendemail|unique:users,email',
+                'name' => 'required',
+                'borroweraddress' => 'required',
+                'financetype' => 'required',
+                'loantype' => 'required',
+                'team' => 'required',
+                'processor' => 'sometimes:required',
+                'associate' => 'sometimes:required',
+                'juniorAssociate' => 'sometimes:required',
+            ], ['email.required_with' => 'This field is required']);
+
+            if ($validator->fails()) {
+                $errors = $validator->errors()->toArray();
+                $response = ['error' => []];
+                foreach ($errors as $field => $error) {
+                    foreach ($error as $message) {
+                        $response['error'][] = [
+                            'field' => $field,
+                            'message' => $message,
+                        ];
+                    }
+                }
+                return response()->json($response);
+            }
+        }
+        if ($id == -1) {
+            $faker = Factory::create();
+            $request->merge(['email' => $request->email ?? $faker->unique()->safeEmail,
+                'role' => 'Borrower',
+            ]);
+            $user = AdminService::doUser($request, -1);
+            $project = Project::create([
+                'name' => $request->borroweraddress,
+                'borrower_id' => $user,
+                'team_id' => $request->team,
+                'created_by' => Auth::id(),
+            ]);
+        } else {
+            $project = Project::find($id);
+        }
+
+        if ($request->associate) {
+            foreach ($request->associate as $associate_id) {
+                if (!$project->users->contains($associate_id)) {
+                    $project->users()->attach($associate_id);
+                }
+
+            }
+        }
+        if ($request->juniorAssociate) {
+            foreach ($request->juniorAssociate as $associate_id) {
+                if (!$project->users->contains($associate_id)) {
+                    $project->users()->attach($associate_id);
+                }
+
+            }
+        }
+        if ($request->processor) {
+            foreach ($request->processor as $associate_id) {
+                if (!$project->users->contains($associate_id)) {
+                    $project->users()->attach($associate_id);
+                }
+            }
+        }
+        if ($id != -1) {
+            $message = "Updated Deal by name : $project->name";
+        } else {
+            $message = "Created new Deal by name : $project->name";
+        }
+        $admin = User::where('role', 'Super Admin')->first();
+        $user = User::find(Auth::id());
+        $admin->notify(new FileUploadNotification($user, $message));
+        return response()->json('success', 200);
+
     }
 
 }

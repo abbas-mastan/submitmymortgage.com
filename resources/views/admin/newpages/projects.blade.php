@@ -207,7 +207,7 @@
                         <div class="flex justify-between">
                             <a href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}"
                                 class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a>
-                            {{-- <button class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New Member</button> --}}
+                            <button data-team-id="{{$project->team->id}}" data-project-id="{{$project->id}}" class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New Member</button>
                         </div>
                         @endif
                         </p>
@@ -378,7 +378,7 @@
                             <div class="flex justify-between">
                                 <a href="{{ url(getRoutePrefix() . ($project->borrower->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}"
                                     class="w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Project Overview</a>
-                                {{-- <button class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New Member</button> --}}
+                            <button id="{{$project->team->id}}" class="AddNewMember w-fit bg-red-800 px-5 py-2 text-white flex mt-5">Add New Member</button>
                             </div>
                             </p>
                         </details>

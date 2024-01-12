@@ -196,9 +196,9 @@
                     </div>
                 </div>
             @endisset
-            <div class="mt-10">
+            <div class="mt-10 flex justify-center">
                     <button type="submit"
-                        class="w-full bg-gradient-to-b from-gradientStart to-gradientEnd capitalize rounded-md px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400 text-white">
+                        class="w-[30%] bg-gradient-to-b from-gradientStart to-gradientEnd capitalize rounded-md px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400 text-white">
                         {{ !empty($user->id) ? 'Update' : 'Create' }}
                     </button>
             </div>

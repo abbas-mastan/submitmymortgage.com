@@ -8,7 +8,6 @@ use App\Models\Application;
 use App\Models\Company;
 use App\Models\Contact;
 use App\Models\Info;
-use App\Models\IntakeForm;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
@@ -20,7 +19,6 @@ use App\Services\UserService;
 use Faker\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
@@ -393,62 +391,9 @@ class SuperAdminController extends Controller
         return view('admin.newpages.project-overview', $data);
     }
 
-    public function storeProject(Request $request)
+    public function storeProject(Request $request, $id = -1)
     {
-        $validator = Validator::make($request->all(), [
-            'borroweraddress' => 'required',
-            'email' => 'required_with:sendemail|unique:users,email',
-            'name' => 'required',
-            'borroweraddress' => 'required',
-            'financetype' => 'required',
-            'loantype' => 'required',
-            'team' => 'required',
-            'processor' => 'sometimes:required',
-            'associate' => 'required',
-            'juniorAssociate' => 'sometimes:required',
-        ]);
-        if ($validator->fails()) {
-            $errors = $validator->errors()->toArray();
-            $response = ['error' => []];
-            foreach ($errors as $field => $error) {
-                foreach ($error as $message) {
-                    $response['error'][] = [
-                        'field' => $field,
-                        'message' => $message,
-                    ];
-                }
-            }
-            return response()->json($response);
-        } else {
-            $request->merge(['email' => $request->email ?? $this->faker->unique()->safeEmail,
-                'role' => 'Borrower',
-            ]);
-            $user = AdminService::doUser($request, -1);
-            $project = Project::create([
-                'name' => $request->borroweraddress,
-                'borrower_id' => $user,
-                'team_id' => $request->team,
-                'created_by' => Auth::id(),
-            ]);
-
-            foreach ($request->associate as $associate_id) {
-                $project->users()->attach($associate_id);
-            }
-            foreach ($request->juniorAssociate as $associate_id) {
-                $project->users()->attach($associate_id);
-            }
-            if ($request->processor) {
-                foreach ($request->processor as $associate_id) {
-                    $project->users()->attach($associate_id);
-                }
-            }
-
-            $message = "Created new Deal by name : $request->borroweraddress";
-            $admin = User::where('role', 'Super Admin')->first();
-            $user = User::find(Auth::id());
-            $admin->notify(new FileUploadNotification($user, $message));
-            return response()->json('success', 200);
-        }
+       return AdminService::storeProject($request,$id);
     }
 
     public function getUsersByTeam(Team $team)
@@ -576,7 +521,7 @@ class SuperAdminController extends Controller
 
     public function submitIntakeForm(IntakeFormRequest $request)
     {
-       CommonService::submitIntakeForm($request);
+        CommonService::submitIntakeForm($request);
     }
 
     public function redirectTo($route, $message)
