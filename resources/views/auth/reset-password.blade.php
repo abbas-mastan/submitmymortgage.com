@@ -5,7 +5,12 @@
         
         <div class="">
             <h1 class="xl:text-3xl text-2xl uppercase text-center font-bold text-white">
-                Reset Passsword
+               @if(\Illuminate\Support\Str::contains(url()->current(),'create'))
+               Create
+               @else
+                Reset 
+                @endif
+                Passsword
             </h1>
         </div>
         <form action="{{ url('/reset-password') }}" method="post" class=" w-7/8">
@@ -40,9 +45,16 @@
                 <div class="col-span-2 text-right mr-12">
                     &nbsp;
                 </div>
+               
                 <div class="col-span-4 ml-1 ">
                     <button type="submit" class=" opacity-70  border-2 border-white rounded-md bg-white px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                        Update Password
+               @if(\Illuminate\Support\Str::contains(url()->current(),'create'))
+Create
+               @else
+               Update
+
+                        @endif 
+                         Password
                     </button>
                 </div>
                 

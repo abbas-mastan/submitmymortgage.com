@@ -32,7 +32,7 @@ You are receiving this email to complete your registration process by entering y
             $color = 'primary';
     }
 ?>
-@component('mail::button', ['url' => $actionUrl, 'color' => $color])
+@component('mail::button', ['url' => $actionUrl.'create', 'color' => $color])
 
 {{ Auth::check() ? 'Create Password': $actionText }}
 @endcomponent

@@ -60,7 +60,7 @@ class AdminService
             $request->validate([
                 'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
                 'name' => "required",
-                'company' => (Auth::user()->role == 'Super Admin') ? 'sometimes:required' : '',
+                'company' => (Auth::check() && Auth::user()->role == 'Super Admin') ? 'sometimes:required' : '',
                 'sendemail' => '',
                 'password' => ($isNewUser && !$request->sendemail) ? 'required|min:8|confirmed' : '',
                 'role' =>
@@ -96,9 +96,9 @@ class AdminService
             $user->loan_type = $request->loan_type;
         }
 
-        if (!$request->company && Auth::user()->role !== 'Super Admin') {
+        if (!$request->company && Auth::check() && Auth::user()->role !== 'Super Admin') {
             $user->company_id = Auth::user()->company_id;
-        } else {
+        } else if(Auth::check() && Auth::user()->role === 'Super Admin') {
             $user->company_id = $request->company;
         }
 
@@ -111,7 +111,6 @@ class AdminService
             } else {
                 event(new Registered($user));
             }
-
         }
 
         if ($request->role === 'Borrower') {
