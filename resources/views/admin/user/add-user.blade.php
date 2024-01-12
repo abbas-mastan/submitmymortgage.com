@@ -273,6 +273,7 @@
                     url: `{{ getRoutePrefix() }}/get-company-teams/${companyid}`, // Replace with the actual URL for retrieving users by team
                     type: 'GET',
                     success: function(data) {
+                        $('.teamDiv').remove();
                         var selectOptions = '<option value="">Select Team</option>';
 
                         data.forEach(function(team) {
@@ -280,7 +281,7 @@
                                 `<option value="${team.id}">${team.name}</option>`;
                         });
                         $('.company').after(`
-                    <div class="mt-3 w-[49%]">
+                    <div class="mt-3 w-[49%] teamDiv">
                         <div class=" text-left mr-12">
                             <label for="team" class="">Team Name</label>
                         </div>
