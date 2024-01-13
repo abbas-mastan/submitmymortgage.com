@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\AssociateController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\AssociateController;
 
 Route::group(
     [
@@ -11,6 +12,7 @@ Route::group(
     ],
     function () {
         #associate profile
+        Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
         Route::view('/profile', 'admin.profile.profile');
         Route::post('/do-profile', 'doProfile');
         #associate adding user
@@ -38,7 +40,7 @@ Route::group(
         Route::post('/application-update/{application}', 'applicationUpdate');
         Route::get('/application-update-status/{application}/{status?}', 'applicationUpdateStatus');
         Route::get('/application-delete/{application}', 'deleteApplication');
-
+        Route::post('/share-items/{id}', 'shareItemWithAssistant');
         Route::get('/leads', 'allLeads');
         Route::get('/lead/{user}', 'lead');
         Route::get('/delete-lead/{info}', 'deleteLead');
@@ -64,8 +66,8 @@ Route::group(
         Route::get('delete-contact/{contact}', 'deleteContact');
         Route::post('/do-contact/{id?}', 'doContact');
         Route::get('project-overview/{id?}', 'projectOverview');
-        Route::get('/mark-as-read/{id}','markAsRead');
-        Route::get('/redirect/{route}/{message}','redirectTo');
+        Route::get('/mark-as-read/{id}', 'markAsRead');
+        Route::get('/redirect/{route}/{message}', 'redirectTo');
 
         Route::post('/submit-intake-form', 'submitIntakeForm');
 

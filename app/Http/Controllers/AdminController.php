@@ -258,13 +258,13 @@ class AdminController extends Controller
         // Fetch users created directly by the user
         $directlyCreatedUsers = $user->createdUsers()
             ->with(['createdBy','company'])
-            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
+            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower','Assistant'])
             ->get();
 
         $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
             ->with(['createdBy','company'])
             ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
-            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
+            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower','Assistant'])
             ->get();
 
         // Combine the directly and indirectly created users
@@ -590,9 +590,9 @@ class AdminController extends Controller
         return redirect(getRoutePrefix() . '/projects')->with('msg_success', "project $type" . "d successfully");
     }
 
-    public function shareItemWithAssistant(Request $request)
+    public function shareItemWithAssistant(Request $request,$id)
     {
-        return AdminService::shareItemWithAssistant($request);
+        return AdminService::shareItemWithAssistant($request,$id);
     }
 
     public function removeAcess(User $user)
@@ -604,7 +604,7 @@ class AdminController extends Controller
 
     public function submitIntakeForm(IntakeFormRequest $request)
     {
-       CommonService::submitIntakeForm($request);
+      return CommonService::submitIntakeForm($request);
     }
 
     public function redirectTo($route, $message)

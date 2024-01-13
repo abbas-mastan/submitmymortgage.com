@@ -55,6 +55,11 @@ class SuperAdminController extends Controller
         $companies = $company->teams;
         return response()->json($companies,200);
     }
+    public function getCompanyBorrowers(Company $company)
+    {
+        $borrowers = $company->users->where('role','Borrower')->toArray();
+        return response()->json($borrowers,200);
+    }
 
     public function LoginAsThisUser(Request $request)
     {
@@ -514,9 +519,9 @@ class SuperAdminController extends Controller
         return redirect(getRoutePrefix() . '/projects')->with('msg_success', "project $type" . "d successfully");
     }
 
-    public function shareItemWithAssistant(Request $request)
+    public function shareItemWithAssistant(Request $request,$id)
     {
-        return AdminService::shareItemWithAssistant($request);
+        return AdminService::shareItemWithAssistant($request,$id);
     }
 
     public function removeAcess(User $user)
@@ -528,7 +533,7 @@ class SuperAdminController extends Controller
 
     public function submitIntakeForm(IntakeFormRequest $request)
     {
-        CommonService::submitIntakeForm($request);
+       return CommonService::submitIntakeForm($request);
     }
 
     public function redirectTo($route, $message)

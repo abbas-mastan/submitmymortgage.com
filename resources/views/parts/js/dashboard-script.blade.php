@@ -19,6 +19,7 @@
             url: $(this).attr('action'),
             data: $(this).serialize(),
             success: function(response) {
+                console.log(response);
                 $('.jq-loader-for-ajax').addClass('hidden');
                 if (response === 'success') {
                     $('#newProjectModal').toggleClass('hidden');
@@ -30,6 +31,9 @@
                     var errorMessage = error.message;
                     $(fieldId).text(errorMessage);
                 });
+            },
+            error: function(error) {
+                console.log(error);
             }
         });
     });
@@ -69,14 +73,14 @@
         }
         $('select[name=loan_type]').val(selectedValue);
     });
-    
+
     $('#isItRentalProperty').change(function(e) {
         e.preventDefault();
         if ($(this).val() === 'Yes') {
             $('#monthly_rental_income').parent().parent().parent().removeClass('hidden');
-            $('#monthly_rental_income').removeAttr('disabled',true);
+            $('#monthly_rental_income').removeAttr('disabled', true);
         } else {
-            $('#monthly_rental_income').attr('disabled',true);
+            $('#monthly_rental_income').attr('disabled', true);
             $('#monthly_rental_income').parent().parent().parent().addClass('hidden');
         }
     });
@@ -85,9 +89,9 @@
         e.preventDefault();
         if ($(this).val() === 'Yes') {
             $('#monthly_rental_income_refinance').parent().parent().parent().removeClass('hidden');
-            $('#monthly_rental_income_refinance').removeAttr('disabled',true);
+            $('#monthly_rental_income_refinance').removeAttr('disabled', true);
         } else {
-            $('#monthly_rental_income_refinance').attr('disabled',true);
+            $('#monthly_rental_income_refinance').attr('disabled', true);
             $('#monthly_rental_income_refinance').parent().parent().parent().addClass('hidden');
         }
     });

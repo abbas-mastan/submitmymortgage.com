@@ -95,7 +95,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
     Route::get('/delete-contact/{contact}', 'deleteContact');
     Route::post('/do-contact/{id?}', 'doContact');
     Route::get('project-overview/{id?}', 'projectOverview');
-    Route::post('/share-items', 'shareItemWithAssistant');
+    Route::post('/share-items/{id}', 'shareItemWithAssistant');
     Route::get('sortby/{id?}/{sortby?}', 'projectOverview');
     // this route is for updating status to disable or close the project
     Route::get('project/{status}/{project}', 'changeProjectStatus');

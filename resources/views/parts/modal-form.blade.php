@@ -3,8 +3,8 @@
         <x-jq-loader />
         @csrf
         <div class="createTeam">
-            @if (count($enableTeams) > 0)
-                <div>
+            {{-- @if (count($enableTeams) > 0)
+                <div class="mt-3">
                     <input type="radio" checked name="team" id="newInput" onclick="changeInputs()">
                     <label for="newInput">Add New</label>
                     <input class="ml-2" type="radio" name="team" id="existingInput" onclick="changeInputs()">
@@ -26,8 +26,8 @@
                     @endforeach
                 </select>
                 <span class="text-red-700" id="team_error"></span>
-            </div>
-            <div id="new">
+            </div> --}}
+            <div id="new" class="mb-3">
                 <x-form.input name="name" label="Team Name" class="mb-5" />
                 @if ($currentrole === 'Super Admin')
                     <label for="company" class="mt-1 text-sm text-dark-500 leading-6 font-bold">
@@ -46,8 +46,7 @@
                     <span class="text-red-700" id="company_error"></span>
                 @endif
             </div>
-
-            <div class="my-3 flex justify-end mt-5">
+            <div class="mb-5 flex justify-end">
                 <button class="bg-red-800 text-white px-8 py-2 text-xs font-thin teamContinue">Continue</button>
             </div>
         </div>
@@ -69,7 +68,7 @@
                         </button>
                     </div>
                     <!-- Dropdown panel -->
-                    <div class="processorDropdown hidden absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
+                    <div class="processorDropdown z-10 hidden absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
                         role="listbox" aria-labelledby="multiselect-toggle" id="multiselect-dropdown">
                         <!-- Checkboxes for options -->
                         @if ($currentrole !== 'Super Admin')
@@ -93,14 +92,8 @@
                 </div>
                 <span class="text-red-700" id="processor_error"></span>
             </div>
-            <div class="my-3 flex justify-between">
-                <span class="bg-gray-400 px-8 py-1 text-white cursor-pointer capitalize backToCreateTeam">back</span>
-                <button class="bg-red-800 text-white px-8 py-1 text-xs font-thin processorContinue">Continue</button>
-            </div>
-        </div>
-        <div class="associate hidden">
             <div class="relative text-left">
-                <label for="Associate" class="text-sm text-dark-500 leading-6 font-bold"> Associate Name
+                <label for="Associate" class="associate text-sm text-dark-500 leading-6 font-bold"> Associate Name
                 </label>
                 <div class="">
                     <button type="button"
@@ -115,7 +108,7 @@
                     </button>
                 </div>
                 <!-- Dropdown panel -->
-                <div class="associateDropdown hidden absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
+                <div class="associateDropdown hidden z-50 absolute flex-wrap w-[100%] overflow-y-auto mt-2 w-64 bg-white border border-gray-300 shadow-lg origin-top-right divide-y divide-gray-200"
                     role="listbox" aria-labelledby="multiselect-toggle" id="multiselect-dropdown1">
                     @if ($currentrole !== 'Super Admin')
                         @foreach ($users as $user)
@@ -137,12 +130,7 @@
                 <button class="text-red-700 my-3  addNewAssociate">+ Add Associate</button>
             </div>
             <span class="text-red-700" id="associate_error"></span>
-            <div class="my-3 flex justify-between">
-                <span class="bg-gray-400 px-8 py-1 text-white cursor-pointer capitalize backToCreateProcessor">back</span>
-                <button class="bg-red-800 text-white px-8 py-1 text-xs font-thin associateContinue">Continue</button>
-            </div>
-        </div>
-        <div class="jrAssociate hidden">
+        
             <div class="relative text-left">
                 <label for="JrAssociate" class="text-sm text-dark-500 leading-6 font-bold"> Jr.Associate Name
                 </label>
@@ -180,11 +168,10 @@
                 </div>
             </div>
             <span class="text-red-700" id="jrAssociate_error"></span>
-            <x-form.input name="jrAssociateManager" label="Jr. Associate's Manager" type="email" class="mb-10" />
-            <div class="my-3 flex justify-between">
-                <span class="bg-gray-400 px-8 py-1 text-white cursor-pointer capitalize backToCreateAssociate">Back</span>
-                <button type="submit"
-                    class="bg-red-800 text-white px-8 py-1 text-xs font-thin jrAssociateContinue">Continue</button>
+            {{-- <x-form.input name="jrAssociateManager" label="Jr. Associate's Manager" type="email" class="mb-10" /> --}}
+            <div class="my-5 flex justify-between">
+                <span class="bg-gray-400 px-8 py-1 text-white cursor-pointer capitalize backToCreateTeam">back</span>
+                <button type="submit" class="jrAssociateContinue bg-red-800 text-white px-8 py-1 text-xs font-thin">Continue</button>
             </div>
         </div>
     </form>

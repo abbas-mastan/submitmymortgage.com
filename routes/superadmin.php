@@ -98,7 +98,7 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
         Route::get('/delete-contact/{contact}', 'deleteContact');
         Route::post('/do-contact/{id?}', 'doContact');
         Route::get('project-overview/{id?}', 'projectOverview');
-        Route::post('/share-items', 'shareItemWithAssistant');
+        Route::post('/share-items/{id}', 'shareItemWithAssistant');
         Route::get('sortby/{id?}/{sortby?}', 'projectOverview');
         // this route is for updating status to disable or close the project
         Route::get('project/{status}/{project}', 'changeProjectStatus');
@@ -109,6 +109,7 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
         Route::post('/do-associate', 'doAssociate');
         Route::post('/get-associates/{company}', 'getAssociates');
         Route::get('/get-company-teams/{company}', 'getCompanyTeams');
+        Route::get('/get-company-borrowers/{company}', 'getCompanyBorrowers');
         Route::get('/redirect/{route}/{message}', 'redirectTo');
         
     });

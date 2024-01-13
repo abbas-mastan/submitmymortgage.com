@@ -99,7 +99,7 @@
                             </span>
                             Group
                         @endif
-                        <a href="{{ url(getRoutePrefix() . "/mark-as-read/$message->id") }}">
+                        <a  @if (!$message->read_at) href="{{ url(getRoutePrefix() . "/mark-as-read/$message->id")  }}"@endif>
                             @if (!$message->read_at)
                                 <img class="inline w-4" src="{{ asset('icons/unread.png') }}" alt="">
                             @else

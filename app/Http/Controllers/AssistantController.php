@@ -2,23 +2,30 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\{Media,User};
-use Illuminate\Http\Request;
-use App\Services\CommonService;
 use App\Http\Controllers\AdminController;
-use Illuminate\Support\Facades\{Auth,Storage,Crypt};
+use App\Models\Media;
+
+use App\Models\User;
+use App\Services\CommonService;
+use Illuminate\Http\Request;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Storage;
 
 class AssistantController extends Controller
 {
 
-   
     public function assistantRegister(Request $request)
     {
-        abort_if(!$request->hasValidSignature(),403);
+        abort_if(!$request->hasValidSignature(), 403);
         $id = Crypt::decryptString($request->user);
         $user = User::where('id', $id)->select(['id', 'active', 'email'])->first();
-        abort_if($user->active === 2,403, 'Sorry, your account has been disabled!');
-        if ($user->active === 1) return redirect('/login');
+        abort_if($user->active === 2, 403, 'Sorry, your account has been disabled!');
+        if ($user->active === 1) {
+            return redirect('/login');
+        }
+
         return view("user.assistant.deal-register", compact('user'));
     }
     public function doAssistant(Request $request, User $user)
@@ -70,7 +77,10 @@ class AssistantController extends Controller
         $success = true;
 
         foreach ($request->all() as $key => $file) {
-            if ($key === '_token') continue;
+            if ($key === '_token') {
+                continue;
+            }
+
             $catName = $this->catName($key);
             $cat = $catName ? $catName : ucwords(str_replace('-', ' ', $key));
 
@@ -99,9 +109,12 @@ class AssistantController extends Controller
             }
         }
 
-        if ($success) return back()->with('msg_success', "Files Upload Successfully");
+        if ($success) {
+            return back()->with('msg_success', "Files Upload Successfully");
+        }
+
         return back()->with('msg_error', "Files Upload Failed");
-        
+
     }
 
     public function deleteFile($id)
@@ -113,7 +126,5 @@ class AssistantController extends Controller
         }
         return ['msg_type' => 'msg_error', 'msg_value' => 'An error occured while deleting the file.'];
     }
-
-   
 
 }

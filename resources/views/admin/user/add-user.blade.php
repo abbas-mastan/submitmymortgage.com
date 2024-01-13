@@ -35,8 +35,8 @@
             </div>
         </form>
         <form onsubmit="event.preventDefault(); showPrompt(this);" enctype="multipart/form-data"
-            action="{{ empty($user->id) ? url(getRoutePrefix() . '/do-user/-1') : url(getRoutePrefix() . '/do-user/' . $user->id) }}"
-            method="post" class=" w-7/8">
+            action="{{ empty($user->id) ? url(getRoutePrefix() . (old('role', $user->role) == 'Assistant' ? '/share-items/' : '/do-user/') . '-1') : url(getRoutePrefix() . (old('role', $user->role) == 'Assistant' ? '/share-items/' : '/do-user/') . $user->id) }}"
+            method="post" class="userForm w-7/8">
             @csrf
             <div class="flex justify-between">
                 <div class="mt-3 w-[49%]">
@@ -48,6 +48,9 @@
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="name" id="name" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Full Name">
                     </div>
+                    @error('name')
+                        <span class="text-red-700">{{ $message }}</span>
+                    @enderror
                 </div>
                 <div class="mt-3 w-[49%]">
                     <div class="text-left mr-12">
@@ -58,12 +61,37 @@
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="email" id="email" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email Address">
                     </div>
+                    @error('email')
+                        <span class="text-red-700">{{ $message }}</span>
+                    @enderror
                 </div>
             </div>
             <div class="flex justify-between company">
+
+                @if (Auth::user()->role === 'Super Admin')
+                    <div class="mt-3 w-[49%]">
+                        <div class=" text-left mr-12">
+                            <label for="role" class="">Company Name</label>
+                        </div>
+                        <div class="mt-2">
+                            <select name="company" id="company"
+                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
+                                <option value="">Select Company</option>
+                                @foreach ($companies as $company)
+                                    <option {{ old('company', $user->company_id) == $company->id ? 'selected' : '' }}
+                                        value="{{ $company->id }}">
+                                        {{ $company->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+                @endif
+
                 <div class="mt-3 w-[49%]">
                     <div class=" text-left mr-12">
                         <label for="role" class="">User Type</label>
+                        {{ old('role') }}
                     </div>
                     <div class="mt-2">
                         <select required name="role" id="role"
@@ -92,26 +120,46 @@
                         </select>
                     </div>
                 </div>
-                @isset($companies)
-                    <div class="mt-3 w-[49%]">
+                @if (Auth::user()->role !== 'Super Admin')
+                    <div class="mt-3 w-[49%] teamDiv {{old('role') === 'Assistant'?'hidden':''}}">
                         <div class=" text-left mr-12">
-                            <label for="role" class="">Company Name</label>
+                            <label for="role" class="">Team Name</label>
                         </div>
                         <div class="mt-2">
-                            <select name="company" id="company"
+                            <select name="team" id="team"
                                 class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                                <option value="">Select Company</option>
-                                @foreach ($companies as $company)
-                                    <option {{ old('company', $user->company_id) == $company->id ? 'selected' : '' }}
-                                        value="{{ $company->id }}">
-                                        {{ $company->name }}
+                                <option value="">Select Team</option>
+                                @foreach ($teams as $team)
+                                    <option {{ old('team') == $team->id ? 'selected' : '' }} value="{{ $team->id }}">
+                                        {{ $team->name }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
                     </div>
-                @endisset
-
+                    <div class="mt-3 w-[49%] borrowerDiv {{old('role') !== 'Assistant'?'hidden':''}}">
+                        <div class=" text-left mr-12">
+                            <label for="role" class="">Select Deal</label>
+                        </div>
+                        <div class="mt-2">
+                            <select name="deal" id="deal"
+                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
+                                <option value="">Select Deal</option>
+                                @foreach ($teams as $team)
+                                    @foreach ($team->projects as $project)
+                                        <option {{ old('deal') == $project->id ? 'selected' : '' }}
+                                        value="{{ $project->id }}">
+                                        {{ $project->name }}
+                                    </option>
+                                    @endforeach
+                                @endforeach
+                            </select>
+                        </div>
+                           @error('deal')
+                                <span class="text-red-700">{{ $message }}</span>
+                            @enderror
+                    </div>
+                @endif
             </div>
             <div class="flex justify-between">
                 <div class="mt-3 w-[49%]" id="finance-div"
@@ -250,37 +298,144 @@
             return form.submit();
         }
     </script>
-    <script>
-        $(document).ready(function() {
-            var arr = ['Admin', 'Borrower', 'Assistant'];
-
+    @if (Auth::user()->role !== 'Super Admin')
+        <script>
             $('#role').change(function(e) {
-                var role = ($('#role').find(':checked').val());
-            });
-            $('#company').change(function(e) {
                 e.preventDefault();
-                var companyid = ($('#company').find(':checked').val());
-                console.log(companyid);
-                console.log($.inArray(role, arr));
-                if ($.inArray(role, arr) === -1 && $('#company').find(':checked').html() !==
-                    "Select Company") {
-                    handleAjax(companyid);
+                var role = $(this).val();
+                if (role === 'Assistant') {
+                    $('.userForm').attr('action', "{{ url(getRoutePrefix() . '/share-items/-1') }}");
+                    $('.borrowerDiv').removeClass('hidden');
+                    $('.teamDiv').addClass('hidden');
+                } else if (role === 'Borrower') {
+                    $('.userForm').attr('action', "{{ url(getRoutePrefix() . '/do-user/-1') }}");
+                    $('.borrowerDiv').addClass('hidden');
+                    $('.teamDiv').addClass('hidden');
+                } else {
+                    $('.userForm').attr('action', "{{ url(getRoutePrefix() . '/do-user/-1') }}");
+                    $('.borrowerDiv').addClass('hidden');
+                    $('.teamDiv').removeClass('hidden');
                 }
             });
+        </script>
+    @endif
+    @if (Auth::user()->role === 'Super Admin')
+        <script>
+            $(document).ready(function() {
+                var arr = ['Admin', 'Borrower', 'Assistant'];
+                $('#company').change(function() {
+                    var companyid = ($(this).val() !== "Select Company") ? $(this).val() : null;
+                    ajaxCompanyChange(companyid);
+                });
+                $('#role').change(function() {
+                    var companyid = ($('#company').val() !== "Select Company") ? $('#company').val() : null;
+                    ajaxRoleChange(companyid);
+                });
 
-            function handleAjax(companyid) {
-                $.ajax({
-                    url: `{{ getRoutePrefix() }}/get-company-teams/${companyid}`, // Replace with the actual URL for retrieving users by team
-                    type: 'GET',
-                    success: function(data) {
-                        $('.teamDiv').remove();
-                        var selectOptions = '<option value="">Select Team</option>';
+                function ajaxCompanyChange(companyid) {
+                    var role = $('#role').val();
+                    if (role === 'Assistant' && companyid) {
+                        ajaxCompanyBorrowers(companyid);
+                    } else if (['Processor', 'Associate', 'Junior Associate'].includes(role) && companyid) {
+                        ajaxCompanyTeams(companyid);
+                    } else {
+                        removeDivs();
+                    }
+                }
 
-                        data.forEach(function(team) {
-                            selectOptions +=
-                                `<option value="${team.id}">${team.name}</option>`;
-                        });
-                        $('.company').after(`
+                function ajaxRoleChange(companyid) {
+                    var role = $('#role').val();
+                    if (role === 'Assistant' && companyid) {
+                        ajaxCompanyBorrowers(companyid);
+                    } else if (['Processor', 'Associate', 'Junior Associate'].includes(role) && companyid) {
+                        ajaxCompanyTeams(companyid);
+                    } else {
+                        removeDivs();
+                    }
+                }
+
+                function removeDivs() {
+                    $('.teamDiv').remove();
+                    $('.borrowerDiv').remove();
+                }
+                $('#company').change(function() {
+                    var companyid = ($(this).val() !== "Select Company") ? $(this).val() : null;
+                    ajaxCompanyChange(companyid);
+                });
+                $('#role').change(function() {
+                    var companyid = ($('#company').val() !== "Select Company") ? $('#company').val() : null;
+                    ajaxRoleChange(companyid);
+                });
+
+                function ajaxCompanyChange(companyid) {
+                    var role = $('#role').val();
+                    if (role === 'Assistant' && companyid) {
+                        ajaxCompanyBorrowers(companyid);
+                    } else if (['Processor', 'Associate', 'Junior Associate'].includes(role) && companyid) {
+                        ajaxCompanyTeams(companyid);
+                    } else {
+                        removeDivs();
+                    }
+                }
+
+                function ajaxRoleChange(companyid) {
+                    var role = $('#role').val();
+                    if (role === 'Assistant' && companyid) {
+                        ajaxCompanyBorrowers(companyid);
+                    } else if (['Processor', 'Associate', 'Junior Associate'].includes(role) && companyid) {
+                        ajaxCompanyTeams(companyid);
+                    } else {
+                        removeDivs();
+                    }
+                }
+
+                function removeDivs() {
+                    $('.teamDiv').remove();
+                    $('.borrowerDiv').remove();
+                }
+
+                function ajaxCompanyBorrowers(companyid) {
+                    $.ajax({
+                        url: `{{ getRoutePrefix() }}/get-company-borrowers/${companyid}`, // Replace with the actual URL for retrieving users by team
+                        type: 'GET',
+                        success: function(data) {
+                            var dataArray = Object.values(data);
+                            removeDivs();
+                            $('.userForm').attr('action', "{{ url(getRoutePrefix() . '/share-items/') }}");
+                            var selectOptions = '<option value="">Select Borrower</option>';
+                            dataArray.forEach(function(borrower) {
+                                selectOptions +=
+                                    `<option value="${borrower.id}">${borrower.name}</option>`;
+                            });
+                            $('.company').after(`
+                    <div class="mt-3 w-[49%] borrowerDiv">
+                        <div class=" text-left mr-12">
+                            <label for="user" class="">Borrower Name</label>
+                        </div>
+                        <div class="mt-2">
+                            <select name="userId" id="user"
+                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
+                                ${selectOptions}
+                            </select>
+                        </div>
+                    </div>
+                `);
+                        }
+                    });
+                }
+
+                function ajaxCompanyTeams(companyid) {
+                    $.ajax({
+                        url: `{{ getRoutePrefix() }}/get-company-teams/${companyid}`, // Replace with the actual URL for retrieving users by team
+                        type: 'GET',
+                        success: function(data) {
+                            removeDivs();
+                            var selectOptions = '<option value="">Select Team</option>';
+                            data.forEach(function(team) {
+                                selectOptions +=
+                                    `<option value="${team.id}">${team.name}</option>`;
+                            });
+                            $('.company').after(`
                     <div class="mt-3 w-[49%] teamDiv">
                         <div class=" text-left mr-12">
                             <label for="team" class="">Team Name</label>
@@ -293,10 +448,10 @@
                         </div>
                     </div>
                 `);
-
-                    }
-                });
-            }
-        });
-    </script>
+                        }
+                    });
+                }
+            });
+        </script>
+    @endif
 @endsection

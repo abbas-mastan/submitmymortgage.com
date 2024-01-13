@@ -24,9 +24,6 @@
         </script>
     @endforeach
 @endcan
-
-
-
 @if ($currentrole === 'Super Admin' || $currentrole === 'Admin' || $currentrole === 'Processor')
     <script>
         if ($('.associateDropdown > div').length > 5) {
@@ -51,83 +48,96 @@
     </script>
 @endif
 <script>
-    @if (Auth::user()->role !== 'Super Admin')
-        if ($('.processorcount').val() === undefined) {
-            $('.processorDropdown').append(`
-        <span class="text-red-700 text-sm text-center p-1">No data available</span>`);
-        }
-        if ($('.associatecount').val() === undefined) {
-            $('.associateDropdown').append(`
-        <span class="text-red-700 text-sm text-center p-1">No data available</span>`);
-        }
-        if ($('.juniorassociatecount').val() === undefined) {
-            $('.jrAssociateDropdown').append(`
-        <span class="text-red-700 text-sm text-center p-1">No data available</span>`);
-        }
-    @endif
-    $('.addNewAssociate ,.backToAssociate').click(function(e) {
-        e.preventDefault();
-        handleNewAssociate();
-    });
-    var companyid = null;
-    $('.addMembers').click(function(e) {
-        e.preventDefault();
-        $('#newProjectModal').toggleClass('hidden');
-        $('#newProjectModal').toggleClass('items-center');
-        $('#newProjectModal div:first').toggleClass('md:top-44 max-sm:top-44 sm:top-36');
-        var EditTeamId = $(this).attr('id');
-        $('#teamForm').attr('action', `{{ url(getRoutePrefix() . '/teams') }}/${EditTeamId}`);
-        $('input[name="name"]').val($(this).attr('name'));
-        $('.modalTitle').text('Add an Processor');
-        $('.createTeam').addClass('hidden');
-        $('.processor').removeClass('hidden');
-        companyid = $(this).attr('company');
-        fetchCompanyUsers(companyid);
-    });
+    $(document).ready(function() {
 
-    $('#company').change(function(e) {
-        e.preventDefault();
-        if ($('#company').find(':checked').html() !== "Select Company") {
-            companyid = ($('#company').find(':checked').val());
+        @if (Auth::user()->role !== 'Super Admin')
+            if ($('.processorcount').val() === undefined) {
+                $('.processorDropdown').append(`
+                <span class="text-red-700 text-sm text-center p-1">No data available</span>`);
+            }
+            if ($('.associatecount').val() === undefined) {
+                $('.associateDropdown').append(`
+                <span class="text-red-700 text-sm text-center p-1">No data available</span>`);
+            }
+            if ($('.juniorassociatecount').val() === undefined) {
+                $('.jrAssociateDropdown').append(`
+                <span class="text-red-700 text-sm text-center p-1">No data available</span>`);
+            }
+        @endif
+
+        $('.addNewAssociate ,.backToAssociate').click(function(e) {
+            e.preventDefault();
+            handleNewAssociate();
+        });
+        var companyid = null;
+        $('.addMembers').click(function(e) {
+            e.preventDefault();
+            $('#newProjectModal').toggleClass('hidden');
+            $('#newProjectModal').toggleClass('items-center');
+            $('#newProjectModal div:first').toggleClass('md:top-44 max-sm:top-44 sm:top-36');
+            var EditTeamId = $(this).attr('id');
+            $('#teamForm').attr('action', `{{ url(getRoutePrefix() . '/teams') }}/${EditTeamId}`);
+            $('input[name="name"]').val($(this).attr('name'));
+            $('.modalTitle').text('Add Members');
+            $('.createTeam').addClass('hidden');
+            $('.processor').removeClass('hidden');
+            companyid = $(this).attr('company');
             fetchCompanyUsers(companyid);
-        }
+        });
+        $('.newProject, .closeModal').click(function(e) {
+            e.preventDefault();
+            $('.jrAssociateButton').val('Select jrAssociate');
+            $('input[name="name"]').val('');
+            $('#teamForm').attr('action', `{{ url(getRoutePrefix() . '/teams/-1') }}`);
+            $('#newProjectModal').toggleClass('hidden');
+            $('#newProjectModal').toggleClass('items-center');
+            $('#newProjectModal div:first').toggleClass('md:top-44 max-sm:top-44 sm:top-36');
+            $('.createTeam').removeClass('hidden');
+            $('.processor').addClass('hidden');
 
-    });
+        });
+        $('#company').change(function(e) {
+            e.preventDefault();
+            if ($('#company').find(':checked').html() !== "Select Company") {
+                companyid = ($('#company').find(':checked').val());
+                fetchCompanyUsers(companyid);
+            }
+        });
 
-    function fetchCompanyUsers(companyid) {
-        $(".processorDropdown").empty();
-        $(".associateDropdown").empty();
-        $(".jrAssociateDropdown").empty();
-        $.ajax({
-            url: `{{ getRoutePrefix() }}/getUsersByCompany/${companyid}`, // Replace with the actual URL for retrieving users by team
-            type: 'GET',
-            success: function(data) {
-                var associates = [];
-                var juniorAssociates = [];
-                var processors = [];
-                $.each(data, function(index, associate) {
-                    if (associate.role === 'Associate') {
-                        associates.push(associate);
-                    } else if (associate.role === 'Junior Associate') {
-                        juniorAssociates.push(associate);
-                    } else if (associate.role === 'Processor') {
-                        processors.push(associate);
+        function fetchCompanyUsers(companyid) {
+            $(".processorDropdown").empty();
+            $(".associateDropdown").empty();
+            $(".jrAssociateDropdown").empty();
+            $.ajax({
+                url: `{{ getRoutePrefix() }}/getUsersByCompany/${companyid}`, // Replace with the actual URL for retrieving users by team
+                type: 'GET',
+                success: function(data) {
+                    var associates = [];
+                    var juniorAssociates = [];
+                    var processors = [];
+                    $.each(data, function(index, associate) {
+                        if (associate.role === 'Associate') {
+                            associates.push(associate);
+                        } else if (associate.role === 'Junior Associate') {
+                            juniorAssociates.push(associate);
+                        } else if (associate.role === 'Processor') {
+                            processors.push(associate);
+                        }
+                    });
+                    function appendEmptyText(dropdown) {
+                        $("." + dropdown).append(
+                            `<span class="text-red-700 text-sm text-center p-1">No data available</span>`
+                        );
                     }
-                });
-
-                function appendEmptyText(dropdown) {
-                    $("." + dropdown).append(
-                        `<span class="text-red-700 text-sm text-center p-1">No data available</span>`);
-                }
-                if (associates < 1) appendEmptyText('associateDropdown');
-                if (juniorAssociates < 1) appendEmptyText('jrAssociateDropdown');
-                if (processors < 1) appendEmptyText('processorDropdown');
-                $.each(associates, function(index, associate) {
-                    if (index > 3) {
-                        $('.associateDropdown').addClass(
-                            'h-56 overflow-y-auto')
-                    }
-                    $(".associateDropdown").append(`<div class="py-1">
+                    if (associates < 1) appendEmptyText('associateDropdown');
+                    if (juniorAssociates < 1) appendEmptyText('jrAssociateDropdown');
+                    if (processors < 1) appendEmptyText('processorDropdown');
+                    $.each(associates, function(index, associate) {
+                        if (index > 3) {
+                            $('.associateDropdown').addClass(
+                                'h-56 overflow-y-auto')
+                        }
+                        $(".associateDropdown").append(`<div class="py-1">
                             <label
                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                                 role="option">
@@ -136,30 +146,30 @@
                                 ${associate.name}
                                 </label>
                                 </div>`);
-                });
+                    });
 
-                $.each(juniorAssociates, function(index, associate) {
-                    if (index > 3) {
-                        $('.jrAssociateDropdown').addClass(
-                            'h-56 overflow-y-auto')
-                    }
-                    $(".jrAssociateDropdown").append(`<div class="py-1">
+                    $.each(juniorAssociates, function(index, associate) {
+                        if (index > 3) {
+                            $('.jrAssociateDropdown').addClass(
+                                'h-56 overflow-y-auto')
+                        }
+                        $(".jrAssociateDropdown").append(`<div class="py-1">
                             <label
                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                                 role="option">
-                                <input type="checkbox" name="juniorAssociate[]"
+                                <input type="checkbox" name="jrAssociate[]"
                                     class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
                                 ${associate.name}
                             </label>
                         </div>`);
-                });
-                $.each(processors, function(index, associate) {
+                    });
+                    $.each(processors, function(index, associate) {
 
-                    if (index > 3) {
-                        $('.processorDropdown').addClass(
-                            'h-56 overflow-y-auto')
-                    }
-                    $(".processorDropdown").append(`<div class="py-1">
+                        if (index > 3) {
+                            $('.processorDropdown').addClass(
+                                'h-56 overflow-y-auto')
+                        }
+                        $(".processorDropdown").append(`<div class="py-1">
                             <label
                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                                 role="option">
@@ -168,92 +178,99 @@
                                 ${associate.name}
                             </label>
                         </div>`);
-                });
-            },
-            error: function(error) {
-                console.log(error);
-            }
-        });
-    }
-
-    function handleNewAssociate() {
-        $('.associate').toggleClass('hidden');
-        $('.associateForm').toggleClass('hidden');
-        if ($('.associateForm').hasClass('hidden')) {
-            $('.modalTitle').text('Add an Associate');
-        } else {
-            @if (Auth::user()->role === 'Super Admin')
-                companyid = ($('#company').find(':checked').val());
-                $('.associateForm').append(`<input type="hidden" name="company" value="${companyid}">`);
-            @endif
-            $('.modalTitle').text('Create New Associate');
-        }
-        $('.associateForm input').attr('required', true);
-    }
-
-    $('.associateForm').submit(function(e) {
-        e.preventDefault();
-        @if (Auth::user()->role === 'Super Admin')
-            var companyid = {!! Auth::user()->role === 'Super Admin' ? "$('#company').find(':checked').val()" : Auth::user()->company_id !!};
-        @endif
-        $('.jq-loader-for-ajax').removeClass('hidden');
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            type: "post",
-            url: $(this).attr('action'),
-            data: $(this).serialize(),
-            success: function(response) {
-                $('.jq-loader-for-ajax').addClass('hidden');
-                console.log(response);
-                if (response === 'success') {
-                    handleNewAssociate();
-                    getAssociates(companyid);
-                    $('.associate').before(
-                        `<span class="associcateSuccess text-green-700">Associate created successfully!</span>`
-                    );
+                    });
+                },
+                error: function(error) {
+                    console.log(error);
                 }
-                $.each(response.error, function(index, error) {
-                    var fieldId = `#${error.field}_error`;
-                    var errorMessage = error.message;
-                    $(fieldId).text(errorMessage);
-                });
-            }
-        });
-    });
+            });
+        }
 
-    function getAssociates(companyid) {
-        companyid = companyid ?? @json(Auth::user()->company_id);
-        console.log(companyid);
-        $('.jq-loader-for-ajax').removeClass('hidden');
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        function handleNewAssociate() {
+            $('.associate').toggleClass('hidden');
+            $('.associateForm').toggleClass('hidden');
+            $('.createTeam').addClass('hidden');
+            $('.processor').addClass('hidden');
+            
+            if ($('.associateForm').hasClass('hidden')) {
+                $('.processor').removeClass('hidden');
+                $('.modalTitle').text('Add an Members');
+            } else {
+                @if (Auth::user()->role === 'Super Admin')
+                    companyid = ($('#company').find(':checked').val());
+                    $('.associateForm').append(`<input type="hidden" name="company" value="${companyid}">`);
+                @endif
+                $('.modalTitle').text('Create New Associate');
             }
+            $('.associateForm input').attr('required', true);
+        }
+
+        $('.associateForm').submit(function(e) {
+            $('.associcateSuccess').remove();
+            e.preventDefault();
+            @if (Auth::user()->role === 'Super Admin')
+                var companyid = {!! Auth::user()->role === 'Super Admin' ? "$('#company').find(':checked').val()" : Auth::user()->company_id !!};
+            @endif
+            $('.jq-loader-for-ajax').removeClass('hidden');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                type: "post",
+                url: $(this).attr('action'),
+                data: $(this).serialize(),
+                success: function(response) {
+                    $('.jq-loader-for-ajax').addClass('hidden');
+                    console.log(response);
+                    if (response === 'success') {
+                        handleNewAssociate();
+                        getAssociates(companyid);
+                        $('.associate').before(
+                            `<span class="associcateSuccess text-green-700">Associate created successfully!</span>
+                            <br>
+                            `
+                        );
+                    }
+                    $.each(response.error, function(index, error) {
+                        var fieldId = `#${error.field}_error`;
+                        var errorMessage = error.message;
+                        $(fieldId).text(errorMessage);
+                    });
+                }
+            });
         });
-        $('.jq-loader-for-ajax').removeClass('hidden');
-        $.ajax({
-            type: "post",
-            url: "{{ getRoutePrefix() . '/get-associates' }}" + '/' + companyid,
-            data: {},
-            success: function(data) {
-                $('.jq-loader-for-ajax').addClass('hidden');
-                $('.associateDropdown').empty();
-                var associates = [];
-                $.each(data, function(index, associate) {
-                    if (associate.role === 'Associate') {
-                        associates.push(associate);
-                    }
-                });
-                $.each(associates, function(index, associate) {
-                    if (index > 3) {
-                        $('.associateDropdown').addClass(
-                            'h-56 overflow-y-auto')
-                    }
-                    $(".associateDropdown").append(`<div class="py-1">
+
+        function getAssociates(companyid) {
+            companyid = companyid ?? @json(Auth::user()->company_id);
+            console.log(companyid);
+            $('.jq-loader-for-ajax').removeClass('hidden');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $('.jq-loader-for-ajax').removeClass('hidden');
+            $.ajax({
+                type: "post",
+                url: "{{ getRoutePrefix() . '/get-associates' }}" + '/' + companyid,
+                data: {},
+                success: function(data) {
+                    $('.jq-loader-for-ajax').addClass('hidden');
+                    $('.associateDropdown').empty();
+                    var associates = [];
+                    $.each(data, function(index, associate) {
+                        if (associate.role === 'Associate') {
+                            associates.push(associate);
+                        }
+                    });
+                    $.each(associates, function(index, associate) {
+                        if (index > 3) {
+                            $('.associateDropdown').addClass(
+                                'h-56 overflow-y-auto')
+                        }
+                        $(".associateDropdown").append(`<div class="py-1">
                             <label
                             class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
                             role="option">
@@ -262,58 +279,51 @@
                                 ${associate.name }
                             </label>
                         </div>`);
-                });
-            },
-            error: function(error) {
-                $('.jq-loader-for-ajax').addClass('hidden');
-            }
-        });
-    }
-
-    $.each(['associate', 'processor', 'jrAssociate'], function(indexInArray, input) {
-        $(document).on('change', "input[name='" + input + "[]']", function(e) {
-            e.preventDefault();
-            var buttonText = '.' + input + 'ButtonText';
-            var $selectedItems = $("input[name='" + input + "[]']:checked");
-            if ($selectedItems.length > 0) {
-                $(buttonText).empty(); // Clear existing content
-                $selectedItems.each(function() {
-                    var $btnText = $(this).parent().text();
-                    var button =
-                        `<span class="inputLabel mr-1">${$btnText}</span>`;
-                    $(button).appendTo(buttonText);
-                });
-            } else {
-                $(buttonText).text("Select " + input);
-            }
-        });
-
-    });
-
-    var teamsData = {!! json_encode($teams) !!};
-
-    $('.newProject, .closeModal').click(function(e) {
-        e.preventDefault();
-        $('#newProjectModal').toggleClass('hidden');
-        $('#newProjectModal').toggleClass('items-center');
-        $('#newProjectModal div:first').toggleClass('md:top-44 max-sm:top-44 sm:top-36');
-
-    });
-
-    var teamid = 0;
-    $('.teamContinue').click(function(e) {
-        if ($('#new').hasClass('hidden')) {
-            if ($('#selecTeam').find(':checked').html() !== "Select Team") {
-                teamid = $('#selecTeam').find(':checked').val()
-            }
+                    });
+                },
+                error: function(error) {
+                    $('.jq-loader-for-ajax').addClass('hidden');
+                }
+            });
         }
-    });
 
-    if ($('.processorcount').last().val() > 4) {
-        $('.processorDropdown').addClass('overflow-y-auto h-56');
-    }
+        $.each(['associate', 'processor', 'jrAssociate'], function(indexInArray, input) {
+            $(document).on('change', "input[name='" + input + "[]']", function(e) {
+                e.preventDefault();
+                var buttonText = '.' + input + 'ButtonText';
+                var $selectedItems = $("input[name='" + input + "[]']:checked");
+                if ($selectedItems.length > 0) {
+                    $(buttonText).empty(); // Clear existing content
+                    $selectedItems.each(function() {
+                        var $btnText = $(this).parent().text();
+                        var button =
+                            `<span class="inputLabel mr-1">${$btnText}</span>`;
+                        $(button).appendTo(buttonText);
+                    });
+                } else {
+                    $(buttonText).text("Select " + input);
+                }
+            });
 
-    $(document).ready(function() {
+        });
+
+        var teamsData = {!! json_encode($teams) !!};
+
+
+
+        var teamid = 0;
+        $('.teamContinue').click(function(e) {
+            if ($('#new').hasClass('hidden')) {
+                if ($('#selecTeam').find(':checked').html() !== "Select Team") {
+                    teamid = $('#selecTeam').find(':checked').val()
+                }
+            }
+        });
+
+        if ($('.processorcount').last().val() > 4) {
+            $('.processorDropdown').addClass('overflow-y-auto h-56');
+        }
+
         function closeDropdowns() {
             $('.associateDropdown, .jrAssociateDropdown, .processorDropdown').addClass(
                 'hidden');
@@ -327,39 +337,18 @@
                 closeDropdowns();
             }
         });
-    });
 
-    $.each(['processor', 'associate', 'jrAssociate'], function(index, btnclass) {
-        var selector = '.' + btnclass;
-        $(selector + 'Button').click(function(e) {
-            e.preventDefault();
-            $(selector + 'Dropdown').toggleClass('hidden');
+
+        $.each(['processor', 'associate', 'jrAssociate'], function(index, btnclass) {
+            var selector = '.' + btnclass;
+            $(selector + 'Button').click(function(e) {
+                e.preventDefault();
+                $(selector + 'Dropdown').toggleClass('hidden');
+            });
         });
-    });
 
-    $('.teamContinue').click(function(e) {
-        e.preventDefault();
-        if ($('#new').hasClass('hidden')) {
-            if ($('#selecTeam').find(':checked').html() === "Select Team") {
-                showError('team')
-            } else {
-                $('#teamForm').attr('action',
-                    `{{ url(getRoutePrefix() . '/teams') }}/${$('#selecTeam').find(':checked').val()}`
-                )
-                removeError('name');
-                $('.modalTitle').text('Add an Processor');
-                $('.createTeam').addClass('hidden');
-                $('.processor').removeClass('hidden');
-            }
-        } else {
-            @if ($currentrole === $superadminrole)
-                if ($('#company').find(':checked').html() === "Select Company") {
-                    showError('company');
-                    return false
-                } else {
-                    removeError('company');
-                }
-            @endif
+        $('.teamContinue').click(function(e) {
+            e.preventDefault();
             if ($('#name').val() === '') {
                 showError('name');
             } else {
@@ -373,157 +362,41 @@
                     }
                 });
                 if (!nameExists) {
+                    @if ($currentrole === $superadminrole)
+                        if ($('#company').find(':checked').html() === "Select Company") {
+                            showError('company');
+                            return false
+                        } else {
+                            removeError('company');
+                        }
+                    @endif
                     removeError('name');
                     $('.modalTitle').text('Add an Processor');
                     $('.createTeam').addClass('hidden');
                     $('.processor').removeClass('hidden');
                 }
             }
+        });
+
+        function showError(id, error = " field is required") {
+            $('#' + id).addClass('border-red-700 border-2');
+            $('#' + id + "_error").text(id + error);
+            return false;
         }
-    });
-    // @if ($currentrole !== 'Super Admin' || $currentrole !== 'Admin')
-    //     $('.processorContinue').click(function(e) {
-    //         e.preventDefault();
-    //         var selectedProcessorValues = [];
-    //         $('input[name="processor[]"]:checked').each(function() {
-    //             selectedProcessorValues.push($(this).val());
-    //         });
-    //         var selectedProcessors = $('input[name="processor[]"]:checked');
-    //         if (selectedProcessors.length === 0) {
-    //             $('#processor_error').text('Please select at least one processor');
-    //             return;
-    //         } else {
-    //             $('.associateButtonText').text('Select Associate');
-    //             $('#processor_error').text('');
-    //             $(".associateDropdown").empty();
-    //             $(document).ready(function() {
-    //                 $.ajax({
-    //                     url: `{{ getRoutePrefix() }}/getUsersByProcessor/${selectedProcessorValues}/${teamid}`, // Replace with the actual URL for retrieving users by team
-    //                     type: 'GET',
-    //                     success: function(data) {
-    //                         if (data == 'processorerror') {
-    //                             $('#processor_error').text(
-    //                                 'this processor is already exists');
-    //                         } else {
-    //                             var associates = [];
-    //                             $.each(data, function(index, associate) {
-    //                                 if (associate.role === 'Associate') {
-    //                                     associates.push(associate);
-    //                                 }
-    //                             });
-    //                             $.each(associates, function(index, associate) {
-    //                                 if (index > 3) {
-    //                                     $('.associateDropdown').addClass(
-    //                                         'h-56 overflow-y-auto')
-    //                                 }
-    //                                 $(".associateDropdown").append(`<div class="py-1">
-    //                             <label
-    //                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
-    //                                 role="option">
-    //                                 <input type="checkbox" name="associate[]"
-    //                                     class="associateinput form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
-    //                                 ${associate.name }
-    //                             </label>
-    //                         </div>`);
-    //                             });
 
-    //                             $('.modalTitle').text('Add an Associate');
-    //                             $('.processor').addClass('hidden');
-    //                             $('.associate').removeClass('hidden');
-    //                         }
-    //                     },
-    //                     error: function(error) {
-    //                         console.log(error);
-    //                     }
-    //                 });
-    //             });
-    //         }
-    //     });
+        function removeError(id) {
+            $('#' + id).removeClass('border-red-700 border-2');
+            $('#' + id + '_error').text('');
+            return true;
+        }
 
-    //     $('.associateContinue').click(function(e) {
-    //         e.preventDefault();
-    //         $('.associcateSuccess').empty();
-    //         var selectedAssociateValues = [];
-    //         $('input[name="associate[]"]:checked').each(function() {
-    //             selectedAssociateValues.push($(this).val());
-    //         });
-    //         var selectedAssociates = $('input[name="associate[]"]:checked');
-    //         if (selectedAssociates.length === 0) {
-    //             $('#associate_error').text('Please select at least one associate');
-    //             return;
-    //         } else {
-    //             $('#associate_error').text('');
-    //             $(".jrAssociateDropdown").empty();
-    //             $(document).ready(function() {
-    //                 $.ajax({
-    //                     url: `{{ getRoutePrefix() }}/getUsersByProcessor/${selectedAssociateValues}/${teamid}`, // Replace with the actual URL for retrieving users by team
-    //                     type: 'GET',
-    //                     success: function(data) {
-    //                         if (data == 'processorerror') {
-    //                             $('.associateContinue').attr('disabled', 'disabled');
-    //                             $('#associate_error').text(
-    //                                 'this associate is already exists');
-    //                         } else {
-    //                             var jrassociates = [];
-    //                             $.each(data, function(index, associate) {
-    //                                 if (associate.role === 'Junior Associate') {
-    //                                     jrassociates.push(associate);
-    //                                 }
-    //                             });
-    //                             $.each(jrassociates, function(index, associate) {
-    //                                 if (index > 3) {
-    //                                     $('.jrAssociateDropdown').addClass(
-    //                                         'h-56 overflow-y-auto')
-    //                                 }
-    //                                 $(".jrAssociateDropdown").append(`<div class="py-1">
-    //                             <label
-    //                                 class="flex items-center px-4 py-2 text-sm font-medium text-gray-700 cursor-pointer hover:bg-gray-100"
-    //                                 role="option">
-    //                                 <input type="checkbox" name="jrAssociate[]"
-    //                                     class="form-checkbox h-4 w-4 text-blue-600 mr-2" value="${associate.id}">
-    //                                 ${associate.name }
-    //                             </label>
-    //                         </div>`);
-    //                             });
+        $('.jrAssociateContinue').click(function(e) {
+            e.preventDefault();
+            var selectedAssociates = $('input[name="jrAssociate[]"]:checked');
+            $('#teamForm').submit();
+        });
 
-    //                             $('.modalTitle').text('Add an Jr Associate');
-    //                             $('.associate').addClass('hidden');
-    //                             $('.jrAssociate').removeClass('hidden');
-    //                         }
-    //                     },
-    //                     error: function(error) {
-    //                         console.log(error);
-    //                     }
-    //                 });
-    //             });
-    //         }
-    //     });
 
-    // @endif
-
-    function showError(id, error = " field is required") {
-        $('#' + id).addClass('border-red-700 border-2');
-        $('#' + id + "_error").text(id + error);
-        return false;
-    }
-
-    function removeError(id) {
-        $('#' + id).removeClass('border-red-700 border-2');
-        $('#' + id + '_error').text('');
-        return true;
-    }
-
-    $('.jrAssociateContinue').click(function(e) {
-        e.preventDefault();
-        var selectedAssociates = $('input[name="jrAssociate[]"]:checked');
-        // if (selectedAssociates.length === 0) {
-        //     $('#jrAssociate_error').text('Please select at least one associate');
-        //     return;
-        // } else removeError('jrAssociate');
-        $('#teamForm').submit();
-    });
-
-    $(document).ready(function() {
         if ($('#newInput').is(':checked')) {
             $('#new').removeClass('hidden');
             $('#existing').addClass('hidden');
@@ -531,44 +404,26 @@
             $('#existing select').attr('disabled',
                 'disabled'); // Correct the selector and method
         }
-    });
 
-    function changeInputs() {
-        if ($('#newInput').is(':checked')) {
-            $('#new').removeClass('hidden');
-            $('#existing').addClass('hidden');
-            $('#new input').removeAttr('disabled'); // Correct the selector and method
-            $('#existing select').attr('disabled', 'disabled'); // Correct the selector and method
+        $('.backToCreateTeam').click(function(e) {
+            e.preventDefault();
+            $('.modalTitle').text('Create New Team');
+            $('.createTeam').removeClass('hidden');
+            $('.processor').addClass('hidden');
+        });
+
+        if ($('.enableTeams').val() > 0) {
+            $('.enableTeamsHeader').removeClass('hidden');
         } else {
-            $('#new').addClass('hidden');
-            $('#existing').removeClass('hidden');
-            $('#existing select').removeAttr('disabled'); // Correct the selector and method
-            $('#new input').attr('disabled', 'disabled'); // Correct the selector and method
+            $('.enableTeamsHeader').addClass('hidden');
         }
-    }
+        if ($('.disableTeams').val() > 0) {
+            $('.disableTeamsHeader').removeClass('hidden');
+        } else {
+            $('.disableTeamsHeader').addClass('hidden');
+        }
 
-    $('.backToCreateTeam').click(function(e) {
-        e.preventDefault();
-        $('.modalTitle').text('Create New Team');
-        $('.createTeam').removeClass('hidden');
-        $('.processor').addClass('hidden');
-    });
 
-    $('.backToCreateProcessor').click(function(e) {
-        e.preventDefault();
-        $('.associcateSuccess').empty();
-        $('.modalTitle').text('Create New Processor');
-        $('.processor').removeClass('hidden');
-        $('.associate').addClass('hidden');
-    });
-    $('.backToCreateAssociate').click(function(e) {
-        e.preventDefault();
-        $('.modalTitle').text('Add an Associate');
-        $('.associate').removeClass('hidden');
-        $('.jrAssociate').addClass('hidden');
-    });
-
-    $(document).ready(function() {
         // $('#user-table').DataTable({
         //     pageLength: 30,
         //     lengthMenu: [10, 20, 30, 50, 100, 200],

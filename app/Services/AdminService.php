@@ -45,6 +45,33 @@ class AdminService
 
         if (Auth::user()->role === 'Super Admin') {
             $data['companies'] = Company::get();
+        }elseif(Auth::user()->role === 'Admin'){
+            $company = Company::find(Auth::user()->company_id);
+            $data['teams'] = $company->teams;
+            $data['borrowers'] = $company->users;
+        }else{
+            $admin = User::find(Auth::id());
+            $data['teams'] = Team::where('owner_id', $admin->id)
+            ->with('users.createdBy')
+            ->where('disable', false)
+            ->orWhereHas('users', function ($query) use ($admin) {
+                $query->where('user_id', $admin->id);
+            })
+            ->get();
+
+            // $directlyCreatedUsers = $admin->createdUsers()
+            //     ->with(['createdBy'])
+            //     ->where('role', 'Borrower')
+            //     ->get();
+            // $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
+            //     ->where('role', 'Borrower')
+            //     ->get();
+    
+            // // Combine the directly and indirectly created users
+            // $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
+    
+            // $data['borrowers'] = $allUsers;
+
         }
 
         $data['user'] = $user;
@@ -113,7 +140,7 @@ class AdminService
                 event(new Registered($user));
             }
         }
-        if (Auth::check() && Auth::user()->role === 'Super Admin' && $request->team) {
+        if (Auth::check() && $request->team) {
             $team = Team::find($request->team);
             $team->users()->attach($user->id);
         }
@@ -224,11 +251,11 @@ class AdminService
         }
         $filesIds = [];
         foreach ($users as $user) {
-                $media = $user->media ?? [];
+            $media = $user->media ?? [];
 
-                foreach ($media as $m) {
-                    $filesIds[] = $m->id;
-                }
+            foreach ($media as $m) {
+                $filesIds[] = $m->id;
+            }
         }
         $filesIds = array_unique($filesIds);
         $data['files'] = Media::with(['uploadedBy', 'user'])->find($filesIds);
@@ -344,7 +371,7 @@ class AdminService
         return ['msg_type' => 'msg_success', 'msg_value' => 'Lead deleted.'];
     }
 
-    public static function StoreTeam($request, $id)
+    public static function StoreTeam($request, $id = -1)
     {
         $teamData = $request->validate([
             'name' => 'required',
@@ -355,44 +382,57 @@ class AdminService
             // 'jrAssociateManager' => 'required',
         ]);
 
-        if ($id) {
+        if ($id != -1) {
             $team = Team::find($id);
+            if ($request->processor) {
+                foreach ($request->processor as $processorId) {
+                    if (!$team->users->contains($processorId)) {
+                        $team->users()->attach($processorId);
+                    }
+                }
+            }
+            if ($request->associate) {
+                foreach ($request->associate as $associateId) {
+                    if (!$team->users->contains($associateId)) {
+                        $team->users()->attach($associateId);
+                    }
+                }
+            }
+            if ($request->jrAssociate) {
+                foreach ($request->jrAssociate as $id) {
+                    if (!$team->users->contains($id)) {
+                        $team->users()->attach($id);
+                    }
+                }
+            }
         } else {
             $team = new Team([
                 'name' => $teamData['name'],
                 'company_id' => Auth::user()->role == 'Super Admin' ? $teamData['company'] : Auth::user()->company_id,
                 'jrAssociateManager' => $teamData['jrAssociateManager'] ?? null,
             ]);
-        }
-        $team->owner()->associate(Auth::id());
-        $team->save();
-        // Attach processors
-        if ($request->processor) {
-            foreach ($request->processor as $processorId) {
-                if (!$team->users->contains($processorId)) {
+            $team->owner()->associate(Auth::id());
+            $team->save();
+            if ($request->processor) {
+                foreach ($request->processor as $processorId) {
                     $team->users()->attach($processorId);
                 }
             }
-        }
 
-// Attach associates
-        if ($request->associate) {
-            foreach ($request->associate as $associateId) {
-                if (!$team->users->contains($associateId)) {
+            // Attach associates
+            if ($request->associate) {
+                foreach ($request->associate as $associateId) {
                     $team->users()->attach($associateId);
                 }
             }
-        }
 
-// Attach junior associates
-        if ($request->jrAssociate) {
-            foreach ($request->jrAssociate as $jrAssociateId) {
-                if (!$team->users->contains($jrAssociateId)) {
-                    $team->users()->attach($jrAssociateId);
+            // Attach junior associates
+            if ($request->jrAssociate) {
+                foreach ($request->jrAssociate as $id) {
+                    $team->users()->attach($id);
                 }
             }
         }
-
         CommonService::storeNotification("Created new team by name : $request->name", Auth::id());
     }
 
@@ -429,36 +469,63 @@ class AdminService
         return $associates;
     }
 
-    public static function shareItemWithAssistant($request)
+    public static function shareItemWithAssistant($request,$id = -1)
     {
         $faker = Factory::create();
-        $validator = Validator::make($request->only(['email', 'items']), [
-            'email' => 'required|unique:users,email',
-            'items' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->all()]);
+        if($id == -1){
+            $user = new User();
+            $assitant = new Assistant;
+        }else{
+            $user = User::find($id);
+            $assitant = Assistant::where('assistant_id',$user->id)->first();
         }
-
-        $user = new User();
+        if($request->ajax()){
+            $validator = Validator::make($request->only(['email', 'items']), [
+                'email' => 'required|unique:users,email',
+                'items' => 'required|sometimes',
+            ]);
+            if ($validator->fails()) {
+                return response()->json(['error' => $validator->errors()->all()]);
+            }
+        }else{
+            $request->validate([
+                'email' => "required|email|max:255|unique:users,email,".$user->id,
+                'name' => "required",
+                'deal' => "required",
+                'company' => (Auth::check() && Auth::user()->role == 'Super Admin') ? 'sometimes:required' : '',
+                'sendemail' => '',
+                'password' => (!$request->sendemail) ? 'sometimes:required|min:8|confirmed' : '',
+            ],['deal'=>'This field is required']);
+            $deal = Project::find($request->deal);
+            $request->userId = $deal->borrower->id;
+        }
         $user->role = 'Assistant';
         $user->active = 0;
-        $user->name = $faker->name;
-        $user->password = bcrypt($faker->unique()->password(8));
+        $user->name = $request->name ?? $faker->name;
+        $user->password = $request->passsword ?? bcrypt($faker->unique()->password(8));
         $user->email = $request->email;
         $user->created_by = Auth::id();
+        if(!$request->company && $user->company_id){
+            $user->company_id = $user->company_id;
+        }else{
+            $user->company_id = $request->company ?? Auth::user()->company_id;
+        }
         $user->save();
-
-        $assitant = new Assistant;
+        $categories = ["Bank Statements","ID/Driver's License","Fillable Loan Application"];
         $assitant->assistant_id = $user->id;
-        $assitant->user_id = $request->userId;
-        $assitant->categories = json_encode($request->items);
+        
+        $assitant->user_id = $request->userId ?? $assitant->user_id;
+        $assitant->categories = json_encode($request->items ?? $categories);
         $assitant->save();
         $id = Crypt::encryptString($user->id);
         $url = function () use ($id) {return Url::signedRoute('assistant.register', ['user' => $id]);};
         Mail::to($request->email)->send(new AssistantMail($url()));
-        return response()->json('sucess', 200);
+        if($request->ajax()){
+            return response()->json('sucess', 200);
+        }else{
+            return back()->with('msg_success', "Assistant create successfully");
+
+        }
     }
 
     public static function storeProject(Request $request, $id)
