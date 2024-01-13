@@ -224,10 +224,12 @@ class AdminService
         }
         $filesIds = [];
         foreach ($users as $user) {
-                $media = optional($user->media);
+            if ($user->media->isNotEmpty()) {
+                $media = $user->media;
                 foreach ($media as $m) {
                     $filesIds[] = $m->id;
                 }
+            }
         }
         $filesIds = array_unique($filesIds);
         $data['files'] = Media::with(['uploadedBy', 'user'])->find($filesIds);
