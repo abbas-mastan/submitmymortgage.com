@@ -224,7 +224,7 @@ class AdminService
         }
         $filesIds = [];
         foreach ($users as $user) {
-            if($user->media){
+            if($user->media != null){
                 $media = $user->media;
                 foreach ($media as $m) {
                     $filesIds[] = $m->id;
