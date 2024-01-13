@@ -401,7 +401,7 @@
                         success: function(data) {
                             var dataArray = Object.values(data);
                             removeDivs();
-                            $('.userForm').attr('action', "{{ url(getRoutePrefix() . '/share-items/') }}");
+                            $('.userForm').attr('action', "{{ url(getRoutePrefix() . '/share-items/-1') }}");
                             var selectOptions = '<option value="">Select Borrower</option>';
                             dataArray.forEach(function(borrower) {
                                 selectOptions +=
