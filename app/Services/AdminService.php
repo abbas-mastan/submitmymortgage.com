@@ -224,9 +224,11 @@ class AdminService
         }
         $filesIds = [];
         foreach ($users as $user) {
-            $media = $user->media;
-            foreach ($media as $m) {
-                $filesIds[] = $m->id;
+            if($user->media){
+                $media = $user->media;
+                foreach ($media as $m) {
+                    $filesIds[] = $m->id;
+                }
             }
         }
         $filesIds = array_unique($filesIds);
