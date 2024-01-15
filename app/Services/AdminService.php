@@ -43,35 +43,28 @@ class AdminService
             $user = User::find($id);
         }
 
+        if ($user->role === 'Assistant') {
+            $assistant = Assistant::where('assistant_id', $user->id)->first();
+            if($assistant){
+                $data['projectid'] = User::find($assistant->user_id)->project->id;
+            }
+        }
+
         if (Auth::user()->role === 'Super Admin') {
             $data['companies'] = Company::get();
-        }elseif(Auth::user()->role === 'Admin'){
+        } elseif (Auth::user()->role === 'Admin') {
             $company = Company::find(Auth::user()->company_id);
             $data['teams'] = $company->teams;
             $data['borrowers'] = $company->users;
-        }else{
+        } else {
             $admin = User::find(Auth::id());
             $data['teams'] = Team::where('owner_id', $admin->id)
-            ->with('users.createdBy')
-            ->where('disable', false)
-            ->orWhereHas('users', function ($query) use ($admin) {
-                $query->where('user_id', $admin->id);
-            })
-            ->get();
-
-            // $directlyCreatedUsers = $admin->createdUsers()
-            //     ->with(['createdBy'])
-            //     ->where('role', 'Borrower')
-            //     ->get();
-            // $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
-            //     ->where('role', 'Borrower')
-            //     ->get();
-    
-            // // Combine the directly and indirectly created users
-            // $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
-    
-            // $data['borrowers'] = $allUsers;
-
+                ->with('users.createdBy')
+                ->where('disable', false)
+                ->orWhereHas('users', function ($query) use ($admin) {
+                    $query->where('user_id', $admin->id);
+                })
+                ->get();
         }
 
         $data['user'] = $user;
@@ -83,11 +76,12 @@ class AdminService
     public static function doUser(Request $request, $id)
     {
         $isNewUser = ($id == -1);
+        $user = $isNewUser ? new User() : User::find($id);
         if (!$request->ajax()) {
             $request->validate([
-                'email' => "required|email" . ($isNewUser ? "|unique:users" : "") . "|max:255",
+                'email' => "sometimes:required|email|unique:users,email," . $user->id,
                 'name' => "required",
-                'company' => (Auth::check() && Auth::user()->role == 'Super Admin') ? 'sometimes:required' : '',
+                'company' => (Auth::check() && Auth::user()->role == 'Super Admin') ? 'required' : '',
                 'sendemail' => '',
                 'password' => ($isNewUser && !$request->sendemail) ? 'required|min:8|confirmed' : '',
                 'role' =>
@@ -97,8 +91,10 @@ class AdminService
                 },
             ]);
         }
+        if (!$isNewUser && $user->role === 'Assistant') {
+            Assistant::where('assistant_id', $user->id)->delete();
+        }
 
-        $user = $isNewUser ? new User() : User::findOrFail($id);
         if ($isNewUser && $request->sendmail) {
             $msg = "Registered. A verification link has been sent. You need to verify your email before login. Please, check your email.";
         } elseif ($isNewUser && !$request->sendmail) {
@@ -107,11 +103,12 @@ class AdminService
             $msg = "User updated successfully";
         }
 
-        $user->fill($request->only(['email', 'name']));
+        $user->name = $request->name;
+        $user->email = $request->email;
         $user->password = $request->filled('password') ?
         Hash::make($request->password) : $user->password = Hash::make(Str::random(8));
         $user->role = $request->input('role', 'Borrower');
-
+        $user->active = 1;
         if ($request->file('file')) {
             if (!str_contains($user->pic, "default") && $id !== -1) {
                 Storage::delete($user->pic);
@@ -145,7 +142,7 @@ class AdminService
             $team->users()->attach($user->id);
         }
 
-        if ($request->role === 'Borrower') {
+        if ($request->role === 'Borrower' && $isNewUser) {
             $contact = new Contact;
             $contact->name = $request->name;
             $contact->email = $request->email;
@@ -469,63 +466,62 @@ class AdminService
         return $associates;
     }
 
-    public static function shareItemWithAssistant($request,$id = -1)
+    public static function shareItemWithAssistant($request, $id = -1)
     {
-        $faker = Factory::create();
-        if($id == -1){
+        if ($id == -1) {
             $user = new User();
+            $user->email_verified_at = Auth::user()->role === 'Super Admin' ? now() : null;
             $assitant = new Assistant;
-        }else{
+        } else {
             $user = User::find($id);
-            $assitant = Assistant::where('assistant_id',$user->id)->first();
+            $assitant = Assistant::where('assistant_id', $user->id)->first();
         }
-        if($request->ajax()){
-            $validator = Validator::make($request->only(['email', 'items']), [
-                'email' => 'required|unique:users,email',
-                'items' => 'required|sometimes',
-            ]);
-            if ($validator->fails()) {
-                return response()->json(['error' => $validator->errors()->all()]);
-            }
-        }else{
-            $request->validate([
-                'email' => "required|email|max:255|unique:users,email,".$user->id,
-                'name' => "required",
-                'deal' => "required",
-                'company' => (Auth::check() && Auth::user()->role == 'Super Admin') ? 'sometimes:required' : '',
-                'sendemail' => '',
-                'password' => (!$request->sendemail) ? 'sometimes:required|min:8|confirmed' : '',
-            ],['deal'=>'This field is required']);
+
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|unique:users,email,' . $user->id,
+            'items' => 'required|sometimes',
+            'company' => Auth::user()->role !== 'Super Admin' ? '' : 'sometimes:required',
+            'deal' => 'sometimes:required',
+        ]);
+        if ($validator->fails()) {
+            return response()->json(['error' => $validator->errors()->all()]);
+        }
+        if ($request->deal) {
             $deal = Project::find($request->deal);
             $request->userId = $deal->borrower->id;
         }
+        $faker = Factory::create();
+
         $user->role = 'Assistant';
         $user->active = 0;
         $user->name = $request->name ?? $faker->name;
         $user->password = $request->passsword ?? bcrypt($faker->unique()->password(8));
         $user->email = $request->email;
         $user->created_by = Auth::id();
-        if(!$request->company && $user->company_id){
+        if (!$request->company && $user->company_id) {
             $user->company_id = $user->company_id;
-        }else{
+        } else {
             $user->company_id = $request->company ?? Auth::user()->company_id;
         }
+
         $user->save();
-        $categories = ["Bank Statements","ID/Driver's License","Fillable Loan Application"];
+        $categories = ["Bank Statements", "ID/Driver's License", "Fillable Loan Application"];
         $assitant->assistant_id = $user->id;
-        
+        if ($request->sendemail) {
+            $id = Crypt::encryptString($user->id);
+            $url = function () use ($id) {return Url::signedRoute('assistant.register', ['user' => $id]);};
+            Mail::to($request->email)->send(new AssistantMail($url()));
+        }
+
         $assitant->user_id = $request->userId ?? $assitant->user_id;
         $assitant->categories = json_encode($request->items ?? $categories);
         $assitant->save();
-        $id = Crypt::encryptString($user->id);
-        $url = function () use ($id) {return Url::signedRoute('assistant.register', ['user' => $id]);};
-        Mail::to($request->email)->send(new AssistantMail($url()));
-        if($request->ajax()){
-            return response()->json('sucess', 200);
-        }else{
-            return back()->with('msg_success', "Assistant create successfully");
+        return response()->json('sucess', 200);
+        // if($request->ajax()){
+        // }else{
+        //     return back()->with('msg_success', "Assistant create successfully");
 
-        }
+        // }
     }
 
     public static function storeProject(Request $request, $id)

@@ -1,7 +1,8 @@
 @extends('layouts.app')
 @section('content')
     <div class="mx-auto w-3/4 mt-24">
-
+        <x-jq-loader />
+        <div class="errors"></div>
         <div class="">
             <h1 class="text-xl uppercase text-center">
                 Create A New User
@@ -34,7 +35,7 @@
                 </button>
             </div>
         </form>
-        <form onsubmit="event.preventDefault(); showPrompt(this);" enctype="multipart/form-data"
+        <form enctype="multipart/form-data"
             action="{{ empty($user->id) ? url(getRoutePrefix() . (old('role', $user->role) == 'Assistant' ? '/share-items/' : '/do-user/') . '-1') : url(getRoutePrefix() . (old('role', $user->role) == 'Assistant' ? '/share-items/' : '/do-user/') . $user->id) }}"
             method="post" class="userForm w-7/8">
             @csrf
@@ -67,11 +68,10 @@
                 </div>
             </div>
             <div class="flex justify-between company">
-
                 @if (Auth::user()->role === 'Super Admin')
                     <div class="mt-3 w-[49%]">
                         <div class=" text-left mr-12">
-                            <label for="role" class="">Company Name</label>
+                            <label for="company" class="">Company Name</label>
                         </div>
                         <div class="mt-2">
                             <select name="company" id="company"
@@ -121,7 +121,7 @@
                     </div>
                 </div>
                 @if (Auth::user()->role !== 'Super Admin')
-                    <div class="mt-3 w-[49%] teamDiv {{old('role') === 'Assistant'?'hidden':''}}">
+                    <div class="mt-3 w-[49%] teamDiv {{ old('role') === 'Assistant' ? 'hidden' : '' }}">
                         <div class=" text-left mr-12">
                             <label for="role" class="">Team Name</label>
                         </div>
@@ -137,7 +137,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="mt-3 w-[49%] borrowerDiv {{old('role') !== 'Assistant'?'hidden':''}}">
+                    <div class="mt-3 w-[49%] borrowerDiv {{ old('role') !== 'Assistant' ? 'hidden' : '' }}">
                         <div class=" text-left mr-12">
                             <label for="role" class="">Select Deal</label>
                         </div>
@@ -148,16 +148,16 @@
                                 @foreach ($teams as $team)
                                     @foreach ($team->projects as $project)
                                         <option {{ old('deal') == $project->id ? 'selected' : '' }}
-                                        value="{{ $project->id }}">
-                                        {{ $project->name }}
-                                    </option>
+                                            value="{{ $project->id }}">
+                                            {{ $project->name }}
+                                        </option>
                                     @endforeach
                                 @endforeach
                             </select>
                         </div>
-                           @error('deal')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+                        @error('deal')
+                            <span class="text-red-700">{{ $message }}</span>
+                        @enderror
                     </div>
                 @endif
             </div>
@@ -303,10 +303,15 @@
             $('#role').change(function(e) {
                 e.preventDefault();
                 var role = $(this).val();
+                $('.userForm').off('submit');
                 if (role === 'Assistant') {
                     $('.userForm').attr('action', "{{ url(getRoutePrefix() . '/share-items/-1') }}");
                     $('.borrowerDiv').removeClass('hidden');
                     $('.teamDiv').addClass('hidden');
+                    $('.userForm').submit(function(e) {
+                        e.preventDefault();
+                        shareItemWithAssistant('-1')
+                    });
                 } else if (role === 'Borrower') {
                     $('.userForm').attr('action', "{{ url(getRoutePrefix() . '/do-user/-1') }}");
                     $('.borrowerDiv').addClass('hidden');
@@ -332,6 +337,7 @@
                     ajaxRoleChange(companyid);
                 });
 
+
                 function ajaxCompanyChange(companyid) {
                     var role = $('#role').val();
                     if (role === 'Assistant' && companyid) {
@@ -345,6 +351,8 @@
 
                 function ajaxRoleChange(companyid) {
                     var role = $('#role').val();
+
+
                     if (role === 'Assistant' && companyid) {
                         ajaxCompanyBorrowers(companyid);
                     } else if (['Processor', 'Associate', 'Junior Associate'].includes(role) && companyid) {
@@ -365,6 +373,11 @@
                 $('#role').change(function() {
                     var companyid = ($('#company').val() !== "Select Company") ? $('#company').val() : null;
                     ajaxRoleChange(companyid);
+                    if ($('#role').val() != 'Assistant') {
+                        $('.userForm').attr('action',
+                            "{{ empty($user->id) ? url(getRoutePrefix() . (old('role', $user->role) == 'Assistant' ? '/share-items/' : '/do-user/') . '-1') : url(getRoutePrefix() . (old('role', $user->role) == 'Assistant' ? '/share-items/' : '/do-user/') . $user->id) }}"
+                        );
+                    }
                 });
 
                 function ajaxCompanyChange(companyid) {
@@ -380,6 +393,7 @@
 
                 function ajaxRoleChange(companyid) {
                     var role = $('#role').val();
+                    $('.userForm').off('submit');
                     if (role === 'Assistant' && companyid) {
                         ajaxCompanyBorrowers(companyid);
                     } else if (['Processor', 'Associate', 'Junior Associate'].includes(role) && companyid) {
@@ -387,7 +401,21 @@
                     } else {
                         removeDivs();
                     }
+                    if (role !== 'Assistant') {
+                        console.log(role);
+                        $('.userForm').submit(function(e) {
+                            $('.userForm').submit();
+                        });
+                    } else {
+                        $('.userForm').submit(function(e) {
+                            e.preventDefault();
+                            shareItemWithAssistant('-1')
+                        });
+                    }
                 }
+
+
+
 
                 function removeDivs() {
                     $('.teamDiv').remove();
@@ -399,21 +427,24 @@
                         url: `{{ getRoutePrefix() }}/get-company-borrowers/${companyid}`, // Replace with the actual URL for retrieving users by team
                         type: 'GET',
                         success: function(data) {
-                            var dataArray = Object.values(data);
+                            // var dataArray = Object.values(data);
                             removeDivs();
-                            $('.userForm').attr('action', "{{ url(getRoutePrefix() . '/share-items/-1') }}");
-                            var selectOptions = '<option value="">Select Borrower</option>';
-                            dataArray.forEach(function(borrower) {
-                                selectOptions +=
-                                    `<option value="${borrower.id}">${borrower.name}</option>`;
+                            $('.userForm').attr('action',
+                                "{{ url(getRoutePrefix() . '/share-items/-1') }}");
+                            var selectOptions = '<option value="">Select deal</option>';
+                            data.forEach(function(team) {
+                                team.projects.forEach(function(project) {
+                                    selectOptions +=
+                                        `<option value="${project.id}">${project.name}</option>`;
+                                })
                             });
                             $('.company').after(`
                     <div class="mt-3 w-[49%] borrowerDiv">
                         <div class=" text-left mr-12">
-                            <label for="user" class="">Borrower Name</label>
+                            <label for="user" class="">Deal Name</label>
                         </div>
                         <div class="mt-2">
-                            <select name="userId" id="user"
+                            <select name="deal" id="user"
                                 class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
                                 ${selectOptions}
                             </select>
@@ -454,4 +485,43 @@
             });
         </script>
     @endif
+
+    <script>
+        function shareItemWithAssistant(assistantId) {
+            $('.jq-loader-for-ajax').removeClass('hidden');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                type: 'POST',
+                url: "{{ url(getRoutePrefix() . '/share-items') }}" + '/' + assistantId,
+                data: $('.userForm').serialize(), // Send data as an object
+                success: function(response) {
+                    $("div[role='alert']").remove();
+                    $('.errors').empty();
+                    console.log(response);
+                    $('.jq-loader-for-ajax').addClass('hidden');
+                    if (response === 'sucess') {
+                        $('#newProjectModal').toggleClass('hidden');
+                        window.location.href =
+                            "{{ url(getRoutePrefix() . '/redirect/back/assistant-created-successfully') }}";
+                    }
+                    $.each(response.error, function(index, message) {
+                        $('.errors').append(`<div class="p-4 my-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                                    <span class="font-medium">Error!</span>
+                                     ${message}
+                                    </div>`
+                            // `<li class="text-red-700">${message}</li>`
+                        );
+                    });
+                },
+                error: function(data) {
+                    $('.jq-loader-for-ajax').addClass('hidden');
+                    console.log(data);
+                }
+            });
+        }
+    </script>
 @endsection

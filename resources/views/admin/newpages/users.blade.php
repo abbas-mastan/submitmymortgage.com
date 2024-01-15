@@ -146,7 +146,7 @@
         </form>
     @endcomponent
     <x-flex-card title="Verified Users" id="verified" titlecounts="0" iconurl="{{ asset('icons/Users.svg') }}" />
-    <button class="bg-red-800 px-5 py-2 text-white flex newProject">Add New User</button>
+    <a href="{{url(getRoutePrefix().'/add-user/-1')}}" class="bg-red-800 px-5 py-2 text-white  newProject inline">Add New User</a>
     @component('components.accordion', ['title' => 'Verified Users'])
         <table class="w-full display" id="completed-table">
             <thead class="bg-gray-300">
@@ -212,7 +212,7 @@
                                             alt="" class="p-1 w-7">
                                     </button>
                                 </a>
-                                @if (session('role') == 'Admin')
+                                @if (session('role') == 'Super Admin')
                                     <form method="POST" action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
                                         @csrf
                                         <input type="hidden" name="user_id" value="{{ $processor->id }}">

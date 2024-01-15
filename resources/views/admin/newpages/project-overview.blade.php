@@ -153,7 +153,7 @@
         <div class="hidden py-3 submitPart">
             <span class="errors">
             </span>
-            <form action="{{ url(getRoutePrefix() . '/share-items') }}" method="POST">
+            <form action="{{ url(getRoutePrefix() . '/share-items/-1') }}" method="POST">
                 @csrf
                 <x-jq-loader />
                 <input type="email" name="email"

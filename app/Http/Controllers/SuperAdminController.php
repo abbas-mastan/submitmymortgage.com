@@ -57,7 +57,7 @@ class SuperAdminController extends Controller
     }
     public function getCompanyBorrowers(Company $company)
     {
-        $borrowers = $company->users->where('role','Borrower')->toArray();
+        $borrowers = $company->teams()->with('projects')->get();
         return response()->json($borrowers,200);
     }
 
