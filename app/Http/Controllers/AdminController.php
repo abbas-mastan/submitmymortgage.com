@@ -352,10 +352,15 @@ class AdminController extends Controller
     public function projects($id = null): View
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-        // if($admin->role === 'Admin'){
-        //     $data['teams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->get();
-            
-        // }else{
+        if($admin->role === 'Admin'){
+            $data['teams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->get();
+            $teamIds = $data['teams']->pluck('id')->toArray();
+            $data['projects'] = Project::whereIn('team_id', $teamIds)
+                ->with(['team', 'users.createdBy', 'borrower.createdBy'])
+                ->get();
+                
+                $data['borrowers'] = User::where('role', 'Borrower')->where('company_id',$admin->company_id)->get(['id', 'name']);
+        }else{
         $data['teams'] = Team::where('owner_id', $admin->id)
             ->orWhereHas('users', function ($query) use ($admin) {
                 $query->where('user_id', $admin->id);
@@ -363,13 +368,13 @@ class AdminController extends Controller
             ->get();
 
         $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
-        $data['projects'] = Project::where('created_by', $admin->id)
+        $data['projects'] = Project::with('creater')->where('created_by', $admin->id)
             ->orWhereHas('users', function ($query) use ($admin) {
                 $query->where('users.id', $admin->id);
             })
             ->with(['team', 'users.createdBy', 'borrower.createdBy'])
             ->get();
-        // }
+        }
         $data['enableProjects'] = $data['projects'];
         return view('admin.newpages.projects', $data);
     }
