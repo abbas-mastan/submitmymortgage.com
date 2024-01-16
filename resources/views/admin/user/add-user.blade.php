@@ -204,36 +204,34 @@
                     <label for="sendemail">Send Welcome Email</label>
                 </div>
             @endif
-            @if (empty($user->password))
-                <span id="passwordParent">
-                    <div class="flex justify-between">
-                        <div class="mt-3 w-[49%]">
-                            <div class=" text-left mr-12">
-                                <label for="password" class="">Create Password</label>
-                            </div>
-                            <div class="mt-2">
-                                <input type="password"
-                                    class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                                    name="password" id="password" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
-                            </div>
-                            @error('password')
-                                <span class="text-red-700">{{ $message }}</span>
-                            @enderror
+            <span id="passwordParent">
+                <div class="flex justify-between">
+                    <div class="mt-3 w-[49%]">
+                        <div class=" text-left mr-12">
+                            <label for="password" class="">{{$user->id > 0 ? "Update":"Create"}} Password</label>
                         </div>
-                        <div class="mt-3 w-[49%]">
-                            <div class=" text-left mr-12">
-                                <label for="password_confirmation" class="">Confirm Password</label>
-                            </div>
-                            <div class="mt-2">
-                                <input type="password"
-                                    class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                                    name="password_confirmation" id="password_confirmation"
-                                    placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
-                            </div>
+                        <div class="mt-2">
+                            <input type="password"
+                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                                name="password" id="password" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
+                        </div>
+                        @error('password')
+                            <span class="text-red-700">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="mt-3 w-[49%]">
+                        <div class=" text-left mr-12">
+                            <label for="password_confirmation" class="">Confirm Password</label>
+                        </div>
+                        <div class="mt-2">
+                            <input type="password"
+                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                                name="password_confirmation" id="password_confirmation"
+                                placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
                         </div>
                     </div>
-                </span>
-            @endif
+                </div>
+            </span>
             @isset($user->pic)
                 <div class="mt-3 mx-auto">
                     <div class=" text-left mr-12">
@@ -387,7 +385,8 @@
 
                     if ($("#role").val() && $('#company').val() > 0) {
                         ajaxRoleChange($('#company').val());
-                    } else if ($("#role").val() !== 'Assistant' || $("#role").val() !== 'Borrower' || $("#role").val() !== 'Admin'  && $('#company').val() > 0) {
+                    } else if ($("#role").val() !== 'Assistant' || $("#role").val() !== 'Borrower' || $("#role")
+                    .val() !== 'Admin' && $('#company').val() > 0) {
 
                     }
                 @endif
@@ -405,7 +404,8 @@
                             data.forEach(function(team) {
                                 team.projects.forEach(function(project) {
                                     @if ($user->id > 0 && isset($projectid))
-                                        selected = project.id === @json($projectid);
+                                        selected = project.id ===
+                                            @json($projectid);
                                     @endif
                                     selectOptions +=
                                         `<option ${selected ? 'selected' : ''} value="${project.id}">${project.name}</option>`;

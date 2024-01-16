@@ -45,7 +45,7 @@ class AdminService
 
         if ($user->role === 'Assistant') {
             $assistant = Assistant::where('assistant_id', $user->id)->first();
-            if($assistant){
+            if ($assistant) {
                 $data['projectid'] = User::find($assistant->user_id)->project->id;
             }
         }
@@ -468,14 +468,11 @@ class AdminService
 
     public static function shareItemWithAssistant($request, $id = -1)
     {
-        if ($id == -1) {
-            $user = new User();
-            $user->email_verified_at = Auth::user()->role === 'Super Admin' ? now() : null;
-            $assitant = new Assistant;
-        } else {
-            $user = User::find($id);
-            $assitant = Assistant::where('assistant_id', $user->id)->first();
-        }
+        $user = User::where('id',$request->userId)->first();
+        return response()->json($user->company_id, 200);
+        $user = new User();
+        $user->email_verified_at = Auth::user()->role === 'Super Admin' ? now() : null;
+        $assitant = new Assistant;
 
         $validator = Validator::make($request->all(), [
             'email' => 'required|unique:users,email,' . $user->id,
@@ -489,6 +486,9 @@ class AdminService
         if ($request->deal) {
             $deal = Project::find($request->deal);
             $request->userId = $deal->borrower->id;
+        }
+        if($request->userId && !$request->deal){
+            $request->company = User::find($request->userId)->company_id;
         }
         $faker = Factory::create();
 
@@ -505,7 +505,7 @@ class AdminService
         }
 
         $user->save();
-        $categories = ["Bank Statements", "ID/Driver's License", "Fillable Loan Application"];
+        $categories = ["Bank Statements","ID\/Driver's License","Fillable Loan Application"];
         $assitant->assistant_id = $user->id;
         if ($request->sendemail) {
             $id = Crypt::encryptString($user->id);

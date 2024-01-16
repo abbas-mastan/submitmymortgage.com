@@ -146,7 +146,7 @@
         </form>
     @endcomponent
     <x-flex-card title="Verified Users" id="verified" titlecounts="0" iconurl="{{ asset('icons/Users.svg') }}" />
-    <a href="{{url(getRoutePrefix().'/add-user/-1')}}" class="bg-red-800 px-5 py-2 text-white  newProject inline">Add New User</a>
+    <a href="{{url(getRoutePrefix().'/add-user/-1')}}" class="bg-red-800 px-5 py-2 text-white inline">Add New User</a>
     @component('components.accordion', ['title' => 'Verified Users'])
         <table class="w-full display" id="completed-table">
             <thead class="bg-gray-300">
