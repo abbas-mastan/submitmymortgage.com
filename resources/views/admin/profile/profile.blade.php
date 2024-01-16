@@ -21,8 +21,36 @@
              id="file-upload-btn">
                                 Browse..
                                 </button>   --}}
-                <input required type="file" name="file" id="file" accept="image/*">
+                <input  type="file" name="file" id="file" accept="image/*">
             </div>
+            <span id="passwordParent">
+                <div class="flex justify-between">
+                    <div class="mt-3 w-[49%]">
+                        <div class=" text-left mr-12">
+                            <label for="password" class="">Password</label>
+                        </div>
+                        <div class="mt-2">
+                            <input type="password"
+                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                                name="password" id="password" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
+                        </div>
+                        @error('password')
+                            <span class="text-red-700">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="mt-3 w-[49%]">
+                        <div class=" text-left mr-12">
+                            <label for="password_confirmation" class="">Confirm Password</label>
+                        </div>
+                        <div class="mt-2">
+                            <input type="password"
+                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                                name="password_confirmation" id="password_confirmation"
+                                placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
+                        </div>
+                    </div>
+                </div>
+            </span>
             <div class="flex justify-center mt-2">
                 <button type="submit"
                     class="tracking-wide rounded-lg text-white px-7 py-2 text-xl capitalize bg-gradient-to-b from-gradientStart to-gradientEnd">
@@ -31,12 +59,12 @@
             </div>
         </form>
         @if (Auth::user()->accessToken)
-        <div class="flex justify-center mt-2">
-            <a href="{{url(getRoutePrefix().'/disconnect-google')}}"
-                class="tracking-wide rounded-lg text-white px-7 py-2 text-xl capitalize bg-gradient-to-b from-gradientStart to-gradientEnd">
-                Disconnect from Google
-            </a>
-        </div>
+            <div class="flex justify-center mt-2">
+                <a href="{{ url(getRoutePrefix() . '/disconnect-google') }}"
+                    class="tracking-wide rounded-lg text-white px-7 py-2 text-xl capitalize bg-gradient-to-b from-gradientStart to-gradientEnd">
+                    Disconnect from Google
+                </a>
+            </div>
         @endif
     </div>
 @endsection

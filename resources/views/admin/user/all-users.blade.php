@@ -373,7 +373,7 @@
         if($('.unverifiedSerial:last').html() < 11){
             $('.unVerifiedUsersTable').attr('id', 'asdf');
         }else{
-            $('.unVerifiedUsersTable').attr('id', 'user-table');
+            $('.unVerifiedUsersTable').attr('id', 'incomplete-table');
         }
         if($('.verifiedSerial:last').html() < 11){
             $('.verifiedUsersTable').attr('id', 'asdf');

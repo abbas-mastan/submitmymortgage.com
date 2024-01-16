@@ -332,44 +332,14 @@
                     var companyid = ($(this).val() !== "Select Company") ? $(this).val() : null;
                     ajaxCompanyChange(companyid);
                 });
-                $('#role').change(function() {
-                    var companyid = ($('#company').val() !== "Select Company") ? $('#company').val() : null;
-                    ajaxRoleChange(companyid);
-                });
 
-
-                function ajaxCompanyChange(companyid) {
-                    var role = $('#role').val();
-                    if (role === 'Assistant' && companyid) {
-                        ajaxCompanyBorrowers(companyid);
-                    } else if (['Processor', 'Associate', 'Junior Associate'].includes(role) && companyid) {
-                        ajaxCompanyTeams(companyid);
-                    } else {
-                        removeDivs();
-                    }
-                }
-
-                function ajaxRoleChange(companyid) {
-                    var role = $('#role').val();
-
-
-                    if (role === 'Assistant' && companyid) {
-                        ajaxCompanyBorrowers(companyid);
-                    } else if (['Processor', 'Associate', 'Junior Associate'].includes(role) && companyid) {
-                        ajaxCompanyTeams(companyid);
-                    } else {
-                        removeDivs();
-                    }
-                }
 
                 function removeDivs() {
                     $('.teamDiv').remove();
                     $('.borrowerDiv').remove();
                 }
-                $('#company').change(function() {
-                    var companyid = ($(this).val() !== "Select Company") ? $(this).val() : null;
-                    ajaxCompanyChange(companyid);
-                });
+
+
                 $('#role').change(function() {
                     var companyid = ($('#company').val() !== "Select Company") ? $('#company').val() : null;
                     ajaxRoleChange(companyid);
@@ -379,6 +349,7 @@
                         );
                     }
                 });
+
 
                 function ajaxCompanyChange(companyid) {
                     var role = $('#role').val();
@@ -402,7 +373,6 @@
                         removeDivs();
                     }
                     if (role !== 'Assistant') {
-                        console.log(role);
                         $('.userForm').submit(function(e) {
                             $('.userForm').submit();
                         });
@@ -413,15 +383,14 @@
                         });
                     }
                 }
+                @if ($user->id > 0)
 
+                    if ($("#role").val() && $('#company').val() > 0) {
+                        ajaxRoleChange($('#company').val());
+                    } else if ($("#role").val() !== 'Assistant' || $("#role").val() !== 'Borrower' || $("#role").val() !== 'Admin'  && $('#company').val() > 0) {
 
-
-
-                function removeDivs() {
-                    $('.teamDiv').remove();
-                    $('.borrowerDiv').remove();
-                }
-
+                    }
+                @endif
                 function ajaxCompanyBorrowers(companyid) {
                     $.ajax({
                         url: `{{ getRoutePrefix() }}/get-company-borrowers/${companyid}`, // Replace with the actual URL for retrieving users by team
@@ -432,10 +401,14 @@
                             $('.userForm').attr('action',
                                 "{{ url(getRoutePrefix() . '/share-items/-1') }}");
                             var selectOptions = '<option value="">Select deal</option>';
+                            var selected = false;
                             data.forEach(function(team) {
                                 team.projects.forEach(function(project) {
+                                    @if ($user->id > 0 && isset($projectid))
+                                        selected = project.id === @json($projectid);
+                                    @endif
                                     selectOptions +=
-                                        `<option value="${project.id}">${project.name}</option>`;
+                                        `<option ${selected ? 'selected' : ''} value="${project.id}">${project.name}</option>`;
                                 })
                             });
                             $('.company').after(`

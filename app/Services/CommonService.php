@@ -2,27 +2,26 @@
 
 namespace App\Services;
 
-use App\Models\Info;
-use App\Models\User;
-use Illuminate\Support\Facades\Password;
-use App\Models\Media;
+use App\Models\Application;
+use App\Models\Attachment;
 use App\Models\Company;
 use App\Models\Contact;
-use App\Models\Project;
-use App\Models\Attachment;
+use App\Models\Info;
 use App\Models\IntakeForm;
-use App\Models\Application;
-use Illuminate\Support\Arr;
+use App\Models\Media;
+use App\Models\Project;
+use App\Models\User;
+use App\Notifications\FileUploadNotification;
 use Faker\Factory;
 use Illuminate\Http\Request;
-use App\Notifications\FileUploadNotification;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
-use Illuminate\Validation\ValidationException;
-use Illuminate\Support\Facades\Validator;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class CommonService
 {
@@ -36,14 +35,19 @@ class CommonService
     //Updates profile picture of the user
     public static function doProfile(Request $request)
     {
-        $msg = "Picture updated.";
+        $msg = "Profile updated.";
         $user = Auth::user();
+        if ($request->password) {
+            $request->validate(['password' => 'confirmed']);
+            $user->password = $request->password;
+        }
         if ($request->file('file')) {
             if (!str_contains($user->pic, "default")) {
                 Storage::delete($user->pic);
             }
             $user->pic = $request->file('file')->store(getFileDirectory());
         }
+
         if ($user->save()) {
             return ['msg_type' => 'msg_success', 'msg_value' => $msg];
         }
@@ -143,18 +147,18 @@ class CommonService
         if ($status == 'accept') {
             $application->status = 1;
             $msg = "Application completed.";
-        } 
+        }
         if ($status == 'delete') {
             $application->status = 3;
             $msg = "Application deleted.";
         }
-        if($status == 'reject') {
+        if ($status == 'reject') {
             $application->status = 2;
             $msg = "Application rejected.";
         }
-        
-        if($status == 'restore') {
-            abort_if(Auth::user()->role !== 'Super Admin',403,'You are not allowed to restore an Application');
+
+        if ($status == 'restore') {
+            abort_if(Auth::user()->role !== 'Super Admin', 403, 'You are not allowed to restore an Application');
             $application->status = 0;
             $msg = "Application Restored.";
         }
@@ -385,22 +389,22 @@ class CommonService
     public static function getAssociates(Company $company)
     {
         $admin = User::find(Auth::id());
-        if($admin->role === 'Super Admin' || $admin->role === 'Admin'){
+        if ($admin->role === 'Super Admin' || $admin->role === 'Admin') {
             $users = $company->users()->get();
-        }else{
+        } else {
             $currentUserId = $admin->id();
             $users = $admin->createdUsers()
-            ->with(['createdBy', 'info'])
-            ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
-            ->where(function ($query) use ($currentUserId) {
-                // Associates directly created by the current user
-                $query->where('created_by', $currentUserId);
-                // Associates created by users who were created by the current user
-                $query->orWhereHas('createdBy', function ($nestedQuery) use ($currentUserId) {
-                    $nestedQuery->where('created_by', $currentUserId);
-                });
-            })
-            ->get();
+                ->with(['createdBy', 'info'])
+                ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
+                ->where(function ($query) use ($currentUserId) {
+                    // Associates directly created by the current user
+                    $query->where('created_by', $currentUserId);
+                    // Associates created by users who were created by the current user
+                    $query->orWhereHas('createdBy', function ($nestedQuery) use ($currentUserId) {
+                        $nestedQuery->where('created_by', $currentUserId);
+                    });
+                })
+                ->get();
         }
         foreach ($users as $user) {
             $associates[] = [
@@ -437,11 +441,11 @@ class CommonService
         if ($route === 'back') {
             return back()->with('msg_success', "$message.");
         }
-        
+
         return redirect(getRoutePrefix() . "/$route")->with('msg_success', "$message.");
     }
 
-    public  static function submitIntakeForm(Request $request)
+    public static function submitIntakeForm(Request $request)
     {
         $user = new User;
         $faker = Factory::create();
@@ -483,7 +487,7 @@ class CommonService
         return response()->json('success', 200);
     }
 
-    public  static function storeProject(Request $request,$user)
+    public static function storeProject(Request $request, $user)
     {
         $project = Project::create([
             'name' => $request->borroweraddress,
@@ -492,20 +496,20 @@ class CommonService
             'created_by' => Auth::id(),
         ]);
 
-        if($request->associate){
-        foreach ($request->associate as $associate_id) {
-            $project->users()->attach($associate_id);
+        if ($request->associate) {
+            foreach ($request->associate as $associate_id) {
+                $project->users()->attach($associate_id);
+            }
         }
-        }
-        if($request->juniorAssociate){
+        if ($request->juniorAssociate) {
             foreach ($request->juniorAssociate as $associate_id) {
                 $project->users()->attach($associate_id);
             }
         }
-        if($request->processor){
-        foreach ($request->processor as $associate_id) {
-            $project->users()->attach($associate_id);
-        }
+        if ($request->processor) {
+            foreach ($request->processor as $associate_id) {
+                $project->users()->attach($associate_id);
+            }
         }
 
         return "Created new Deal by name : $request->borroweraddress";
