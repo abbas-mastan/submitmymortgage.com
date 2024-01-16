@@ -131,7 +131,7 @@
                                             </td>
                                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                                                 @if (
-                                                    $project->created_by == Auth::id() ||
+                                                   
                                                         $currentrole === $superadminrole ||
                                                         $currentrole === 'Admin' ||
                                                         ($currentrole === 'Processor' && $user->role !== 'Processor'))

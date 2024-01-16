@@ -12,7 +12,6 @@ use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
 use App\Models\UserCategory;
-use App\Notifications\FileUploadNotification;
 use App\Services\AdminService;
 use App\Services\CommonService;
 use App\Services\UserService;
@@ -53,12 +52,12 @@ class SuperAdminController extends Controller
     public function getCompanyTeams(Company $company)
     {
         $companies = $company->teams;
-        return response()->json($companies,200);
+        return response()->json($companies, 200);
     }
     public function getCompanyBorrowers(Company $company)
     {
         $borrowers = $company->teams()->with('projects')->get();
-        return response()->json($borrowers,200);
+        return response()->json($borrowers, 200);
     }
 
     public function LoginAsThisUser(Request $request)
@@ -99,7 +98,10 @@ class SuperAdminController extends Controller
     public function deleteUserPermenant(User $user)
     {
         abort_if(Auth::user()->role !== 'Super Admin', 403, 'you are not allowed to to permenantly delete user');
-        if($user->role === 'Borrower') $user->project->delete();
+        if ($user->role === 'Borrower') {
+            $user->project->delete();
+        }
+
         $user->forceDelete();
         return back()->with('msg_success', 'User permenantly deleted successfully');
     }
@@ -263,6 +265,7 @@ class SuperAdminController extends Controller
 
     public function allUsers($id = null)
     {
+
         $user = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
         if ($user && $user->role === 'Super Admin') {
             $data['role'] = $user->role;
@@ -360,7 +363,7 @@ class SuperAdminController extends Controller
     public function projects($id = null): View
     {
         $data['projects'] = Project::with('users')->get();
-        $data['enableProjects'] = Project::with(['creater','users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'enable')->get();
+        $data['enableProjects'] = Project::with(['creater', 'users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'enable')->get();
         $data['disableProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'disable')->get();
         $data['closeProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'close')->get();
         $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name', 'role']);
@@ -405,7 +408,7 @@ class SuperAdminController extends Controller
 
     public function storeProject(Request $request, $id = -1)
     {
-       return AdminService::storeProject($request,$id);
+        return AdminService::storeProject($request, $id);
     }
 
     public function getUsersByTeam(Team $team)
@@ -463,7 +466,7 @@ class SuperAdminController extends Controller
     public function teams($id = null): View
     {
         $data['teams'] = Team::with('users')->get();
-        $data['enableTeams'] = Team::with(['users.createdBy','company'])->where('disable', false)->get();
+        $data['enableTeams'] = Team::with(['users.createdBy', 'company'])->where('disable', false)->get();
         $data['disableTeams'] = Team::with('users')->where('disable', true)->get();
         $data['companies'] = Company::where('enable', true)->get();
 
@@ -519,9 +522,9 @@ class SuperAdminController extends Controller
         return redirect(getRoutePrefix() . '/projects')->with('msg_success', "project $type" . "d successfully");
     }
 
-    public function shareItemWithAssistant(Request $request,$id)
+    public function shareItemWithAssistant(Request $request, $id)
     {
-        return AdminService::shareItemWithAssistant($request,$id);
+        return AdminService::shareItemWithAssistant($request, $id);
     }
 
     public function removeAcess(User $user)
@@ -533,7 +536,7 @@ class SuperAdminController extends Controller
 
     public function submitIntakeForm(IntakeFormRequest $request)
     {
-       return CommonService::submitIntakeForm($request);
+        return CommonService::submitIntakeForm($request);
     }
 
     public function redirectTo($route, $message)

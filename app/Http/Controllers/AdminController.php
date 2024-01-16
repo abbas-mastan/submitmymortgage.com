@@ -2,25 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Factory;
-use App\Models\Info;
-use App\Models\Team;
-use App\Models\User;
+use App\Http\Requests\ApplicationRequest;
+use App\Http\Requests\IntakeFormRequest;
+use App\Models\Application;
 use App\Models\Company;
 use App\Models\Contact;
+use App\Models\Info;
 use App\Models\Project;
-use Illuminate\View\View;
-use App\Models\Application;
+use App\Models\Team;
+use App\Models\User;
 use App\Models\UserCategory;
-use Illuminate\Http\Request;
-use App\Services\UserService;
 use App\Services\AdminService;
 use App\Services\CommonService;
+use App\Services\UserService;
+use Faker\Factory;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\IntakeFormRequest;
-use App\Http\Requests\ApplicationRequest;
 use Illuminate\Support\Facades\Validator;
-use App\Notifications\FileUploadNotification;
+use Illuminate\View\View;
 
 class AdminController extends Controller
 {
@@ -257,14 +256,14 @@ class AdminController extends Controller
 
         // Fetch users created directly by the user
         $directlyCreatedUsers = $user->createdUsers()
-            ->with(['createdBy','company'])
-            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower','Assistant'])
+            ->with(['createdBy', 'company'])
+            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower', 'Assistant'])
             ->get();
 
         $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
-            ->with(['createdBy','company'])
+            ->with(['createdBy', 'company'])
             ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
-            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower','Assistant'])
+            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower', 'Assistant'])
             ->get();
 
         // Combine the directly and indirectly created users
@@ -274,7 +273,6 @@ class AdminController extends Controller
 
         return view('admin.user.all-users', $data);
     }
-
 
     #disconnect from google
     public function disconnectGoogle(Request $request)
@@ -412,7 +410,7 @@ class AdminController extends Controller
     }
     public function storeProject(Request $request, $id = -1)
     {
-       return AdminService::storeProject($request,$id);
+        return AdminService::storeProject($request, $id);
     }
 
     public function getUsersByTeam(Team $team)
@@ -460,24 +458,24 @@ class AdminController extends Controller
     public function connections()
     {
         $user = User::find(Auth::id()); // Assuming you have authenticated the admin
-        abort_if($user->role !== 'Admin',403,'You are not allowed to this part of the world!');
+        abort_if($user->role !== 'Admin', 403, 'You are not allowed to this part of the world!');
         if (Auth::user()->role === 'Admin') {
             $data['role'] = $user->role;
             $data['connections'] = $user
                 ->createdUsers()
                 ->with(['createdBy'])
                 ->orWhere('company_id', $user->company_id ?? -1)
-                ->whereNotIn('role',['Admin','Super Admin'])
-                ->get(['id','name','email','role','created_by']);
+                ->whereNotIn('role', ['Admin', 'Super Admin'])
+                ->get(['id', 'name', 'email', 'role', 'created_by']);
         }
         return view('admin.newpages.connections', $data);
 
     }
-    public function deleteConnection(User $user) 
+    public function deleteConnection(User $user)
     {
-        abort_if(Auth::user()->role !== 'Admin',403,'You are not allowed to this part of the world!');
+        abort_if(Auth::user()->role !== 'Admin', 403, 'You are not allowed to this part of the world!');
         $user->delete();
-        return back()->with('msg_success','Connection deleted successfully');
+        return back()->with('msg_success', 'Connection deleted successfully');
     }
 
     public function doContact(Request $request, $id = 0)
@@ -507,40 +505,37 @@ class AdminController extends Controller
     public function teams($id = null): View
     {
         $admin = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
-        $data['disableTeams'] = $admin->teamsOwnend()
-        ->with('users')
-        ->where('disable', true)
-        ->orWhereHas('users',function($query)use ($admin){
-            $query->where('company_id',$admin->company_id);
-        })
-        ->orWhereHas('users', function ($query) use ($admin) {
-            $query->where('user_id', $admin->id);
-        })->get();
-        $data['enableTeams'] = $admin->teamsOwnend()
-        ->with('users.createdBy')
-        ->where('disable', false)
-        ->orWhereHas('users',function($query)use ($admin){
-            $query->where('company_id',$admin->company_id);
-        })
-        ->orWhereHas('users', function ($query) use ($admin) {
-            $query->where('user_id', $admin->id);
-        })->get();
-        $data['teams'] = $admin->teamsOwnend()
-        ->with('users')
-        ->orWhereHas('users',function($query)use ($admin){
-            $query->where('company_id',$admin->company_id);
-        })
-        ->whereHas('users', function ($query) use ($admin) {
-            $query->where('user_id', $admin->id);
-        })->get();
-        
+
+        if ($admin->role === 'Admin') {
+            $data['disableTeams'] = Team::with('users')->where('company_id', $admin->company_id)->get();
+        } else {
+            $data['disableTeams'] = $admin->teamsOwnend()
+                ->with('users')
+                ->where('disable', true)
+                ->orWhereHas('users', function ($query) use ($admin) {
+                    $query->where('user_id', $admin->id);
+                })->get();
+
+            $data['enableTeams'] = $admin->teamsOwnend()
+                ->with('users.createdBy')
+                ->where('disable', false)
+                ->orWhereHas('users', function ($query) use ($admin) {
+                    $query->where('user_id', $admin->id);
+                })->get();
+
+            $data['teams'] = $admin->teamsOwnend()
+                ->with('users')
+                ->whereHas('users', function ($query) use ($admin) {
+                    $query->where('user_id', $admin->id);
+                })->get();
+        }
         $data['users'] = $admin->createdUsers()
-        ->orWhere('company_id',$admin->company_id ?? -1)
-        ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
-        ->orWhereHas('createdBy', function ($query) use ($admin) {
+            ->orWhere('company_id', $admin->role == 'Admin' ? $admin->company_id : -1)
+            ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
+            ->orWhereHas('createdBy', function ($query) use ($admin) {
                 $query->where('created_by', $admin->id);
-        })
-        ->get();
+            })
+            ->get();
         return view('admin.newpages.teams', $data);
     }
 
@@ -590,9 +585,9 @@ class AdminController extends Controller
         return redirect(getRoutePrefix() . '/projects')->with('msg_success', "project $type" . "d successfully");
     }
 
-    public function shareItemWithAssistant(Request $request,$id)
+    public function shareItemWithAssistant(Request $request, $id)
     {
-        return AdminService::shareItemWithAssistant($request,$id);
+        return AdminService::shareItemWithAssistant($request, $id);
     }
 
     public function removeAcess(User $user)
@@ -604,7 +599,7 @@ class AdminController extends Controller
 
     public function submitIntakeForm(IntakeFormRequest $request)
     {
-      return CommonService::submitIntakeForm($request);
+        return CommonService::submitIntakeForm($request);
     }
 
     public function redirectTo($route, $message)

@@ -67,7 +67,7 @@
     @include('user.file-upload.upload-modal')
     @include('user.file-upload.category-modal')
     <div class="min-h-screen flex flex-col flex-grow ">
-        <div class="w-full md:h-full flex flex-col sm:flex-row flex-wrap sm:flex-nowrap flex-grow">
+        <div class="w-full flex flex-col sm:flex-row flex-wrap sm:flex-nowrap flex-grow">
             @include('parts.sidebar')
             <main role="main" class="pb-20 bg-themebackground sm:w-full">
                 <div class="w-full">

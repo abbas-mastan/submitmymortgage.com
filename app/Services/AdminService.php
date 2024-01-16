@@ -468,8 +468,7 @@ class AdminService
 
     public static function shareItemWithAssistant($request, $id = -1)
     {
-        $user = User::where('id',$request->userId)->first();
-        return response()->json($user->company_id, 200);
+        // return response()->json(User::find($request->userId)->company_id, 200);
         $user = new User();
         $user->email_verified_at = Auth::user()->role === 'Super Admin' ? now() : null;
         $assitant = new Assistant;
@@ -480,6 +479,7 @@ class AdminService
             'company' => Auth::user()->role !== 'Super Admin' ? '' : 'sometimes:required',
             'deal' => 'sometimes:required',
         ]);
+      
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
