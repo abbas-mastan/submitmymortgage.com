@@ -112,7 +112,7 @@
                 <div class="w-1/5 border-e-2 pl-5">Item</div>
                 <div class="pl-5">Action</div>
             </div>
-            @forelse (json_decode($cats->categories) as $item)
+            @forelse (json_decode($cats->categories) ?? [] as $item)
                 @php($id = Str::slug($item))
                 <div class="flex mt-3">
                     <div class="flex w-1/5 h-8 py-7 items-center px-3">{{ $item }}</div>
@@ -217,7 +217,7 @@
                     });
                 });
             }
-            @foreach (json_decode($cats->categories) as $item)
+            @foreach (json_decode($cats->categories) ?? [] as $item)
                 @php($id = Str::slug($item))
                 handleFileInput("#{{ $id }}", "#{{ $id }}filesList",
                     "#{{ $id }}-files-names");
