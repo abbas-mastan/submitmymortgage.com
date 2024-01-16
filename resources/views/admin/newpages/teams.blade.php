@@ -45,7 +45,7 @@
     @foreach ($enableTeams as $team)
         @if (!$team->disable)
             <input class="enableTeams hidden" value="{{ $loop->iteration }}">
-            @component('components.accordion', ['title' => $team->name.' | ' $team->company->name ])
+            @component('components.accordion', ['title' => $team->name.' | ' .$team->company->name ])
                 <table class="w-full display shadow-lg" id="{{ Str::slug($team->name) }}-table{{ $team->id }}">
                     <thead class="hidden bg-gray-300">
                         <tr>

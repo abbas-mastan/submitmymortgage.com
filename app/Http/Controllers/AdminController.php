@@ -352,6 +352,9 @@ class AdminController extends Controller
     public function projects($id = null): View
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
+        // if($admin->role === 'Admin'){
+            
+        // }
         $data['teams'] = Team::where('owner_id', $admin->id)
             ->orWhereHas('users', function ($query) use ($admin) {
                 $query->where('user_id', $admin->id);
@@ -507,7 +510,9 @@ class AdminController extends Controller
         $admin = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
 
         if ($admin->role === 'Admin') {
-            $data['disableTeams'] = Team::with('users')->where('company_id', $admin->company_id)->get();
+            $data['disableTeams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->orWhere('disable',true)->get();
+            $data['enableTeams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->orWhere('disable',false)->get();
+            $data['teams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->get();
         } else {
             $data['disableTeams'] = $admin->teamsOwnend()
                 ->with('users')
