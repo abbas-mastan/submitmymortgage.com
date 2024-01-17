@@ -114,6 +114,9 @@
             </div>
             @if($cats !== null && $cats->categories !== null)
             @forelse (json_decode($cats->categories) ?? [] as $item)
+            @if ($item === 'Loan Application')
+                @continue
+            @endif
                 @php($id = Str::slug($item))
                 <div class="flex mt-3">
                     <div class="flex w-1/5 h-8 py-7 items-center px-3">{{ $item }}</div>

@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Model::preventLazyLoading(! $this->app->isProduction());
+        // Model::preventLazyLoading(! $this->app->isProduction());
         //change the default length of string column
         Schema::defaultStringLength(191);
 

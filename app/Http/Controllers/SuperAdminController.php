@@ -362,8 +362,8 @@ class SuperAdminController extends Controller
 
     public function projects($id = null): View
     {
-        $data['projects'] = Project::with('users')->get();
-        $data['enableProjects'] = Project::with(['creater', 'users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'enable')->get();
+        $data['projects'] = Project::with('users.assistants')->get();
+        $data['enableProjects'] = Project::with(['creater', 'users.createdBy', 'team','borrower.assistants', 'borrower.createdBy'])->where('status', 'enable')->get();
         $data['disableProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'disable')->get();
         $data['closeProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'close')->get();
         $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name', 'role']);

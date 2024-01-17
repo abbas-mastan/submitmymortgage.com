@@ -131,8 +131,7 @@
                                             </td>
                                             <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                                                 @if (
-                                                   
-                                                        $currentrole === $superadminrole ||
+                                                    $currentrole === $superadminrole ||
                                                         $currentrole === 'Admin' ||
                                                         ($currentrole === 'Processor' && $user->role !== 'Processor'))
                                                     <a data="Delete" class="delete"
@@ -163,6 +162,61 @@
                                         @endphp
                                     @endif
                                 @endforeach
+                                @if ($project->borrower->assistants)
+                                    @foreach ($project->borrower->assistants as $assistant)
+                                        @if ($assistant->assistant->active != 2 && $assistant->assistant->active != 0)
+                                            <tr class="border-none">
+                                                <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
+                                                    {{ $serialNumber }}
+                                                </td>
+                                                <td class=" pl-2 tracking-wide border border-l-0">
+                                                    <a title="Click to view files uploaded by this user"
+                                                        class="text-blue-500 inline"
+                                                        href="{{ url(getRoutePrefix() . ($assistant->assistant->role == 'Borrower' ? '/project-overview/' : '/all-users/') . $project->borrower->id) }}">
+                                                        {{ $assistant->assistant->name }}
+                                                    </a>
+                                                </td>
+                                                <td class=" pl-2 tracking-wide border border-l-0">
+                                                    {{ $assistant->assistant->email }}
+                                                </td>
+                                                <td class=" pl-2 tracking-wide border border-l-0">
+                                                    {{ $assistant->assistant->role }}
+                                                </td>
+                                                <td class=" pl-2 tracking-wide border border-l-0">
+                                                    @if ($assistant->assistant->created_by)
+                                                        {{ $assistant->assistant->createdBy->name }}
+                                                        |
+                                                        {{ $assistant->assistant->role }}
+                                                    @endif
+                                                </td>
+                                                <td class="flex pl-2 justify-center tracking-wide border border-r-0">
+                                                    <a data="Delete" class="delete"
+                                                        href='{{ url(getRoutePrefix() . '/remove-access/' . $assistant->assistant->id) }}'>
+                                                        <button
+                                                            class="bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1.5">
+                                                            <img src="{{ asset('icons/trash.svg') }}" alt="">
+                                                        </button>
+                                                    </a>
+                                                    @if ($currentrole === 'Super Admin')
+                                                        <form method="POST"
+                                                            action="{{ url(getRoutePrefix() . '/login-as-this-user') }}">
+                                                            @csrf
+                                                            <input type="hidden" name="user_id"
+                                                                value="{{ $assistant->assistant->id }}">
+                                                            <span class="loginBtn">
+                                                                <button type="submit"
+                                                                    class="ml-1 bg-themered tracking-wide text-white font-semibold capitalize w-7 p-1">
+                                                                    <img src="{{ asset('icons/user.svg') }}"
+                                                                        alt="">
+                                                                </button>
+                                                            </span>
+                                                        </form>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endif
+                                    @endforeach
+                                @endif
                                 @if ($project->borrower->id ?? false)
                                     <tr class="border-none">
                                         <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
