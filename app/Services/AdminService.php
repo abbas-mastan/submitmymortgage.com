@@ -479,19 +479,19 @@ class AdminService
             'company' => Auth::user()->role !== 'Super Admin' ? '' : 'sometimes:required',
             'deal' => 'sometimes:required',
         ]);
-      
+
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
         if ($request->deal) {
             $deal = Project::find($request->deal);
             $request->userId = $deal->borrower->id;
+            $categories = [array_diff(config('smm.file_category'),['Credit Report'])];
         }
-        if($request->userId && !$request->deal){
+        if ($request->userId && !$request->deal) {
             $request->company = User::find($request->userId)->company_id;
         }
         $faker = Factory::create();
-
         $user->role = 'Assistant';
         $user->active = 0;
         $user->name = $request->name ?? $faker->name;
@@ -505,7 +505,6 @@ class AdminService
         }
 
         $user->save();
-        $categories = ["Bank Statements","ID\/Driver's License","Fillable Loan Application"];
         $assitant->assistant_id = $user->id;
         if ($request->sendemail) {
             $id = Crypt::encryptString($user->id);

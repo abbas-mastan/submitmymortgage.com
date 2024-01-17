@@ -87,7 +87,7 @@
     </style>
 @endsection
 @section('content')
-    <div class="child mt-24 mx-16 w-full shadow-2xl bg-white p-10 rounded-2xl">
+    <div class="child mt-24 mb-10 mx-16 w-full shadow-2xl bg-white p-10 rounded-2xl">
         <div class="my-5 flex justify-end ">
             @if (session('reLogin'))
                 <form method="POST" action="{{ url('/logout-from-this-user') }}">
@@ -112,6 +112,7 @@
                 <div class="w-1/5 border-e-2 pl-5">Item</div>
                 <div class="pl-5">Action</div>
             </div>
+            @if($cats !== null && $cats->categories !== null)
             @forelse (json_decode($cats->categories) ?? [] as $item)
                 @php($id = Str::slug($item))
                 <div class="flex mt-3">
@@ -122,7 +123,7 @@
                             <span id="{{ $id }}filesList">
                                 <span class="grid grid-cols-5 items-end">
                                     @forelse(\App\Models\Media::where('uploaded_by',Auth::id())->get() as $file)
-                                        @if ($file->category !== $item)
+                                        @if ($file->category !== $item) 
                                             @continue
                                         @endif
                                         <span>
@@ -153,6 +154,7 @@
             <div class="mt-3 flex justify-center">
                 <button type="submit" class="px-5 py-2 text-white bg-red-700 mt-7 rounded-md">Submit All Files</button>
             </div>
+            @endif
         </form>
     </div>
 @endsection
@@ -217,11 +219,13 @@
                     });
                 });
             }
+            @if($cats !== null && $cats->categories !== null)
             @foreach (json_decode($cats->categories) ?? [] as $item)
                 @php($id = Str::slug($item))
                 handleFileInput("#{{ $id }}", "#{{ $id }}filesList",
                     "#{{ $id }}-files-names");
             @endforeach
+            @endif
         });
     </script>
 @endsection

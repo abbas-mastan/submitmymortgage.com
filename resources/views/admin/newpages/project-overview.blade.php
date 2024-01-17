@@ -160,13 +160,13 @@
                     class="bg-transperent w-full py-3 focus:bg-transperent focus:ring-2 focus:border-0 focus:ring-red-700 rounded-md">
                 <h3 class="mt-3 text-xl font-bold">People With access</h3>
                 @forelse($assistants as $assistant)
-                    @if ($assistant->active !== 0 || $assistant->active !== 2)
+                        @if ($assistant->assistant->active != 0 && $assistant->assistant->active != 2)
                         <div class="flex justify-between items-center mt-3">
                             <div>
-                                <h3 class="text-xl font-normal">{{ $assistant->name }}</h3>
-                                <p class="text-gray-600">{{ $assistant->email }}</p>
+                                <h3 class="text-xl font-normal">{{ $assistant->assistant->name.$assistant->assistant->active }}</h3>
+                                <p class="text-gray-600">{{ $assistant->assistant->email }}</p>
                             </div>
-                            <a class="removeAccess" href="#" data-id="{{ $assistant->id }}">
+                            <a class="removeAccess" href="{{$assistant->assistant->id}}" data-id="{{ $assistant->assistant->id }}">
                                 <img class="icon w-10" src="{{ asset('icons/trash.svg') }}" alt="">
                             </a>
                         </div>

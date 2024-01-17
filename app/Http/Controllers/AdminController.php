@@ -358,7 +358,6 @@ class AdminController extends Controller
             $data['projects'] = Project::whereIn('team_id', $teamIds)
                 ->with(['team', 'users.createdBy', 'borrower.createdBy'])
                 ->get();
-                
                 $data['borrowers'] = User::where('role', 'Borrower')->where('company_id',$admin->company_id)->get(['id', 'name']);
         }else{
         $data['teams'] = Team::where('owner_id', $admin->id)

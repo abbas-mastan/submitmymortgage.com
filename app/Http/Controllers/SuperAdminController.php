@@ -392,6 +392,7 @@ class SuperAdminController extends Controller
             sort($data['categories']); // Sort the array in ascending order
         }
         $data['assistants'] = $data['user']->assistants->load('assistant');
+        // dd($data['assistants']);
         $data['catCount'] = [];
         $data['categories'] = array_unique($data['categories']);
         foreach ($data['categories'] as $category) {
