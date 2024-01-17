@@ -11,7 +11,7 @@
 @section('content')
     <div class="w-1/2 mx-auto">
         <div class="flex justify-center items-center mt-4">
-            <img class="w-40 h-40 rounded-full" src="{{ asset(auth()->user()->pic) }}" alt="Profile Picture">
+            <img class="w-40 h-40 rounded-full" src="{{ asset(auth()->user()->pic) ??  }}" alt="Profile Picture">
         </div>
         <form action="{{ url(getRoutePrefix() . '/do-profile') }}" method="post" enctype="multipart/form-data">
             <div class="flex  justify-center mt-2">

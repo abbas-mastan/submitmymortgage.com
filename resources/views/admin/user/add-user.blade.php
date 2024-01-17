@@ -60,7 +60,7 @@
                     <div class="mt-2">
                         <input value="{{ old('email', $user->email) }}" type="email"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                            name="email" {{$user->id ? 'readonly' : ''}} disabled id="email" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email Address">
+                            name="email" {{$user->id > 0 ? 'readonly disabled' : ''}}  id="email" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email Address">
                     </div>
                     @error('email')
                         <span class="text-red-700">{{ $message }}</span>
