@@ -493,7 +493,7 @@ class AdminService
         }
         $faker = Factory::create();
         $user->role = 'Assistant';
-        $user->active = 0;
+        $user->active = 1;
         $user->name = $request->name ?? $faker->name;
         $user->password = bcrypt($request->passsword) ?? bcrypt($faker->unique()->password(8));
         $user->email = $request->email;
