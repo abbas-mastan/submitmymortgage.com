@@ -500,7 +500,7 @@ class AdminService
         $user->role = 'Assistant';
         $user->active = 1;
         $user->name = $request->name ?? $faker->name;
-        $user->password = bcrypt($request->passsword) ?? bcrypt($faker->unique()->password(8));
+        $user->password = Hash::make($request->passsword) ?? Hash::make($faker->unique()->password(8));
         $user->email = $request->email;
         $user->created_by = Auth::id();
         if (!$request->company && $user->company_id) {

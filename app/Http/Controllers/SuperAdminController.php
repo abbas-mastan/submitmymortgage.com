@@ -63,12 +63,16 @@ class SuperAdminController extends Controller
     public function LoginAsThisUser(Request $request)
     {
         $user = User::where('id', $request->user_id)->where('role', '<>', 'Super Admin')->first();
-        Auth::login($user);
-        $request->session()->regenerate();
-        $request->session()->put('role', $user->role);
-        $request->session()->put('reLogin', Auth::id());
-        $request->session()->put('url', url()->previous());
-        return redirect('/dashboard');
+        if($user->email_verified_at !== null){
+            Auth::login($user);
+            $request->session()->regenerate();
+            $request->session()->put('role', $user->role);
+            $request->session()->put('reLogin', Auth::id());
+            $request->session()->put('url', url()->previous());
+            return redirect('/dashboard');
+        }else{
+            return back()->with('msg_error','Sorry this user email is not verified');
+        }
     }
 
     public function ReLoginFrom(Request $request)
