@@ -162,7 +162,7 @@
                                         @endphp
                                     @endif
                                 @endforeach
-                                @if ($project->borrower->assistants)
+                                @if ($project->borrower && $project->borrower->assistants)
                                     @foreach ($project->borrower->assistants as $assistant)
                                         @if ($assistant && $assistant->assistant && $assistant->assistant->active != 2 && $assistant->assistant->active != 0)
                                             <tr class="border-none">
