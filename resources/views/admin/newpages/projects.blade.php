@@ -47,6 +47,7 @@
         <h2 class="text-center text-xl border-y-4 py-3  mt-5">Enable Deals</h2>
     @endif
     @forelse ($enableProjects as $project)
+    @if ($project->borrower->deleted_at == null)
         <div class="flex mb-10 flex-wrap w-full">
             <div class="grid divide-y divide-neutral-200 w-full mt-8">
                 <div class="py-2">
@@ -281,6 +282,7 @@
                 </div>
             </div>
         </div>
+    @endif
     @empty
     @endforelse
 
