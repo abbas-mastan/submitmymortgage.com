@@ -468,7 +468,7 @@ class AdminService
 
     public static function shareItemWithAssistant($request, $id = -1)
     {
-        // return response()->json(User::find($request->userId)->company_id, 200);
+
         $user = new User();
         $user->email_verified_at = Auth::user()->role === 'Super Admin' ? now() : null;
         $assitant = new Assistant;
@@ -483,11 +483,13 @@ class AdminService
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
+
         if ($request->deal) {
             $deal = Project::find($request->deal);
             $request->userId = $deal->borrower->id;
             $categories = array_values(array_diff(config('smm.file_category'),['Credit Report']));
         }
+        
         if ($request->userId && !$request->deal) {
             $request->company = User::find($request->userId)->company_id;
         }
