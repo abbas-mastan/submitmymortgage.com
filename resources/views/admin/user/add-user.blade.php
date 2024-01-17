@@ -330,8 +330,6 @@
                     var companyid = ($(this).val() !== "Select Company") ? $(this).val() : null;
                     ajaxCompanyChange(companyid);
                 });
-
-
                 function removeDivs() {
                     $('.teamDiv').remove();
                     $('.borrowerDiv').remove();
@@ -391,6 +389,8 @@
                     }
                 @endif
                 function ajaxCompanyBorrowers(companyid) {
+            $('.jq-loader-for-ajax').removeClass('hidden');
+
                     $.ajax({
                         url: `{{ getRoutePrefix() }}/get-company-borrowers/${companyid}`, // Replace with the actual URL for retrieving users by team
                         type: 'GET',
@@ -424,11 +424,14 @@
                         </div>
                     </div>
                 `);
+            $('.jq-loader-for-ajax').addClass('hidden');
+
                         }
                     });
                 }
 
                 function ajaxCompanyTeams(companyid) {
+                    $('.jq-loader-for-ajax').removeClass('hidden');
                     $.ajax({
                         url: `{{ getRoutePrefix() }}/get-company-teams/${companyid}`, // Replace with the actual URL for retrieving users by team
                         type: 'GET',
@@ -452,6 +455,8 @@
                         </div>
                     </div>
                 `);
+            $('.jq-loader-for-ajax').addClass('hidden');
+
                         }
                     });
                 }

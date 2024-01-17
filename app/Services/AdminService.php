@@ -486,7 +486,7 @@ class AdminService
         if ($request->deal) {
             $deal = Project::find($request->deal);
             $request->userId = $deal->borrower->id;
-            $categories = [array_diff(config('smm.file_category'),['Credit Report'])];
+            $categories = array_values(array_diff(config('smm.file_category'),['Credit Report']));
         }
         if ($request->userId && !$request->deal) {
             $request->company = User::find($request->userId)->company_id;
@@ -495,7 +495,7 @@ class AdminService
         $user->role = 'Assistant';
         $user->active = 0;
         $user->name = $request->name ?? $faker->name;
-        $user->password = $request->passsword ?? bcrypt($faker->unique()->password(8));
+        $user->password = bcrypt($request->passsword) ?? bcrypt($faker->unique()->password(8));
         $user->email = $request->email;
         $user->created_by = Auth::id();
         if (!$request->company && $user->company_id) {
