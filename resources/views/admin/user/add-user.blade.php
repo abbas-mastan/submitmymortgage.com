@@ -147,7 +147,7 @@
                                 <option value="">Select Deal</option>
                                 @foreach ($teams as $team)
                                     @foreach ($team->projects as $project)
-                                        <option {{ old('deal',$projectid) == $project->id ? 'selected' : '' }}
+                                        <option {{ old('deal',$projectid ?? 0) == $project->id ? 'selected' : '' }}
                                             value="{{ $project->id }}">
                                             {{ $project->name }}
                                         </option>
