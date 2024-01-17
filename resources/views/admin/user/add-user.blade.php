@@ -121,9 +121,9 @@
                     </div>
                 </div>
                 @if (Auth::user()->role !== 'Super Admin')
-                    <div class="mt-3 w-[49%] teamDiv {{ old('role') === 'Assistant' ? 'hidden' : '' }}">
+                    <div class="mt-3 w-[49%] teamDiv {{ old('role',$user->role) === 'Assistant' ? 'hidden' : '' }}">
                         <div class=" text-left mr-12">
-                            <label for="role" class="">Team Name</label>
+                            <label for="role" class="">Team Name </label>
                         </div>
                         <div class="mt-2">
                             <select name="team" id="team"
@@ -137,7 +137,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="mt-3 w-[49%] borrowerDiv {{ old('role') !== 'Assistant' ? 'hidden' : '' }}">
+                    <div class="mt-3 w-[49%] borrowerDiv {{ old('role',$user->role) !== 'Assistant' ? 'hidden' : '' }}">
                         <div class=" text-left mr-12">
                             <label for="role" class="">Select Deal</label>
                         </div>
@@ -147,7 +147,7 @@
                                 <option value="">Select Deal</option>
                                 @foreach ($teams as $team)
                                     @foreach ($team->projects as $project)
-                                        <option {{ old('deal') == $project->id ? 'selected' : '' }}
+                                        <option {{ old('deal',$projectid) == $project->id ? 'selected' : '' }}
                                             value="{{ $project->id }}">
                                             {{ $project->name }}
                                         </option>
@@ -380,7 +380,6 @@
                     }
                 }
                 @if ($user->id > 0)
-
                     if ($("#role").val() && $('#company').val() > 0) {
                         ajaxRoleChange($('#company').val());
                     } else if ($("#role").val() !== 'Assistant' || $("#role").val() !== 'Borrower' || $("#role")
@@ -389,8 +388,7 @@
                     }
                 @endif
                 function ajaxCompanyBorrowers(companyid) {
-            $('.jq-loader-for-ajax').removeClass('hidden');
-
+                         $('.jq-loader-for-ajax').removeClass('hidden');
                     $.ajax({
                         url: `{{ getRoutePrefix() }}/get-company-borrowers/${companyid}`, // Replace with the actual URL for retrieving users by team
                         type: 'GET',

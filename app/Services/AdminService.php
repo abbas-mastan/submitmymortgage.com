@@ -468,10 +468,13 @@ class AdminService
 
     public static function shareItemWithAssistant($request, $id = -1)
     {
-
-        $user = new User();
-        $user->email_verified_at = Auth::user()->role === 'Super Admin' ? now() : null;
+        if($id != -1){
+            $user = User::find($id);
+        }else{
+            $user = new User();
+        }
         $assitant = new Assistant;
+        $user->email_verified_at = Auth::user()->role === 'Super Admin' ? now() : null;
 
         $validator = Validator::make($request->all(), [
             'email' => 'required|unique:users,email,' . $user->id,
