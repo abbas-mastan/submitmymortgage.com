@@ -381,7 +381,7 @@
                     } else {
                         $('.userForm').submit(function(e) {
                             e.preventDefault();
-                            shareItemWithAssistant('-1')
+                            shareItemWithAssistant("{{$user->id ?? -1}}")
                         });
                     }
                 }
@@ -401,8 +401,6 @@
                         success: function(data) {
                             // var dataArray = Object.values(data);
                             removeDivs();
-                            $('.userForm').attr('action',
-                                "{{ url(getRoutePrefix() . '/share-items/-1') }}");
                             var selectOptions = '<option value="">Select deal</option>';
                             var selected = false;
                             data.forEach(function(project) {
@@ -410,7 +408,6 @@
                                         selected = project.id ===
                                             @json($projectid);
                                     @endif
-                                    
                                     selectOptions +=
                                         `<option ${selected ? 'selected' : ''} value="${project.id}">${project.name}</option>`;
                             });

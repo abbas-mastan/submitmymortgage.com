@@ -45,6 +45,7 @@ class AdminService
 
         if ($user->role === 'Assistant') {
             $assistant = Assistant::where('assistant_id', $user->id)->first();
+
             if ($assistant) {
                 $data['projectid'] = User::find($assistant->user_id)->project->id;
             }
@@ -107,14 +108,13 @@ class AdminService
         if ($isNewUser) {
             $user->email = $request->email;
         }
-
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
         if ($isNewUser && !$request->filled('password')) {
             $user->password = Hash::make(Str::random(8));
         }
-        $user->role = $request->input('role','Borrower');
+        $user->role = $request->input('role', 'Borrower');
         $user->active = 1;
         if ($request->file('file')) {
             if (!str_contains($user->pic, "default") && $id !== -1) {
@@ -477,16 +477,15 @@ class AdminService
     {
         if ($id != -1) {
             $user = User::find($id);
-            $assitant = Assistant::where('assistant_id',$user->id);
+            $assitant = Assistant::where('assistant_id', $user->id)->delete();
         } else {
             $user = new User();
-            $assitant = new Assistant;
         }
-        $admin  = Auth::user();
-        $user->email_verified_at = $admin->role === 'Super Admin' || $admin->role === 'Admin'  ? now() : null;
-
+        $assitant = new Assistant;
+        $admin = Auth::user();
+        $user->email_verified_at = $admin->role === 'Super Admin' || $admin->role === 'Admin' ? now() : null;
         $validator = Validator::make($request->all(), [
-            'email' => 'required|unique:users,email,' . $user->id,
+            'email' => -1 == $id ? 'required|unique:users,email' : '',
             'items' => 'required|sometimes',
             'company' => Auth::user()->role !== 'Super Admin' ? '' : 'sometimes:required',
             'deal' => 'sometimes:required',
@@ -506,22 +505,29 @@ class AdminService
             $request->company = User::find($request->userId)->company_id;
         }
         $faker = Factory::create();
-        if($id == -1){
+        if ($id == -1) {
             $user->role = 'Assistant';
             $user->active = 1;
+            $user->email = $request->email;
         }
         $user->name = $request->name ?? $faker->name;
-        $user->password = Hash::make($request->passsword) ?? Hash::make($faker->unique()->password(8));
-        $user->email = $request->email;
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+        if ($id == -1 && !$request->filled('password')) {
+            $user->password = Hash::make($faker->unique()->password(8));
+        }
         $user->created_by = Auth::id();
         if (!$request->company && $user->company_id) {
             $user->company_id = $user->company_id;
         } else {
             $user->company_id = $request->company ?? Auth::user()->company_id;
         }
-
-        $user->save();
-        $assitant->assistant_id = $user->id;
+        if ($id != -1) {
+            $user->update();
+        } else {
+            $user->save();
+        }
         if ($request->sendemail) {
             $id = Crypt::encryptString($user->id);
             $url = function () use ($id) {return Url::signedRoute('assistant.register', ['user' => $id]);};
@@ -530,13 +536,9 @@ class AdminService
 
         $assitant->user_id = $request->userId ?? $assitant->user_id;
         $assitant->categories = json_encode($request->items ?? $categories);
+        $assitant->assistant_id = $user->id;
         $assitant->save();
         return response()->json('sucess', 200);
-        // if($request->ajax()){
-        // }else{
-        //     return back()->with('msg_success', "Assistant create successfully");
-
-        // }
     }
 
     public static function storeProject(Request $request, $id)
