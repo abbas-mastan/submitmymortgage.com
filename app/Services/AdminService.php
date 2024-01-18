@@ -477,11 +477,13 @@ class AdminService
     {
         if ($id != -1) {
             $user = User::find($id);
+            $assitant = Assistant::where('assistant_id',$user->id);
         } else {
             $user = new User();
+            $assitant = new Assistant;
         }
-        $assitant = new Assistant;
-        $user->email_verified_at = Auth::user()->role === 'Super Admin' ? now() : null;
+        $admin  = Auth::user();
+        $user->email_verified_at = $admin->role === 'Super Admin' || $admin->role === 'Admin'  ? now() : null;
 
         $validator = Validator::make($request->all(), [
             'email' => 'required|unique:users,email,' . $user->id,
@@ -504,8 +506,10 @@ class AdminService
             $request->company = User::find($request->userId)->company_id;
         }
         $faker = Factory::create();
-        $user->role = 'Assistant';
-        $user->active = 1;
+        if($id != -1){
+            $user->role = 'Assistant';
+            $user->active = 1;
+        }
         $user->name = $request->name ?? $faker->name;
         $user->password = Hash::make($request->passsword) ?? Hash::make($faker->unique()->password(8));
         $user->email = $request->email;

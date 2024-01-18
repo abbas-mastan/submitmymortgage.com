@@ -87,7 +87,6 @@
                         </div>
                     </div>
                 @endif
-
                 <div class="mt-3 w-[49%]">
                     <div class=" text-left mr-12">
                         <label for="role" class="">User Type</label>
@@ -126,7 +125,7 @@
                             <label for="role" class="">Team Name </label>
                         </div>
                         <div class="mt-2">
-                            <select name="team" id="team"
+                            {{-- <select name="team" id="team"
                                 class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
                                 <option value="">Select Team</option>
                                 @foreach ($teams as $team)
@@ -134,7 +133,14 @@
                                         {{ $team->name }}
                                     </option>
                                 @endforeach
-                            </select>
+                            </select> --}}
+                            @foreach ($teams as $team)
+                            <input type="checkbox" id="{{$team->id}}" value="{{$team->id}}" name="team[]">
+                            <label for="{{$team->id}}">{{$team->name}}</label>
+                            {{-- <option {{ old('team') == $team->id ? 'selected' : '' }} value="{{ $team->id }}">
+                                {{ $team->name }}
+                            </option> --}}
+                        @endforeach
                         </div>
                     </div>
                     <div class="mt-3 w-[49%] borrowerDiv {{ old('role',$user->role) !== 'Assistant' ? 'hidden' : '' }}">

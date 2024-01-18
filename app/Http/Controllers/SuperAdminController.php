@@ -102,9 +102,9 @@ class SuperAdminController extends Controller
     public function deleteUserPermenant(User $user)
     {
         abort_if(Auth::user()->role !== 'Super Admin', 403, 'you are not allowed to to permenantly delete user');
-        if ($user->role === 'Borrower') {
-            $user->project->delete();
-        }
+        // if ($user->role === 'Borrower') {
+        //     $user->project->delete();
+        // }
 
         $user->forceDelete();
         return back()->with('msg_success', 'User permenantly deleted successfully');
