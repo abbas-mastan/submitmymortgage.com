@@ -506,7 +506,7 @@ class AdminService
             $request->company = User::find($request->userId)->company_id;
         }
         $faker = Factory::create();
-        if($id != -1){
+        if($id == -1){
             $user->role = 'Assistant';
             $user->active = 1;
         }
