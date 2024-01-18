@@ -2,26 +2,27 @@
 
 namespace App\Services;
 
-use App\Models\Application;
-use App\Models\Attachment;
+use Faker\Factory;
+use App\Models\Info;
+use App\Models\User;
+use App\Models\Media;
 use App\Models\Company;
 use App\Models\Contact;
-use App\Models\Info;
-use App\Models\IntakeForm;
-use App\Models\Media;
 use App\Models\Project;
-use App\Models\User;
-use App\Notifications\FileUploadNotification;
-use Faker\Factory;
-use Illuminate\Http\Request;
+use App\Models\Attachment;
+use App\Models\IntakeForm;
+use App\Models\Application;
 use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\ValidationException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Illuminate\Support\Facades\Password;
 use PhpOffice\PhpSpreadsheet\Writer\Xls;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use App\Notifications\FileUploadNotification;
+use Illuminate\Validation\ValidationException;
 
 class CommonService
 {
@@ -39,7 +40,7 @@ class CommonService
         $user = Auth::user();
         if ($request->password) {
             $request->validate(['password' => 'confirmed']);
-            $user->password = $request->password;
+            $user->password = Hash::make($request->password);
         }
         if ($request->file('file')) {
             if (!str_contains($user->pic, "default")) {
