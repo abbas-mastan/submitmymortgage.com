@@ -46,7 +46,7 @@ class IntakeFormRequest extends FormRequest
             'property_value_fix_flip' => 'required_if:loan_type,Fix & Flip',
             'down_payment_fix_flip' => 'required_if:loan_type,Fix & Flip',
             'closing_date_fix_flip' => 'required_if:loan_type,Fix & Flip',
-            'is_repair_finance_needed' => 'required_if:loan_type,Cash Out',
+            'is_repair_finance_needed' => 'required_if:loan_type,Fix & Flip',
             'repair_finance_amount' => 'required_if:is_repair_finance_needed,Yes',
             'current_loan_amount_refinance' => 'required_if:loan_type,Refinance',
             'current_lender_refinance' => 'required_if:loan_type,Refinance',
