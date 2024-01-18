@@ -106,6 +106,9 @@
                                 <img class="inline w-4" src="{{ asset('icons/read.png') }}" alt="">
                             @endif
                         </a>
+                        <span class="text-xs">
+                        {{$message->created_at->diffForHumans()}}
+                        </span>
                     </li>
                 @endforeach
             </ul>

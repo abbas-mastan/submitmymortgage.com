@@ -104,10 +104,17 @@ class AdminService
         }
 
         $user->name = $request->name;
-        $user->email = $request->email;
-        $user->password = $request->filled('password') ?
-        Hash::make($request->password) : $user->password = Hash::make(Str::random(8));
-        $user->role = $request->input('role', 'Borrower');
+        if ($isNewUser) {
+            $user->email = $request->email;
+        }
+
+        if ($request->filled('password')) {
+            $user->password = Hash::make($request->password);
+        }
+        if ($isNewUser && !$request->filled('password')) {
+            $user->password = Hash::make(Str::random(8));
+        }
+        $user->role = $request->input('role','Borrower');
         $user->active = 1;
         if ($request->file('file')) {
             if (!str_contains($user->pic, "default") && $id !== -1) {
@@ -468,9 +475,9 @@ class AdminService
 
     public static function shareItemWithAssistant($request, $id = -1)
     {
-        if($id != -1){
+        if ($id != -1) {
             $user = User::find($id);
-        }else{
+        } else {
             $user = new User();
         }
         $assitant = new Assistant;
@@ -490,9 +497,9 @@ class AdminService
         if ($request->deal) {
             $deal = Project::find($request->deal);
             $request->userId = $deal->borrower->id;
-            $categories = array_values(array_diff(config('smm.file_category'),['Credit Report']));
+            $categories = array_values(array_diff(config('smm.file_category'), ['Credit Report']));
         }
-        
+
         if ($request->userId && !$request->deal) {
             $request->company = User::find($request->userId)->company_id;
         }
