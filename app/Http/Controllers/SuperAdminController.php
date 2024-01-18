@@ -56,7 +56,18 @@ class SuperAdminController extends Controller
     }
     public function getCompanyBorrowers(Company $company)
     {
-        $borrowers = $company->teams()->with('projects')->get();
+        $projects = [];
+        $teams = $company->teams()->with('projects')->get();
+        foreach($teams as $team){
+            foreach($team->projects as $project){
+                $borrower = User::find($project->borrower_id);
+
+                if ($borrower && $borrower->deleted_at === null) {
+                    $projects[] = $project;
+                }
+            }
+        }
+        $borrowers = $projects;
         return response()->json($borrowers, 200);
     }
 

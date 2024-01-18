@@ -405,15 +405,14 @@
                                 "{{ url(getRoutePrefix() . '/share-items/-1') }}");
                             var selectOptions = '<option value="">Select deal</option>';
                             var selected = false;
-                            data.forEach(function(team) {
-                                team.projects.forEach(function(project) {
+                            data.forEach(function(project) {
                                     @if ($user->id > 0 && isset($projectid))
                                         selected = project.id ===
                                             @json($projectid);
                                     @endif
+                                    
                                     selectOptions +=
                                         `<option ${selected ? 'selected' : ''} value="${project.id}">${project.name}</option>`;
-                                })
                             });
                             $('.company').after(`
                     <div class="mt-3 w-[49%] borrowerDiv">
