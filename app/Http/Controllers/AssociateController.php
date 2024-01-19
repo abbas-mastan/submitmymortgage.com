@@ -125,7 +125,12 @@ class AssociateController extends Controller
 
         // Combine the directly and indirectly created users
         $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
-
+        $data['verified'] = $allUsers->filter(function ($user) {
+            return $user->email_verified_at !== null;
+        });
+        $data['unverified'] = $allUsers->filter(function ($user) {
+            return $user->email_verified_at === null;
+        });
         $data['users'] = $allUsers;
 
         return view('admin.user.all-users', $data);

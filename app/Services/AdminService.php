@@ -46,10 +46,16 @@ class AdminService
 
         if ($user->role === 'Assistant') {
             $assistant = Assistant::where('assistant_id', $user->id)->first();
-
             if ($assistant) {
-                $data['projectid'] = User::find($assistant->user_id)->project->id;
+                $project = User::find($assistant->user_id);
+                if($project){
+                    $data['projectid'] = $project->project->id;
+                }
             }
+        }
+        $data['oldteams'] = [];
+        if($user->role !== 'Assistant' ||$user->role !== 'Admin' ||$user->role !== 'Borrower'){
+            $data['oldteams'] = $user->teams->pluck('id')->toArray();
         }
 
         if (Auth::user()->role === 'Super Admin') {
@@ -145,9 +151,14 @@ class AdminService
                 event(new Registered($user));
             }
         }
-        if (Auth::check() && $request->team) {
-            $team = Team::find($request->team);
-            $team->users()->attach($user->id);
+        if (Auth::check() && $request->role !== 'Borrower'  && $request->team > 0) {
+            $user->teams()->detach();
+            foreach ($request->team as $team) {
+                $team = Team::find($team);
+                if (!$team->users->contains($user->id)) {
+                    $team->users()->attach($user->id);
+                }
+            }
         }
 
         if ($request->role === 'Borrower' && $isNewUser) {
@@ -381,10 +392,6 @@ class AdminService
         $teamData = $request->validate([
             'name' => 'required',
             'company' => (Auth::user()->role == 'Super Admin') ? 'sometimes:required' : '',
-            // 'processor' => 'required|exists:users,id',
-            // 'associate' => 'required|exists:users,id',
-            // 'jrAssociate' => 'required|exists:users,id',
-            // 'jrAssociateManager' => 'required',
         ]);
 
         if ($id != -1) {
@@ -540,6 +547,7 @@ class AdminService
         $assitant->categories = json_encode($request->items ?? $categories);
         $assitant->assistant_id = $user->id;
         $assitant->save();
+        return back()->with('msg_success',"Asisstant".($id > 0 ? " updated ":' created ')."successfully");
         return response()->json('sucess', 200);
     }
 

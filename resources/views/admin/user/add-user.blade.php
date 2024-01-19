@@ -60,7 +60,8 @@
                     <div class="mt-2">
                         <input value="{{ old('email', $user->email) }}" type="email"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                            name="email" {{$user->id > 0 ? 'readonly disabled' : ''}}  id="email" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email Address">
+                            name="email" {{ $user->id > 0 ? 'readonly disabled' : '' }} id="email"
+                            placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email Address">
                     </div>
                     @error('email')
                         <span class="text-red-700">{{ $message }}</span>
@@ -120,30 +121,7 @@
                     </div>
                 </div>
                 @if (Auth::user()->role !== 'Super Admin')
-                    <div class="mt-3 w-[49%] teamDiv {{ old('role',$user->role) === 'Assistant' ? 'hidden' : '' }}">
-                        <div class=" text-left mr-12">
-                            <label for="role" class="">Team Name </label>
-                        </div>
-                        <div class="mt-2">
-                            {{-- <select name="team" id="team"
-                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                                <option value="">Select Team</option>
-                                @foreach ($teams as $team)
-                                    <option {{ old('team') == $team->id ? 'selected' : '' }} value="{{ $team->id }}">
-                                        {{ $team->name }}
-                                    </option>
-                                @endforeach
-                            </select> --}}
-                            @foreach ($teams as $team)
-                            <input type="checkbox" id="{{$team->id}}" value="{{$team->id}}" name="team[]">
-                            <label for="{{$team->id}}">{{$team->name}}</label>
-                            {{-- <option {{ old('team') == $team->id ? 'selected' : '' }} value="{{ $team->id }}">
-                                {{ $team->name }}
-                            </option> --}}
-                        @endforeach
-                        </div>
-                    </div>
-                    <div class="mt-3 w-[49%] borrowerDiv {{ old('role',$user->role) !== 'Assistant' ? 'hidden' : '' }}">
+                    <div class="mt-3 w-[49%] borrowerDiv {{ old('role', $user->role) !== 'Assistant' ? 'hidden' : '' }}">
                         <div class=" text-left mr-12">
                             <label for="role" class="">Select Deal</label>
                         </div>
@@ -153,7 +131,10 @@
                                 <option value="">Select Deal</option>
                                 @foreach ($teams as $team)
                                     @foreach ($team->projects as $project)
-                                        <option {{ old('deal',$projectid ?? 0) == $project->id ? 'selected' : '' }}
+                                        @if (Auth::user()->role !== 'Admin' && $project->creater->id !== auth()->id())
+                                            @continue
+                                        @endif
+                                        <option {{ old('deal', $projectid ?? 0) == $project->id ? 'selected' : '' }}
                                             value="{{ $project->id }}">
                                             {{ $project->name }}
                                         </option>
@@ -167,6 +148,26 @@
                     </div>
                 @endif
             </div>
+
+            @if (Auth::user()->role !== 'Super Admin')
+                @php
+                    $hiddenClass = old('role', $user->role) === 'Borrower' || old('role') === 'Assistant' || $user->role === 'Borrower' || $user->role === 'Assistant' ? 'hidden' : '';
+                @endphp
+                <div class="flex justify-between">
+                    <div class="border-2 rounded-lg p-1.5 mt-3 w-[100%] teamDiv {{ $hiddenClass }}">
+                        <div class=" text-left mr-12">
+                            <label for="role" class="">Team Name </label>
+                        </div>
+                        <div class="mt-2">
+                            @foreach ($teams as $team)
+                                <input {{ in_array($team->id, $oldteams ?? []) ? 'checked' : '' }}  type="checkbox" id="{{ $team->id }}" value="{{ $team->id }}"
+                                    name="team[]">
+                                <label for="{{ $team->id }}">{{ $team->name }}</label>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
             <div class="flex justify-between">
                 <div class="mt-3 w-[49%]" id="finance-div"
                     style="{{ in_array($user->role, ['Processor', 'Associate', 'Junior Associate']) ? 'display: none' : '' }}">
@@ -192,9 +193,9 @@
                     <div class="mt-2">
                         <select id="loan_type" name="loan_type"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                            <option value="" class="">Choose a value</option>
+                            <option value="" class="">Choose a value {{$user->loan_type}}</option>
                             <option {{ old('loan_type', $user->loan_type) == 'Private Loan' ? 'selected' : '' }}
-                                value="Private Loan" class="">Private Loan</option>
+                                value="Private Loan" class="">Private Loan {{ $user->loan_type }}</option>
                             <option {{ old('loan_type', $user->loan_type) == 'Full Doc' ? 'selected' : '' }}
                                 value="Full Doc" class="">Full Doc</option>
                             <option {{ old('loan_type', $user->loan_type) == 'Non QM' ? 'selected' : '' }} value="Non QM"
@@ -214,7 +215,8 @@
                 <div class="flex justify-between">
                     <div class="mt-3 w-[49%]">
                         <div class=" text-left mr-12">
-                            <label for="password" class="">{{$user->id > 0 ? "Update":"Create"}} Password</label>
+                            <label for="password" class="">{{ $user->id > 0 ? 'Update' : 'Create' }}
+                                Password</label>
                         </div>
                         <div class="mt-2">
                             <input type="password"
@@ -336,6 +338,7 @@
                     var companyid = ($(this).val() !== "Select Company") ? $(this).val() : null;
                     ajaxCompanyChange(companyid);
                 });
+
                 function removeDivs() {
                     $('.teamDiv').remove();
                     $('.borrowerDiv').remove();
@@ -381,7 +384,7 @@
                     } else {
                         $('.userForm').submit(function(e) {
                             e.preventDefault();
-                            shareItemWithAssistant("{{$user->id ?? -1}}")
+                            shareItemWithAssistant("{{ $user->id ?? -1 }}")
                         });
                     }
                 }
@@ -389,12 +392,12 @@
                     if ($("#role").val() && $('#company').val() > 0) {
                         ajaxRoleChange($('#company').val());
                     } else if ($("#role").val() !== 'Assistant' || $("#role").val() !== 'Borrower' || $("#role")
-                    .val() !== 'Admin' && $('#company').val() > 0) {
+                        .val() !== 'Admin' && $('#company').val() > 0) {
 
                     }
                 @endif
                 function ajaxCompanyBorrowers(companyid) {
-                         $('.jq-loader-for-ajax').removeClass('hidden');
+                    $('.jq-loader-for-ajax').removeClass('hidden');
                     $.ajax({
                         url: `{{ getRoutePrefix() }}/get-company-borrowers/${companyid}`, // Replace with the actual URL for retrieving users by team
                         type: 'GET',
@@ -404,12 +407,12 @@
                             var selectOptions = '<option value="">Select deal</option>';
                             var selected = false;
                             data.forEach(function(project) {
-                                    @if ($user->id > 0 && isset($projectid))
-                                        selected = project.id ===
-                                            @json($projectid);
-                                    @endif
-                                    selectOptions +=
-                                        `<option ${selected ? 'selected' : ''} value="${project.id}">${project.name}</option>`;
+                                @if ($user->id > 0 && isset($projectid))
+                                    selected = project.id ===
+                                        @json($projectid);
+                                @endif
+                                selectOptions +=
+                                    `<option ${selected ? 'selected' : ''} value="${project.id}">${project.name}</option>`;
                             });
                             $('.company').after(`
                     <div class="mt-3 w-[49%] borrowerDiv">
@@ -424,7 +427,7 @@
                         </div>
                     </div>
                 `);
-            $('.jq-loader-for-ajax').addClass('hidden');
+                            $('.jq-loader-for-ajax').addClass('hidden');
 
                         }
                     });
@@ -455,51 +458,55 @@
                         </div>
                     </div>
                 `);
-            $('.jq-loader-for-ajax').addClass('hidden');
+                            $('.jq-loader-for-ajax').addClass('hidden');
 
                         }
                     });
                 }
             });
-        </script>
-    @endif
+        </script> @endif
 
-    <script>
-        function shareItemWithAssistant(assistantId) {
-            $('.jq-loader-for-ajax').removeClass('hidden');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                type: 'POST',
-                url: "{{ url(getRoutePrefix() . '/share-items') }}" + '/' + assistantId,
-                data: $('.userForm').serialize(), // Send data as an object
-                success: function(response) {
-                    $("div[role='alert']").remove();
-                    $('.errors').empty();
-                    console.log(response);
-                    $('.jq-loader-for-ajax').addClass('hidden');
-                    if (response === 'sucess') {
-                        $('#newProjectModal').toggleClass('hidden');
-                        window.location.href =
-                            "{{ url(getRoutePrefix() . '/redirect/back/assistant-created-successfully') }}";
+        <script>
+            function shareItemWithAssistant(assistantId) {
+                $('.jq-loader-for-ajax').removeClass('hidden');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     }
-                    $.each(response.error, function(index, message) {
-                        $('.errors').append(`<div class="p-4 my-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: "{{ url(getRoutePrefix() . '/share-items') }}" + '/' + assistantId,
+                    data: $('.userForm').serialize(), // Send data as an object
+                    success: function(response) {
+                        $("div[role='alert']").remove();
+                        $('.errors').empty();
+                        console.log(response);
+                        $('.jq-loader-for-ajax').addClass('hidden');
+                        if (response === 'sucess') {
+                            $('#newProjectModal').toggleClass('hidden');
+                            if (assistantId > 0) {
+                                window.location.href =
+                                    "{{ url(getRoutePrefix() . '/redirect/back/assistant-updated-successfully') }}";
+                            } else {
+                                window.location.href =
+                                    "{{ url(getRoutePrefix() . '/redirect/back/assistant-created-successfully') }}";
+                            }
+                        }
+                        $.each(response.error, function(index, message) {
+                            $('.errors').append(`<div class="p-4 my-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
                                     <span class="font-medium">Error!</span>
                                      ${message}
                                     </div>`
-                            // `<li class="text-red-700">${message}</li>`
-                        );
-                    });
-                },
-                error: function(data) {
-                    $('.jq-loader-for-ajax').addClass('hidden');
-                    console.log(data);
-                }
-            });
-        }
-    </script>
+                                // `<li class="text-red-700">${message}</li>`
+                            );
+                        });
+                    },
+                    error: function(data) {
+                        $('.jq-loader-for-ajax').addClass('hidden');
+                        console.log(data);
+                    }
+                });
+            }
+        </script>
 @endsection

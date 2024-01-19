@@ -286,12 +286,24 @@ class SuperAdminController extends Controller
             $data['role'] = $user->role;
             $data['users'] = User::with(['createdBy', 'createdUsers', 'company'])
                 ->where('role', '!=', 'Super Admin')
-                ->orWhere('role', '!=', 'Super Admin')
                 ->latest()
                 ->get();
-            $data['trashed'] = User::withTrashed()
+            $data['verified'] = User::with(['createdBy', 'createdUsers', 'company'])
+                ->where('role', '!=', 'Super Admin')
+                ->whereNotNull('email_verified_at')
+                ->latest()
+                ->get();
+            
+            $data['unverified'] = User::with(['createdBy', 'createdUsers', 'company'])
+                ->where('role', '!=', 'Super Admin')
+                ->whereNull('email_verified_at')
+                ->latest()
+                ->get();
+                
+                $data['trashed'] = User::withTrashed()
                 ->with('createdBy')
                 ->whereNotNull('deleted_at')
+                ->latest()
                 ->get();
         } else {
             $data['role'] = $user->role;

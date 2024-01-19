@@ -255,20 +255,34 @@ class AdminController extends Controller
         $role = $user->role;
 
         // Fetch users created directly by the user
-        $directlyCreatedUsers = $user->createdUsers()
+        
+        if(Auth::user()->role === 'Admin'){
+            $allUsers = User::where('company_id',Auth::user()->company_id)->get();
+        }else{
+
+            $directlyCreatedUsers = $user->createdUsers()
             ->with(['createdBy', 'company'])
             ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower', 'Assistant'])
+            ->latest()
             ->get();
-
-        $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
+            
+            $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
             ->with(['createdBy', 'company'])
-            ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
+            ->orWhere('company_id', $role === 'Admin' ? $user->company_id  : -1)
             ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower', 'Assistant'])
+            ->latest()
             ->get();
+            
+            // Combine the directly and indirectly created users
+            $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
+        }
 
-        // Combine the directly and indirectly created users
-        $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
-
+        $data['verified'] = $allUsers->filter(function ($user) {
+            return $user->email_verified_at !== null;
+        });
+        $data['unverified'] = $allUsers->filter(function ($user) {
+            return $user->email_verified_at === null;
+        });
         $data['users'] = $allUsers;
 
         return view('admin.user.all-users', $data);
