@@ -163,7 +163,7 @@
                         @if ($assistant && $assistant->assistant && $assistant->assistant->active != 0 && $assistant->assistant->active != 2)
                         <div class="flex justify-between items-center mt-3">
                             <div>
-                                <h3 class="text-xl font-normal">{{ $assistant->assistant->name.$assistant->assistant->active }}</h3>
+                                <h3 class="text-xl font-normal">{{ $assistant->assistant->name }}</h3>
                                 <p class="text-gray-600">{{ $assistant->assistant->email }}</p>
                             </div>
                             <a class="removeAccess" href="{{$assistant->assistant->id}}" data-id="{{ $assistant->assistant->id }}">
