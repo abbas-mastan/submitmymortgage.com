@@ -435,4 +435,12 @@ class AssociateController extends Controller
     {
       return CommonService::submitIntakeForm($request);
     }
+
+    public function removeAcess(Request $request,User $user)
+    {
+        $user->active = 2;
+        $user->save();
+        if($request->ajax())return response()->json('access removed', 200);
+        else return back()->with('msg_success','Assistant deleted successfully');
+    }
 }

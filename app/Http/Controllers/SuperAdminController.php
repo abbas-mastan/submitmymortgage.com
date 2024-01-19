@@ -543,11 +543,12 @@ class SuperAdminController extends Controller
         return AdminService::shareItemWithAssistant($request, $id);
     }
 
-    public function removeAcess(User $user)
+    public function removeAcess(Request $request,User $user)
     {
         $user->active = 2;
         $user->save();
-        return response()->json('access removed', 200);
+        if($request->ajax())return response()->json('access removed', 200);
+        else return back()->with('msg_success','Assistant deleted successfully');
     }
 
     public function submitIntakeForm(IntakeFormRequest $request)

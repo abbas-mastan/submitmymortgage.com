@@ -68,6 +68,7 @@ Route::group(
         Route::get('project-overview/{id?}', 'projectOverview');
         Route::get('/mark-as-read/{id}', 'markAsRead');
         Route::get('/redirect/{route}/{message}', 'redirectTo');
+        Route::get('/remove-access/{user}', 'removeAcess');
 
         Route::post('/submit-intake-form', 'submitIntakeForm');
 
