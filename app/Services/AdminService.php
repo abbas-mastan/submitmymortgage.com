@@ -21,6 +21,7 @@ use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
@@ -490,17 +491,17 @@ class AdminService
             'company' => Auth::user()->role !== 'Super Admin' ? '' : 'sometimes:required',
             'deal' => 'sometimes:required',
         ]);
-
+        
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
-
+        
         if ($request->deal) {
             $deal = Project::find($request->deal);
             $request->userId = $deal->borrower->id;
             $categories = array_values(array_diff(config('smm.file_category'), ['Credit Report']));
         }
-
+        
         if ($request->userId && !$request->deal) {
             $request->company = User::find($request->userId)->company_id;
         }
@@ -528,7 +529,8 @@ class AdminService
         } else {
             $user->save();
         }
-        if ($request->sendemail) {
+        $routename = Route::getRoutes()->match(Request::create(url()->previous()))->getName();
+        if ($request->sendemail || $routename != 'add-user') {
             $id = Crypt::encryptString($user->id);
             $url = function () use ($id) {return Url::signedRoute('assistant.register', ['user' => $id]);};
             Mail::to($request->email)->send(new AssistantMail($url()));

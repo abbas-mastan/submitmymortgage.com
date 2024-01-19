@@ -8,23 +8,23 @@
         }
 
         /* #completed-table_length,
-                    #completed-table_filter,
-                    #completed-table>thead,
-                    #deleted-table_length,
-                    #deleted-table_filter,
-                    #deleted-table>thead,
-                    #user-table_length,
-                    #user-table_filter,
-                    #user-table>thead {
-                        display: none !important;
-                    }
+                        #completed-table_filter,
+                        #completed-table>thead,
+                        #deleted-table_length,
+                        #deleted-table_filter,
+                        #deleted-table>thead,
+                        #user-table_length,
+                        #user-table_filter,
+                        #user-table>thead {
+                            display: none !important;
+                        }
 
 
-                    #completed-table_wrapper,
-                    #deleted-table_wrapper,
-                    #user-table_wrapper {
-                        box-shadow: 0px 0px 11px 0px gray;
-                    } */
+                        #completed-table_wrapper,
+                        #deleted-table_wrapper,
+                        #user-table_wrapper {
+                            box-shadow: 0px 0px 11px 0px gray;
+                        } */
 
         .dataTables_info {
             margin-left: 10px;
@@ -348,6 +348,24 @@
     </script>
     <script>
         $(document).ready(function() {
+            $('#unverified').html($('.unverifiedSerial:last').html());
+            if ($('.unverifiedSerial:last').html() < 11) {
+                $('.unVerifiedUsersTable').attr('id', 'asdf');
+            } else {
+                $('.unVerifiedUsersTable').attr('id', 'incomplete-table');
+            }
+            if ($('.verifiedSerial:last').html() < 11) {
+                $('.verifiedUsersTable').attr('id', 'asdf');
+            } else {
+                $('.unVerifiedUsersTable').attr('id', 'completed-table');
+            }
+            if ($('.deletedSerial:last').html() < 11) {
+                $('.deletedUsersTable').attr('id', 'asdf');
+            } else {
+                $('.deletedUsersTable').attr('id', 'deleted-table');
+            }
+            $('#verified').html($('.verifiedSerial:last').html());
+            $('#deleted').html($('.deletedSerial:last').html());
             $(document).on('mouseenter', '.loginBtn', function() {
                 if ($(this).attr('data') == 'restore') {
                     var data = $(this).attr('data');
@@ -369,23 +387,5 @@
                 lengthMenu: [10, 20, 30, 50, 100, 200],
             });
         });
-        $('#unverified').html($('.unverifiedSerial:last').html());
-        if($('.unverifiedSerial:last').html() < 11){
-            $('.unVerifiedUsersTable').attr('id', 'asdf');
-        }else{
-            $('.unVerifiedUsersTable').attr('id', 'incomplete-table');
-        }
-        if($('.verifiedSerial:last').html() < 11){
-            $('.verifiedUsersTable').attr('id', 'asdf');
-        }else{
-            $('.unVerifiedUsersTable').attr('id', 'completed-table');
-        }
-        if($('.deletedSerial:last').html() < 11){
-            $('.deletedUsersTable').attr('id', 'asdf');
-        }else{
-            $('.deletedUsersTable').attr('id', 'deleted-table');
-        }
-        $('#verified').html($('.verifiedSerial:last').html());
-        $('#deleted').html($('.deletedSerial:last').html());
     </script>
 @endsection

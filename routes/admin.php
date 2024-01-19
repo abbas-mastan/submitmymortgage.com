@@ -28,7 +28,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
 
         Route::get('/users', 'users');
         Route::get('/dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
-        Route::get('/add-user/{userId}', 'addUser');
+        Route::get('/add-user/{userId}', 'addUser')->name('add-user');
         Route::post('/do-user/{userId}', 'doUser');
         Route::get('/delete-user/{userId}', 'deleteUser');
         Route::get('/delete-user-permenant/{user}', 'deleteUserPermenant')->withTrashed();

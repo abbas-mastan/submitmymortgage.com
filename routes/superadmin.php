@@ -28,7 +28,7 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
     Route::post('/do-info', [UserController::class, 'doInfo']);
     Route::group(['controller' => SuperAdminController::class], function () {
         Route::get('/users', 'users');
-        Route::get('/add-user/{userId}', 'addUser');
+        Route::get('/add-user/{userId}', 'addUser')->name('add-user');
         Route::post('/do-user/{userId}', 'doUser');
         Route::get('/delete-user/{userId}', 'deleteUser');
         Route::get('/delete-user-permenant/{user}', 'deleteUserPermenant')->withTrashed();
