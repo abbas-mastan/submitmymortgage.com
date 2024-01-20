@@ -446,6 +446,7 @@
                                    var isChecked = oldteams.includes(team.id); 
                                 selectOptions +=
                                     `<div>
+                                        
                                      <input ${isChecked ? 'checked' : ''} type="checkbox" id="${team.id}" value="${team.id}"
                                         name="team[]">
                                     <label class="mr-3 mt-3" for="${team.id}">${ team.name }</label>
@@ -456,7 +457,7 @@
                                     <div class=" text-left mr-12">
                                         <label class="">Team Name</label>
                                     </div>
-                                    <div class="mt-2">
+                                    <div class="mt-2 grid grid-cols-3 gap-2">
                                             ${selectOptions}             
                                     </div>
                                 </div>
