@@ -160,8 +160,8 @@
                         </div>
                         <div class="mt-2">
                             @foreach ($teams as $team)
-                                <input {{ in_array($team->id, $oldteams ?? []) ? 'checked' : '' }}  type="checkbox" id="{{ $team->id }}" value="{{ $team->id }}"
-                                    name="team[]">
+                                <input {{ in_array($team->id, $oldteams ?? []) ? 'checked' : '' }} type="checkbox"
+                                    id="{{ $team->id }}" value="{{ $team->id }}" name="team[]">
                                 <label for="{{ $team->id }}">{{ $team->name }}</label>
                             @endforeach
                         </div>
@@ -193,7 +193,7 @@
                     <div class="mt-2">
                         <select id="loan_type" name="loan_type"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                            <option value="" class="">Choose a value {{$user->loan_type}}</option>
+                            <option value="" class="">Choose a value {{ $user->loan_type }}</option>
                             <option {{ old('loan_type', $user->loan_type) == 'Private Loan' ? 'selected' : '' }}
                                 value="Private Loan" class="">Private Loan</option>
                             <option {{ old('loan_type', $user->loan_type) == 'Full Doc' ? 'selected' : '' }}
@@ -440,73 +440,76 @@
                         type: 'GET',
                         success: function(data) {
                             removeDivs();
-                            var selectOptions = '<option value="">Select Team</option>';
+                            var oldteams = @json($oldteams ?? []);
+                            var selectOptions = [];
                             data.forEach(function(team) {
+                                   var isChecked = oldteams.includes(team.id); 
                                 selectOptions +=
-                                    `<option value="${team.id}">${team.name}</option>`;
+                                    ` <input ${isChecked ? 'checked' : ''} type="checkbox" id="${team.id}" value="${team.id}"
+                                        name="team[]">
+                                    <label class="mr-3" for="${team.id}">${ team.name }</label>`;
                             });
                             $('.company').after(`
-                    <div class="mt-3 w-[49%] teamDiv">
-                        <div class=" text-left mr-12">
-                            <label for="team" class="">Team Name</label>
-                        </div>
-                        <div class="mt-2">
-                            <select name="team" id="team"
-                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                                ${selectOptions}
-                            </select>
-                        </div>
-                    </div>
-                `);
+                                <div class="border-2 rounded-lg p-1.5 w-[100%] mt-5 teamDiv">
+                                    <div class=" text-left mr-12">
+                                        <label class="">Team Name</label>
+                                    </div>
+                                    <div class="mt-2">
+                                            ${selectOptions}             
+                                    </div>
+                                </div>
+                            `);
                             $('.jq-loader-for-ajax').addClass('hidden');
 
                         }
                     });
                 }
             });
-        </script> @endif
+        </script>
+    @endif
 
-        <script>
-            function shareItemWithAssistant(assistantId) {
-                $('.jq-loader-for-ajax').removeClass('hidden');
-                $.ajaxSetup({
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    }
-                });
-                $.ajax({
-                    type: 'POST',
-                    url: "{{ url(getRoutePrefix() . '/share-items') }}" + '/' + assistantId,
-                    data: $('.userForm').serialize(), // Send data as an object
-                    success: function(response) {
-                        $("div[role='alert']").remove();
-                        $('.errors').empty();
-                        console.log(response);
-                        $('.jq-loader-for-ajax').addClass('hidden');
-                        if (response === 'sucess') {
-                            $('#newProjectModal').toggleClass('hidden');
-                            if (assistantId > 0) {
-                                window.location.href =
-                                    "{{ url(getRoutePrefix() . '/redirect/back/assistant-updated-successfully') }}";
-                            } else {
-                                window.location.href =
-                                    "{{ url(getRoutePrefix() . '/redirect/back/assistant-created-successfully') }}";
-                            }
+
+    <script>
+        function shareItemWithAssistant(assistantId) {
+            $('.jq-loader-for-ajax').removeClass('hidden');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                type: 'POST',
+                url: "{{ url(getRoutePrefix() . '/share-items') }}" + '/' + assistantId,
+                data: $('.userForm').serialize(), // Send data as an object
+                success: function(response) {
+                    $("div[role='alert']").remove();
+                    $('.errors').empty();
+                    console.log(response);
+                    $('.jq-loader-for-ajax').addClass('hidden');
+                    if (response === 'sucess') {
+                        $('#newProjectModal').toggleClass('hidden');
+                        if (assistantId > 0) {
+                            window.location.href =
+                                "{{ url(getRoutePrefix() . '/redirect/back/assistant-updated-successfully') }}";
+                        } else {
+                            window.location.href =
+                                "{{ url(getRoutePrefix() . '/redirect/back/assistant-created-successfully') }}";
                         }
-                        $.each(response.error, function(index, message) {
-                            $('.errors').append(`<div class="p-4 my-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                    }
+                    $.each(response.error, function(index, message) {
+                        $('.errors').append(`<div class="p-4 my-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
                                     <span class="font-medium">Error!</span>
                                      ${message}
                                     </div>`
-                                // `<li class="text-red-700">${message}</li>`
-                            );
-                        });
-                    },
-                    error: function(data) {
-                        $('.jq-loader-for-ajax').addClass('hidden');
-                        console.log(data);
-                    }
-                });
-            }
-        </script>
+                            // `<li class="text-red-700">${message}</li>`
+                        );
+                    });
+                },
+                error: function(data) {
+                    $('.jq-loader-for-ajax').addClass('hidden');
+                    console.log(data);
+                }
+            });
+        }
+    </script>
 @endsection

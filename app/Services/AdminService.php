@@ -151,8 +151,11 @@ class AdminService
                 event(new Registered($user));
             }
         }
-        if (Auth::check() && $request->role !== 'Borrower'  && $request->team > 0) {
+        if (Auth::check() && $request->role !== 'Borrower' && $user->teams){
             $user->teams()->detach();
+        } 
+
+        if (Auth::check() && $request->role !== 'Borrower'  && $request->team > 0) {
             foreach ($request->team as $team) {
                 $team = Team::find($team);
                 if (!$team->users->contains($user->id)) {
@@ -222,29 +225,25 @@ class AdminService
     //Shows input for adding a user
     public static function files(Request $request, $id)
     {
-        $role = Auth::user()->role;
+        $user = Auth::user();
         if ($id !== -1) {
             $users = User::with('media')->where('role', 'Borrower')->where('id', $id)->get();
             $data['id'] = $id;
             $data['info'] = User::find($id)->info;
         } else {
-            if (Auth::user()->role === 'Super Admin') {
+            if ($user->role === 'Super Admin') {
                 $users = User::with(['media.user'])->where('role', 'Borrower')->get();
-            } elseif ($role === 'Admin') {
-                $user = User::find(Auth::id());
-                $role = $user->role;
-                $users = $user
-                    ->createdUsers()
-                    ->with(['createdBy', 'media'])
-                    ->orWhere('company_id', $user->company_id ?? -1)
-                    ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
-                    ->get();
-            } elseif ($role === 'Processor') {
-                $admin = Auth::user();
-                $teams = Team::where('owner_id', $admin->id)
+            } elseif ($user->role === 'Admin') {
+                    $users = User::with(['media','createdBy'])
+                    ->where('role','!=','Admin')
+                    ->where('company_id',Auth::user()->company_id)->get();
+
+
+            } elseif ($user->role === 'Processor') {
+                $teams = Team::where('owner_id', $user->id)
                     ->with(['users.createdBy', 'users.media'])
-                    ->orWhereHas('users', function ($query) use ($admin) {
-                        $query->where('user_id', $admin->id);
+                    ->orWhereHas('users', function ($query) use ($user) {
+                        $query->where('user_id', $user->id);
                     })
                     ->get();
                 $users = collect(); // Initialize a collection to store users
@@ -252,10 +251,9 @@ class AdminService
                     $users = $users->merge($team->users); // Merge users into the collection
                 }
             } else {
-                $admin = Auth::user();
-                $projects = Project::where('created_by', $admin->id)
-                    ->orWhereHas('users', function ($query) use ($admin) {
-                        $query->where('users.id', $admin->id);
+                $projects = Project::where('created_by', $user->id)
+                    ->orWhereHas('users', function ($query) use ($user) {
+                        $query->where('users.id', $user->id);
                     })
                     ->with(['users.createdBy', 'borrower.createdBy', 'users.media'])
                     ->get();
@@ -268,7 +266,6 @@ class AdminService
         $filesIds = [];
         foreach ($users as $user) {
             $media = $user->media ?? [];
-
             foreach ($media as $m) {
                 $filesIds[] = $m->id;
             }
@@ -367,9 +364,7 @@ class AdminService
                     $query->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower']);
                 })
                 ->get();
-
         }
-
         return $data;
     }
 
