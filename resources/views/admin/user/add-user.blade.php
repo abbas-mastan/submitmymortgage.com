@@ -195,7 +195,7 @@
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
                             <option value="" class="">Choose a value {{$user->loan_type}}</option>
                             <option {{ old('loan_type', $user->loan_type) == 'Private Loan' ? 'selected' : '' }}
-                                value="Private Loan" class="">Private Loan {{ $user->loan_type }}</option>
+                                value="Private Loan" class="">Private Loan</option>
                             <option {{ old('loan_type', $user->loan_type) == 'Full Doc' ? 'selected' : '' }}
                                 value="Full Doc" class="">Full Doc</option>
                             <option {{ old('loan_type', $user->loan_type) == 'Non QM' ? 'selected' : '' }} value="Non QM"

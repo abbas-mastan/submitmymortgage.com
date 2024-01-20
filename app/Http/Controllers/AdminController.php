@@ -272,7 +272,6 @@ class AdminController extends Controller
             ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower', 'Assistant'])
             ->latest()
             ->get();
-            
             // Combine the directly and indirectly created users
             $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
         }

@@ -26,7 +26,7 @@
                         class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
                 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                 sm:text-sm sm:leading-6"
-                        name="financetype" id="financetype">
+                        name="finance_type" id="financetype">
                         <option value="">Select Finance Type</option>
                         @foreach (['Purchase', 'Refinance'] as $finance)
                             <option value="{{ $finance }}">{{ $finance }}</option>
@@ -42,7 +42,7 @@
                         class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
             ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
             sm:text-sm sm:leading-6"
-                        name="loantype" id="loantype">
+                        name="loan_type" id="loantype">
                         <option value="">Select Loan Type</option>
                         @foreach (['Private Loan', 'Full Doc', 'Non QM'] as $loan)
                             <option value="{{ $loan }}">{{ $loan }}</option>
