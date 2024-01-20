@@ -158,12 +158,15 @@
                         <div class=" text-left mr-12">
                             <label for="role" class="">Team Name </label>
                         </div>
-                        <div class="mt-2">
+                        <div class="mt-2 grid grid-cols-3 gap-2">
+                            
                             @foreach ($teams as $team)
+                            <div>
                                 <input {{ in_array($team->id, $oldteams ?? []) ? 'checked' : '' }} type="checkbox"
-                                    id="{{ $team->id }}" value="{{ $team->id }}" name="team[]">
+                                id="{{ $team->id }}" value="{{ $team->id }}" name="team[]">
                                 <label for="{{ $team->id }}">{{ $team->name }}</label>
-                            @endforeach
+                            </div>
+                                @endforeach
                         </div>
                     </div>
                 </div>
