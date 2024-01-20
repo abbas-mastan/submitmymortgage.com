@@ -445,9 +445,11 @@
                             data.forEach(function(team) {
                                    var isChecked = oldteams.includes(team.id); 
                                 selectOptions +=
-                                    ` <input ${isChecked ? 'checked' : ''} type="checkbox" id="${team.id}" value="${team.id}"
+                                    `<div>
+                                     <input ${isChecked ? 'checked' : ''} type="checkbox" id="${team.id}" value="${team.id}"
                                         name="team[]">
-                                    <label class="mr-3 mt-3" for="${team.id}">${ team.name }</label>`;
+                                    <label class="mr-3 mt-3" for="${team.id}">${ team.name }</label>
+                                    </div>`;
                             });
                             $('.company').after(`
                                 <div class="border-2 rounded-lg p-1.5 w-[100%] mt-5 teamDiv">
