@@ -116,8 +116,7 @@
             $(this).find('div[role="tooltip"]').remove();
         });
 
-        $('.delete').click(function(e) {
-
+        $(document).on("click",'.delete',function(e) {
             function getPopupText(text) {
                 if (text == 'Accept') return 'Accepted!';
                 if (text == 'Reject') return 'Rejected!';
