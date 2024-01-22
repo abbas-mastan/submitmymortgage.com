@@ -2,27 +2,27 @@
 
 namespace App\Services;
 
-use Faker\Factory;
-use App\Models\Info;
-use App\Models\User;
-use App\Models\Media;
+use App\Models\Application;
+use App\Models\Attachment;
 use App\Models\Company;
 use App\Models\Contact;
-use App\Models\Project;
-use App\Models\Attachment;
+use App\Models\Info;
 use App\Models\IntakeForm;
-use App\Models\Application;
-use Illuminate\Support\Arr;
+use App\Models\Media;
+use App\Models\Project;
+use App\Models\User;
+use App\Notifications\FileUploadNotification;
+use Faker\Factory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Password;
-use PhpOffice\PhpSpreadsheet\Writer\Xls;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use App\Notifications\FileUploadNotification;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
 class CommonService
 {
@@ -514,6 +514,50 @@ class CommonService
         }
 
         return "Created new Deal by name : $request->borroweraddress";
+    }
+
+    public static function getUsers()
+    {
+        $user = User::find(Auth::id());
+        $data['role'] = $user->role;
+        if ($user->role == 'Super Admin') {
+            $allUsers = User::with(['company','createdBy'])->whereNotIn('role',['Super Admin'])->latest()->get();
+            $data['trashed'] = User::withTrashed()
+                ->with('createdBy')
+                ->whereNotNull('deleted_at')
+                ->latest()
+                ->get();
+        } elseif ($user->role === 'Admin') {
+            $allUsers = User::where('company_id', Auth::user()->company_id)
+                ->where('role','!=','Admin')
+                ->with(['createdBy'])
+                ->latest()
+                ->get();
+        } else {
+            $directlyCreatedUsers = $user->createdUsers()
+                ->with(['createdBy', 'company'])
+                ->whereIn('role', ['Associate', 'Junior Associate', 'Borrower', 'Assistant'])
+                ->latest()
+                ->get();
+
+            $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
+                ->with(['createdBy', 'company'])
+                ->whereIn('role', ['Associate', 'Junior Associate', 'Borrower', 'Assistant'])
+                ->latest()
+                ->get();
+            $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
+        }
+
+        $data['verified'] = $allUsers->filter(function ($user) {
+            return $user->email_verified_at !== null;
+        });
+        $data['unverified'] = $allUsers->filter(function ($user) {
+            return $user->email_verified_at === null;
+        });
+
+        $data['users'] = $allUsers;
+
+        return $data;
     }
 
 }

@@ -280,39 +280,7 @@ class SuperAdminController extends Controller
 
     public function allUsers($id = null)
     {
-
-        $user = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
-        if ($user && $user->role === 'Super Admin') {
-            $data['role'] = $user->role;
-            $data['users'] = User::with(['createdBy', 'createdUsers', 'company'])
-                ->where('role', '!=', 'Super Admin')
-                ->latest()
-                ->get();
-            $data['verified'] = User::with(['createdBy', 'createdUsers', 'company'])
-                ->where('role', '!=', 'Super Admin')
-                ->whereNotNull('email_verified_at')
-                ->latest()
-                ->get();
-            
-            $data['unverified'] = User::with(['createdBy', 'createdUsers', 'company'])
-                ->where('role', '!=', 'Super Admin')
-                ->whereNull('email_verified_at')
-                ->latest()
-                ->get();
-                
-                $data['trashed'] = User::withTrashed()
-                ->with('createdBy')
-                ->whereNotNull('deleted_at')
-                ->latest()
-                ->get();
-        } else {
-            $data['role'] = $user->role;
-            $data['users'] = $user->createdUsers()
-                ->with(['createdUsers', 'createdBy', 'company'])
-                ->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])
-                ->latest()
-                ->get();
-        }
+        $data = CommonService::getUsers();
         return view('admin.user.all-users', $data);
     }
 

@@ -684,6 +684,9 @@ select {
 .pointer-events-auto {
   pointer-events: auto;
 }
+.visible {
+  visibility: visible;
+}
 .invisible {
   visibility: hidden;
 }
@@ -2314,10 +2317,6 @@ select {
 
   .md\:h-auto {
     height: auto;
-  }
-
-  .md\:h-full {
-    height: 100%;
   }
 
   .md\:w-1\/3 {

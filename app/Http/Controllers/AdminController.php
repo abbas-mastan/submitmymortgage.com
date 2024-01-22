@@ -94,18 +94,6 @@ class AdminController extends Controller
         return view('admin.file.files', $data);
     }
 
-    //Showing documents for a user in specified category
-    // public function docs(Request $request, $id, $cat)
-    // {
-    //     if ($cat === "Loan Application") {
-    //         $id = User::find($id)->application()->first()->id;
-    //         return redirect(getAdminRoutePrefix() . '/application-show/' . $id);
-    //     } else {
-    //         $data = AdminService::docs($request, $id, $cat);
-    //         return view("admin.file.single-cat-docs", $data);
-    //     }
-    // }
-
     public function doApplication(ApplicationRequest $request)
     {
         $data = CommonService::doApplication($request);
@@ -249,41 +237,7 @@ class AdminController extends Controller
 
     public function allUsers($id = null)
     {
-        $user = $id ? User::find($id) : Auth::user();
-
-        $data['role'] = $user->role;
-        $role = $user->role;
-
-        // Fetch users created directly by the user
-        
-        if(Auth::user()->role === 'Admin'){
-            $allUsers = User::where('company_id',Auth::user()->company_id)->get();
-        }else{
-
-            $directlyCreatedUsers = $user->createdUsers()
-            ->with(['createdBy', 'company'])
-            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower', 'Assistant'])
-            ->latest()
-            ->get();
-            
-            $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
-            ->with(['createdBy', 'company'])
-            ->orWhere('company_id', $role === 'Admin' ? $user->company_id  : -1)
-            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower', 'Assistant'])
-            ->latest()
-            ->get();
-            // Combine the directly and indirectly created users
-            $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
-        }
-
-        $data['verified'] = $allUsers->filter(function ($user) {
-            return $user->email_verified_at !== null;
-        });
-        $data['unverified'] = $allUsers->filter(function ($user) {
-            return $user->email_verified_at === null;
-        });
-        $data['users'] = $allUsers;
-
+        $data = CommonService::getUsers();
         return view('admin.user.all-users', $data);
     }
 

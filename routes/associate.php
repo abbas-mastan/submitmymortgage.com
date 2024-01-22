@@ -16,7 +16,7 @@ Route::group(
         Route::view('/profile', 'admin.profile.profile');
         Route::post('/do-profile', 'doProfile');
         #associate adding user
-        Route::get('/all-users/{userId?}', 'allUsers');
+        Route::get('/all-users/{id?}', 'allUsers')->name('all-user');
         Route::get('/add-user/{userId}', 'addUser')->name('add-user');
         Route::post('/do-user/{userId}', 'doUser');
 

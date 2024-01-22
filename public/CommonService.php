@@ -2,20 +2,20 @@
 
 namespace App\Services;
 
-use App\Models\Info;
-use App\Models\User;
-use App\Models\Media;
-use App\Models\Attachment;
 use App\Models\Application;
-use Illuminate\Support\Arr;
+use App\Models\Attachment;
+use App\Models\Info;
+use App\Models\Media;
+use App\Models\User;
+use App\Notifications\FileUploadNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Writer\Xls;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use App\Notifications\FileUploadNotification;
 use Illuminate\Validation\ValidationException;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
 class CommonService
 {
@@ -35,7 +35,6 @@ class CommonService
         }
         return ['msg_type' => 'msg_error', 'msg_value' => "Couldn't save the picture"];
     }
-
 
     //Uploads a file
     public static function fileUpload(Request $request)
@@ -61,7 +60,7 @@ class CommonService
                     $filepath = $request->category;
                     $admin = User::where('role', 'Admin')->first();
                     $user = User::find($request->id ?? $attachment->user_id);
-                    $admin->notify(new FileUploadNotification($filepath,$user));
+                    $admin->notify(new FileUploadNotification($filepath, $user));
                 } catch (\Exception $e) {
                     return response()->json(['status' => "$e", 'filename' => $e]);
                     // return response()->json(['status'=>'File exists','filename'=>$attachment->file_name]);
@@ -86,7 +85,7 @@ class CommonService
                 $filepath = $request->category;
                 $admin = User::where('role', 'Admin')->first();
                 $user = User::find($request->id ?? Auth::id());
-                $admin->notify(new FileUploadNotification($filepath,$user));
+                $admin->notify(new FileUploadNotification($filepath, $user));
                 return response()->json(['status' => "success", 'msg' => "File uploaded."]);
             }
         }

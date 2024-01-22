@@ -58,7 +58,7 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
         Route::get('/delete-lead/{info}', 'deleteLead');
         Route::get('/basic-info', 'basicInfo');
         #all users
-        Route::get('/all-users/{id?}', 'allUsers');
+        Route::get('/all-users/{id?}', 'allUsers')->name('all-user');
         Route::get('/hide-cat/{user}/{cat}', 'hideCategory')->where('cat', '(.*)');
         Route::post('/login-as-this-user', 'LoginAsThisUser');
         Route::post('/add-category/{user?}', 'addCategoryToUser');

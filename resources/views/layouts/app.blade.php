@@ -90,11 +90,13 @@
     @yield('foot')
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script>
+        @if (request()->route()->getName() != 'all-user')
         ['user', 'completed', 'incomplete', 'deleted'].map((table) => {
             new DataTable("#" + table + "-table");
             $(`select[name="${table}-table_length"]`).addClass('w-16');
             $(`select[name="${table}-table_length"]`).addClass('mb-3');
         });
+        @endif
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -116,7 +118,7 @@
             $(this).find('div[role="tooltip"]').remove();
         });
 
-        $(document).on("click",'.delete',function(e) {
+        $(document).on("click", '.delete', function(e) {
             function getPopupText(text) {
                 if (text == 'Accept') return 'Accepted!';
                 if (text == 'Reject') return 'Rejected!';
@@ -131,13 +133,14 @@
             if (textClass) {
                 var titleText = 'Are you sure to ' + textClass.toLowerCase() + ' it?';
             }
-            
+
             if (textClass == 'Hide' || textClass == 'Unhide' || textClass == 'Disable' || textClass == 'Enable' ||
-            textClass == 'Restore') {
+                textClass == 'Restore') {
                 middleSentenceOfModal = null;
             } else {
                 if (textClass == 'temporary') {
-                    middleSentenceOfModal = 'This is not a permanent delete. You can restore it from deleted users anytime';
+                    middleSentenceOfModal =
+                        'This is not a permanent delete. You can restore it from deleted users anytime';
                     titleText = 'Are you sure to delete this user?';
                     textClass = "Delete";
                 } else {

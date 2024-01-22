@@ -33,18 +33,13 @@
         @include('user.dashboard.upload')
     @endcan
     <div class="flex-wrap justify-center w-full">
-        @if(Gate::check('isSuperAdmin') || Gate::check('isAdmin'))
+        @if (Gate::check('isSuperAdmin') || Gate::check('isAdmin'))
             @include('admin.dashboard.menu')
-            {{-- @include('admin.dashboard.cards')
-        @include('admin.dashboard.users') --}}
         @endif
         @can('isAssociate')
             @include('admin.dashboard.menu')
-            {{-- @include('admin.dashboard.cards')
-        @include('admin.dashboard.users') --}}
         @endcan
         @can('isUser')
-            {{-- @include('admin.dashboard.menu') --}}
             @include('user.dashboard.cards')
         @endcan
         @can('isAssistant')
@@ -53,5 +48,5 @@
     </div>
 @endsection
 @section('foot')
-@include('parts.js.dashboard-script')
+    @include('parts.js.dashboard-script')
 @endsection

@@ -109,30 +109,7 @@ class AssociateController extends Controller
 
     public function allUsers($id = null)
     {
-        $user = $id ? User::find($id) : Auth::user();
-        $data['role'] = $user->role;
-        $role = $user->role;
-// Fetch users created directly by the user
-        $directlyCreatedUsers = $user->createdUsers()
-            ->with(['createdBy'])
-            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
-            ->get();
-
-        $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
-            ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
-            ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
-            ->get();
-
-        // Combine the directly and indirectly created users
-        $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
-        $data['verified'] = $allUsers->filter(function ($user) {
-            return $user->email_verified_at !== null;
-        });
-        $data['unverified'] = $allUsers->filter(function ($user) {
-            return $user->email_verified_at === null;
-        });
-        $data['users'] = $allUsers;
-
+        $data = CommonService::getUsers();
         return view('admin.user.all-users', $data);
     }
 
@@ -438,14 +415,18 @@ class AssociateController extends Controller
 
     public function submitIntakeForm(IntakeFormRequest $request)
     {
-      return CommonService::submitIntakeForm($request);
+        return CommonService::submitIntakeForm($request);
     }
 
-    public function removeAcess(Request $request,User $user)
+    public function removeAcess(Request $request, User $user)
     {
         $user->active = 2;
         $user->save();
-        if($request->ajax())return response()->json('access removed', 200);
-        else return back()->with('msg_success','Assistant deleted successfully');
+        if ($request->ajax()) {
+            return response()->json('access removed', 200);
+        } else {
+            return back()->with('msg_success', 'Assistant deleted successfully');
+        }
+
     }
 }

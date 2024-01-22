@@ -60,7 +60,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
         Route::get('/basic-info', 'basicInfo');
         Route::post('/do-info', [UserController::class, 'doInfo']);
         #all users
-        Route::get('/all-users/{id?}', 'allUsers');
+        Route::get('/all-users/{id?}', 'allUsers')->name('all-user');
         Route::get('/hide-cat/{user}/{cat}', 'hideCategory')->where('cat', '(.*)');
         Route::post('/login-as-this-user', 'LoginAsThisUser');
         Route::post('/add-category/{user?}', 'addCategoryToUser');

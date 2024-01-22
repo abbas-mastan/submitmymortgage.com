@@ -6,26 +6,6 @@
         #file {
             display: none;
         }
-
-        /* #completed-table_length,
-                        #completed-table_filter,
-                        #completed-table>thead,
-                        #deleted-table_length,
-                        #deleted-table_filter,
-                        #deleted-table>thead,
-                        #user-table_length,
-                        #user-table_filter,
-                        #user-table>thead {
-                            display: none !important;
-                        }
-
-
-                        #completed-table_wrapper,
-                        #deleted-table_wrapper,
-                        #user-table_wrapper {
-                            box-shadow: 0px 0px 11px 0px gray;
-                        } */
-
         .dataTables_info {
             margin-left: 10px;
         }
@@ -41,7 +21,7 @@
     @endcomponent
 
     <x-flex-card title="Verified Users" id="verified" titlecounts="0" iconurl="{{ asset('icons/Users.svg') }}" />
-    <table class="w-full display verifiedUsersTable mb-26" id="{{count($verified) > 10 ? 'completed-table':null}}">
+    <table class="w-full display verifiedUsersTable mb-26" id="{{ count($verified) > 10 ? 'completed-table' : null }}">
         <thead class="bg-gray-300">
             <tr>
                 <th class="pl-2 tracking-wide">
@@ -56,14 +36,11 @@
                 <th class="">
                     Role
                 </th>
-                @if (auth()->user()->role === 'Super Admin')
+                @if ($role === 'Super Admin')
                     <th class="">
                         Company
                     </th>
                 @endif
-                <th class="">
-                    Status
-                </th>
                 <th class="">
                     Created By
                 </th>
@@ -81,8 +58,7 @@
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
                             <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                {{-- href="{{ url(getRoutePrefix() . ($user->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $user->id) }}" --}}
-                                >
+                                {{-- href="{{ url(getRoutePrefix() . ($user->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $user->id) }}" --}}>
                                 {{ $user->name }}
                             </a>
                             <a title="Edit this user" href="{{ url(getRoutePrefix() . '/add-user/' . $user->id) }}">
@@ -103,9 +79,6 @@
                             </td>
                         @endif
                         <td class=" pl-2 tracking-wide border border-l-0">
-                            {{ $user->active ? 'Enabled' : 'Disable' }}
-                        </td>
-                        <td class=" pl-2 tracking-wide border border-l-0">
                             @if ($user->createdBy)
                                 {{ $user->createdBy->name ?? null }}
                                 @if ($user->createdBy->name)
@@ -115,14 +88,14 @@
                             @endif
                         </td>
                         <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                            <a data="{{ $currentrole === $superadminrole ? 'temporary' : 'Delete' }}" class="delete"
+                            <a data="{{ $role === $superadminrole ? 'temporary' : 'Delete' }}" class="delete"
                                 href="{{ url(getRoutePrefix() . '/delete-user/' . $user->id) }}">
                                 <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                                     <img style="-webkit-writing-mode: vertical-lr;" src="{{ asset('icons/trash.svg') }}"
                                         alt="" class="p-1 w-7">
                                 </button>
                             </a>
-                            @if ($currentrole === $superadminrole)
+                            @if ($role === $superadminrole)
                                 <form method="POST"
                                     action="{{ url(getSuperAdminRoutePrefix() . '/login-as-this-user') }}">
                                     @csrf
@@ -146,106 +119,64 @@
     </table>
 
     <x-flex-card title="Unverified Users" id="unverified" titlecounts="" iconurl="{{ asset('icons/Users.svg') }}" />
-    <table class="w-full display unVerifiedUsersTable mb-20" id="{{count($unverified) > 10 ? 'user-table':null}}">
-        <thead class="bg-gray-300">
-            <tr>
-                <th class="pl-2 tracking-wide">
-                    S No.
-                </th>
-                <th class="">
-                    Name
-                </th>
-                <th class="">
-                    User ID
-                </th>
-                <th class="">
-                    Role
-                </th>
-                <th class="">
-                    Created By
-                </th>
-                <th class="">
-                    Actions
-                </th>
-            </tr>
-        </thead>
+    <table class="w-full display unVerifiedUsersTable mb-20" id="{{ count($unverified) > 10 ? 'user-table' : null }}">
+        <x-users-table-head/>
         <tbody>
             @php
                 $serialNumber = 1;
             @endphp
             @foreach ($unverified as $user)
-                    <tr>
-                        <td class="unverifiedSerial pl-2 tracking-wide border border-l-0">{{ $serialNumber }}
-                        </td>
-                        <td class=" pl-2 tracking-wide border border-l-0">
-                            <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
-                                href="{{ url(getRoutePrefix() . ($user->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $user->id) }}">
-                                {{ $user->name }}{{$user->email_verified_at}}
-                            </a>
-                            <a title="Edit this user" href="{{ url(getRoutePrefix() . '/add-user/' . $user->id) }}">
-                                <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
-                            </a>
-                        </td>
-                        <td class=" pl-2 tracking-wide border border-l-0">
-                            {{ $user->email }}
-                        </td>
-                        <td class=" pl-2 tracking-wide border border-l-0">
-                            {{ $user->role }}
-                        </td>
-                        <td class=" pl-2 tracking-wide border border-l-0">
-                            @if ($user->createdBy)
-                                {{ $user->createdBy->name }}
-                                |
-                                {{ $user->createdBy->role }}
-                            @endif
-                        </td>
-                        <td class="flex pl-2 justify-center tracking-wide border border-r-0">
-                            <a data="{{ $currentrole === $superadminrole ? 'temporary' : 'Delete' }}" class="delete"
-                                href="{{ url(getRoutePrefix() . '/delete-user/' . $user->id) }}">
-                                <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
-                                    <img style="-webkit-writing-mode: vertical-lr;" src="{{ asset('icons/trash.svg') }}"
-                                        alt="" class="p-1 w-7">
+                <tr>
+                    <td class="unverifiedSerial pl-2 tracking-wide border border-l-0">{{ $serialNumber }}
+                    </td>
+                    <td class=" pl-2 tracking-wide border border-l-0">
+                        <a title="Click to view files uploaded by this user" class="text-blue-500 inline"
+                            href="{{ url(getRoutePrefix() . ($user->role == 'Borrower' ? '/file-cat/' : '/all-users/') . $user->id) }}">
+                            {{ $user->name }}
+                        </a>
+                        <a title="Edit this user" href="{{ url(getRoutePrefix() . '/add-user/' . $user->id) }}">
+                            <img src="{{ asset('icons/pencil.svg') }}" alt="" class="inline ml-5">
+                        </a>
+                    </td>
+                    <td class=" pl-2 tracking-wide border border-l-0">
+                        {{ $user->email }}
+                    </td>
+                    <td class=" pl-2 tracking-wide border border-l-0">
+                        {{ $user->role }}
+                    </td>
+                    <td class=" pl-2 tracking-wide border border-l-0">
+                        @if ($user->createdBy)
+                            {{ $user->createdBy->name }}
+                            |
+                            {{ $user->createdBy->role }}
+                        @endif
+                    </td>
+                    <td class="flex pl-2 justify-center tracking-wide border border-r-0">
+                        <a data="{{ $role === $superadminrole ? 'temporary' : 'Delete' }}" class="delete"
+                            href="{{ url(getRoutePrefix() . '/delete-user/' . $user->id) }}">
+                            <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
+                                <img style="-webkit-writing-mode: vertical-lr;" src="{{ asset('icons/trash.svg') }}"
+                                    alt="" class="p-1 w-7">
 
-                                </button>
-                            </a>
-                            @if ($currentrole === $superadminrole || $currentrole === 'Admin')
-                                <a href="{{ url(getRoutePrefix() . '/verify-user/' . $user->id) }}"
-                                    class="bg-themered text-white px-2.5 py-0.5 ml-1">Verify</a>
-                            @endif
-                        </td>
-                    </tr>
-                    @php
-                        $serialNumber++;
-                    @endphp
+                            </button>
+                        </a>
+                        @if ($role === $superadminrole || $role === 'Admin')
+                            <a href="{{ url(getRoutePrefix() . '/verify-user/' . $user->id) }}"
+                                class="bg-themered text-white px-2.5 py-0.5 ml-1">Verify</a>
+                        @endif
+                    </td>
+                </tr>
+                @php
+                    $serialNumber++;
+                @endphp
             @endforeach
         </tbody>
     </table>
 
     @if ($role === 'Super Admin')
         <x-flex-card title="Deleted Users" id="deleted" titlecounts="0" iconurl="{{ asset('icons/Users.svg') }}" />
-        <table class="w-full display my-5 deletedUsersTable" id="{{count($trashed) > 10 ?  'deleted-table':''}}">
-            <thead class="bg-gray-300">
-                <tr>
-                    <th class="pl-2 tracking-wide">
-                        S No.
-                    </th>
-                    <th class="">
-                        Name
-                    </th>
-                    <th class="">
-                        User ID
-                    </th>
-                    <th class="">
-                        Role
-                    </th>
-                    <th class="">
-                        Created By
-                    </th>
-                    <th class="">
-                        Actions
-                    </th>
-                </tr>
-            </thead>
+        <table class="w-full display my-5 deletedUsersTable" id="{{ count($trashed) > 10 ? 'deleted-table' : '' }}">
+            <x-users-table-head/>
             <tbody>
                 @php $serialNumber = 1; @endphp
                 @forelse ($trashed as $user)
@@ -346,6 +277,29 @@
     </script>
     <script>
         $(document).ready(function() {
+            new DataTable('#completed-table', {
+                columnDefs: [{
+                    target: {{ $role == 'Super Admin' ? 5 : 4 }},
+                    searchable: false
+                }]
+            });
+            new DataTable('#deleted-table', {
+                columnDefs: [{
+                    target: 4,
+                    searchable: false
+                }]
+            });
+            new DataTable('#user-table', {
+                columnDefs: [{
+                    target: 4,
+                    searchable: false
+                }]
+            });
+            ['user', 'completed', 'incomplete', 'deleted'].map((table) => {
+                $(`select[name="${table}-table_length"]`).addClass('w-16');
+                $(`select[name="${table}-table_length"]`).addClass('mb-3');
+            });
+
             $(document).on('mouseenter', '.loginBtn', function() {
                 if ($(this).attr('data') == 'restore') {
                     var data = $(this).attr('data');
