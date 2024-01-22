@@ -31,7 +31,7 @@
                 <p class="text-center font-bold">{{ $currentrole === 'Borrower' ? 'Deal' : 'Deals' }}</p>
             </a>
 
-            <a href="{{ url(getRoutePrefix() . '/new-users') }}" class="flex justify-center align-center flex-col">
+            <a href="{{ url(getRoutePrefix() . '/all-users') }}" class="flex justify-center align-center flex-col">
                 <div
                     class="h-16 flex align-center justify-center rounded px-7 py-2 bg-gradient-to-b from-gradientStart to-gradientEnd">
                     <img class="object-contain  sm:w-[100%] h-12  w-14" src="{{ asset('icons/Users.svg') }}"

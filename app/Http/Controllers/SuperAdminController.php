@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ApplicationRequest;
-use App\Http\Requests\IntakeFormRequest;
-use App\Models\Application;
-use App\Models\Company;
-use App\Models\Contact;
+use Faker\Factory;
 use App\Models\Info;
-use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Company;
+use App\Models\Contact;
+use App\Models\Project;
+use Illuminate\View\View;
+use App\Models\IntakeForm;
+use App\Models\Application;
 use App\Models\UserCategory;
+use Illuminate\Http\Request;
+use App\Services\UserService;
 use App\Services\AdminService;
 use App\Services\CommonService;
-use App\Services\UserService;
-use Faker\Factory;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\IntakeFormRequest;
+use App\Http\Requests\ApplicationRequest;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\View\View;
 
 class SuperAdminController extends Controller
 {
@@ -535,6 +536,18 @@ class SuperAdminController extends Controller
     {
         return CommonService::submitIntakeForm($request);
     }
+    public function loanIntake()
+    {
+        $data['role'] = Auth::user()->role;
+        $data['tables'] = ['Pending Intake', 'Completed Intake', 'Incomplete Intake', 'Deleted Intake'];
+        $data['intakes'] = IntakeForm::get();
+        return view('admin.intakes.index', $data);
+    }
+    public function updateIntakeStatus(IntakeForm $intake, $status)
+    {
+        $msg = CommonService::updateIntakeStatus($intake, $status);
+        return back()->with($msg['msg_type'], $msg['msg_value']);
+    }
 
     public function redirectTo($route, $message)
     {
@@ -543,7 +556,7 @@ class SuperAdminController extends Controller
 
     public function doAssociate(Request $request)
     {
-        $validator = Validator::make($request->only(['AssociateName', 'AssociateEmail']), [
+        $validator = Validator::make($request->onlyf(['AssociateName', 'AssociateEmail']), [
             'AssociateEmail' => 'required|email:rfc,dns|unique:users,email',
         ]);
         if ($validator->fails()) {

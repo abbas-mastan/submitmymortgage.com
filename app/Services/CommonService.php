@@ -166,6 +166,31 @@ class CommonService
         $application->update();
         return ['msg_value' => $msg, 'msg_type' => 'msg_success'];
     }
+    public static function updateIntakeStatus($intake, $status)
+    {
+        // $application->status = $status == 'accept' ? 1 : ($status == 'delete' ? 3 : 2);
+        // $msg = $status == 'accept' ? "Deal completed." : ($status == 'delete' ? "Deal deleted." : "Deal rejected.");
+        if ($status == 'accept') {
+            $intake->status = 1;
+            $msg = "Intake completed.";
+        }
+        if ($status == 'delete') {
+            $intake->status = 3;
+            $msg = "Intake deleted.";
+        }
+        if ($status == 'reject') {
+            $intake->status = 2;
+            $msg = "Intake rejected.";
+        }
+
+        if ($status == 'restore') {
+            abort_if(Auth::user()->role !== 'Super Admin', 403, 'You are not allowed to restore an Intake');
+            $intake->status = 0;
+            $msg = "Intake Restored.";
+        }
+        $intake->update();
+        return ['msg_value' => $msg, 'msg_type' => 'msg_success'];
+    }
 
     public static function hideCategory($user, $cat)
     {
@@ -554,9 +579,6 @@ class CommonService
         $data['unverified'] = $allUsers->filter(function ($user) {
             return $user->email_verified_at === null;
         });
-
-        $data['users'] = $allUsers;
-
         return $data;
     }
 

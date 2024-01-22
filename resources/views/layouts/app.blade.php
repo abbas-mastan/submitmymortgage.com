@@ -134,7 +134,7 @@
                 var titleText = 'Are you sure to ' + textClass.toLowerCase() + ' it?';
             }
 
-            if (textClass == 'Hide' || textClass == 'Unhide' || textClass == 'Disable' || textClass == 'Enable' ||
+            if (textClass == 'Reject' || textClass == 'Accept' || textClass == 'Hide' || textClass == 'Unhide' || textClass == 'Disable' || textClass == 'Enable' ||
                 textClass == 'Restore') {
                 middleSentenceOfModal = null;
             } else {

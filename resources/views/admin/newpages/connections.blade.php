@@ -7,29 +7,8 @@
 @include('parts.connection-modal-form')
 <div class="flex-wrap flex-shrink-0 w-full">
         <x-flex-card title="Connections" titlecounts="{{ count($connections) }}" iconurl="{{ asset('icons/Marketing.svg') }}" />
-        <table class="w-full pt-7" id="deleted-table">
-            <thead class="bg-gray-300">
-                <tr>
-                    <th class=" pl-2 tracking-wide">
-                        S.No
-                    </th>
-                    <th class="">
-                        Name
-                    </th>
-                    <th class="">
-                        User ID
-                    </th>
-                    <th class="">
-                        Role
-                    </th>
-                    <th class="">
-                   Created By
-                    </th>
-                    <th class="">
-                        Actions
-                    </th>
-                </tr>
-            </thead>
+        <table class="w-full pt-7" id="{{ count($connections) > 10 ? 'deleted-table' : 'table'}}">
+          <x-users-table-head />
             <tbody>
                 @foreach ($connections as $connection)
                     <tr class="text-center">

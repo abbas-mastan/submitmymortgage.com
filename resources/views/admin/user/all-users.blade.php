@@ -151,18 +151,17 @@
                             {{ $user->createdBy->role }}
                         @endif
                     </td>
-                    <td class="flex pl-2 justify-center tracking-wide border border-r-0">
+                    <td class="flex pl-2 justify-center items-center tracking-wide border border-r-0">
                         <a data="{{ $role === $superadminrole ? 'temporary' : 'Delete' }}" class="delete"
                             href="{{ url(getRoutePrefix() . '/delete-user/' . $user->id) }}">
-                            <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
+                            <button class="bg-themered  tracking-wide font-semibold capitalize mt-1 text-xl">
                                 <img style="-webkit-writing-mode: vertical-lr;" src="{{ asset('icons/trash.svg') }}"
                                     alt="" class="p-1 w-7">
-
                             </button>
                         </a>
                         @if ($role === $superadminrole || $role === 'Admin')
                             <a href="{{ url(getRoutePrefix() . '/verify-user/' . $user->id) }}"
-                                class="bg-themered text-white px-2.5 py-0.5 ml-1">Verify</a>
+                                class="bg-themered text-white px-2.5 py-[0.15rem] tracking-wide ml-1">Verify</a>
                         @endif
                     </td>
                 </tr>

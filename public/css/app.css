@@ -684,9 +684,6 @@ select {
 .pointer-events-auto {
   pointer-events: auto;
 }
-.visible {
-  visibility: visible;
-}
 .invisible {
   visibility: hidden;
 }
@@ -1700,6 +1697,14 @@ select {
 .py-\[0\.32rem\] {
   padding-top: 0.32rem;
   padding-bottom: 0.32rem;
+}
+.py-\[0\.20rem\] {
+  padding-top: 0.20rem;
+  padding-bottom: 0.20rem;
+}
+.py-\[0\.15rem\] {
+  padding-top: 0.15rem;
+  padding-bottom: 0.15rem;
 }
 .pb-20 {
   padding-bottom: 5rem;

@@ -148,4 +148,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsTo(Company::class, 'company_id');
     }
+
+    public function intakes()       
+    {
+        return $this->hasMany(IntakeForm::class);
+    }
 }
