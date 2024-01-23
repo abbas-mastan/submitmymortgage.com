@@ -107,6 +107,7 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
         Route::get('/remove-access/{user}', 'removeAcess');
         Route::post('/submit-intake-form', 'submitIntakeForm');
         Route::get('/loan-intake', 'loanIntake');
+        Route::get('/loan-intake/{id}', 'loanIntakeShow');
         Route::get('/intake-update-status/{intake}/{status?}', 'updateIntakeStatus');
     
         Route::post('/do-associate', 'doAssociate');

@@ -539,9 +539,14 @@ class SuperAdminController extends Controller
     public function loanIntake()
     {
         $data['role'] = Auth::user()->role;
-        $data['tables'] = ['Pending Intake', 'Completed Intake', 'Incomplete Intake', 'Deleted Intake'];
+        $data['tables'] = ['Pending Intake'];
         $data['intakes'] = IntakeForm::get();
         return view('admin.intakes.index', $data);
+    }
+    public function loanIntakeShow($id)
+    {
+        $data['intake'] = IntakeForm::find($id);
+        return view('admin.intakes.show', $data);
     }
     public function updateIntakeStatus(IntakeForm $intake, $status)
     {

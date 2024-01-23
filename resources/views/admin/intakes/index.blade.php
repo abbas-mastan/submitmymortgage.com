@@ -22,7 +22,7 @@
                 <a href="{{ url('/dashboard') }}">
                     <div class="flex h-32 bg-gradient-to-b from-gradientStart to-gradientEnd">
                         <div class="w-1/2 p-4 pl-8">
-                            <span class="text-white text-lg block text-left">Applications</span>
+                            <span class="text-white text-lg block text-left">Intake Forms</span>
                             <span class="text-white text-2xl block text-left font-bold mt-1">
                                 {{-- {{ $applications->count() }} --}}
                             </span>
@@ -51,7 +51,7 @@
                                     <td class="verifiedSerial pl-2 tracking-wide border border-l-0">{{ $serialNo }}</td>
                                     <td class=" pl-2 tracking-wide border border-l-0">
                                         <a title="Click to view this intake" class="text-blue-500 inline"
-                                            {{-- href="{{ url(getRoutePrefix() . '/intake-show/' . $intake->id) }}" --}}>
+                                            href="{{ url(getRoutePrefix() . '/loan-intake/' . $intake->id) }}">
                                             {{ $intake->name }}
                                         </a>
                                         {{-- <a title="Click to Edit this intake"
