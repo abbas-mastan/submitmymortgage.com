@@ -1,6 +1,5 @@
 <div class="sticky top-0 h-screen flex-shrink flex-grow-0 bg-gradient-to-b from-gradientStart to-gradientEnd">
-    <div
-        class="py-3 my-1 rounded-xl w-full">
+    <div class="py-3 my-1 rounded-xl w-full">
         <ul class="flex justify-start gap-2 sm:gap-0 sm:flex-col overflow-hidden sm:content-center sm:justify-center">
             <li class="py-3 my-1 sm:px-24 mt-5 hidden sm:block ">
                 <a class="truncate flex flex-col items-center" href="{{ url('/dashboard') }}">
@@ -8,24 +7,25 @@
                     <span class="tracking-wide text-xl text-white ">Submit My <br class="xl:hidden"> Mortgage</span>
                 </a>
             </li>
-            @if(Gate::check('isAdmin') || Gate::check('isSuperAdmin'))
+            @if (Gate::check('isAdmin') || Gate::check('isSuperAdmin'))
                 <!-- Sidebar for Admin starts -->
-                @if($currentrole === $superadminrole)
-                <li class="mt-10 py-3 my-1 sm:px-24 flex flex-row">
-                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getSuperAdminRoutePrefix() . '/companies') }}">
-                        <span class="tracking-wide sm:block  capitalize text-white">Companies</span>
-                    </a>
-                </li>
-                <li class="-mt-4 hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
+                @if ($currentrole === $superadminrole)
+                    <li class="mt-10 py-3 my-1 sm:px-24 flex flex-row">
+                        <span
+                            class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </span>
+                        <a class="truncate ml-4" href="{{ url(getSuperAdminRoutePrefix() . '/companies') }}">
+                            <span class="tracking-wide sm:block  capitalize text-white">Companies</span>
+                        </a>
+                    </li>
+                    <li class="-mt-4 hidden sm:block">
+                        <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
+                            &nbsp;
+                        </span>
+                    </li>
                 @endif
-                <li class="pb-3 mb-1 sm:px-24 flex flex-row {{$currentrole !== $superadminrole ? 'mt-10':''}}">
+                <li class="pb-3 mb-1 sm:px-24 flex flex-row {{ $currentrole !== $superadminrole ? 'mt-10' : '' }}">
                     <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
@@ -40,7 +40,8 @@
                 </li>
                 @if (session('role') === 'Processor')
                     <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
-                        <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
+                        <span
+                            class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
                             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                         </span>
                         <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/application/-1') }}">
@@ -75,73 +76,13 @@
                         <span class="tracking-wide sm:block  capitalize text-white">Contacts</span>
                     </a>
                 </li>
-            @if($currentrole === 'Admin' || Gate::check('isSuperAdmin'))
-                <li class="-mt-4 hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
-                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/connections') }}">
-                        <span class="tracking-wide sm:block  capitalize text-white">Connections</span>
-                    </a>
-                </li>
-                <li class="-mt-4 hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
-                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/loan-intake') }}">
-                        <span class="tracking-wide sm:block  capitalize text-white">Loan Intake</span>
-                    </a>
-                </li>
+                @if ($currentrole === 'Admin' || Gate::check('isSuperAdmin'))
+                    <x-tab href="connections" title="Connections" />
                 @endif
-                <li class="-mt-4 hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
-                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/applications') }}">
-                        <span class="tracking-wide sm:block  capitalize text-white">Loan Pipeline</span>
-                    </a>
-                </li>
-                <li class="-mt-4 hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
-                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/upload-files') }}">
-                        <span class="tracking-wide sm:block capitalize text-white">Upload Files</span>
-                    </a>
-                </li>
-                <li class="-mt-4 hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
-                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/files') }}">
-                        <span class="tracking-wide sm:block  capitalize text-white">Files Uploaded</span>
-                    </a>
-                </li>
+                <x-tab href="loan-intake" title="Loan Intakes" />
+                <x-tab href="applications" title="Loan Pipeline" />
+                <x-tab href="upload-files" title="Upload Files" />
+                <x-tab href="files" title="Files Uploaded" />
                 <li class="-mt-4 hidden sm:block">
                     <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
                         &nbsp;
@@ -194,84 +135,13 @@
                         <span class="tracking-wide sm:block  capitalize text-white">Create New User</span>
                     </a>
                 </li>
-                <li class="-mt-4 hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
-                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/application/-1') }}">
-                        <span class="tracking-wide sm:block  capitalize text-white">Loan Application</span>
-                    </a>
-                </li>
-                <li class="-mt-4 hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
-                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/all-users') }}">
-                        <span class="tracking-wide sm:block  capitalize text-white">All Users</span>
-                    </a>
-                </li>
-                <li class="-mt-4 hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
-                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/upload-files') }}">
-                        <span class="tracking-wide sm:block capitalize text-white">Upload Files</span>
-                    </a>
-                </li>
-                <li class="-mt-4 hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
-                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/files') }}">
-                        <span class="tracking-wide sm:block  capitalize text-white">Files Uploaded</span>
-                    </a>
-                </li>
-                <li class="-mt-4 hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
-                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/applications') }}">
-                        <span class="tracking-wide sm:block  capitalize text-white">Loan Pipeline</span>
-                    </a>
-                </li>
-                <li class="-mt-4 hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
-                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getAssociateRoutePrefix() . '/contacts') }}">
-                        <span class="tracking-wide sm:block  capitalize text-white">Contacts</span>
-                    </a>
-                </li>
+                <x-tab href="application/-1" title="Loan Application" />
+                <x-tab href="all-users" title="All Users" />
+                <x-tab href="upload-files" title="Upload Files" />
+                <x-tab href="files" title="Files Uploaded" />
+                <x-tab href="applications" title="Loan Pipeline" />
+                <x-tab href="loan-intake" title="Loan Intake" />
+                <x-tab href="contacts" title="Contacts" />
                 <li class="-mt-3 hidden sm:block">
                     <span class="border-l-4  border-l-white  border-opacity-20 h-14  vertical-line-m">
                         &nbsp;
