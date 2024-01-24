@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ApplicationRequest;
-use App\Http\Requests\IntakeFormRequest;
-use App\Models\Application;
-use App\Models\Contact;
+use Faker\Factory;
 use App\Models\Info;
-use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
+use App\Models\Contact;
+use App\Models\Project;
+use Illuminate\View\View;
+use App\Models\IntakeForm;
+use App\Models\Application;
 use App\Models\UserCategory;
+use Illuminate\Http\Request;
+use App\Services\UserService;
 use App\Services\AdminService;
 use App\Services\CommonService;
-use App\Services\UserService;
-use Faker\Factory;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use App\Http\Requests\IntakeFormRequest;
+use App\Http\Requests\ApplicationRequest;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\View\View;
 
 class AssociateController extends Controller
 {
@@ -416,6 +417,22 @@ class AssociateController extends Controller
     public function submitIntakeForm(IntakeFormRequest $request)
     {
         return CommonService::submitIntakeForm($request);
+    }
+    
+    public function loanIntake()
+    {
+        return CommonService::loanIntake();
+      
+    }
+    public function loanIntakeShow($id)
+    {
+        $data['intake'] = IntakeForm::find($id);
+        return view('admin.intakes.show', $data);
+    }
+    public function updateIntakeStatus(IntakeForm $intake, $status)
+    {
+        $msg = CommonService::updateIntakeStatus($intake, $status);
+        return back()->with($msg['msg_type'], $msg['msg_value']);
     }
 
     public function removeAcess(Request $request, User $user)

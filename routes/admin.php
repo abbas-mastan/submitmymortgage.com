@@ -104,7 +104,9 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
         Route::get('project/{status}/{project}', 'changeProjectStatus');
         // this route is for mark as read the notification
         Route::get('/mark-as-read/{id}', 'markAsRead');
-        Route::get('/remove-access/{user}', 'removeAcess');
+        Route::get('/loan-intake', 'loanIntake');
+        Route::get('/loan-intake/{id}', 'loanIntakeShow')->name('loan-intake');
+        Route::get('/intake-update-status/{intake}/{status?}', 'updateIntakeStatus');
         Route::post('/submit-intake-form', 'submitIntakeForm');
         Route::post('/do-associate', 'doAssociate');
         Route::post('/get-associates/{company?}', 'getAssociates');

@@ -1,5 +1,5 @@
 {{-- @if ($currentrole === $superadminrole || $currentrole === 'Admin') --}}
-<x-form.intake-modal-form />
+<x-form.intake-modal-form :intake="$intake" />
 {{-- @endif --}}
 <div class="flex justify-evenly gap-8 align-center">
     <div class="sm:w-2/3 w-full">

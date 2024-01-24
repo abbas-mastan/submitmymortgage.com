@@ -1,3 +1,4 @@
+@props(['value'=>null,'name','label','attribute','type'])
 <div class="my-3 capitalize {{$class ?? ''}}">
     <label for="{{$name}}" class="block text-sm text-dark-500 leading-6  font-bold">{{$label}}</label>
     <div class="relative rounded-md shadow-sm">
@@ -9,7 +10,7 @@
              ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
               sm:text-sm sm:leading-6"
             placeholder="{{$label}}"
-            value="">
+            value="{{$value}}">
     </div>
     <span class="text-red-700" id="{{$name}}_error"></span>
 </div>

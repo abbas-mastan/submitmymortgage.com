@@ -71,6 +71,10 @@ Route::group(
         Route::get('/remove-access/{user}', 'removeAcess');
 
         Route::post('/submit-intake-form', 'submitIntakeForm');
+        Route::get('/loan-intake', 'loanIntake');
+        Route::get('/loan-intake/{id}', 'loanIntakeShow')->name('loan-intake');
+        Route::get('/intake-update-status/{intake}/{status?}', 'updateIntakeStatus');
+    
 
     }
 );

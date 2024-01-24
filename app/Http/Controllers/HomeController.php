@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\IntakeForm;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
@@ -37,7 +38,8 @@ class HomeController extends Controller
             Gate::allows('isAssociate') => $this->getAssociateDashboard(),
             default => []
         };
-
+        
+        $data['intake'] = new IntakeForm();
         $data["authUrl"] = $this->client->createAuthUrl();
         $data["active"] = "dashboard";
         $data['carbon'] = Carbon::class;

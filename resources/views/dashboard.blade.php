@@ -48,5 +48,8 @@
     </div>
 @endsection
 @section('foot')
+<script>
+var routePrefix ="{{url(getRoutePrefix())}}";
+</script>
     @include('parts.js.dashboard-script')
 @endsection

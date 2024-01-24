@@ -474,11 +474,13 @@ class CommonService
     public static function submitIntakeForm(Request $request)
     {
         $user = new User;
+        $admin = Auth::user();
         $faker = Factory::create();
         $user->name = $request->first_name . ' ' . $request->last_name;
         $user->email = $request->email;
         $user->role = 'Borrower';
-        $user->created_by = Auth::id();
+        $user->created_by = $admin->id;
+        $user->company_id = $request->company ?? $admin->company_id ?? null;
         $user->password = bcrypt($faker->password(8));
         if ($user->save()) {
             Password::sendResetLink($request->only('email'));
@@ -499,7 +501,9 @@ class CommonService
             'purchase_price' => $request->purchase_price ?? null,
             'property_value' => $request->property_value ?? null,
             'down_payment' => $request->down_payment ?? null,
-            'current_loan_amount' => $request->current_loan_amount ?? null,
+            'current_loan_amount' => $request->current_loan_amount_purchase ??
+            $request->current_loan_amount_cashout ??
+            $request->current_loan_amount_refinance ?? null,
             'closing_date' => $request->closing_date ?? null,
             'current_lender' => $request->current_lender ?? null,
             'rate' => $request->rate ?? null,
@@ -510,7 +514,29 @@ class CommonService
             'how_much' => $request->how_much ?? null,
             'note' => $request->note ?? null,
         ]);
+        // return redirect()->back()->with('msg_success','From submited succesfully');
         return response()->json('success', 200);
+    }
+
+    public static function loanIntake()
+    {
+        $user = Auth::user();
+        $data['role'] = $user->role;
+        $data['tables'] = ['Pending Intake'];
+        if ($user->role == 'Super Admin') {
+            $data['intakes'] = IntakeForm::get();
+        } elseif ($user->role == 'Admin') {
+            $users = User::where('company_id', $user->company_id)->get();
+            $data['intakes'] = IntakeForm::whereHas('user', function ($query) use ($users) {
+                $query->whereIn('id', $users->pluck('id'));
+            })->get();
+        }else{
+            $users = User::where('created_by', $user->id)->get();
+            $data['intakes'] = IntakeForm::whereHas('user', function ($query) use ($users) {
+                $query->whereIn('id', $users->pluck('id'));
+            })->get();
+        }
+        return view('admin.intakes.index', $data);
     }
 
     public static function storeProject(Request $request, $user)
@@ -546,7 +572,7 @@ class CommonService
         $user = User::find(Auth::id());
         $data['role'] = $user->role;
         if ($user->role == 'Super Admin') {
-            $allUsers = User::with(['company','createdBy'])->whereNotIn('role',['Super Admin'])->latest()->get();
+            $allUsers = User::with(['company', 'createdBy'])->whereNotIn('role', ['Super Admin'])->latest()->get();
             $data['trashed'] = User::withTrashed()
                 ->with('createdBy')
                 ->whereNotNull('deleted_at')
@@ -554,7 +580,7 @@ class CommonService
                 ->get();
         } elseif ($user->role === 'Admin') {
             $allUsers = User::where('company_id', Auth::user()->company_id)
-                ->where('role','!=','Admin')
+                ->where('role', '!=', 'Admin')
                 ->with(['createdBy'])
                 ->latest()
                 ->get();

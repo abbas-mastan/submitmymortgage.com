@@ -6,6 +6,7 @@ $('.intakeForm').submit(function(e) {
     $.each(errors, function(indexInArray, error_tag) {
         $(`#${error_tag}`).empty();
     });
+    
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -20,9 +21,7 @@ $('.intakeForm').submit(function(e) {
             $('.jq-loader-for-ajax').addClass('hidden');
             if (response === 'success') {
                 $('#newProjectModal').toggleClass('hidden');
-                window.location.href =
-                    "{{ url(getRoutePrefix() . '/redirect/dashboard/form-submitted-successfully') }}";
-            }
+                window.location.href = routePrefix + '/redirect/dashboard/form-submitted-successfully';            }
             $.each(response.error, function(index, error) {
                 var fieldId = `#${error.field}_error`;
                 var errorMessage = error.message;
@@ -48,7 +47,11 @@ $('.newProject, .closeModal').click(function(e) {
 // this code is the shorter version of below commented code
 $('.loantype').change(function(e) {
     e.preventDefault();
-    const selectedValue = $(this).val();
+    changeLoantype($(this).val());
+});
+
+function changeLoantype(loanType){
+    const selectedValue = loanType;
     const sections = {
         'Purchase': 'purchase',
         'Cash Out': 'cashout',
@@ -69,7 +72,7 @@ $('.loantype').change(function(e) {
         }
     }
     $('select[name=loan_type]').val(selectedValue);
-});
+}
 
 $('#isItRentalProperty').change(function(e) {
     e.preventDefault();
