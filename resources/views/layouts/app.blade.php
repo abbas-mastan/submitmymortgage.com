@@ -91,11 +91,15 @@
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script>
         @if (request()->route()->getName() != 'all-user')
-        ['user', 'completed', 'incomplete', 'deleted'].map((table) => {
-            new DataTable("#" + table + "-table");
-            $(`select[name="${table}-table_length"]`).addClass('w-16');
-            $(`select[name="${table}-table_length"]`).addClass('mb-3');
-        });
+            ['user', 'completed', 'incomplete', 'deleted'].map((table) => {
+                new DataTable("#" + table + "-table", {
+                    order: [
+                        [1, 'desc']
+                    ]
+                });
+                $(`select[name="${table}-table_length"]`).addClass('w-16');
+                $(`select[name="${table}-table_length"]`).addClass('mb-3');
+            });
         @endif
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
@@ -134,7 +138,8 @@
                 var titleText = 'Are you sure to ' + textClass.toLowerCase() + ' it?';
             }
 
-            if (textClass == 'Reject' || textClass == 'Accept' || textClass == 'Hide' || textClass == 'Unhide' || textClass == 'Disable' || textClass == 'Enable' ||
+            if (textClass == 'Reject' || textClass == 'Accept' || textClass == 'Hide' || textClass == 'Unhide' ||
+                textClass == 'Disable' || textClass == 'Enable' ||
                 textClass == 'Restore') {
                 middleSentenceOfModal = null;
             } else {
