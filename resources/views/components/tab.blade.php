@@ -1,4 +1,4 @@
-@props(['href','title'])
+@props(['href','title','class'])
 <li class="-mt-4 hidden sm:block">
     <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
         &nbsp;

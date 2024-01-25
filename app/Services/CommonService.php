@@ -498,20 +498,20 @@ class CommonService
             'state' => $request->state ?? null,
             'zip' => $request->zip ?? null,
             'loan_type' => $request->loan_type ?? null,
-            'purchase_price' => $request->purchase_price ?? null,
-            'property_value' => $request->property_value ?? null,
-            'down_payment' => $request->down_payment ?? null,
+            'purchase_price' => $request->purchase_price ?? $request->purchase_price_fix_flip ?? null,
+            'property_value' => $request->property_value ?? $request->property_value_fix_flip ?? null,
+            'down_payment' => $request->down_payment ?? $request->down_payment_fix_flip ?? null,
             'current_loan_amount' => $request->current_loan_amount_purchase ??
             $request->current_loan_amount_cashout ??
             $request->current_loan_amount_refinance ?? null,
-            'closing_date' => $request->closing_date ?? null,
-            'current_lender' => $request->current_lender ?? null,
-            'rate' => $request->rate ?? null,
+            'closing_date' => $request->closing_date_purchase ?? $request->closing_date_fix_flip ??  null,
+            'current_lender' => $request->current_lender_cashout ?? $request->current_lender_refinance ?? null,
+            'rate' => $request->rate_refinance ?? $request->rate_cashout ?? null,
             'is_it_rental_property' => $request->is_it_rental_property ?? null,
-            'monthly_rental_income' => $request->monthly_rental_income ?? null,
+            'monthly_rental_income' => $request->monthly_rental_income ?? $request->monthly_rental_income_refinance ??null,
             'cashout_amount' => $request->cashout_amount ?? null,
             'is_repair_finance_needed' => $request->is_repair_finance_needed ?? null,
-            'how_much' => $request->how_much ?? null,
+            'how_much' => $request->repair_finance_amount ?? null,
             'note' => $request->note ?? null,
         ]);
         // return redirect()->back()->with('msg_success','From submited succesfully');
@@ -530,7 +530,7 @@ class CommonService
             $data['intakes'] = IntakeForm::whereHas('user', function ($query) use ($users) {
                 $query->whereIn('id', $users->pluck('id'));
             })->get();
-        }else{
+        } else {
             $users = User::where('created_by', $user->id)->get();
             $data['intakes'] = IntakeForm::whereHas('user', function ($query) use ($users) {
                 $query->whereIn('id', $users->pluck('id'));

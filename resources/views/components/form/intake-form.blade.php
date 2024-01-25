@@ -9,8 +9,8 @@
                 <label for="company" class="block text-sm text-dark-500 leading-6 font-bold">Company</label>
                 <select
                     class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
-ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
-sm:text-sm sm:leading-6"
+                        ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
+                        sm:text-sm sm:leading-6"
                     name="company">
                     <option value="">Select Company</option>
                     @foreach (\App\Models\Company::get() as $company)
@@ -41,8 +41,8 @@ sm:text-sm sm:leading-6"
             <label for="loantype" class="block text-sm text-dark-500 leading-6 font-bold">Loan Type</label>
             <select
                 class="loantype w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
-    ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
-    sm:text-sm sm:leading-6"
+                        ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
+                        sm:text-sm sm:leading-6"
                 name="loan_type">
                 @foreach (['Purchase', 'Cash Out', 'Fix & Flip', 'Refinance'] as $LoanType)
                     <option {{ old('loan_type', $intake->loan_type) === $LoanType ? 'selected' : '' }}
@@ -66,15 +66,16 @@ sm:text-sm sm:leading-6"
             <x-form.input name="current_loan_amount_purchase" :value="$intake->current_loan_amount ?? ''" type="number"
                 label="Current Loan Amount" class="mb-0" sign="1" />
         </div>
-        <x-form.input name="closing_date" :value="$intake->closing_date ?? ''" type="date" class="mb-0" label="ClosingDate" />
+        <x-form.input name="closing_date_purchase" :value="$intake->closing_date ?? ''" type="date" class="mb-0"
+            label="ClosingDate" />
     </div>
     <div class="cashout hidden grid grid-cols-2 gap-x-4">
         <div class="mt-3 ">
             <label for="loantype" class="block text-sm text-dark-500 leading-6 font-bold">Loan Type</label>
             <select
                 class="loantype w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
-    ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
-    sm:text-sm sm:leading-6"
+                        ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
+                        sm:text-sm sm:leading-6"
                 name="loan_type">
                 @foreach (['Purchase', 'Cash Out', 'Fix & Flip', 'Refinance'] as $LoanType)
                     <option {{ old('loan_type', $intake->loan_type) === $LoanType ? 'selected' : '' }}
@@ -87,10 +88,10 @@ sm:text-sm sm:leading-6"
                 label="Current Loan Amount" class="mb-0" sign="1" />
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->current_lender_cashout ?? ''" name="current_lender_cashout" label="Current Lender" class="mb-0" />
+            <x-form.input :value="$intake->current_lender ?? ''" name="current_lender_cashout" label="Current Lender" class="mb-0" />
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->rate_cashout ?? ''" name="rate_cashout" type="number" label="Rate" class="mb-0"
+            <x-form.input :value="$intake->rate ?? ''" name="rate_cashout" type="number" label="Rate" class="mb-0"
                 sign="1" />
         </div>
         <div class="mt-3 ">
@@ -98,8 +99,8 @@ sm:text-sm sm:leading-6"
                 Property?</label>
             <select
                 class=" w-full shadow-none py-0.5 pl-7 pr-20 bg-gray-100 border-1
-    ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
-    sm:text-sm sm:leading-6"
+                        ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
+                        sm:text-sm sm:leading-6"
                 name="is_it_rental_property" id="isItRentalProperty">
                 @foreach (['Yes', 'No'] as $rental)
                     <option {{ old('isItRentalProperty', $intake->isItRentalProperty) === $rental ? 'selected' : '' }}
@@ -131,18 +132,19 @@ sm:text-sm sm:leading-6"
             </select>
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->purchase_price_fix_flip ?? ''" name="purchase_price_fix_flip" type="number" label="Purchase Price"
+            <x-form.input :value="$intake->purchase_price ?? ''" name="purchase_price_fix_flip" type="number" label="Purchase Price"
                 class="mb-0" sign="1" />
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->property_value_fix_flip ?? ''" name="property_value_fix_flip" type="number" label="Property Value"
+            <x-form.input :value="$intake->property_value ?? ''" name="property_value_fix_flip" type="number" label="Property Value"
                 class="mb-0" sign="1" />
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->down_payment_fix_flip ?? ''" name="down_payment_fix_flip" type="number" label="Down Payment"
+            <x-form.input :value="$intake->down_payment ?? ''" name="down_payment_fix_flip" type="number" label="Down Payment"
                 class="mb-0" sign="1" />
         </div>
-        <x-form.input name="closing_date_fix_flip" type="date" class="mb-0" label="ClosingDate" />
+        <x-form.input name="closing_date_fix_flip" :value="$intake->closing_date ?? ''" type="date" class="mb-0"
+            label="ClosingDate" />
         <div class="mt-3 ">
             <label for="isRepairFinanceNeeded" class="block text-sm text-dark-500 leading-6 font-bold">Is Repair
                 Financing Needed?</label>
@@ -159,7 +161,7 @@ sm:text-sm sm:leading-6"
             </select>
         </div>
         <div class="relative repairfinanceamountdiv">
-            <x-form.input :value="$intake->repair_finance_amount ?? ''" name="repair_finance_amount" type="number" label="How much?"
+            <x-form.input :value="$intake->how_much ?? ''" name="repair_finance_amount" type="number" label="How much?"
                 class="mb-0" sign="1" />
         </div>
     </div>
@@ -182,11 +184,11 @@ sm:text-sm sm:leading-6"
                 label="Current Loan Amount" class="mb-0" sign="1" />
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->current_lender_refinance ?? ''" name="current_lender_refinance" type="number" label="Current Lender"
+            <x-form.input :value="$intake->current_lender ?? ''" name="current_lender_refinance" type="number" label="Current Lender"
                 class="mb-0" sign="1" />
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->rate_refinance ?? ''" name="rate_refinance" type="number" label="Rate" class="mb-0"
+            <x-form.input :value="$intake->rate ?? ''" name="rate_refinance" type="number" label="Rate" class="mb-0"
                 sign="1" />
         </div>
         <div class="mt-3 ">
@@ -206,7 +208,7 @@ sm:text-sm sm:leading-6"
             </select>
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->monthly_rental_income_refinance ?? ''" name="monthly_rental_income_refinance" type="number"
+            <x-form.input :value="$intake->monthly_rental_income ?? ''" name="monthly_rental_income_refinance" type="number"
                 label="Monthly Rental Income" class="mb-0" sign="1" />
         </div>
     </div>
