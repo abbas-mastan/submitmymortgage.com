@@ -20,7 +20,7 @@
         <button class="absolute z-10 py-2 text-white bg-red-800 px-8 newProject">
             Add New Company
         </button>
-        <table class="w-full pt-7" id="completed-table">
+        <table class="w-full pt-7" id="completed">
             <thead class="bg-gray-300">
                 <tr>
                     <th class=" pl-2 tracking-wide">
