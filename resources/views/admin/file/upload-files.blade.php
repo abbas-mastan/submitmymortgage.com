@@ -60,7 +60,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach ($user->attachments as $file)
+            @foreach ($user->attachments->sortByDesc('created_at') as $file)
                 <tr>
                     <td class=" pl-2 tracking-wide border border-l-0">{{ $loop->iteration }}</td>
                     <td class=" pl-2 tracking-wide border border-l-0">
