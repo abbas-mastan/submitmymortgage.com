@@ -94,7 +94,7 @@
             ['user', 'completed', 'incomplete', 'deleted'].map((table) => {
                 new DataTable("#" + table + "-table", {
                     order: [
-                        [1, 'desc']
+                        [0, 'desc']
                     ]
                 });
                 $(`select[name="${table}-table_length"]`).addClass('w-16');
