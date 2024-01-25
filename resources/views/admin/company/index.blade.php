@@ -164,30 +164,6 @@
                 this.submit(); 
             }
         });
-
-
-        var submitButton = $('.submitButton');
-        $('#selectall').click(function(e) {
-            if ($(this).is(':checked')) {
-                checkboxes.prop('checked', true);
-                submitButton.removeClass('cursor-not-allowed')
-                    .removeAttr('disabled');
-            } else {
-                checkboxes.prop('checked', false);
-                submitButton.addClass('cursor-not-allowed')
-                    .attr('disabled', true);
-            }
-        });
-
-        checkboxes.click(function() {
-            if (checkboxes.is(':checked')) {
-                submitButton.removeClass('cursor-not-allowed')
-                    .removeAttr('disabled');
-            } else {
-                submitButton.addClass('cursor-not-allowed')
-                    .attr('disabled', true);
-            }
-        });
         $('.newProject').click(function(e) {
             e.preventDefault();
             $('#newProjectModal').removeClass('hidden');
