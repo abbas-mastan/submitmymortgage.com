@@ -36,7 +36,8 @@
             </thead>
             <tbody>
                 @foreach ($companies as $company)
-                <tr class="text-center">
+                    @if(!$company->trashed())   
+                <tr class="text-center {{$company->trashed() ? 'text-red-700' : ''}}">
                         <td class=" pl-2 tracking-wide border border-l-0">
                             {{ date('d/m/y', strtotime($company->created_at)) }}
                         </td>
@@ -61,6 +62,7 @@
                             
                         </td>
                     </tr>
+                    @endif
                 @endforeach
             </tbody>
         </table>
