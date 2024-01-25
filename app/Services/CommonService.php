@@ -220,16 +220,19 @@ class CommonService
     }
     public static function applications()
     {
-        $data['role'] = Auth::user()->role;
+        $admin = Auth::user();
+        $data['role'] = $admin->role;
         $data['tables'] = ['Pending Applications', 'Completed Applications', 'Incomplete Applications', 'Deleted Applications'];
 
         if ($data['role'] == 'Super Admin') {
             $data['applications'] = Application::with(['user' => function ($query) {
                 $query->withTrashed();
-            }])->get();
+            }])->latest()->get();
+        } elseif ($admin->role == 'Admin') {
+            $users = User::where('company_id',$admin->company_id)->withTrashed()->get();
+            $data['applications'] = Application::whereIn('user_id', $users->pluck('id'))->latest()->get();
         } else {
             $data['tables'] = array_diff($data['tables'], ['Deleted Applications']);
-
             $user = User::find(auth()->id());
             $role = $user->role;
             // Fetch users created directly by the user
@@ -237,21 +240,21 @@ class CommonService
                 ->with(['createdBy', 'application.user'])
                 ->withTrashed()
                 ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
+                ->latest()
                 ->get();
 
-            $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers
-                    ->pluck('id'))
+            $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
                 ->with('application.user')
                 ->withTrashed()
                 ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
                 ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
+                ->latest()
                 ->get();
             // Combine the directly and indirectly created users
             $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
             $data['users'] = $allUsers;
 
         }
-
         return $data;
     }
 
@@ -504,11 +507,11 @@ class CommonService
             'current_loan_amount' => $request->current_loan_amount_purchase ??
             $request->current_loan_amount_cashout ??
             $request->current_loan_amount_refinance ?? null,
-            'closing_date' => $request->closing_date_purchase ?? $request->closing_date_fix_flip ??  null,
+            'closing_date' => $request->closing_date_purchase ?? $request->closing_date_fix_flip ?? null,
             'current_lender' => $request->current_lender_cashout ?? $request->current_lender_refinance ?? null,
             'rate' => $request->rate_refinance ?? $request->rate_cashout ?? null,
             'is_it_rental_property' => $request->is_it_rental_property ?? null,
-            'monthly_rental_income' => $request->monthly_rental_income ?? $request->monthly_rental_income_refinance ??null,
+            'monthly_rental_income' => $request->monthly_rental_income ?? $request->monthly_rental_income_refinance ?? null,
             'cashout_amount' => $request->cashout_amount ?? null,
             'is_repair_finance_needed' => $request->is_repair_finance_needed ?? null,
             'how_much' => $request->repair_finance_amount ?? null,
@@ -524,17 +527,19 @@ class CommonService
         $data['role'] = $user->role;
         $data['tables'] = ['Pending Intake'];
         if ($user->role == 'Super Admin') {
-            $data['intakes'] = IntakeForm::get();
+            $data['intakes'] = IntakeForm::latest()->get();
         } elseif ($user->role == 'Admin') {
             $users = User::where('company_id', $user->company_id)->get();
             $data['intakes'] = IntakeForm::whereHas('user', function ($query) use ($users) {
                 $query->whereIn('id', $users->pluck('id'));
-            })->get();
+            })
+                ->latest()
+                ->get();
         } else {
             $users = User::where('created_by', $user->id)->get();
             $data['intakes'] = IntakeForm::whereHas('user', function ($query) use ($users) {
                 $query->whereIn('id', $users->pluck('id'));
-            })->get();
+            })->lastest()->get();
         }
         return view('admin.intakes.index', $data);
     }

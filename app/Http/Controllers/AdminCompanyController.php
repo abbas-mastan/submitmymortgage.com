@@ -10,8 +10,8 @@ class AdminCompanyController extends Controller
 {
     public function index()
     {
-        $companies = Company::where('enable', true)->get();
-        $trashed = Company::where('enable', false)->get();
+        $companies = Company::where('enable', true)->latest()->get();
+        $trashed = Company::where('enable', false)->latest()->get();
         return view('admin.company.index', compact('companies', 'trashed'));
     }
 

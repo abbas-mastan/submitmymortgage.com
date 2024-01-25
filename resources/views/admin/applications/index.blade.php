@@ -41,7 +41,7 @@
         @if ($role == 'Super Admin')
             @foreach ($tables as $key => $table)
                 @php $serialNo = 1; @endphp
-                <h2 class="text-center text-themered text-2xl font-semibold">{{ $table }}</h2>
+                <h2 class="{{!$loop->first ? 'mt-16':''}} text-center text-themered text-2xl font-semibold">{{ $table }}</h2>
                 <table class="w-full display" id="{{ getTableId($key) }}">
                     <x-table-head />
                     <tbody class="text-center">
@@ -57,9 +57,9 @@
                 </table>
             @endforeach
         @endif
-        @if ($role === 'Associate' || $role === 'Junior Associate' || $role == 'Processor' || $role == 'Admin')
+        @if ($role != 'Super Admin' && $role != 'Borrower')
             @foreach ($tables as $key => $table)
-                <h2 class="text-center text-themered text-2xl font-semibold">{{ $table }}</h2>
+                <h2 class="{{!$loop->first ? 'mt-16':''}} text-center text-themered text-2xl font-semibold">{{ $table }}</h2>
                 <table class="w-full display" id="{{ getTableId($key) }}">
                     <tbody class="text-center">
                         <x-table-head />
@@ -90,21 +90,10 @@
     <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
     <script>
         var verifiedSerialText = $('.verifiedSerial').text();
-
-
-
         $('[data="Reject"]').attr('title', 'Reject This Deal');
         $('[data="Accept"]').attr('title', 'Accept This Deal');
         $('[title="Delete this user"]').attr('title', 'Delete This Deal');
-        // $(document).ready(function() {
-        //     $('#user-table').DataTable({
-        //         pageLength: 30,
-        //         lengthMenu: [10, 20, 30, 50, 100, 200],
-        //     });
-        // });
-        // $('.no-footer').addClass('w-full');
         var verifiedSerialText = $('.verifiedSerial').text();
-
         if (verifiedSerialText.length > 0) {
             $('.dataTables_empty').css('display:none');
         } else {

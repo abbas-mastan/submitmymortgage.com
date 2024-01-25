@@ -358,20 +358,20 @@ class SuperAdminController extends Controller
 
     public function projects($id = null): View
     {
-        $data['projects'] = Project::with('users.assistants')->get();
-        $data['enableProjects'] = Project::with(['creater', 'users.createdBy', 'team','borrower.assistants', 'borrower.createdBy'])->where('status', 'enable')->get();
-        $data['disableProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'disable')->get();
-        $data['closeProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'close')->get();
-        $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name', 'role']);
-        $data['teams'] = Team::where('disable', false)->get();
-        $data['trashed'] = User::onlyTrashed()->get();
+        $data['projects'] = Project::with('users.assistants')->latest()->get();
+        $data['enableProjects'] = Project::with(['creater', 'users.createdBy', 'team','borrower.assistants', 'borrower.createdBy'])->where('status', 'enable')->latest()->get();
+        $data['disableProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'disable')->latest()->get();
+        $data['closeProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'close')->latest()->get();
+        $data['borrowers'] = User::where('role', 'Borrower')->latest()->get(['id', 'name', 'role']);
+        $data['teams'] = Team::where('disable', false)->latest()->get();
+        $data['trashed'] = User::onlyTrashed()->latest()->get();
         return view('admin.newpages.projects', $data);
     }
 
     public function ProjectOverview(Request $request, $id = -1, $sortby = null)
     {
         if ($request->ajax()) {
-            $data['attachments'] = Auth::user()->load('attachments')->attachments()->paginate(2);
+            $data['attachments'] = User::find(Auth::id())->load('attachments')->attachments()->paginate(2);
             // $data['attachments'] = \App\Models\Attachment::where('user_id', Auth::id())->paginate(2);
             return $data;
         }
@@ -414,7 +414,6 @@ class SuperAdminController extends Controller
         if (!$team) {
             return response()->json([], 404);
         }
-        // Team not found
         // Retrieve associates and store them in the $associates array
         foreach ($team->users as $user) {
             $associates[] = [
@@ -428,23 +427,11 @@ class SuperAdminController extends Controller
         return response()->json($associates, 200);
     }
 
-    public function newusers($id = null)
-    {
-        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-        if ($admin->role == 'Super Admin') {
-            $data['users'] = User::with(['createdBy'])->where('role', '!=', 'Super Admin')->get(['id', 'name', 'email', 'role', 'created_by', 'email_verified_at']);
-            $data['trashed'] = User::onlyTrashed()->get();
-        } else {
-            $data['users'] = $admin->with(['createdUsers', 'createdBy'])->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
-        }
-        return view('admin.newpages.users', $data);
-    }
-
     public function contacts()
     {
         $data['contacts'] = Contact::with(['user' => function ($query) {
             $query->withTrashed();
-        }])->get();
+        }])->latest()->get();
         return view('admin.newpages.contacts', $data);
     }
 
@@ -463,12 +450,13 @@ class SuperAdminController extends Controller
     public function teams($id = null): View
     {
         $data['teams'] = Team::with('users')->get();
-        $data['enableTeams'] = Team::with(['users.createdBy', 'company'])->where('disable', false)->get();
-        $data['disableTeams'] = Team::with('users')->where('disable', true)->get();
-        $data['companies'] = Company::where('enable', true)->get();
+        $data['enableTeams'] = Team::with(['users.createdBy', 'company'])->where('disable', false)->latest()->get();
+        $data['disableTeams'] = Team::with('users')->where('disable', true)->latest()->get();
+        $data['companies'] = Company::where('enable', true)->latest()->get();
 
         $data['users'] = User::where('role', '!=', 'Admin')
             ->whereIn('role', ['Associate', 'Processor', 'Junior Associate'])
+            ->latest()
             ->get(['id', 'email', 'name', 'role']);
         return view('admin.newpages.teams', $data);
     }
@@ -602,6 +590,7 @@ class SuperAdminController extends Controller
     {
         $data['connections'] = User::with('createdBy')
             ->whereNotIn('role', ['Admin', 'Super Admin'])
+            ->latest()
             ->get(['id', 'name', 'email', 'role', 'company_id', 'created_by']);
         return view('admin.newpages.connections', $data);
     }
