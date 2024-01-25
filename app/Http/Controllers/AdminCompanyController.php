@@ -2,16 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Company;
 use App\Models\User;
+use App\Models\Company;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AdminCompanyController extends Controller
 {
     public function index()
     {
-        $companies = Company::where('enable', true)->latest()->get();
-        $trashed = Company::where('enable', false)->latest()->get();
+        $companies = DB::table('companies')
+        ->where('enable', true)
+        ->orderBy('created_at', 'desc') // Assuming you want to order by created_at
+        ->get();
+    
+    $trashed = DB::table('companies')
+        ->where('enable', false)
+        ->orderBy('created_at', 'desc') // Assuming you want to order by created_at
+        ->get();
+    
         return view('admin.company.index', compact('companies', 'trashed'));
     }
 
