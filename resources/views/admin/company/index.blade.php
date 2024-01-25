@@ -17,10 +17,10 @@
 @include('parts.company-modal-form')
     <div class="flex-wrap flex-shrink-0 w-full">
         <x-flex-card title="Companies" titlecounts="{{ count($companies) }}" iconurl="{{ asset('icons/Marketing.svg') }}" />
-        <button class="{{ count($companies) > 10 'absolute':'mb-5'}} z-10 py-2 text-white bg-red-800 px-8 newProject">
+        <button class="{{ count($companies) > 10 ? 'absolute':'mb-5'}} z-10 py-2 text-white bg-red-800 px-8 newProject">
             Add New Company
         </button>
-        <table class="w-full pt-7" id="{{count($companies) > 10 'completed-table':''}}">
+        <table class="w-full pt-7" id="{{count($companies) > 10 ? 'completed-table':''}}">
             <thead class="bg-gray-300">
                 <tr>
                     <th class=" pl-2 tracking-wide">
