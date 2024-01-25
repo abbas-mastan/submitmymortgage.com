@@ -1,4 +1,4 @@
-@props(['value'=>null,'name','label','attribute','type'])
+@props(['value'=>null,'name','label','attribute','type','class'])
 <div class="my-3 capitalize {{$class ?? ''}}">
     <label for="{{$name}}" class="block text-sm text-dark-500 leading-6  font-bold">{{$label}}</label>
     <div class="relative rounded-md shadow-sm">
