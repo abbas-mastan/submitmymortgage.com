@@ -4,13 +4,15 @@
     @endif
     <thead class="bg-gray-300">
         <tr>
-            <th class="">
-                Upload Date
+            <th class=" pl-2 tracking-wide">
+                S No.
             </th>
             <th class="">
                 File Title
             </th>
-
+            <th class="">
+                Upload Date
+            </th>
             <th class="">
                 Uploaded by
             </th>
@@ -25,9 +27,7 @@
     <tbody>
         @foreach ($files as $file)
             <tr>
-                <td class=" pl-2 tracking-wide border border-l-0 capitalize">
-                    {{ $file->created_at->diffforHumans() }}
-                </td>
+                <td class=" pl-2 tracking-wide border border-l-0">{{ $loop->iteration }}</td>
                 <td class=" pl-2 tracking-wide border border-l-0">
                     <a href="{{ asset($file->file_path) }}" class="hover:text-blue-500 inline">
                         {{ $file->file_name }}
@@ -36,7 +36,9 @@
                         <img src="{{ asset('icons/download.svg') }}" alt="" class="w-6 h-8 ml-5 inline">
                     </a>
                 </td>
-
+                <td class=" pl-2 tracking-wide border border-l-0 capitalize">
+                    {{ convertDBDateUSFormat($file->created_at) }}
+                </td>
                 <td class=" pl-2 tracking-wide border border-l-0 capitalize">
                     {{ $file->uploadedBy->name ?? $file->user->name }} |
                     {{ $file->uploadedBy->role ?? $file->user->role }}
