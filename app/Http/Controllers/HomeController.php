@@ -102,7 +102,7 @@ class HomeController extends Controller
 
     public function showDocx(Media $media)
     {
-       $path = $media->file_path;
+       $path = public_path($media->file_path);
        return view('show-docx',compact('path'));
     }
 }
