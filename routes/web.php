@@ -52,6 +52,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/logout-from-this-user', [SuperAdminController::class, 'ReLoginFrom']);
     Route::get('/dashboard', [HomeController::class, 'dashboard']);
     Route::get('/home', [HomeController::class, 'dashboard']);
+    Route::get('/show-docx/{media}',[HomeController::class, 'showDocx']);
     // Gmail attachments download and other routes
     Route::get('/gmail/auth', [GmailController::class, 'authenticate']);
     Route::get('/gmail/callback', [GmailController::class, 'callback']);

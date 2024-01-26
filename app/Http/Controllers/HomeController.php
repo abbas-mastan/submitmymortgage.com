@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\IntakeForm;
-use App\Models\Project;
+use Carbon\Carbon;
 use App\Models\Team;
 use App\Models\User;
-use App\Services\UserService;
-use Carbon\Carbon;
+use App\Models\Media;
+use App\Models\Project;
+use App\Models\IntakeForm;
 use Illuminate\Http\Request;
+use App\Services\UserService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
@@ -99,4 +100,9 @@ class HomeController extends Controller
         return UserService::getUserDashboard();
     }
 
+    public function showDocx(Media $media)
+    {
+       $path = $media->file_path;
+       return view('show-docx',compact('path'));
+    }
 }
