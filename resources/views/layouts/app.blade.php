@@ -93,7 +93,7 @@
         @if (request()->route()->getName() != 'all-user')
             ['user', 'completed', 'incomplete', 'deleted'].map((table) => {
                 new DataTable("#" + table + "-table", {
-                    "ordering": false,
+                    "ordering": true,
                 });
                 $(`select[name="${table}-table_length"]`).addClass('w-16');
                 $(`select[name="${table}-table_length"]`).addClass('mb-3');
