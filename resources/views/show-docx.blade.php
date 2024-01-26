@@ -25,9 +25,7 @@
     </style>
 @endsection
 @section('content')
-<div class="h-screen">
-    <iframe class="mt-4 w-full h-[80%]" src="https://docs.google.com/gview?url={{$path}}&embedded=true"></iframe>
-</div>
+    <iframe class="w-full h-screen" src="https://docs.google.com/gview?url={{$path}}&embedded=true"></iframe>
     @endsection
 @section('foot')
 @endsection
