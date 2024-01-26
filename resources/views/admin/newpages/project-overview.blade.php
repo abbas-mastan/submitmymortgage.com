@@ -303,7 +303,7 @@
                                         <div width="30%">
                                             <!-- File Name -->
                                             <div class="mb-2">
-                                                <a href='{{ \File::extension($file->file_name) == "docx" ? url("/show-docx/$file->id") : asset($file->file_path) }}' class="text-blue-500 inline">
+                                                <a target="_blank" href='{{ \File::extension($file->file_name) == "docx" ? url("/show-docx/$file->id") : asset($file->file_path) }}' class="text-blue-500 inline">
                                                     {{ $file->file_name }} 
                                                 </a>
                                                 <a download href="{{ asset($file->file_path) }}">
