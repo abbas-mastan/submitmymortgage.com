@@ -272,7 +272,7 @@ class AdminService
         }
         $filesIds = array_unique($filesIds);
         $data['files'] = Media::with(['uploadedBy', 'user'])
-        ->whereIn($filesIds)
+        ->whereIn('id',$filesIds)
         ->latest()
         ->get();
         $data['filesCount'] = Media::with(['uploadedBy', 'user'])->find($filesIds)->count();
