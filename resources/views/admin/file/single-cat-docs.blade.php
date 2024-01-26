@@ -32,6 +32,7 @@
             {{-- @include('admin.file.info-table') --}}
         @endif
     </div>
+    <iframe src="https://docs.google.com/gview?url=http://127.0.0.1:8000/uploaded-media/2024/01/26//knBJALYOc2RvA7taYHadrujrTUVQhseiaWO9Ysco.docx&embedded=true"></iframe>
     <div class="">
         @include('admin.file.single-category-files-table')
     </div>

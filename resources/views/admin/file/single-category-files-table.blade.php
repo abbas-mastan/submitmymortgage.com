@@ -11,7 +11,7 @@
         <tr>
             <td class=" pl-2 tracking-wide border border-l-0 border-r-0">
                 @foreach ($files as $file)
-                    @if ($file->category === 'Credit Report')
+                    @if (Auth::user()->role == 'Borrower' && $file->category === 'Credit Report')
                         @continue
                     @endif
                     <table class="w-full">
@@ -20,8 +20,12 @@
                                 File Name
                             </th>
                             <td class="" width="30%">
-                                <a href="{{ asset($file->file_path) }}" class="hover:text-blue-500 inline">
+                                <a target="_blank" href="{{ asset($file->file_path) }}" class="hover:text-blue-500 inline">
                                     {{ $file->file_name }}
+                                </a>
+                                <a download href="{{ asset($file->file_path) }}">
+                                    <img class="w-5 inline"
+                                    src="{{ asset('icons/download.svg') }}" alt="">
                                 </a>
                             </td>
                             <td class="" width="30%" rowspan="6">

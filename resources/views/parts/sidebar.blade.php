@@ -33,6 +33,8 @@
                         <span class="tracking-wide sm:block  capitalize text-white">Create New User</span>
                     </a>
                 </li>
+                <x-tab href="teams" title="Teams" />
+                <x-tab href="projects" title="Deals" />
                 @if (session('role') === 'Processor')
                     <x-tab href="application/-1" title="Loan Application" />
                 @endif

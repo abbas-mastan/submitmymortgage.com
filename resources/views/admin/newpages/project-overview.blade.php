@@ -279,7 +279,7 @@
             </div>
         @endif
         @foreach ($categories as $category)
-            @if (\Illuminate\Support\Facades\DB::table('media')->where('user_id', $user->id)->where('category', $category)->count() > 0 && $category !== 'Credit Report')
+            @if (\Illuminate\Support\Facades\DB::table('media')->where('user_id', $user->id)->where('category', $category)->count() > 0)
                 <div class="searchablediv">
                     @component('components.accordion', [
                         'title' => $category,
@@ -304,8 +304,11 @@
                                             <!-- File Name -->
                                             <div class="mb-2">
                                                 <a href="{{ asset($file->file_path) }}" class="text-blue-500 inline">
-                                                    {{ $file->file_name }} <img class="w-5 inline"
-                                                        src="{{ asset('icons/download.svg') }}" alt="">
+                                                    {{ $file->file_name }} 
+                                                </a>
+                                                <a download href="{{ asset($file->file_path) }}">
+                                                    <img class="w-5 inline"
+                                                    src="{{ asset('icons/download.svg') }}" alt="">
                                                 </a>
                                             </div>
                                             <!-- Category -->
