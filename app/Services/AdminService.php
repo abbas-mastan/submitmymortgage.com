@@ -545,7 +545,6 @@ class AdminService
         $assitant->categories = json_encode($request->items ?? $categories);
         $assitant->assistant_id = $user->id;
         $assitant->save();
-        return back()->with('msg_success',"Asisstant".($id > 0 ? " updated ":' created ')."successfully");
         return response()->json('sucess', 200);
     }
 

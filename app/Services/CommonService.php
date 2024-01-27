@@ -75,7 +75,7 @@ class CommonService
                 $media->uploaded_by = Auth::id();
                 try {
                     Storage::copy($attachment->file_path, getFileDirectory() . $uniqueName);
-                    self::storeNotification("Uploaded $request->category", $request->id ?? $attachment->user_id);
+                    self::storeNotification("Uploaded $request->category", Auth::id());
                 } catch (\Exception $e) {
                     return response()->json(['status' => "$e", 'filename' => $e]);
                 }
@@ -96,7 +96,9 @@ class CommonService
             $media->user_id = $request->input('id') ?? Auth::id();
             $media->uploaded_by = Auth::user()->id;
             if ($media->save()) {
-                self::storeNotification("Uploaded $request->category", $request->id ?? Auth::id());
+                $project =  Project::where('borrower_id', $request->id)->first();
+                $message = $project ? "uploaded $request->category for $project->name" :"Uploaded $request->category";
+                self::storeNotification($message,Auth::id());
                 return response()->json(['status' => "success", 'msg' => "File uploaded."]);
             }
         }
@@ -391,17 +393,16 @@ class CommonService
     {
 
         $project = Project::where('borrower_id', $userid)->first();
+        $user = User::find($userid);
         if ($project) {
             $allIds = $project->users->pluck('id')->toArray();
             array_push($allIds, User::where('role', 'Super Admin')->first()->id);
             foreach ($allIds as $Admin) {
                 $notifyThisUser = User::find($Admin);
-                $user = User::find($userid);
                 $notifyThisUser->notify(new FileUploadNotification($user, $message));
             }
         } else {
             $admin = User::where('role', 'Super Admin')->first();
-            $user = User::find($userid);
             $admin->notify(new FileUploadNotification($user, $message));
             if ($user->created_by) {
                 $createdby = User::find($user->created_by);
