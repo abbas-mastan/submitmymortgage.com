@@ -516,7 +516,7 @@ class AdminService
             $user->active = 1;
             $user->email = $request->email;
         }
-        $user->name = $request->name ?? $faker->name;
+        $user->name = $request->name ?? "Assistant";
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
