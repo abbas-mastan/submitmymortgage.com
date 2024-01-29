@@ -232,7 +232,7 @@ class CommonService
             }])->latest()->get();
         } elseif ($admin->role == 'Admin') {
             $data['users'] = User::where('company_id',$admin->company_id)->withTrashed()->get();
-            $data['applications'] = Application::whereIn('user_id', $users->pluck('id'))->latest()->get();
+            $data['applications'] = Application::whereIn('user_id', $data['users']->pluck('id'))->latest()->get();
         } else {
             $data['tables'] = array_diff($data['tables'], ['Deleted Applications']);
             $user = User::find(auth()->id());
@@ -255,7 +255,6 @@ class CommonService
             // Combine the directly and indirectly created users
             $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
             $data['users'] = $allUsers;
-
         }
         return $data;
     }
