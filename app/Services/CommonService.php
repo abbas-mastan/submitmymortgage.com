@@ -231,7 +231,7 @@ class CommonService
                 $query->withTrashed();
             }])->latest()->get();
         } elseif ($admin->role == 'Admin') {
-            $users = User::where('company_id',$admin->company_id)->withTrashed()->get();
+            $data['users'] = User::where('company_id',$admin->company_id)->withTrashed()->get();
             $data['applications'] = Application::whereIn('user_id', $users->pluck('id'))->latest()->get();
         } else {
             $data['tables'] = array_diff($data['tables'], ['Deleted Applications']);
