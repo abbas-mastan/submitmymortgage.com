@@ -10,15 +10,17 @@ class FileUploadNotification extends Notification
     use Queueable;
     public $user;
     public $message;
+    public $project;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user, $message)
+    public function __construct($user, $message,$project = null)
     {
         $this->user = $user;
+        $this->project = $project;
         $this->message = $message;
     }
 
@@ -37,7 +39,8 @@ class FileUploadNotification extends Notification
         return [
             'user_name' => $this->user->name,
             'user_id' => $this->user->id,
-            'message' => $this->message
+            'message' => $this->message,
+            'project' => $this->project
         ];
     }
 }

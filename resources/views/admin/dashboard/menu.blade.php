@@ -80,29 +80,47 @@
         {{-- @endif --}}
     </div>
     @if ($currentrole !== 'Borrower' && count(Auth::user()->notifications) > 0)
-        <div class="pl-5 pr-1 shadow-lg rounded-xl md:w-1/3 w-full mt-8 bg-white">
+        <div class="pl-5 pr-1 rounded-xl md:w-1/3 w-full mt-8">
             <ul class="menu overflow-y-auto max-h-[80vh]">
                 @foreach (Auth::user()->notifications as $message)
+                    @php
+                    if($message->data['project'] ?? false){
+                        $project = \App\Models\Project::find($message->data['project']);   
+                    }else{
+                        $project = \App\Models\Project::where('borrower_id', $message->data['user_id'])->first();   
+                    }
+                    @endphp
                     <div
-                        class="@if ($loop->first) mt-5 @endif rounded-md bg-gray-200 p-5 mr-4 font-bold px-5 pt-5 mb-5 list-disc list-inside">
-                        <div>
-                            <span class="textcolor">{{ $message->data['user_name'] }}</span>
-                            @php
-                                $project = \App\Models\Project::where('borrower_id', $message->data['user_id'])->first();
-                            @endphp
-                            @if ($project)
-                                With <span class="textcolor">{{ \App\Models\Team::find($project->team_id)->name }}
-                            @endif
-                            </span>
-                            {{ $message->data['message'] }}
-                            @if ($project)
-                                for
-                                <span class="textcolor">
-                                    {{ $project->name }}
+                        class="@if ($loop->first) mt-5 @endif rounded-sm bg-white p-5 mr-4 font-bold px-5 pt-5 mb-5 list-disc list-inside">
+                        @if (!$project)
+                            <div>
+                                <span class="textcolor">{{ $message->data['user_name'] }}</span>
+                                @if ($project)
+                                    With <span class="textcolor">{{ \App\Models\Team::find($project->team_id)->name }}
+                                @endif
                                 </span>
-                                Group
-                            @endif
-                        </div>
+                                {{ $message->data['message'] }}
+                            </div>
+                        @else
+                            <div>
+                                <div>Deal:
+                                    <a class="textcolor"
+                                        href="{{ url(getRoutePrefix() . '/project-overview/' . $project->borrower->id) }}">
+                                        {{ $project->name }}
+                                    </a>
+                                </div>
+                                <div>Doc Uploaded:
+                                    <span class="textcolor">
+                                        {{ $message->data['message'] }}
+                                    </span>
+                                </div>
+                                <div>Uploaded by:
+                                    <span class="textcolor">
+                                        {{ $message->data['user_name'] }}
+                                    </span>
+                                </div>
+                            </div>
+                        @endif
                         <div class="flex justify-end mt-2">
                             <span class="text-xs">
                                 <span class="mr-1">

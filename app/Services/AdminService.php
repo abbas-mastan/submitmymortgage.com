@@ -48,13 +48,13 @@ class AdminService
             $assistant = Assistant::where('assistant_id', $user->id)->first();
             if ($assistant) {
                 $project = User::find($assistant->user_id);
-                if($project){
+                if ($project) {
                     $data['projectid'] = $project->project->id;
                 }
             }
         }
         $data['oldteams'] = [];
-        if($user->role !== 'Assistant' ||$user->role !== 'Admin' ||$user->role !== 'Borrower'){
+        if ($user->role !== 'Assistant' || $user->role !== 'Admin' || $user->role !== 'Borrower') {
             $data['oldteams'] = $user->teams->pluck('id')->toArray();
         }
 
@@ -151,11 +151,11 @@ class AdminService
                 event(new Registered($user));
             }
         }
-        if (Auth::check() && $request->role !== 'Borrower' && $user->teams){
+        if (Auth::check() && $request->role !== 'Borrower' && $user->teams) {
             $user->teams()->detach();
-        } 
+        }
 
-        if (Auth::check() && $request->role !== 'Borrower'  && $request->team > 0) {
+        if (Auth::check() && $request->role !== 'Borrower' && $request->team > 0) {
             foreach ($request->team as $team) {
                 $team = Team::find($team);
                 if (!$team->users->contains($user->id)) {
@@ -234,10 +234,9 @@ class AdminService
             if ($user->role === 'Super Admin') {
                 $users = User::with(['media.user'])->where('role', 'Borrower')->get();
             } elseif ($user->role === 'Admin') {
-                    $users = User::with(['media','createdBy'])
-                    ->where('role','!=','Admin')
-                    ->where('company_id',Auth::user()->company_id)->get();
-
+                $users = User::with(['media', 'createdBy'])
+                    ->where('role', '!=', 'Admin')
+                    ->where('company_id', Auth::user()->company_id)->get();
 
             } elseif ($user->role === 'Processor') {
                 $teams = Team::where('owner_id', $user->id)
@@ -272,9 +271,9 @@ class AdminService
         }
         $filesIds = array_unique($filesIds);
         $data['files'] = Media::with(['uploadedBy', 'user'])
-        ->whereIn('id',$filesIds)
-        ->latest()
-        ->get();
+            ->whereIn('id', $filesIds)
+            ->latest()
+            ->get();
         $data['filesCount'] = Media::with(['uploadedBy', 'user'])->find($filesIds)->count();
         $data["active"] = "file";
         return $data;
@@ -327,7 +326,7 @@ class AdminService
             ->where('category', $cat)
             ->update(["cat_comments" => $request->cat_comments]);
         if ($updated) {
-            CommonService::storeNotification("commented on $cat category", $request->user_id);
+            // CommonService::storeNotification("commented on $cat category", $request->user_id);
             return ['msg_type' => 'msg_success', 'msg_value' => 'Category comments saved.'];
         }
         return ['msg_type' => 'msg_error', 'msg_value' => 'Couldn\'t save category comments.'];
@@ -496,17 +495,17 @@ class AdminService
             'company' => Auth::user()->role !== 'Super Admin' ? '' : 'sometimes:required',
             'deal' => 'sometimes:required',
         ]);
-        
+
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
-        
+
         if ($request->deal) {
             $deal = Project::find($request->deal);
             $request->userId = $deal->borrower->id;
             $categories = array_values(array_diff(config('smm.file_category'), ['Credit Report']));
         }
-        
+
         if ($request->userId && !$request->deal) {
             $request->company = User::find($request->userId)->company_id;
         }

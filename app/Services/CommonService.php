@@ -75,7 +75,12 @@ class CommonService
                 $media->uploaded_by = Auth::id();
                 try {
                     Storage::copy($attachment->file_path, getFileDirectory() . $uniqueName);
-                    self::storeNotification("Uploaded $request->category", Auth::id());
+                    $project = User::find($request->input('id') ?? $attachment->user_id)->project;
+                    if ($project) {
+                        self::storeNotification("$request->category", Auth::id(), $project->id);
+                    } else {
+                        self::storeNotification("$request->category", Auth::id());
+                    }
                 } catch (\Exception $e) {
                     return response()->json(['status' => "$e", 'filename' => $e]);
                 }
@@ -96,9 +101,12 @@ class CommonService
             $media->user_id = $request->input('id') ?? Auth::id();
             $media->uploaded_by = Auth::user()->id;
             if ($media->save()) {
-                $project =  Project::where('borrower_id', $request->id)->first();
-                $message = $project ? "uploaded $request->category for $project->name" :"Uploaded $request->category";
-                self::storeNotification($message,Auth::id());
+                $project = User::find($request->input('id') ?? $attachment->user_id)->project;
+                if ($project) {
+                    self::storeNotification("$request->category", Auth::id(), $project->id);
+                } else {
+                    self::storeNotification("$request->category", Auth::id());
+                }
                 return response()->json(['status' => "success", 'msg' => "File uploaded."]);
             }
         }
@@ -231,7 +239,7 @@ class CommonService
                 $query->withTrashed();
             }])->latest()->get();
         } elseif ($admin->role == 'Admin') {
-            $data['users'] = User::where('company_id',$admin->company_id)->withTrashed()->get();
+            $data['users'] = User::where('company_id', $admin->company_id)->withTrashed()->get();
             $data['applications'] = Application::whereIn('user_id', $data['users']->pluck('id'))->latest()->get();
         } else {
             $data['tables'] = array_diff($data['tables'], ['Deleted Applications']);
@@ -388,17 +396,20 @@ class CommonService
 
     }
 
-    public static function storeNotification($message, $userid)
+    public static function storeNotification($message, $userid, $projectId = null)
     {
 
         $project = Project::where('borrower_id', $userid)->first();
         $user = User::find($userid);
+        if ($projectId) {
+            $project = Project::find($projectId);
+        }
         if ($project) {
             $allIds = $project->users->pluck('id')->toArray();
             array_push($allIds, User::where('role', 'Super Admin')->first()->id);
             foreach ($allIds as $Admin) {
                 $notifyThisUser = User::find($Admin);
-                $notifyThisUser->notify(new FileUploadNotification($user, $message));
+                $notifyThisUser->notify(new FileUploadNotification($user, $message, $project->id));
             }
         } else {
             $admin = User::where('role', 'Super Admin')->first();
