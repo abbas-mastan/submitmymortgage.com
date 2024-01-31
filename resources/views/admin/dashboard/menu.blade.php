@@ -106,7 +106,7 @@
                                 <div>Deal:
                                     <a class="textcolor"
                                         href="{{ url(getRoutePrefix() . '/project-overview/' . $project->borrower->id) }}">
-                                        {{ $project->name }}
+                                        {{ $project->name ?? '' }}
                                     </a>
                                 </div>
                                 <div>Doc Uploaded:
