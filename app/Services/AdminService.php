@@ -579,9 +579,10 @@ class AdminService
         }
         if ($id == -1) {
             $faker = Factory::create();
+            $team = Team::find($request->team);
             $request->merge(['email' => $request->email ?? $faker->unique()->safeEmail,
                 'role' => 'Borrower',
-                'company' => $request->company,
+                'company' => $team->company_id,
             ]);
             $user = self::doUser($request, -1);
             $project = Project::create([
