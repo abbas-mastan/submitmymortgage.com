@@ -85,7 +85,6 @@
                 @foreach (Auth::user()->notifications as $message)
                     @php
                     if($message->data['project'] ?? false){
-                        dd($message->data['project']);
                         $project = \App\Models\Project::find($message->data['project']);   
                     }else{
                         $project = \App\Models\Project::where('borrower_id', $message->data['user_id'])->first();   
