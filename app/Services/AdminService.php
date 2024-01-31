@@ -561,7 +561,10 @@ class AdminService
                 'processor' => 'sometimes:required',
                 'associate' => 'sometimes:required',
                 'juniorAssociate' => 'sometimes:required',
-            ], ['email.required_with' => 'This field is required']);
+            ], [
+                'email.required_with' => 'This field is required',
+                'borroweraddress' => 'This field is required'
+            ]);
 
             if ($validator->fails()) {
                 $errors = $validator->errors()->toArray();
