@@ -16,7 +16,7 @@
         <form action="{{ url('/reset-password') }}" method="post" class=" w-7/8">
             @include('parts.alerts')
             @csrf
-			<input value="{{$token}}" type="hidden" name="token">
+                <input value="{{$token}}" type="hidden" name="token">
             <div class="mt-10 mx-auto">
                 <div class=" text-left mr-12">
                     <label for="username" class="text-white text-md xl:text-xl opacity-70">Email</label>

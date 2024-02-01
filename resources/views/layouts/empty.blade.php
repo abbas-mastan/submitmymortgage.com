@@ -25,7 +25,7 @@
     @yield('head')
 </head>
 <body class="font-graphik" style="font-family: graphik, sans-serif !important">
-    <div class="body-first-div h-full  flex justify-center">
+    <div class="body-first-div h-full flex justify-center items-center">
         @yield('content')
         @include('parts/footer')
     </div>

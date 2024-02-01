@@ -3,18 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use App\Services\AdminService;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Events\Verified;use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Auth\Events\Verified;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Redirect;use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Auth\Events\PasswordReset;
 
 class AuthController extends Controller
 {
     //Called when a user submits login form
     //Or press login button in login form
+
+    public function userRegister(Request $request)
+    {
+        abort_if(!$request->hasValidSignature(), 403);
+        $id = Crypt::decryptString($request->user);
+        $user = User::where('id', $id)->select(['id', 'active', 'email'])->first();
+        abort_if($user->active === 0, 403, 'Sorry, your account has been disabled!');
+        $token = DB::table('password_resets')->where('email',$user->email)->value('token');
+        return view('auth.reset-password',compact('token'));
+    }
     public function doLogin(Request $request)
     {
         //$credentials = $request->only('email', 'password');

@@ -2,30 +2,32 @@
 
 namespace App\Services;
 
-use App\Mail\AssistantMail;
-use App\Models\Assistant;
-use App\Models\Attachment;
-use App\Models\Company;
-use App\Models\Contact;
+use Faker\Factory;
 use App\Models\Info;
-use App\Models\Media;
-use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
-use App\Notifications\FileUploadNotification;
-use Faker\Factory;
-use Illuminate\Auth\Events\Registered;
+use App\Models\Media;
+use App\Mail\UserMail;
+use App\Models\Company;
+use App\Models\Contact;
+use App\Models\Project;
+use App\Models\Assistant;
+use App\Models\Attachment;
+use App\Mail\AssistantMail;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
+use App\Notifications\FileUploadNotification;
 
 class AdminService
 {
@@ -145,8 +147,12 @@ class AdminService
         $user->email_verified_at = !$request->sendemail ? now() : null;
         if ($user->save() && $request->sendemail) {
             if (session('role') != null && $isNewUser) {
-                Password::sendResetLink($request->only('email'));
-                Password::RESET_LINK_SENT;
+                // Password::sendResetLink($request->only('email'));
+                // Password::RESET_LINK_SENT;
+                $id = Crypt::encryptString($user->id);
+                DB::table('password_resets')->insert(['email'=>$user->email,'token'=> Hash::make(Str::random(8)),'created_at'=> now()]);
+                $url = function () use ($id) {return Url::signedRoute('user.register', ['user' => $id]);};
+                Mail::to($request->email)->send(new UserMail($url()));
             } else {
                 event(new Registered($user));
             }
