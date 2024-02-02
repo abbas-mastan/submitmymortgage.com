@@ -64,7 +64,7 @@
                 <tr>
                     <td class=" pl-2 tracking-wide border border-l-0">{{ $loop->iteration }}</td>
                     <td class=" pl-2 tracking-wide border border-l-0">
-                        <a href="{{ asset($file->file_path) }}" class="hover:text-blue-500 inline">
+                        <a target="_blank" href='{{ \File::extension($file->file_name) == "docx" ? url("/show-docx/$file->id") : asset($file->file_path) }}' class="hover:text-blue-500 inline">
                             {{ $file->file_name }}
                         </a>
                         <a href="{{ asset($file->file_path) }}" class="hover:text-blue-500 inline" download>
