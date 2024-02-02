@@ -557,6 +557,7 @@ class CommonService
 
     public static function storeProject(Request $request, $user)
     {
+        dd('asdf');
         $project = Project::create([
             'name' => $request->borroweraddress,
             'borrower_id' => $user,

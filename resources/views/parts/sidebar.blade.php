@@ -33,12 +33,12 @@
                         <span class="tracking-wide sm:block  capitalize text-white">Create New User</span>
                     </a>
                 </li>
+                <x-tab href="all-users" title="All Users" />
                 <x-tab href="teams" title="Teams" />
                 <x-tab href="projects" title="Deals" />
                 @if (session('role') === 'Processor')
                     <x-tab href="application/-1" title="Loan Application" />
                 @endif
-                <x-tab href="all-users" title="All Users" />
                 <x-tab href="contacts" title="Contacts" />
                 @if ($currentrole === 'Admin' || Gate::check('isSuperAdmin'))
                     <x-tab href="connections" title="Connections" />
@@ -60,6 +60,8 @@
                 </li>
                 <x-tab href="application/-1" title="Loan Application" />
                 <x-tab href="all-users" title="All Users" />
+                <x-tab href="teams" title="Teams" />
+                <x-tab href="projects" title="Deals" />
                 <x-tab href="upload-files" title="Upload Files" />
                 <x-tab href="files" title="Files Uploaded" />
                 <x-tab href="applications" title="Loan Pipeline" />

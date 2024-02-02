@@ -560,7 +560,6 @@ class AdminService
                 'borroweraddress' => 'required',
                 'email' => 'required_with:sendemail|unique:users,email',
                 'name' => 'required',
-                'borroweraddress' => 'required',
                 'finance_type' => 'required',
                 'loan_type' => 'required',
                 'team' => 'required',
@@ -569,7 +568,7 @@ class AdminService
                 'juniorAssociate' => 'sometimes:required',
             ], [
                 'email.required_with' => 'This field is required',
-                'borroweraddress' => 'This field is required'
+                'borroweraddress.required' => 'This field is required'
             ]);
 
             if ($validator->fails()) {

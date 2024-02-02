@@ -7,7 +7,7 @@
     </style>
 @endsection
 @section('content')
-    <div class="child w-2/3 shadow-2xl bg-white p-10 rounded-2xl">
+    <div class="flex justify-center child w-2/3 shadow-2xl bg-white p-10 rounded-2xl">
         <header class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white rounded-t-2xl p-4">
             <h1 class="text-3xl text-center font-bold">Welcome to Submit My Mortgage</h1>
         </header>

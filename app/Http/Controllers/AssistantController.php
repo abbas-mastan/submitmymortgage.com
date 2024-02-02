@@ -22,9 +22,9 @@ class AssistantController extends Controller
         $id = Crypt::decryptString($request->user);
         $user = User::where('id', $id)->select(['id', 'active', 'email'])->first();
         abort_if($user->active === 2, 403, 'Sorry, your account has been disabled!');
-        if ($user->active === 1) {
-            return redirect('/login');
-        }
+        // if ($user->active === 1) {
+        //     return redirect('/login');
+        // }
 
         return view("user.assistant.deal-register", compact('user'));
     }
