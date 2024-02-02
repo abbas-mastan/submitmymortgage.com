@@ -220,12 +220,14 @@
                             </label>
                         </div>`);
                     });
-                    if (associates < 1) appendEmptyText('associateDropdown',' No Associate available');
+                    if (associates < 1) appendEmptyText('associateDropdown',
+                        ' No Associate available');
                     if (juniorAssociates < 1) appendEmptyText(
-                        'jrAssociateDropdown',' No Jr.Associate available');
-                    if (processors < 1) appendEmptyText('processorDropdown',' No Processor available');
+                        'jrAssociateDropdown', ' No Jr.Associate available');
+                    if (processors < 1) appendEmptyText('processorDropdown',
+                        ' No Processor available');
 
-                    function appendEmptyText(dropdown,message) {
+                    function appendEmptyText(dropdown, message) {
                         $("." + dropdown).append(
                             `<span class="text-red-700 text-sm text-center p-1">${message}</span>`
                         );
@@ -306,8 +308,8 @@
                         ${!data ? 'Login As This User': data+' this user'}
                         <div class="tooltip-arrow" data-popper-arrow></div></div>`
             );
-        }).on('mouseleave', '.loginBtn', function() {
-            $(this).find('div[role="tooltip"]').remove();
+            }).on('mouseleave', '.loginBtn', function() {
+                $(this).find('div[role="tooltip"]').remove();
         });
     });
 

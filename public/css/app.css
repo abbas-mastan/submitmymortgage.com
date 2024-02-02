@@ -975,9 +975,6 @@ select {
 .mt-8 {
   margin-top: 2rem;
 }
-.mt-20 {
-  margin-top: 5rem;
-}
 .box-content {
   box-sizing: content-box;
 }
@@ -1059,6 +1056,9 @@ select {
 .h-8 {
   height: 2rem;
 }
+.h-\[50\%\] {
+  height: 50%;
+}
 .h-fit {
   height: -moz-fit-content;
   height: fit-content;
@@ -1068,12 +1068,6 @@ select {
 }
 .h-screen {
   height: 100vh;
-}
-.h-\[80\%\] {
-  height: 80%;
-}
-.h-\[50\%\] {
-  height: 50%;
 }
 .max-h-\[80vh\] {
   max-height: 80vh;
@@ -1159,6 +1153,9 @@ select {
 .w-\[49\%\] {
   width: 49%;
 }
+.w-\[50\%\] {
+  width: 50%;
+}
 .w-\[70px\] {
   width: 70px;
 }
@@ -1174,15 +1171,6 @@ select {
 }
 .w-full {
   width: 100%;
-}
-.w-\[80\%\] {
-  width: 80%;
-}
-.w-80 {
-  width: 20rem;
-}
-.w-\[50\%\] {
-  width: 50%;
 }
 .min-w-\[20px\] {
   min-width: 20px;
@@ -1479,9 +1467,6 @@ select {
 .border-opacity-20 {
   --tw-border-opacity: 0.2;
 }
-.bg-\[\'\#2d3748\'\] {
-  background-color: '#2d3748';
-}
 .bg-\[\'\#edf2f7\'\] {
   background-color: '#edf2f7';
 }
@@ -1575,10 +1560,6 @@ select {
 .bg-yellow-500 {
   --tw-bg-opacity: 1;
   background-color: rgb(234 179 8 / var(--tw-bg-opacity));
-}
-.bg-blue-200 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(191 219 254 / var(--tw-bg-opacity));
 }
 .bg-opacity-40 {
   --tw-bg-opacity: 0.4;
