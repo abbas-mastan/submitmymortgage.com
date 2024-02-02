@@ -81,6 +81,7 @@
     </div>
     @if ($currentrole !== 'Borrower' && count(Auth::user()->notifications) > 0)
         <div class="pl-5 pr-1 rounded-xl md:w-1/3 w-full mt-8">
+            <h2 class="text-center text-xl font-bold">Notifications</h2>
             <ul class="menu overflow-y-auto max-h-[80vh]">
                 @foreach (Auth::user()->notifications as $message)
                     @php

@@ -3,17 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
 use App\Services\AdminService;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
@@ -26,9 +26,27 @@ class AuthController extends Controller
         $id = Crypt::decryptString($request->user);
         $user = User::where('id', $id)->select(['id', 'active', 'email'])->first();
         abort_if($user->active === 0, 403, 'Sorry, your account has been disabled!');
-        $token = DB::table('password_resets')->where('email',$user->email)->value('token');
-        return view('auth.reset-password',compact('token'));
+        $token = DB::table('password_resets')->where('email', $user->email)->value('token');
+        return view('auth.reset-password', compact('token'));
     }
+
+    public function setPasswordForNewUsers(Request $request)
+    {
+        $this->passwordValidation($request);
+        $token = DB::table('password_resets')->where('email', $request->email)->value('token');
+        if ($token == $request->token) {
+            $user = User::where('email', $request->email)->first();
+            $user->password = Hash::make($request->password);
+            if (!$user->emaail_verified_at) {
+                $user->email_verified_at = now();
+            }
+            $user->save();
+        } else {
+            dd('token not matched');
+        }
+        return $this->doLogin($request);
+    }
+
     public function doLogin(Request $request)
     {
         //$credentials = $request->only('email', 'password');
@@ -36,7 +54,10 @@ class AuthController extends Controller
             // Authentication passed...
             $request->session()->regenerate();
             $request->session()->put('role', Auth::user()->role);
-            if(Auth::user()->role === 'Assistant') return redirect(getAssistantRoutePrefix().'/submit-document');
+            if (Auth::user()->role === 'Assistant') {
+                return redirect(getAssistantRoutePrefix() . '/submit-document');
+            }
+
             return redirect()->intended('/dashboard');
         }
         return redirect('/login')->with('msg_error', "Username or password is incorrect. Or your account might be disabled.");
@@ -73,16 +94,11 @@ class AuthController extends Controller
 
     public function updatePassword(Request $request)
     {
-        $request->validate([
-            'token' => 'required',
-            'email' => 'required|email',
-            'password' => 'required|confirmed',
-        ]);
-
+        $this->passwordValidation($request);
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
             function ($user, $password) {
-                  $user->forceFill([
+                $user->forceFill([
                     'password' => Hash::make($password),
                 ])->setRememberToken(Str::random(60));
                 if (!$user->emaail_verified_at) {
@@ -101,7 +117,6 @@ class AuthController extends Controller
     //Method to be called for registeration form
     public function register()
     {
-
         $data['unis'] = '';
         return view('auth.register', $data);
     }
@@ -139,5 +154,14 @@ class AuthController extends Controller
     {
         $request->user()->sendEmailVerificationNotification();
         return back()->with('msg_info', 'Verification link sent!');
+    }
+
+    private function passwordValidation(Request $request)
+    {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|confirmed',
+        ]);
     }
 }

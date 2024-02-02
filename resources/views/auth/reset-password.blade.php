@@ -5,7 +5,7 @@
         
         <div class="">
             <h1 class="xl:text-3xl text-2xl uppercase text-center font-bold text-white">
-               @if(\Illuminate\Support\Str::contains(url()->current(),'create'))
+               @if(\Request::route()->getName() === 'user.register')
                Create
                @else
                 Reset 
@@ -13,7 +13,7 @@
                 Passsword
             </h1>
         </div>
-        <form action="{{ url('/reset-password') }}" method="post" class=" w-7/8">
+        <form action="{{ url(\Request::route()->getName() === 'user.register'? 'set-password-new-user':'/reset-password') }}" method="post" class=" w-7/8">
             @include('parts.alerts')
             @csrf
                 <input value="{{$token}}" type="hidden" name="token">

@@ -39,6 +39,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::post('/reset-password', [AuthController::class, 'updatePassword'])->name('password.update');
     Route::get('/set-password/{token}', [AuthController::class, 'sePassword'])->name('set.password');
     Route::get('/user-register', [AuthController::class, 'userRegister'])->name('user.register');
+    Route::post('/set-password-new-user', [AuthController::class, 'setPasswordForNewUsers']);
     
 });
 Route::get('/logout', [AuthController::class, 'logout']);
@@ -51,7 +52,6 @@ Route::post('/email/verification-notification', [AuthController::class, 'emailVe
 //Authentication required roots
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('/email', 'set-password')->name("login");
     Route::post('/logout-from-this-user', [SuperAdminController::class, 'ReLoginFrom']);
     Route::get('/dashboard', [HomeController::class, 'dashboard']);
     Route::get('/home', [HomeController::class, 'dashboard']);
