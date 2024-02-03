@@ -25,7 +25,6 @@ class AuthController extends Controller
         abort_if(!$request->hasValidSignature(), 403);
         $id = Crypt::decryptString($request->user);
         $user = User::where('id', $id)->select(['id', 'active', 'email'])->first();
-        abort_if($user->active === 0, 403, 'Sorry, your account has been disabled!');
         $token = DB::table('password_resets')->where('email', $user->email)->value('token');
         return view('auth.reset-password', compact('token'));
     }
