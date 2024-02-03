@@ -99,15 +99,6 @@ function uploadToPHPServer(checkedValues = null) {
             return;
         }
         window.location.href = window.returnBack;            
-        // $("#start-upload-div").toggleClass("hidden");
-        // $("#file-progress").toggleClass("hidden");
-        // $("#filename").text("");
-        // $('#file').empty();
-        // $('#filename').empty();
-        // $("#start-upload-div").removeClass("hidden");
-        // $('#default-modal').addClass('hidden');
-        // $('.alertbox').removeClass('hidden');
-        // $('.alerttextbox').text('File uploaded successfully');
     });
 }
 function makeXMLHttpRequest(url, data, callback) {

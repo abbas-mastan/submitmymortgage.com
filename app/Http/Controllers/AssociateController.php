@@ -290,26 +290,6 @@ class AssociateController extends Controller
         return AdminService::shareItemWithAssistant($request, $id);
     }
 
-    // public function projects(): View
-    // {
-    //     $id = Auth::id();
-    //     $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-    //     $data['teams'] = Team::where('owner_id', $admin->id)
-    //         ->orWhereHas('users', function ($query) use ($admin) {
-    //             $query->where('user_id', $admin->id);
-    //         })
-    //         ->get();
-
-    //     $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
-    //     $data['projects'] = Project::where('created_by', $admin->id)
-    //         ->orWhereHas('users', function ($query) use ($admin) {
-    //             $query->where('users.id', $admin->id);
-    //         })
-    //         ->with(['team', 'users.createdBy', 'borrower.createdBy'])
-    //         ->get();
-    //     $data['enableProjects'] = $data['projects'];
-    //     return view('admin.newpages.projects', $data);
-    // }
     public function storeProject(Request $request, $id = -1)
     {
         return AdminService::storeProject($request, $id);

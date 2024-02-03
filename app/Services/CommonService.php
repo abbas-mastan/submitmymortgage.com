@@ -167,7 +167,6 @@ class CommonService
             $application->status = 2;
             $msg = "Application rejected.";
         }
-
         if ($status == 'restore') {
             abort_if(Auth::user()->role !== 'Super Admin', 403, 'You are not allowed to restore an Application');
             $application->status = 0;
@@ -227,44 +226,6 @@ class CommonService
         $user->categories()->where('name', $cat)->delete();
         return ['msg_value' => "\"$cat\" category deleted!", 'msg_type' => 'msg_success'];
 
-    }
-    public static function applications()
-    {
-        $admin = Auth::user();
-        $data['role'] = $admin->role;
-        $data['tables'] = ['Pending Applications', 'Completed Applications', 'Incomplete Applications', 'Deleted Applications'];
-
-        if ($data['role'] == 'Super Admin') {
-            $data['applications'] = Application::with(['user' => function ($query) {
-                $query->withTrashed();
-            }])->latest()->get();
-        } elseif ($admin->role == 'Admin') {
-            $data['users'] = User::where('company_id', $admin->company_id)->withTrashed()->get();
-            $data['applications'] = Application::whereIn('user_id', $data['users']->pluck('id'))->latest()->get();
-        } else {
-            $data['tables'] = array_diff($data['tables'], ['Deleted Applications']);
-            $user = User::find(auth()->id());
-            $role = $user->role;
-            // Fetch users created directly by the user
-            $directlyCreatedUsers = $user->createdUsers()
-                ->with(['createdBy', 'application.user'])
-                ->withTrashed()
-                ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
-                ->latest()
-                ->get();
-
-            $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
-                ->with('application.user')
-                ->withTrashed()
-                ->orWhere('company_id', $role === 'Admin' ? $user->company_id ?? -1 : -1)
-                ->whereIn('role', [($role === 'Processor' ? '' : 'Processor'), 'Associate', 'Junior Associate', 'Borrower'])
-                ->latest()
-                ->get();
-            // Combine the directly and indirectly created users
-            $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
-            $data['users'] = $allUsers;
-        }
-        return $data;
     }
 
     public static function filterCat($user, $cat)
@@ -550,7 +511,7 @@ class CommonService
             $users = User::where('created_by', $user->id)->get();
             $data['intakes'] = IntakeForm::whereHas('user', function ($query) use ($users) {
                 $query->whereIn('id', $users->pluck('id'));
-            })->lastest()->get();
+            })->latest()->get();
         }
         return view('admin.intakes.index', $data);
     }
@@ -596,24 +557,13 @@ class CommonService
                 ->latest()
                 ->get();
         } elseif ($user->role === 'Admin') {
-            $allUsers = User::where('company_id', Auth::user()->company_id)
+            $allUsers = User::where('company_id', $user->company_id)
                 ->where('role', '!=', 'Admin')
                 ->with(['createdBy'])
                 ->latest()
                 ->get();
         } else {
-            $directlyCreatedUsers = $user->createdUsers()
-                ->with(['createdBy', 'company'])
-                ->whereIn('role', ['Associate', 'Junior Associate', 'Borrower', 'Assistant'])
-                ->latest()
-                ->get();
-
-            $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
-                ->with(['createdBy', 'company'])
-                ->whereIn('role', ['Associate', 'Junior Associate', 'Borrower', 'Assistant'])
-                ->latest()
-                ->get();
-            $allUsers = $directlyCreatedUsers->merge($indirectlyCreatedUsers);
+            $allUsers = self::allusers($user);
         }
 
         $data['verified'] = $allUsers->filter(function ($user) {
@@ -625,4 +575,50 @@ class CommonService
         return $data;
     }
 
+    public static function applications()
+    {
+        $admin = Auth::user();
+        $data['role'] = $admin->role;
+        $data['tables'] = ['Pending Applications', 'Completed Applications', 'Incomplete Applications', 'Deleted Applications'];
+        if ($data['role'] == 'Super Admin') {
+            $data['applications'] = Application::with(['user' => function ($query) {
+                $query->withTrashed();
+            }])->latest()->get();
+        } elseif ($admin->role == 'Admin') {
+            $data['users'] = User::where('company_id', $admin->company_id)->withTrashed()->get();
+            $data['applications'] = Application::whereIn('user_id', $data['users']->pluck('id'))->latest()->get();
+        } else {
+            $data['tables'] = array_diff($data['tables'], ['Deleted Applications']);
+            $allUsers = self::allusers($admin);
+            $projects = Project::where('created_by', $admin->id)
+                ->orWhereHas('users', function ($query) use ($admin) {
+                    $query->where('users.id', $admin->id);
+                })
+                ->get();
+            $projects->each(function ($project) use (&$allUsers) {
+                $borrower = optional($project->borrower)->load('application');
+                if ($borrower && $borrower->application) {
+                    $allUsers = $allUsers->merge([$borrower]);
+                }
+            });
+            $data['users'] = $allUsers;
+        }
+        return $data;
+    }
+    public static function allusers($user)
+    {
+        $directlyCreatedUsers = $user->createdUsers()
+            ->with(['createdBy', 'company'])
+            ->whereIn('role', ['Associate', 'Junior Associate', 'Borrower', 'Assistant'])
+            ->latest()
+            ->get();
+
+        $indirectlyCreatedUsers = User::whereIn('created_by', $directlyCreatedUsers->pluck('id'))
+            ->with(['createdBy', 'company'])
+            ->whereIn('role', ['Associate', 'Junior Associate', 'Borrower', 'Assistant'])
+            ->latest()
+            ->get();
+
+        return $directlyCreatedUsers->merge($indirectlyCreatedUsers);
+    }
 }

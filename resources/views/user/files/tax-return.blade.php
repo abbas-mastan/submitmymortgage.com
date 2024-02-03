@@ -50,7 +50,7 @@
                             {{ $file->comments }}
                         </td>
                         <td class=" pl-2 tracking-wide border border-r-0">
-                            <a data="Delete"  class="delete" title="Delete this file"
+                            <a data="Delete" class="delete" title="Delete this file"
                                 href="{{ url(getRoutePrefix() . '/delete-file/' . $file->id) }}">
                                 <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
                                     <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7">
@@ -66,8 +66,6 @@
 @section('foot')
     <script type="text/javascript">
         var cat = 'Tax Returns';
-        var uploadUrl = '{{ url(getUserRoutePrefix() . '/file-upload') }}';
     </script>
-    <script src="{{ asset('js/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('js/upload.js') }}" type="text/javascript"></script>
+    @include('parts.js.userfooter')
 @endsection

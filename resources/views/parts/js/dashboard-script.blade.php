@@ -31,11 +31,7 @@
                 $("#file-name-percent").text(progress);
                 return;
             }
-            alert('File upload complete.')
-            $("#start-upload-div").toggleClass("hidden");
-            $("#file-progress").toggleClass("hidden");
-            $("#filename").text("");
-            location.reload();
+        window.location.href = window.returnBack;            
         });
     }
 

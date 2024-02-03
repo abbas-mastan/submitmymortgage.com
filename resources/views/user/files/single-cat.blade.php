@@ -65,8 +65,6 @@
 @section('foot')
     <script>
         var cat = "{{ $cat }}";
-        var uploadUrl = '{{ url(getUserRoutePrefix() . '/file-upload') }}';
     </script>
-    <script src="{{ asset('js/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('js/upload.js') }}" type="text/javascript"></script>
+    @include('parts.js.userfooter')
 @endsection

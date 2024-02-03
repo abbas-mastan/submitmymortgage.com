@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Factory;
-use App\Models\Info;
-use App\Models\Team;
-use App\Models\User;
+use App\Http\Requests\ApplicationRequest;
+use App\Http\Requests\IntakeFormRequest;
+use App\Models\Application;
 use App\Models\Company;
 use App\Models\Contact;
-use App\Models\Project;
-use Illuminate\View\View;
+use App\Models\Info;
 use App\Models\IntakeForm;
-use App\Models\Application;
+use App\Models\Project;
+use App\Models\Team;
+use App\Models\User;
 use App\Models\UserCategory;
-use Illuminate\Http\Request;
-use App\Services\UserService;
 use App\Services\AdminService;
 use App\Services\CommonService;
+use App\Services\UserService;
+use Faker\Factory;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\IntakeFormRequest;
-use App\Http\Requests\ApplicationRequest;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\View\View;
 
 class AdminController extends Controller
 {
@@ -320,27 +320,27 @@ class AdminController extends Controller
     public function projects($id = null): View
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-        if($admin->role === 'Admin'){
+        if ($admin->role === 'Admin') {
             $data['teams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->get();
             $teamIds = $data['teams']->pluck('id')->toArray();
             $data['projects'] = Project::whereIn('team_id', $teamIds)
                 ->with(['team', 'users.createdBy', 'borrower.createdBy'])
                 ->get();
-                $data['borrowers'] = User::where('role', 'Borrower')->where('company_id',$admin->company_id)->get(['id', 'name']);
-        }else{
-        $data['teams'] = Team::where('owner_id', $admin->id)
-            ->orWhereHas('users', function ($query) use ($admin) {
-                $query->where('user_id', $admin->id);
-            })
-            ->get();
+            $data['borrowers'] = User::where('role', 'Borrower')->where('company_id', $admin->company_id)->get(['id', 'name']);
+        } else {
+            $data['teams'] = Team::where('owner_id', $admin->id)
+                ->orWhereHas('users', function ($query) use ($admin) {
+                    $query->where('user_id', $admin->id);
+                })
+                ->get();
 
-        $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
-        $data['projects'] = Project::with('creater')->where('created_by', $admin->id)
-            ->orWhereHas('users', function ($query) use ($admin) {
-                $query->where('users.id', $admin->id);
-            })
-            ->with(['team', 'users.createdBy', 'borrower.createdBy'])
-            ->get();
+            $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
+            $data['projects'] = Project::with('creater')->where('created_by', $admin->id)
+                ->orWhereHas('users', function ($query) use ($admin) {
+                    $query->where('users.id', $admin->id);
+                })
+                ->with(['team', 'users.createdBy', 'borrower.createdBy'])
+                ->get();
         }
         $data['enableProjects'] = $data['projects'];
         return view('admin.newpages.projects', $data);
@@ -484,8 +484,8 @@ class AdminController extends Controller
         $admin = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
 
         if ($admin->role === 'Admin') {
-            $data['disableTeams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->Where('disable',true)->get();
-            $data['enableTeams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->Where('disable',false)->get();
+            $data['disableTeams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->Where('disable', true)->get();
+            $data['enableTeams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->Where('disable', false)->get();
             $data['teams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->get();
         } else {
             $data['disableTeams'] = $admin->teamsOwnend()
@@ -569,12 +569,16 @@ class AdminController extends Controller
         return AdminService::shareItemWithAssistant($request, $id);
     }
 
-    public function removeAcess(Request $request,User $user)
+    public function removeAcess(Request $request, User $user)
     {
         $user->active = 2;
         $user->save();
-        if($request->ajax()) return response()->json('access removed', 200);
-        else return back()->with('msg_success','Assistant deleted successfully');
+        if ($request->ajax()) {
+            return response()->json('access removed', 200);
+        } else {
+            return back()->with('msg_success', 'Assistant deleted successfully');
+        }
+
     }
 
     public function submitIntakeForm(IntakeFormRequest $request)
