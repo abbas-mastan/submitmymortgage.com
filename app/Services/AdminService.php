@@ -137,7 +137,7 @@ class AdminService
             $user->loan_type = $request->loan_type;
         }
 
-        if (!$request->company && Auth::check() && Auth::user()->role !== 'Super Admin') {
+        if (Auth::check() && Auth::user()->role !== 'Super Admin') {
             $user->company_id = Auth::user()->company_id;
         } else if (Auth::check() && Auth::user()->role === 'Super Admin') {
             $user->company_id = $request->company;
@@ -590,7 +590,7 @@ class AdminService
             $team = Team::find($request->team);
             $request->merge(['email' => $request->email ?? $faker->unique()->safeEmail,
                 'role' => 'Borrower',
-                'company' => $team->company_id,
+                'company' => Auth::user()->company_id ?? $team->company_id,
             ]);
             $user = self::doUser($request, -1);
             $project = Project::create([
