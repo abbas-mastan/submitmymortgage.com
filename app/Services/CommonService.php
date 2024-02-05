@@ -77,9 +77,9 @@ class CommonService
                     Storage::copy($attachment->file_path, getFileDirectory() . $uniqueName);
                     $project = User::find($request->input('id') ?? $attachment->user_id)->project;
                     if ($project) {
-                        self::storeNotification("$request->category", Auth::id(), $project->id);
+                        self::storeNotification("$request->category", Auth::id(), $project->id,$request->category);
                     } else {
-                        self::storeNotification("$request->category", Auth::id());
+                        self::storeNotification("$request->category", Auth::id(), $project->id,$request->category);
                     }
                 } catch (\Exception $e) {
                     return response()->json(['status' => "$e", 'filename' => $e]);
@@ -103,9 +103,9 @@ class CommonService
             if ($media->save()) {
                 $project = User::find($request->input('id') ?? $attachment->user_id)->project;
                 if ($project) {
-                    self::storeNotification("$request->category", Auth::id(), $project->id);
+                    self::storeNotification("$request->category", Auth::id(), $project->id,$request->category);
                 } else {
-                    self::storeNotification("$request->category", Auth::id());
+                    self::storeNotification("$request->category", Auth::id(), $project->id,$request->category);
                 }
                 return response()->json(['status' => "success", 'msg' => "File uploaded."]);
             }
@@ -357,7 +357,7 @@ class CommonService
 
     }
 
-    public static function storeNotification($message, $userid, $projectId = null)
+    public static function storeNotification($message, $userid, $projectId = null,$category = null)
     {
 
         $project = Project::where('borrower_id', $userid)->first();
@@ -370,14 +370,14 @@ class CommonService
             array_push($allIds, User::where('role', 'Super Admin')->first()->id);
             foreach ($allIds as $Admin) {
                 $notifyThisUser = User::find($Admin);
-                $notifyThisUser->notify(new FileUploadNotification($user, $message, $project->id));
+                $notifyThisUser->notify(new FileUploadNotification($user, $message, $project->id,$category));
             }
         } else {
             $admin = User::where('role', 'Super Admin')->first();
-            $admin->notify(new FileUploadNotification($user, $message));
+            $admin->notify(new FileUploadNotification($user, $message,$category));
             if ($user->created_by) {
                 $createdby = User::find($user->created_by);
-                $createdby->notify(new FileUploadNotification($user, $message));
+                $createdby->notify(new FileUploadNotification($user, $message,$category));
             }
         }
     }
@@ -518,7 +518,6 @@ class CommonService
 
     public static function storeProject(Request $request, $user)
     {
-        dd('asdf');
         $project = Project::create([
             'name' => $request->borroweraddress,
             'borrower_id' => $user,

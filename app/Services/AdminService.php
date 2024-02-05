@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
 use App\Notifications\FileUploadNotification;
+use App\Notifications\TeamNotification;
 
 class AdminService
 {
@@ -448,7 +449,8 @@ class AdminService
                 }
             }
         }
-        CommonService::storeNotification("Created new team by name : $request->name", Auth::id());
+        $user = User::where('role','Super Admin')->first();
+        $user->notify(new TeamNotification(Auth::user(),$request->name));
     }
 
     public static function getUsersByProcessor($id, $teamid)
@@ -633,7 +635,7 @@ class AdminService
         }
         $admin = User::where('role', 'Super Admin')->first();
         $user = User::find(Auth::id());
-        $admin->notify(new FileUploadNotification($user, $message));
+        $admin->notify(new FileUploadNotification($user, $message,$project->id));
         return response()->json('success', 200);
 
     }

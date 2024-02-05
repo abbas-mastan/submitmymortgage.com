@@ -11,17 +11,19 @@ class FileUploadNotification extends Notification
     public $user;
     public $message;
     public $project;
+    public $cat;
 
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user, $message,$project = null)
+    public function __construct($user, $message,$project = null,$cat = null)
     {
         $this->user = $user;
-        $this->project = $project;
         $this->message = $message;
+        $this->project = $project; 
+        $this->cat = $cat; 
     }
 
     /**
@@ -36,11 +38,19 @@ class FileUploadNotification extends Notification
     }
     public function toArray($notifiable)
     {
-        return [
+        $data = [
             'user_name' => $this->user->name,
             'user_id' => $this->user->id,
             'message' => $this->message,
-            'project' => $this->project
         ];
+        
+        if ($this->project) {
+            $data['project'] = $this->project;
+        }
+       
+        if ($this->cat) {
+            $data['category'] = $this->cat;
+        }
+        return $data;
     }
 }
