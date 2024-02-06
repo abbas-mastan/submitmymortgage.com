@@ -52,7 +52,7 @@ Route::post('/email/verification-notification', [AuthController::class, 'emailVe
 //Authentication required roots
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('email','set-password');
+    Route::view('email','deal-email');
     Route::post('/logout-from-this-user', [SuperAdminController::class, 'ReLoginFrom']);
     Route::get('/dashboard', [HomeController::class, 'dashboard']);
     Route::get('/home', [HomeController::class, 'dashboard']);

@@ -20,12 +20,13 @@ align-items: center;">
                     <header
                         style="padding: 0.3rem; color:white;border-top-left-radius: 1rem;
             border-top-right-radius: 1rem; background-color: #b91c1c;">
-                        <h1 style="font-weight:600;font-size: 1.875rem;">You’ve Been Added on a Submit my Mortgage Deal
+                        <h1 style="font-weight:700;font-size: 1.875rem;">You’ve Been Added on a Submit my Mortgage Deal
                         </h1>
                     </header>
-                    <p style="    font-size: 1.5rem;
-                    line-height: 2rem;font-weight:600;padding: 2rem;">
-                        <span style="margin-bottom: 0.5rem;">
+                    <p style="font-size: 1.5rem;
+            line-height: 2rem; font-weight:700;"
+                        class="text-2xl font-bold p-8 text-center">
+                        <span class="block mb-2">
                             {{-- Dear {{ $user->name ?? "" }} --}}
                         </span>
                         <br>
@@ -34,16 +35,16 @@ align-items: center;">
                         Click the link below to begin adding the necessary files to complete your mortgage deal:
                     </p>
                     <div style="text-white">
-                        <a href="{{$url}}"
+                        <a href="#"
                             style="text-decoration:none;font-size: 1.125rem;
                 line-height: 1.75rem; padding-bottom: 0.75rem;    padding-left: 1.25rem;
     padding-right: 1.25rem;     border-radius: 0.375rem; color:white;
-    padding-top: 0.75rem; font-weight:600;background-color:#b91c1c;"
-                            class="block w-40 text-white py-3 px-5 text-lg font-bold bg-red-600 rounded-md text-center">Get
+    padding-top: 0.75rem; font-weight:700;background-color:#b91c1c;"
+                            class="block w-40 text-white py-3 px-5 text-lg font-bold bg-red-700 rounded-md text-center">Get
                             Started</a>
                     </div>
                     <p style="font-size: 1.5rem;
-            line-height: 2rem; font-weight:600;"
+            line-height: 2rem; font-weight:700;"
                         class="text-2xl font-bold p-8 text-center">
                         if you have any queries or need assistance, please don't hesitate to reach out to our support
                         team.
