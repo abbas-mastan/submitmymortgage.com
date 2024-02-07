@@ -8,17 +8,17 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class TeamNotification extends Notification
+class DealCreatedNotification extends Notification
 {
     use Queueable;
     public $user;
-    public $team;
+    public $project;
     public $company;
 
     public function __construct($user,Request $request)
     {
         $this->user = $user;
-        $this->team = $request->name;
+        $this->project = $request->id;
         $this->company = $request->company;
     }
 
@@ -37,9 +37,11 @@ class TeamNotification extends Notification
         $data = [
             'user_name' => $this->user->name,
             'user_id' => $this->user->id,
-            'team' => $this->team,
+            'project' => $this->project,
             'company' => $this->company,
             ];
         return $data;
     }
+
+
 }

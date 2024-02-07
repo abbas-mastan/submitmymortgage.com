@@ -8,26 +8,21 @@ use Illuminate\Notifications\Notification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 
-class TeamNotification extends Notification
+class UserCreatedNotification extends Notification
 {
     use Queueable;
+
     public $user;
-    public $team;
+    public $user_created;
     public $company;
 
     public function __construct($user,Request $request)
     {
         $this->user = $user;
-        $this->team = $request->name;
+        $this->user_created = $request->name;
         $this->company = $request->company;
     }
 
-    /**
-     * Get the notification's delivery channels.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
     public function via($notifiable)
     {
         return ['database'];
@@ -37,7 +32,7 @@ class TeamNotification extends Notification
         $data = [
             'user_name' => $this->user->name,
             'user_id' => $this->user->id,
-            'team' => $this->team,
+            'user_created' => $this->user_created,
             'company' => $this->company,
             ];
         return $data;

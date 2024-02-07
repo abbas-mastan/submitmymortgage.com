@@ -2,33 +2,34 @@
 
 namespace App\Services;
 
-use Faker\Factory;
-use App\Models\Info;
-use App\Models\Team;
-use App\Models\User;
-use App\Models\Media;
+use App\Mail\AssistantMail;
 use App\Mail\UserMail;
-use App\Models\Company;
-use App\Models\Contact;
-use App\Models\Project;
 use App\Models\Assistant;
 use App\Models\Attachment;
-use App\Mail\AssistantMail;
-use Illuminate\Support\Str;
+use App\Models\Company;
+use App\Models\Contact;
+use App\Models\Info;
+use App\Models\Media;
+use App\Models\Project;
+use App\Models\Team;
+use App\Models\User;
+use App\Notifications\DealCreatedNotification;
+use App\Notifications\TeamNotification;
+use App\Notifications\UserCreatedNotification;
+use Faker\Factory;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Crypt;
-use Illuminate\Support\Facades\Route;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
-use App\Notifications\FileUploadNotification;
-use App\Notifications\TeamNotification;
+use Illuminate\Support\Str;
 
 class AdminService
 {
@@ -151,7 +152,7 @@ class AdminService
                 // Password::sendResetLink($request->only('email'));
                 // Password::RESET_LINK_SENT;
                 $id = Crypt::encryptString($user->id);
-                DB::table('password_resets')->insert(['email'=>$user->email,'token'=> Hash::make(Str::random(8)),'created_at'=> now()]);
+                DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(8)), 'created_at' => now()]);
                 $url = function () use ($id) {return Url::signedRoute('user.register', ['user' => $id]);};
                 Mail::to($request->email)->send(new UserMail($url()));
             } else {
@@ -182,6 +183,12 @@ class AdminService
         if ($request->ajax()) {
             return $user->id;
         }
+        if (!isSuperAdmin()) {
+            $request['company'] = auth()->user()->company_id;
+        }
+
+        $user = User::where('role', 'Super Admin')->first();
+        $user->notify(new UserCreatedNotification(Auth::user(), $request));
 
         return ['msg_type' => 'msg_success', 'msg_value' => $msg];
     }
@@ -449,8 +456,12 @@ class AdminService
                 }
             }
         }
-        $user = User::where('role','Super Admin')->first();
-        $user->notify(new TeamNotification(Auth::user(),$request->name));
+        if (!isSuperAdmin()) {
+            $request['company'] = auth()->user()->company_id;
+        }
+
+        $user = User::where('role', 'Super Admin')->first();
+        $user->notify(new TeamNotification(Auth::user(), $request));
     }
 
     public static function getUsersByProcessor($id, $teamid)
@@ -570,7 +581,7 @@ class AdminService
                 'juniorAssociate' => 'sometimes:required',
             ], [
                 'email.required_with' => 'This field is required',
-                'borroweraddress.required' => 'This field is required'
+                'borroweraddress.required' => 'This field is required',
             ]);
 
             if ($validator->fails()) {
@@ -595,12 +606,12 @@ class AdminService
                 'company' => Auth::user()->company_id ?? $team->company_id,
             ]);
             $user = self::doUser($request, -1);
-            $project = Project::create([
-                'name' => $request->borroweraddress,
-                'borrower_id' => $user,
-                'team_id' => $request->team,
-                'created_by' => Auth::id(),
-            ]);
+            $project = new Project();
+            $project->name = $request->borroweraddress;
+            $project->borrower_id = $user;
+            $project->team_id = $request->team;
+            $project->created_by = Auth::id();
+            $project->save();
         } else {
             $project = Project::find($id);
         }
@@ -635,7 +646,8 @@ class AdminService
         }
         $admin = User::where('role', 'Super Admin')->first();
         $user = User::find(Auth::id());
-        $admin->notify(new FileUploadNotification($user, $message,$project->id));
+        $request['id'] = $project->id;
+        $admin->notify(new DealCreatedNotification($user, $request));
         return response()->json('success', 200);
 
     }

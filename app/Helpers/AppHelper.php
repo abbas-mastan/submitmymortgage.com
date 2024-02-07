@@ -66,6 +66,10 @@ function getRoutePrefix()
     }
 }
 
+function isSuperAdmin(){
+    return auth()->check() && auth()->user()->role === 'Super Admin';
+}
+
 function getVariable($var)
 {
     if ($var == 'Basic Info') {
