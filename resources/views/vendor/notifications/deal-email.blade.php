@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,9 +7,10 @@
     <title>Register Email</title>
 </head>
 <body style="font-family: graphik, sans-serif; cursor: auto; background-color:#faf2f2;">
-    <div style="text-align: center;">
-        <div style="margin-top:30px">
-            <div style="text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,.25); padding:2.5rem;">
+    <div style="color: black; display: flex;">
+        <div style="margin-top:5rem; margin-bottom:5rem;">
+            <div
+                style="margin-left: 5rem; margin-right:5rem; box-shadow: 0 25px 50px -12px #00000040; background-color:white; text-align: center;  padding:2.5rem;">
                 <header
                     style="padding:0.3rem; color:white; border-top-left-radius:1rem; border-top-right-radius:1rem; background-color:#b91c1c;">
                     <h1 style="font-weight:600;font-size: 1.875rem;">
@@ -42,5 +42,4 @@
         </div>
     </div>
 </body>
-
 </html>
