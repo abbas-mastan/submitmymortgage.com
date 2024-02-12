@@ -15,9 +15,12 @@ class UserCreatedNotification extends Notification
     public $user;
     public $user_created;
     public $company;
+    public $req;
 
     public function __construct($user,Request $request)
     {
+
+        $this->req = $request;
         $this->user = $user;
         $this->user_created = $request->name;
         $this->company = $request->company;
@@ -30,10 +33,10 @@ class UserCreatedNotification extends Notification
     public function toArray($notifiable)
     {
         $data = [
-            'user_name' => $this->user->name,
-            'user_id' => $this->user->id,
+            'user_name' => $this->user->name ?? $this->req->name,
+            'user_id' => $this->user->id ??  $this->req->id,
             'user_created' => $this->user_created,
-            'company' => $this->company,
+            'company' => $this->company ?? null,
             ];
         return $data;
     }

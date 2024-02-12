@@ -183,11 +183,15 @@ class AdminService
         if ($request->ajax()) {
             return $user->id;
         }
-        if (!isSuperAdmin()) {
+        if (auth()->check() && !isSuperAdmin()) {
             $request['company'] = auth()->user()->company_id;
+        }
+        if(!auth()->check()){
+            $request['id'] = $user->id;
         }
 
         $user = User::where('role', 'Super Admin')->first();
+
         $user->notify(new UserCreatedNotification(Auth::user(), $request));
 
         return ['msg_type' => 'msg_success', 'msg_value' => $msg];
