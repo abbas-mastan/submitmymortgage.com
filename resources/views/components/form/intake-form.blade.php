@@ -184,7 +184,7 @@
                 label="Current Loan Amount" class="mb-0" sign="1" />
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->current_lender ?? ''" name="current_lender_refinance" type="number" label="Current Lender"
+            <x-form.input :value="$intake->current_lender ?? ''" name="current_lender_refinance" type="text" label="Current Lender"
                 class="mb-0" sign="1" />
         </div>
         <div class="relative">
