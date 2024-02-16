@@ -75,6 +75,9 @@ class SuperAdminController extends Controller
     public function LoginAsThisUser(Request $request)
     {
         $user = User::where('id', $request->user_id)->where('role', '<>', 'Super Admin')->first();
+        if( $user->active !== 1){
+            return back()->with('msg_error','Sorry this user has been disabled');
+        }
         if($user->email_verified_at !== null){
             Auth::login($user);
             $request->session()->regenerate();
@@ -387,8 +390,13 @@ class SuperAdminController extends Controller
             $data['categories'] = config('smm.file_category');
             sort($data['categories']); // Sort the array in ascending order
         }
-        $data['assistants'] = $data['user']->assistants->load('assistant');
-        // dd($data['assistants']);
+        $data['assistants'] = [];
+        $data['assistantsusers'] = $data['user']->assistants->load('assistant');
+        foreach ($data['assistantsusers'] as $assistant) {
+            if($assistant->assistant->active === 1){
+                $data['assistants'][]= $assistant->assistant;
+            }
+        }
         $data['catCount'] = [];
         $data['categories'] = array_unique($data['categories']);
         foreach ($data['categories'] as $category) {

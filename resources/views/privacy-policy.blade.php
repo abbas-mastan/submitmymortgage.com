@@ -17,7 +17,7 @@
                 <hr class="mb-5">
                 <p>
                     <span class="website_name company_name"><span
-                            class="dashed"><strong>Edoceditor</strong></span></span> takes your privacy very seriously.
+                            class="dashed"><strong>Submitmymortgage</strong></span></span> takes your privacy very seriously.
                     This Privacy Policy explains how <span class="website_name"><span
                             class="dashed"><strong>submitmymortgage.com</strong></span></span>
                     collects, uses, and discloses information, and your choices for managing your information

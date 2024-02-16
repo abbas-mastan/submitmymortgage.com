@@ -193,7 +193,7 @@ class AdminService
         $user = User::where('role', 'Super Admin')->first();
 
         $user->notify(new UserCreatedNotification(Auth::user(), $request));
-
+        
         return ['msg_type' => 'msg_success', 'msg_value' => $msg];
     }
 

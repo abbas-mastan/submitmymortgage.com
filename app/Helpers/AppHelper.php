@@ -37,12 +37,12 @@ function getAssistantRoutePrefix()
 function getRoutePrefix()
 {
     switch (session('role')) {
+        case 'Super Admin':
+            return getSuperAdminRoutePrefix();
+            break;
+            
         case 'Admin':
             return getAdminRoutePrefix();
-            break;
-
-            case 'Super Admin':
-            return getSuperAdminRoutePrefix();
             break;
 
         case 'Processor':

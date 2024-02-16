@@ -151,8 +151,7 @@
             </div>
         </div>
         <div class="hidden py-3 submitPart">
-            <span class="errors">
-            </span>
+            <span class="errors"></span>
             <form action="{{ url(getRoutePrefix() . '/share-items/-1') }}" method="POST">
                 @csrf
                 <x-jq-loader />
@@ -160,17 +159,15 @@
                     class="bg-transperent w-full py-3 focus:bg-transperent focus:ring-2 focus:border-0 focus:ring-red-700 rounded-md">
                 <h3 class="mt-3 text-xl font-bold">People With access</h3>
                 @forelse($assistants as $assistant)
-                        @if ($assistant && $assistant->assistant && $assistant->assistant->active != 0 && $assistant->assistant->active != 2)
-                        <div class="flex justify-between items-center mt-3">
-                            <div>
-                                <h3 class="text-xl font-normal">{{ $assistant->assistant->name }}</h3>
-                                <p class="text-gray-600">{{ $assistant->assistant->email }}</p>
-                            </div>
-                            <a class="removeAccess" href="{{$assistant->assistant->id}}" data-id="{{ $assistant->assistant->id }}">
-                                <img class="icon w-10" src="{{ asset('icons/trash.svg') }}" alt="">
-                            </a>
-                        </div>
-                    @endif
+                    <div class="flex justify-between items-center mt-3">
+                        <span>
+                            <h3 class="text-xl font-normal">{{ $assistant->name }}</h3>
+                            <p class="text-gray-600">{{ $assistant->email }}</p>
+                        </span>
+                        <a class="removeAccess" href="{{ $assistant->id }}" data-id="{{ $assistant->id }}">
+                            <img class="icon w-10" src="{{ asset('icons/trash.svg') }}" alt="">
+                        </a>
+                    </div>
                 @empty
                     <div class="text-center text-xl font-bold">Sorry! no data available</div>
                 @endforelse
@@ -185,11 +182,10 @@
         <h2 class="text-center text-2xl mb-5 text-red-700"> Deal name: {{ $user->project->name }} |
             {{ $user->project->team->name }} </h2>
     @endif
-
     <div class="">
         @include('elems.upload-btn')
-        <div class="flex justify-between">
-            <div class="flex align-center">
+        <div class="grid grid-cols-3 my-3">
+            <div class="">
                 <Button class="newProject bg-red-800 px-5 py-2 text-white flex">
                     <img class="w-7 mr-2" src="{{ asset('icons/share.png') }}" alt="">
                     <span class="pt-1">
@@ -203,11 +199,11 @@
                         $name = explode(' ', $user->name);
                         $rearrangedName = count($name) > 1 ? $name[1] . ', ' . $name[0] : $user->name;
                     @endphp
-                    <h2 class="text-center text-2xl -mt-3.5 mb-5 text-red-700">
+                    <h2 class="text-center text-2xl mb-5 text-red-700">
                         {{ $rearrangedName }}
                     </h2>
                     @isset($info)
-                        <h3 class="text-center text-xl -mt-3.5 mb-5 text-red-700">
+                        <h3 class="text-center text-xl mb-5 text-red-700">
                             {{ $info->b_address . $info->b_city . ', ' . $info->b_state }}
                         </h3>
                     @endisset
@@ -215,32 +211,34 @@
             </div>
             <div class="inline-block">
                 @if ($currentrole === $superadminrole || $user->project->created_by === Auth::id())
-                <div class="relative dropdownButton">
-                    <button class=" bg-red-800 px-5 py-2 text-white flex" id="menu-button" aria-expanded="true"
-                        aria-haspopup="true">Move To
-                        <svg class="ml-2 w-4 mt-1" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
-                            xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 185.344 185.344" xml:space="preserve">
-                            <g>
+                    <div class="relative dropdownButton flex justify-end">
+                        <button class=" bg-red-800 px-5 py-2 text-white flex" id="menu-button" aria-expanded="true"
+                            aria-haspopup="true">Move To
+                            <svg class="ml-2 w-4 mt-1" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 185.344 185.344"
+                                xml:space="preserve">
                                 <g>
-                                    <path style="fill:#ffffff;"
-                                        d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
-                                                                                                                                                                                                                                    c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
-                                                                                                                                                                                                                                    c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                    <g>
+                                        <path style="fill:#ffffff;"
+                                            d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
+                                                                                                                                                                                                                                                            c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
+                                                                                                                                                                                                                                                            c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                    </g>
                                 </g>
-                            </g>
-                        </svg>
-                    </button>
-                    <div class="dropdownMenu hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
-                        <div class="py-1">
-                            <a href="{{ url(getRoutePrefix() . '/project/disable/' . $user->project->id) }}"
-                                class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'disable' ? 'bg-red-800 text-white' : '' }}"
-                                role="menuitem" tabindex="-1" id="menu-item-0">Disable Deal</a>
-                            <a href="{{ url(getRoutePrefix() . '/project/close/' . $user->project->id) }}"
-                                class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'close' ? 'bg-red-800 text-white' : '' }}"
-                                role="menuitem" tabindex="-1" id="menu-item-1">Close Deal</a>
+                            </svg>
+                        </button>
+                        <div
+                            class="dropdownMenu hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
+                            <div class="py-1">
+                                <a href="{{ url(getRoutePrefix() . '/project/disable/' . $user->project->id) }}"
+                                    class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'disable' ? 'bg-red-800 text-white' : '' }}"
+                                    role="menuitem" tabindex="-1" id="menu-item-0">Disable Deal</a>
+                                <a href="{{ url(getRoutePrefix() . '/project/close/' . $user->project->id) }}"
+                                    class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'close' ? 'bg-red-800 text-white' : '' }}"
+                                    role="menuitem" tabindex="-1" id="menu-item-1">Close Deal</a>
+                            </div>
                         </div>
                     </div>
-                </div>
                 @endif
             </div>
         </div>
@@ -303,12 +301,11 @@
                                         <div width="30%">
                                             <!-- File Name -->
                                             <div class="mb-2">
-                                                <a target="_blank" href='{{ \File::extension($file->file_name) == "docx" ? url("/show-docx/$file->id") : asset($file->file_path) }}' class="text-blue-500 inline">
-                                                    {{ $file->file_name }} 
+                                                <a target="_blank" href='{{ \File::extension($file->file_name) == 'docx' ? url("/show-docx/$file->id") : asset($file->file_path) }}' class="text-blue-500 inline">
+                                                    {{ $file->file_name }}
                                                 </a>
                                                 <a download href="{{ asset($file->file_path) }}">
-                                                    <img class="w-5 inline"
-                                                    src="{{ asset('icons/download.svg') }}" alt="">
+                                                    <img class="w-5 inline" src="{{ asset('icons/download.svg') }}"alt="">
                                                 </a>
                                             </div>
                                             <!-- Category -->

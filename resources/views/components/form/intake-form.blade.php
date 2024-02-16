@@ -67,7 +67,7 @@
                 label="Current Loan Amount" class="mb-0" sign="1" />
         </div>
         <x-form.input name="closing_date_purchase" :value="$intake->closing_date ?? ''" type="date" class="mb-0"
-            label="ClosingDate" />
+            label="Closing Date" />
     </div>
     <div class="cashout hidden grid grid-cols-2 gap-x-4">
         <div class="mt-3 ">

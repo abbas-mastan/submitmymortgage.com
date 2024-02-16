@@ -367,18 +367,12 @@ class AdminController extends Controller
         $data['assistants'] = []; // Initialize the array
         $data['catCount'] = [];
         foreach ($data['user']->assistants as $assistant) {
-            $user = $data['assistants'][] = User::with('assistants')->find($assistant->assistant_id);
-            if ($user) {
-                $data['assistants'][$user->id] = $user;
+            if ($assistant && $assistant->assistant && $assistant->assistant->active == 1) {
+                $data['assistants'][] = $assistant->assistant;
             }
         }
-        $data['assistants'] = collect($data['assistants'])->unique('id');
         $data['categories'] = array_unique($data['categories']);
         foreach ($data['categories'] as $category) {
-            if ($category === 'Credit Report') {
-                continue;
-            }
-
             $data['catCount'][$category] = [
                 $data['user']->media()->where('category', $category)->count(),
             ];

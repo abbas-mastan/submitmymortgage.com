@@ -110,6 +110,7 @@ Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(funct
         Route::post('/submit-intake-form', 'submitIntakeForm');
         Route::post('/do-associate', 'doAssociate');
         Route::post('/get-associates/{company?}', 'getAssociates');
+        Route::get('/remove-access/{user}', 'removeAcess');
         Route::get('/redirect/{route}/{message}', 'redirectTo');
         Route::get('/delete-attachment/{id}', 'deleteAttachment');
         Route::get('/getUsersByCompany/{company}', [AdminCompanyController::class, 'getUsersByCompany']);
