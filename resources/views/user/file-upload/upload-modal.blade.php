@@ -97,19 +97,22 @@ fixed bg-gray-500 bg-opacity-40
                             <th>filename</th>
                         </thead>
                         <tbody>
+
                             @php
                                 $attachments = \App\Models\Attachment::where('user_id', Auth::id())->get();
                             @endphp
                             @foreach ($attachments as $key => $file)
-                                <td>
-                                    <div id="attachments" class="inline ">
-                                        <input id="check{{ $file->id }}" type="checkbox" value="{{ $file->id }}"
-                                            name="attachment[]" class="form-control">
-                                        <label for="check{{ $file->id }}">
-                                            {{ $file->file_name }}
-                                        </label>
-                                    </div>
-                                </td>
+                                <tr>
+                                    <td>
+                                        <div id="attachments" class="inline ">
+                                            <input id="check{{ $file->id }}" type="checkbox"
+                                                value="{{ $file->id }}" name="attachment[]" class="form-control">
+                                            <label for="check{{ $file->id }}">
+                                                {{ $file->file_name }}
+                                            </label>
+                                        </div>
+                                    </td>
+                                </tr>
                             @endforeach
                         </tbody>
                     </table>
