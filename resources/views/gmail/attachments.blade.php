@@ -35,7 +35,7 @@
                     </div>
                 @endforeach
             @else --}}
-            
+
                 <div class="list-group">
                     @foreach ($attachments as $key => $file)
                         <div class="list-group-item">
@@ -47,7 +47,7 @@
                                 </label>
                             </div>
                         </div>
-                    @endforeach
+                    @endforeach   
                 </div>
             {{-- @endif --}}
         </div>

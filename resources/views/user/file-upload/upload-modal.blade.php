@@ -24,12 +24,7 @@ fixed bg-gray-500 bg-opacity-40
                     <option value="">Choose document type</option>
                     @php
                         $categories = config('smm.file_category');
-                        foreach (
-                            Auth::user()
-                                ->categories()
-                                ->get()
-                            as $category
-                        ) {
+                        foreach (Auth::user()->categories()->get() as $category) {
                             $categories[] = $category->name;
                         }
                         if (isset($user)) {
@@ -97,13 +92,24 @@ fixed bg-gray-500 bg-opacity-40
             <br>
             @if (count(\App\Models\Attachment::where('user_id', Auth::id())->get()) > 0)
                 <div class="px-20 justify-evenly">
-                    <table class="deleted-table">
+                    <table class="deleted-table w-full">
                         <thead class="hidden">
                             <th>filename</th>
                         </thead>
                         <tbody>
                             <td>
-                                @include('gmail.attachments')
+                                @php
+                                    $attachments = \App\Models\Attachment::where('user_id', Auth::id())->get();
+                                @endphp
+                                @foreach ($attachments as $key => $file)
+                                    <div id="attachments" class="inline ">
+                                        <input id="check{{ $file->id }}" type="checkbox" value="{{ $file->id }}"
+                                            name="attachment[]" class="form-control">
+                                        <label for="check{{ $file->id }}">
+                                            {{ $file->file_name }}
+                                        </label>
+                                    </div>
+                                @endforeach
                             </td>
                         </tbody>
                     </table>
