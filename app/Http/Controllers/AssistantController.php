@@ -101,8 +101,8 @@ class AssistantController extends Controller
                     $media->uploaded_by = Auth::id();
                     if ($media->save()) {
                         $project = User::find($borrower->user_id)->project;
-                        if($project){
-                            CommonService::storeNotification("$cat", Auth::id(),$project->id);
+                        if($project){   
+                            CommonService::storeNotification("$cat", Auth::id(),$project->id,$cat);
                         }else{
                             CommonService::storeNotification("$cat", Auth::id());
                         }
