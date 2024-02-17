@@ -97,6 +97,11 @@ fixed bg-gray-500 bg-opacity-40
             <br>
             @if (count(\App\Models\Attachment::where('user_id', Auth::id())->get()) > 0)
                 <div class="px-20 justify-evenly">
+                    <table>
+                        <thead>
+                            <th></th>
+                        </thead>
+                    </table>
                     @include('gmail.attachments')
                 </div>
             @endif

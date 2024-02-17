@@ -6,8 +6,8 @@
         <div class="panel-heading">
             <div class="text-gradientStart">Files from Gmail</div>
         </div>
-        <div class="list-group grid grid-cols-2 gap-2">
-            @if (count($attachments) > 1)
+        <div class="list-group grid grid-cols-1 gap-2">
+            {{-- @if (count($attachments) > 1)
                 @php
                     $splitIndex = ceil(count($attachments) / 2);
                     $firstHalf = $attachments->take($splitIndex);
@@ -34,7 +34,8 @@
                         </div>
                     </div>
                 @endforeach
-            @else
+            @else --}}
+            
                 <div class="list-group">
                     @foreach ($attachments as $key => $file)
                         <div class="list-group-item">
@@ -48,7 +49,7 @@
                         </div>
                     @endforeach
                 </div>
-            @endif
+            {{-- @endif --}}
         </div>
     </div>
 </div>

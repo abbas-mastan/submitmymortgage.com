@@ -75,7 +75,7 @@ class SuperAdminController extends Controller
     public function LoginAsThisUser(Request $request)
     {
         $user = User::where('id', $request->user_id)->where('role', '<>', 'Super Admin')->first();
-        if( $user->active !== 1){
+        if($user->active != 1){
             return back()->with('msg_error','Sorry this user has been disabled');
         }
         if($user->email_verified_at !== null){
