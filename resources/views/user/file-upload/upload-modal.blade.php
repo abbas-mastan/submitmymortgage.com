@@ -92,8 +92,8 @@ fixed bg-gray-500 bg-opacity-40
             <br>
             @if (count(\App\Models\Attachment::where('user_id', Auth::id())->get()) > 0)
                 <div class="px-20 justify-evenly">
-                    <table class="deleted-table w-full">
-                        <thead class="hidden">
+                    <table class="user-table w-full">
+                        <thead>
                             <th>filename</th>
                         </thead>
                         <tbody>
