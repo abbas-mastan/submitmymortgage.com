@@ -36,9 +36,8 @@
             display: block;
         }
 
-        #user-table_length,
-        #user-table_paginate,
-        #user-table_info {
+        #attachment-table_length,
+        #attachment-table_info {
             display: none;
         }
 
@@ -50,12 +49,12 @@
             border-radius: 0px !important;
         }
 
-        #user-table_filter label {
+        #attachment-table_filter label {
             font-size: 0;
             /* Hide the text by setting font-size to 0 */
         }
 
-        #user-table_filter {
+        #attachment-table_filter {
             color: white;
         }
 
@@ -69,6 +68,41 @@
 
         .icon {
             filter: invert(1);
+        }
+
+        .dataTables_wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .dataTables_filter {
+            margin-left: auto;
+        }
+
+        .paginate_button {
+            padding: 5px !important;
+            margin: 0 6px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: none;
+            color: black !important;
+            border-radius: 4px;
+            border: 1px solid #828282;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:active {
+            background: skyblue;
+            color: rgb(221, 14, 14) !important;
+        }
+
+        .paginate_button.current {
+            background: #4676e5 !important;
+        }
+
+        .paginate_button.current {
+            color: #4676e5 !important;
         }
     </style>
 @endsection
@@ -221,8 +255,8 @@
                                     <g>
                                         <path style="fill:#ffffff;"
                                             d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
-                                                                                                                                                                                                                                                            c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
-                                                                                                                                                                                                                                                            c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                                                                                                                                                                                                                                                                                    c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
+                                                                                                                                                                                                                                                                                                    c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
                                     </g>
                                 </g>
                             </svg>
@@ -301,7 +335,9 @@
                                         <div width="30%">
                                             <!-- File Name -->
                                             <div class="mb-2">
-                                                <a target="_blank" href='{{ \File::extension($file->file_name) == 'docx' ? url("/show-docx/$file->id") : asset($file->file_path) }}' class="text-blue-500 inline">
+                                                <a target="_blank"
+                                                    href='{{ \File::extension($file->file_name) == 'docx' ? url("/show-docx/$file->id") : asset($file->file_path) }}'
+                                                    class="text-blue-500 inline">
                                                     {{ $file->file_name }}
                                                 </a>
                                                 <a download href="{{ asset($file->file_path) }}">
@@ -394,4 +430,23 @@
 @endsection
 @section('foot')
     @include('parts.js.project-overview-script')
+    <script>
+        $('#attachment-table').dataTable({
+            "sPaginationType": "full_numbers",
+            language: {
+                'paginate': {
+                    'previous': '<span class="prev-icon">&lt;&lt;</span>',
+                    'next': '<span class="next-icon">&gt;&gt;</span>'
+                }
+            }
+        });
+        $(`select[name="attachment-table_length"]`).addClass('mb-3');
+        $(`select[name="attachment-table_length"]`).addClass('w-16');
+        $('.sorting').addClass('hidden');
+        $('.dataTables_wrapper .dataTables_paginate .paginate_button.current').attr('style', 'color:white !important')
+        $(document).on('click', '.paginate_button', function(e) {
+            e.preventDefault();
+            $('.dataTables_wrapper .dataTables_paginate .paginate_button.current').attr('style', 'color:white !important')
+        });
+    </script>
 @endsection

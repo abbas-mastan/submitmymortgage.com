@@ -91,19 +91,22 @@ fixed bg-gray-500 bg-opacity-40
             </div>
             <br>
             @if (count(\App\Models\Attachment::where('user_id', Auth::id())->get()) > 0)
-                <div class="px-20 justify-evenly">
-                    <table class="user-table w-full">
-                        <thead>
-                            <th>filename</th>
+                <div class="px-20 justify-evenly"> 
+                    <button class="bg-red-800 text-white px-5 py-1.5 absolute ">Sort by</button>
+                    <table class="user-table w-full stripe" id="attachment-table">
+                        <thead class="">
+                            <th></th>
                         </thead>
-                        <tbody>
-
+                        <tbody class="flex flex-col pt-2">
                             @php
                                 $attachments = \App\Models\Attachment::where('user_id', Auth::id())->get();
                             @endphp
                             @foreach ($attachments as $key => $file)
-                                <tr>
-                                    <td>
+                                <tr @class([
+                                    'bg-gray-200'=> $loop->odd,
+                                    '-py-1'
+                                ])>
+                                    <td class="">
                                         <div id="attachments" class="inline ">
                                             <input id="check{{ $file->id }}" type="checkbox"
                                                 value="{{ $file->id }}" name="attachment[]" class="form-control">
