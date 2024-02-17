@@ -97,12 +97,16 @@ fixed bg-gray-500 bg-opacity-40
             <br>
             @if (count(\App\Models\Attachment::where('user_id', Auth::id())->get()) > 0)
                 <div class="px-20 justify-evenly">
-                    <table>
-                        <thead>
-                            <th></th>
+                    <table class="deleted-table">
+                        <thead class="hidden">
+                            <th>filename</th>
                         </thead>
+                        <tbody>
+                            <td>
+                                @include('gmail.attachments')
+                            </td>
+                        </tbody>
                     </table>
-                    @include('gmail.attachments')
                 </div>
             @endif
             <!-- Modal footer -->
