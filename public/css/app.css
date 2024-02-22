@@ -972,6 +972,9 @@ select {
 .mt-8 {
   margin-top: 2rem;
 }
+.mr-24 {
+  margin-right: 6rem;
+}
 .box-content {
   box-sizing: content-box;
 }

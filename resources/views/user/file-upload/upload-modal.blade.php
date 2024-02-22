@@ -1,8 +1,8 @@
 <div id="default-modal" aria-hidden="true"
-    class="hidden w-full h-full overflow-x-hidden overflow-y-auto 
+    class="hidden w-full h-full overflow-x-hidden overflow-y-auto  
 fixed bg-gray-500 bg-opacity-40
  z-50 justify-center items-center">
-    <div class="fixed left-1/3 top-1/4 w-full max-w-2xl px-4 h-full md:h-auto bg-white shadow relative">
+    <div class="fixed left-1/3 top-1/4 w-full max-w-2xl px-4 h-full md:h-auto bg-white shadow relative mb-40">
         <!-- Modal content -->
         <div class="">
             <!-- Modal header -->
@@ -92,7 +92,8 @@ fixed bg-gray-500 bg-opacity-40
             <br>
             @if (count(\App\Models\Attachment::where('user_id', Auth::id())->get()) > 0)
                 <div class="px-20 justify-evenly"> 
-                    <button class="bg-red-800 text-white px-5 py-1.5 absolute ">Sort by</button>
+                    <img class="absolute right-0 mr-24 z-10 w-5 mt-2" src="{{asset('icons/search.svg')}}" alt="">
+                    {{-- <button class="bg-red-800 text-white px-5 py-1.5 absolute ">Sort by</button> --}}
                     <table class="user-table w-full stripe" id="attachment-table">
                         <thead class="">
                             <th></th>
@@ -104,7 +105,6 @@ fixed bg-gray-500 bg-opacity-40
                             @foreach ($attachments as $key => $file)
                                 <tr @class([
                                     'bg-gray-200'=> $loop->odd,
-                                    '-py-1'
                                 ])>
                                     <td class="">
                                         <div id="attachments" class="inline ">
