@@ -1,5 +1,5 @@
 <div id="default-modal" aria-hidden="true"
-    class="pb-[20rem] hidden w-full h-full overflow-x-hidden overflow-y-auto  
+    style="padding-bottom: 20rem;" class="hidden w-full h-full overflow-x-hidden overflow-y-auto  
 fixed bg-gray-500 bg-opacity-40
  z-50 justify-center items-center">
     <div class="fixed left-1/3 top-1/4 w-full max-w-2xl px-4 h-full md:h-auto bg-white shadow relative mb-40">
