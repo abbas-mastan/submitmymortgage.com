@@ -135,9 +135,10 @@
                     @if (Auth::user()->accessToken)
                         <span class="tracking-wide sm:block capitalize text-themegreen"> Gmail Inbox</span>
                     @else
-                        <div class="px-4 inline-flex bg-white shadow  rounded-full">
-                            <span class="mt-1 mr-3">
-                                Sign in with Google Mail
+                        <div class="px-4 flex gap-3 items-center bg-white py-2 shadow rounded-full">
+                            <img src="{{ asset('assets/unnamed.png') }}" alt="gmail" class="" width="28px">
+                            <span class="mt-1 mr-3 ml-2 text-md">
+                                Link to Gmail
                             </span>
                             {{-- <svg class="" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
                                 data-name="Layer 1" viewBox="0 0 32 32" id="gmail">
