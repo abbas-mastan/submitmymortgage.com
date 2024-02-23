@@ -22,7 +22,7 @@
                     <label for="username" class="text-white text-md xl:text-xl opacity-70">Email</label>
                 </div>
                 <div class="mt-2">
-                    <input type="email" value="{{ old('email') }}"
+                    <input type="email" value="{{ old('email',$user->email ?? null) }}" {{ isset($user) && $user->email ? 'disabled' : ''}}
                         class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                         name="email" id="username" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email">
                 </div>

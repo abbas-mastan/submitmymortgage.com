@@ -1,6 +1,6 @@
 @extends('layouts.empty')
 @section('content')
-    <div class="mx-auto w-1/3 mt-40">
+    <div class="mx-auto w-1/3 h-screen flex flex-col justify-center">
         <div class="">
             <h1 class="xl:text-3xl text-2xl uppercase text-center font-bold text-white">
                 Password reset

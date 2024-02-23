@@ -269,15 +269,19 @@
         $("#sendemail").on('change', function(e) {
             e.preventDefault();
             if ($(this).is(":checked")) {
+                $("[name='password']").attr('disabled', true);
+                $("[name='password_confirmation']").attr('disabled', true);
                 $("#passwordParent").addClass('hidden');
             } else {
+                $("[name='password_confirmation']").removeAttr('disabled');
+                $("#passwordParent").removeClass('hidden');
                 $("#passwordParent").removeClass('hidden');
             }
         });
         if ($("#sendemail").is(":checked")) {
             $("#passwordParent").addClass('hidden');
         } else {
-            $("#passwordParent").removeClass('hidden');
+            $("[name='password']").removeAttr('disabled');
         }
         let role = document.querySelector('#role');
         let financeDiv = document.querySelector('#finance-div');

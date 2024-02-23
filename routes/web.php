@@ -45,6 +45,8 @@ Route::group(['middleware' => 'guest'], function () {
 Route::get('/logout', [AuthController::class, 'logout']);
 
 //Email verification links
+Route::get('/user-register', [AuthController::class, 'userRegister'])->name('user.register');
+Route::get('/borrower-register', [AuthController::class, 'userRegister'])->middleware('auth')->name('borrower.register');
 Route::get('/email/verify', [AuthController::class, 'notifyEmailVerification'])->middleware('auth')->name('verification.notice');
 Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'emailVerificationHandler'])->middleware(['auth', 'signed'])->name('verification.verify');
 Route::post('/email/verification-notification', [AuthController::class, 'emailVerificationResend'])->middleware(['auth', 'throttle:6,1'])->name('verification.send');

@@ -53,7 +53,8 @@ fixed bg-gray-500 bg-opacity-40
                             class="bg-transparent border-none outline-none
                             font-bold text-gradientStart"
                             id="file-upload-btn">
-                            browse
+          
+                                browse
                         </button>
                         <input type="file" name="file" id="file" multiple>
                     </p>

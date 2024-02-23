@@ -2,34 +2,34 @@
 
 namespace App\Services;
 
-use App\Mail\AssistantMail;
-use App\Mail\UserMail;
-use App\Models\Assistant;
-use App\Models\Attachment;
-use App\Models\Company;
-use App\Models\Contact;
+use Faker\Factory;
 use App\Models\Info;
-use App\Models\Media;
-use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
-use App\Notifications\DealCreatedNotification;
-use App\Notifications\TeamNotification;
-use App\Notifications\UserCreatedNotification;
-use Faker\Factory;
-use Illuminate\Auth\Events\Registered;
+use App\Models\Media;
+use App\Mail\UserMail;
+use App\Models\Company;
+use App\Models\Contact;
+use App\Models\Project;
+use App\Models\Assistant;
+use App\Models\Attachment;
+use App\Mail\AssistantMail;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Auth\Events\Registered;
+use App\Notifications\TeamNotification;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
+use App\Notifications\DealCreatedNotification;
+use App\Notifications\UserCreatedNotification;
 
 class AdminService
 {
@@ -123,7 +123,7 @@ class AdminService
             $user->password = Hash::make($request->password);
         }
         if ($isNewUser && !$request->filled('password')) {
-            $user->password = Hash::make(Str::random(8));
+            $user->password = 'null';
         }
         $user->role = $request->input('role', 'Borrower');
         $user->active = 1;
@@ -154,9 +154,18 @@ class AdminService
                 $id = Crypt::encryptString($user->id);
                 DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(8)), 'created_at' => now()]);
                 $url = function () use ($id) {return Url::signedRoute('user.register', ['user' => $id]);};
-                Mail::to($request->email)->send(new UserMail($url()));
+                if ($request->role === 'Borrower') {
+                    Mail::to($request->email)->send(new AssistantMail($url()));
+                } else {
+                    Mail::to($request->email)->send(new UserMail($url()));
+                }
             } else {
-                event(new Registered($user));
+                $id = Crypt::encryptString($user->id);
+                DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(8)), 'created_at' => now()]);
+                $url = function () use ($id) {return Url::signedRoute('borrower.register', ['user' => $id]);};
+                Mail::to($request->email)->send(new AssistantMail($url()));
+                // event(new Registered($user));
+
             }
         }
         if (Auth::check() && $request->role !== 'Borrower' && $user->teams) {
@@ -186,14 +195,14 @@ class AdminService
         if (auth()->check() && !isSuperAdmin()) {
             $request['company'] = auth()->user()->company_id;
         }
-        if(!auth()->check()){
+        if (!auth()->check()) {
             $request['id'] = $user->id;
         }
 
         $user = User::where('role', 'Super Admin')->first();
 
         $user->notify(new UserCreatedNotification(Auth::user(), $request));
-        
+
         return ['msg_type' => 'msg_success', 'msg_value' => $msg];
     }
 
