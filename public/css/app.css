@@ -1169,6 +1169,9 @@ select {
 .w-full {
   width: 100%;
 }
+.w-\[50\%\] {
+  width: 50%;
+}
 .min-w-\[20px\] {
   min-width: 20px;
 }
