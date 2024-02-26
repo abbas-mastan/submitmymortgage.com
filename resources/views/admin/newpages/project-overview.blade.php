@@ -255,23 +255,23 @@
                                     <g>
                                         <path style="fill:#ffffff;"
                                             d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
-                                                                                                                                                                                                                                                                                                    c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
-                                                                                                                                                                                                                                                                                                    c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                                c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
+                                                c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
                                     </g>
                                 </g>
                             </svg>
-                        </button>
-                        <div
-                            class="dropdownMenu hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
-                            <div class="py-1">
-                                <a href="{{ url(getRoutePrefix() . '/project/disable/' . $user->project->id) }}"
-                                    class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'disable' ? 'bg-red-800 text-white' : '' }}"
-                                    role="menuitem" tabindex="-1" id="menu-item-0">Disable Deal</a>
-                                <a href="{{ url(getRoutePrefix() . '/project/close/' . $user->project->id) }}"
-                                    class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'close' ? 'bg-red-800 text-white' : '' }}"
-                                    role="menuitem" tabindex="-1" id="menu-item-1">Close Deal</a>
+                            <div
+                                class="dropdownMenu w-[28%] hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-8 shadow bg-white">
+                                <div class="py-1">
+                                    <a href="{{ url(getRoutePrefix() . '/project/disable/' . $user->project->id) }}"
+                                        class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'disable' ? 'bg-red-800 text-white' : '' }}"
+                                        role="menuitem" tabindex="-1" id="menu-item-0">Disable Deal</a>
+                                    <a href="{{ url(getRoutePrefix() . '/project/close/' . $user->project->id) }}"
+                                        class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'close' ? 'bg-red-800 text-white' : '' }}"
+                                        role="menuitem" tabindex="-1" id="menu-item-1">Close Deal</a>
+                                </div>
                             </div>
-                        </div>
+                        </button>
                     </div>
                 @endif
             </div>
@@ -431,7 +431,9 @@
 @section('foot')
     @include('parts.js.project-overview-script')
     <script>
-        $('#attachment-table').dataTable({
+        var otable = $('#attachment-table').dataTable({
+            iVote: -1, //field name 
+            "bRetrieve": true,
             "sPaginationType": "full_numbers",
             language: {
                 'paginate': {
@@ -440,13 +442,16 @@
                 }
             }
         });
+        // otable.fnSort( [ [0,'desc'] ] );   // Sort by second column descending
+
         $(`select[name="attachment-table_length"]`).addClass('mb-3');
         $(`select[name="attachment-table_length"]`).addClass('w-16');
         $('.sorting').addClass('hidden');
         $('.dataTables_wrapper .dataTables_paginate .paginate_button.current').attr('style', 'color:white !important')
         $(document).on('click', '.paginate_button', function(e) {
             e.preventDefault();
-            $('.dataTables_wrapper .dataTables_paginate .paginate_button.current').attr('style', 'color:white !important')
+            $('.dataTables_wrapper .dataTables_paginate .paginate_button.current').attr('style',
+                'color:white !important')
         });
     </script>
 @endsection

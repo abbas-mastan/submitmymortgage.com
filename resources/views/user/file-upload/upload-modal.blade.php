@@ -1,5 +1,5 @@
-<div id="default-modal" aria-hidden="true"
-    style="padding-bottom: 20rem;" class="hidden w-full h-full overflow-x-hidden overflow-y-auto  
+<div id="default-modal" aria-hidden="true" style="padding-bottom: 20rem;"
+    class="hidden w-full h-full overflow-x-hidden overflow-y-auto  
 fixed bg-gray-500 bg-opacity-40
  z-50 justify-center items-center">
     <div class="fixed left-1/3 top-1/4 w-full max-w-2xl px-4 h-full md:h-auto bg-white shadow relative mb-40">
@@ -53,8 +53,8 @@ fixed bg-gray-500 bg-opacity-40
                             class="bg-transparent border-none outline-none
                             font-bold text-gradientStart"
                             id="file-upload-btn">
-          
-                                browse
+
+                            browse
                         </button>
                         <input type="file" name="file" id="file" multiple>
                     </p>
@@ -91,37 +91,71 @@ fixed bg-gray-500 bg-opacity-40
                 </div>
             </div>
             <br>
-            @if (count(\App\Models\Attachment::where('user_id', Auth::id())->get()) > 0)
-                <div class="px-20 justify-evenly"> 
-                    <img class="absolute right-0 mr-24 z-10 w-5 mt-2" src="{{asset('icons/search.svg')}}" alt="">
-                    {{-- <button class="bg-red-800 text-white px-5 py-1.5 absolute ">Sort by</button> --}}
-                    <table class="user-table w-full stripe" id="attachment-table">
-                        <thead class="">
-                            <th></th>
-                        </thead>
-                        <tbody class="flex flex-col pt-2">
-                            @php
-                                $attachments = \App\Models\Attachment::where('user_id', Auth::id())->get();
-                            @endphp
-                            @foreach ($attachments as $key => $file)
-                                <tr @class([
-                                    'bg-gray-200'=> $loop->odd,
-                                ])>
-                                    <td class="">
-                                        <div id="attachments" class="inline ">
-                                            <input id="check{{ $file->id }}" type="checkbox"
-                                                value="{{ $file->id }}" name="attachment[]" class="form-control">
-                                            <label for="check{{ $file->id }}">
-                                                {{ $file->file_name }}
-                                            </label>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
-            @endif
+            {{-- @if (count(\App\Models\Attachment::where('user_id', Auth::id())->get()) > 0) --}}
+            <div class="px-20 justify-evenly">
+                {{-- <button class="bg-red-800 text-white px-5 py-1.5 absolute ">Sort by</button> --}}
+                    <div class="absolute">
+                        <button class="modalsort bg-red-800 px-4 py-1 text-white flex items-center" id="menu-button" aria-expanded="true"
+                            aria-haspopup="true">Sort By
+                            <svg class="ml-2 w-3 mt-1" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                                xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 185.344 185.344"
+                                xml:space="preserve">
+                                <g>
+                                    <g>
+                                        <path style="fill:#ffffff;"
+                                            d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
+                                                                                                                                                                                                                                                                                                    c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
+                                                                                                                                                                                                                                                                                                    c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                    </g>
+                                </g>
+                            </svg>
+                        </button>
+                        <div
+                            class="hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
+                            <div class="py-1">
+                                <a href="{{ url(getRoutePrefix() . '/project/disable/' . $user->project->id) }}"
+                                    class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'disable' ? 'bg-red-800 text-white' : '' }}"
+                                    role="menuitem" tabindex="-1" id="menu-item-0">Category</a>
+                                <a href="{{ url(getRoutePrefix() . '/project/close/' . $user->project->id) }}"
+                                    class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'close' ? 'bg-red-800 text-white' : '' }}"
+                                    role="menuitem" tabindex="-1" id="menu-item-1">Files</a>
+                            </div>
+                        </div>
+                    </div> 
+
+                <img class="absolute right-0 mr-24 z-10 w-5 mt-2" src="{{ asset('icons/search.svg') }}"
+                    alt="">
+
+                <table class="user-table w-full stripe" id="attachment-table">
+                    <thead class="">
+                        <th></th>
+                    </thead>
+                    <tbody class="flex flex-col pt-2">
+                        @php
+                            $attachments = \App\Models\Attachment::where('user_id', Auth::id())->latest()->get();
+                        @endphp
+                        @foreach (
+                        // [(object) ['id' => 'file-1', 'file_name' => 'File 1'], (object) ['id' => 'file-2', 'file_name' => 'File 2'], (object) ['id' => 'file-3', 'file_name' => 'File 3']] 
+                        $attachments
+                        as $key => $file)
+                            <tr @class([
+                                'bg-gray-200' => $loop->odd,
+                            ])>
+                                <td class="">
+                                    <div id="attachments" class="inline ">
+                                        <input id="check{{ $file->id }}" type="checkbox"
+                                            value="{{ $file->id }}" name="attachment[]" class="form-control">
+                                        <label for="check{{ $file->id }}">
+                                            {{ $file->file_name }}
+                                        </label>
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            {{-- @endif --}}
             <!-- Modal footer -->
             <div id="start-upload-div" class="flex  items-center justify-center py-8  rounded-b dark:border-gray-600">
                 <button id="start-upload-btn" data-modal-toggle="default-modal" type="button"
