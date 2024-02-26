@@ -255,8 +255,8 @@
                                     <g>
                                         <path style="fill:#ffffff;"
                                             d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
-                                                c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
-                                                c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                                                        c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
+                                                                        c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
                                     </g>
                                 </g>
                             </svg>
@@ -431,8 +431,22 @@
 @section('foot')
     @include('parts.js.project-overview-script')
     <script>
+        $('.modalsort').click(function(e) {
+            e.preventDefault();
+            $('.uploadModalDropdown').toggleClass('hidden');
+
+        });
+        $(document).on("click", function(e) {
+            if (!$(e.target).closest(".modalsort").length) {
+                // Clicked outside of the .categoryContainer
+                $('.uploadModalDropdown').addClass('hidden');
+            }
+        });
+
+        // Initialize the DataTable
         var otable = $('#attachment-table').dataTable({
-            "ordering":false,
+            iVote: -1, //field name 
+            "bRetrieve": true,
             "sPaginationType": "full_numbers",
             language: {
                 'paginate': {
@@ -441,7 +455,28 @@
                 }
             }
         });
-        otable.fnSort( [ [0,'desc'] ] );   // Sort by second column descending
+
+        otable.fnSort([[2, 'desc']]);
+        $('.latest').addClass('bg-red-800 text-white w-full');
+        $('.latest').click(function() {
+            $('.latest').addClass('bg-red-800 text-white w-full');
+            $('.filetype').removeClass('bg-red-800 text-white');
+            otable.fnSort([
+                [2, 'asc']
+            ]); // Sort by second column descending
+        });
+        
+        // Add event listener for the File Type button
+        $('.filetype').click(function() {
+            $('.latest').removeClass('bg-red-800 text-white');
+            $('.filetype').addClass('bg-red-800 text-white w-full');
+            otable.fnSort([
+                [1, 'asc']
+            ]); // Sort by second column descending
+        });
+
+
+
 
         $(`select[name="attachment-table_length"]`).addClass('mb-3');
         $(`select[name="attachment-table_length"]`).addClass('w-16');

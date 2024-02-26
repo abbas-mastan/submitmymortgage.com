@@ -94,46 +94,44 @@ fixed bg-gray-500 bg-opacity-40
             {{-- @if (count(\App\Models\Attachment::where('user_id', Auth::id())->get()) > 0) --}}
             <div class="px-20 justify-evenly">
                 {{-- <button class="bg-red-800 text-white px-5 py-1.5 absolute ">Sort by</button> --}}
-                    <div class="absolute">
-                        <button class="modalsort bg-red-800 px-4 py-1 text-white flex items-center" id="menu-button" aria-expanded="true"
-                            aria-haspopup="true">Sort By
-                            <svg class="ml-2 w-3 mt-1" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
-                                xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 185.344 185.344"
-                                xml:space="preserve">
+                <div class="absolute z-50">
+                    <button class="modalsort bg-red-800 px-4 py-1 text-white flex items-center" id="menu-button"
+                        aria-expanded="true" aria-haspopup="true">Sort By
+                        <svg class="ml-2 w-3 mt-1" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 185.344 185.344"
+                            xml:space="preserve">
+                            <g>
                                 <g>
-                                    <g>
-                                        <path style="fill:#ffffff;"
-                                            d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
+                                    <path style="fill:#ffffff;"
+                                        d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
                                                                                                                                                                                                                                                                                                     c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
                                                                                                                                                                                                                                                                                                     c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
-                                    </g>
                                 </g>
-                            </svg>
-                        </button>
-                        <div
-                            class="hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
-                            <div class="py-1">
-                                <a href="#"
-                                    class="text-gray-700 block px-4 py-2 text-sm"
-                                    role="menuitem" tabindex="-1" id="menu-item-0">Category</a>
-                                <a href="#"
-                                    class="text-gray-700 block px-4 py-2 text-sm"
-                                    role="menuitem" tabindex="-1" id="menu-item-1">Files</a>
-                            </div>
+                            </g>
+                        </svg>
+                    </button>
+                    <div class="hidden uploadModalDropdown absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
+                        <div class="py-1">
+                            <button href="#" class="latest text-gray-700 block px-4 py-2 text-sm" role="menuitem"
+                                tabindex="-1" id="menu-item-0">Latest</button>
+                            <button href="#" class="filetype text-gray-700 block px-4 py-2 text-sm" role="menuitem"
+                                tabindex="-1" id="menu-item-1">File Type</button>
                         </div>
-                    </div> 
+                    </div>
+                </div>
 
-                <img class="absolute right-0 mr-24 z-10 w-5 mt-2" src="{{ asset('icons/search.svg') }}"
-                    alt="">
+                <img class="absolute right-0 mr-24 z-10 w-5 mt-2" src="{{ asset('icons/search.svg') }}" alt="">
 
                 <table class="user-table w-full stripe" id="attachment-table">
                     <thead class="">
+                        <th></th>
+                        <th></th>
                         <th></th>
                     </thead>
                     <tbody class="flex flex-col pt-2">
                         @php
                             $attachments = \App\Models\Attachment::where('user_id', Auth::id())->latest()->get();
-                            // [(object) ['id' => 'file-1', 'file_name' => 'File 1'], (object) ['id' => 'file-2', 'file_name' => 'File 2'], (object) ['id' => 'file-3', 'file_name' => 'File 3']] 
+                            // [(object) ['id' => 'file-1', 'file_name' => 'File 1'], (object) ['id' => 'file-2', 'file_name' => 'File 2'], (object) ['id' => 'file-3', 'file_name' => 'File 3']]
                         @endphp
                         @foreach ($attachments as $key => $file)
                             <tr @class([
@@ -147,6 +145,12 @@ fixed bg-gray-500 bg-opacity-40
                                             {{ $file->file_name }}
                                         </label>
                                     </div>
+                                </td>
+                                <td class="hidden">
+                                  {{$file->file_extension}}
+                                </td>
+                                <td class="hidden">
+                                  {{date($file->created_at)}}
                                 </td>
                             </tr>
                         @endforeach
