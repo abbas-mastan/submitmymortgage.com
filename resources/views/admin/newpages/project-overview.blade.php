@@ -441,7 +441,7 @@
                 }
             }
         });
-        // otable.fnSort( [ [0,'desc'] ] );   // Sort by second column descending
+        otable.fnSort( [ [0,'desc'] ] );   // Sort by second column descending
 
         $(`select[name="attachment-table_length"]`).addClass('mb-3');
         $(`select[name="attachment-table_length"]`).addClass('w-16');
