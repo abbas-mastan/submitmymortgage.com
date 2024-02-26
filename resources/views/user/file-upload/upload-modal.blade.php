@@ -117,7 +117,7 @@ fixed bg-gray-500 bg-opacity-40
                                     class="text-gray-700 block px-4 py-2 text-sm"
                                     role="menuitem" tabindex="-1" id="menu-item-0">Category</a>
                                 <a href="#"
-                                    class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'close' ? 'bg-red-800 text-white' : '' }}"
+                                    class="text-gray-700 block px-4 py-2 text-sm"
                                     role="menuitem" tabindex="-1" id="menu-item-1">Files</a>
                             </div>
                         </div>
