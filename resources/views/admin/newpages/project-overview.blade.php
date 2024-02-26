@@ -432,8 +432,6 @@
     @include('parts.js.project-overview-script')
     <script>
         var otable = $('#attachment-table').dataTable({
-            iVote: -1, //field name 
-            "bRetrieve": true,
             "sPaginationType": "full_numbers",
             language: {
                 'paginate': {
