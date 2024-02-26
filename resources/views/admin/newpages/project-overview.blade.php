@@ -432,6 +432,7 @@
     @include('parts.js.project-overview-script')
     <script>
         var otable = $('#attachment-table').dataTable({
+            "ordering":false,
             "sPaginationType": "full_numbers",
             language: {
                 'paginate': {

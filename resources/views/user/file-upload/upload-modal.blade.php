@@ -135,7 +135,7 @@ fixed bg-gray-500 bg-opacity-40
                             $attachments = \App\Models\Attachment::where('user_id', Auth::id())->get();
                             // [(object) ['id' => 'file-1', 'file_name' => 'File 1'], (object) ['id' => 'file-2', 'file_name' => 'File 2'], (object) ['id' => 'file-3', 'file_name' => 'File 3']] 
                         @endphp
-                        @foreach ($attachments->sortByDesc('created_at') as $key => $file)
+                        @foreach ($attachments as $key => $file)
                             <tr @class([
                                 'bg-gray-200' => $loop->odd,
                             ])>
