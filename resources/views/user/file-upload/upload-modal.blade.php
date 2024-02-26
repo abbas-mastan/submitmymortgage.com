@@ -133,11 +133,9 @@ fixed bg-gray-500 bg-opacity-40
                     <tbody class="flex flex-col pt-2">
                         @php
                             $attachments = \App\Models\Attachment::where('user_id', Auth::id())->latest()->get();
+                            // [(object) ['id' => 'file-1', 'file_name' => 'File 1'], (object) ['id' => 'file-2', 'file_name' => 'File 2'], (object) ['id' => 'file-3', 'file_name' => 'File 3']] 
                         @endphp
-                        @foreach (
-                        // [(object) ['id' => 'file-1', 'file_name' => 'File 1'], (object) ['id' => 'file-2', 'file_name' => 'File 2'], (object) ['id' => 'file-3', 'file_name' => 'File 3']] 
-                        $attachments
-                        as $key => $file)
+                        @foreach ($attachments as $key => $file)
                             <tr @class([
                                 'bg-gray-200' => $loop->odd,
                             ])>
