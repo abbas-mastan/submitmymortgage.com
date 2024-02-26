@@ -113,10 +113,10 @@ fixed bg-gray-500 bg-opacity-40
                         <div
                             class="hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-1 shadow w-full bg-white">
                             <div class="py-1">
-                                <a href="{{ url(getRoutePrefix() . '/project/disable/' . $user->project->id) }}"
-                                    class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'disable' ? 'bg-red-800 text-white' : '' }}"
+                                <a href="#"
+                                    class="text-gray-700 block px-4 py-2 text-sm"
                                     role="menuitem" tabindex="-1" id="menu-item-0">Category</a>
-                                <a href="{{ url(getRoutePrefix() . '/project/close/' . $user->project->id) }}"
+                                <a href="#"
                                     class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'close' ? 'bg-red-800 text-white' : '' }}"
                                     role="menuitem" tabindex="-1" id="menu-item-1">Files</a>
                             </div>
