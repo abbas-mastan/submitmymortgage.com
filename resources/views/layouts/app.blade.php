@@ -139,8 +139,8 @@
 
 
 
-        $(`select[name="attachment-table_length"]`).addClass('mb-3');
-        $(`select[name="attachment-table_length"]`).addClass('w-16');
+        $('select[name="attachment-table_length"]').addClass('mb-3');
+        $('select[name="attachment-table_length"]').addClass('w-16');
         $('.sorting').addClass('hidden');
         $('.dataTables_wrapper .dataTables_paginate .paginate_button.current').attr('style', 'color:white !important')
         $(document).on('click', '.paginate_button', function(e) {
