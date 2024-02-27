@@ -91,7 +91,7 @@ fixed bg-gray-500 bg-opacity-40
                 </div>
             </div>
             <br>
-            {{-- @if (count(\App\Models\Attachment::where('user_id', Auth::id())->get()) > 0) --}}
+            @if (count(\App\Models\Attachment::where('user_id', Auth::id())->get()) > 0)
             <div class="px-20 justify-evenly">
                 {{-- <button class="bg-red-800 text-white px-5 py-1.5 absolute ">Sort by</button> --}}
                 <div class="absolute z-50">
@@ -157,7 +157,7 @@ fixed bg-gray-500 bg-opacity-40
                     </tbody>
                 </table>
             </div>
-            {{-- @endif --}}
+            @endif
             <!-- Modal footer -->
             <div id="start-upload-div" class="flex  items-center justify-center py-8  rounded-b dark:border-gray-600">
                 <button id="start-upload-btn" data-modal-toggle="default-modal" type="button"
