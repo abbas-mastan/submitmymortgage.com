@@ -163,8 +163,10 @@
                 'color:white !important')
         });
         $(document).ready(function() {
+            $("#attachment-table_filter").css("background", "#991b1b");
             $("#attachment-table_filter").attr("placeholder", "search");
             $("#attachment-table_filter").addClass('bg-red-800');
+            $("#attachment-table_filter > input").addClass('border-none text-white');
         });
     </script>
     <script>
