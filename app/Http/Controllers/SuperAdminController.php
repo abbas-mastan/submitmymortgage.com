@@ -395,11 +395,10 @@ class SuperAdminController extends Controller
         foreach ($data['assistantsusers'] as $assistant) {
             dump($assistant->assistant->name);
             dump($assistant->assistant->active);
-            if($assistant->assistant->active === 1){
+            if($assistant->assistant->active == 1){
                 $data['assistants'][]= $assistant->assistant;
             }
         }
-        die;
         $data['catCount'] = [];
         $data['categories'] = array_unique($data['categories']);
         foreach ($data['categories'] as $category) {
