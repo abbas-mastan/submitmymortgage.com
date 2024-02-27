@@ -195,7 +195,7 @@
                 @forelse($assistants as $assistant)
                     <div class="flex justify-between items-center mt-3">
                         <span>
-                            <h3 class="text-xl font-normal">{{ $assistant->name }}</h3>
+                            <h3 class="text-xl font-normal">Assistant</h3>
                             <p class="text-gray-600">{{ $assistant->email }}</p>
                         </span>
                         <a class="removeAccess" href="{{ $assistant->id }}" data-id="{{ $assistant->id }}">
