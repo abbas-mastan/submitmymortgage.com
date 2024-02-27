@@ -50,8 +50,21 @@
         .textcolor {
             color: #963437;
         }
-        #attachment-table_length{
+
+        #attachment-table_length {
             display: none;
+        }
+
+        #attachment-table_filter label {
+            font-size: 0;
+        }
+
+        #attachment-table_filter {
+            color: white;
+        }
+
+        #attachment-table_filter .dataTables_filter {
+            margin-left: auto;
         }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
@@ -92,7 +105,7 @@
     </script>
     @yield('foot')
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
-      <script>
+    <script>
         $('.modalsort').click(function(e) {
             e.preventDefault();
             $('.uploadModalDropdown').toggleClass('hidden');
@@ -142,14 +155,19 @@
 
 
 
-        $('select[name="attachment-table_length"]').addClass('mb-3');
-        $('select[name="attachment-table_length"]').addClass('w-16');
         $('.sorting').addClass('hidden');
         $('.dataTables_wrapper .dataTables_paginate .paginate_button.current').attr('style', 'color:white !important')
         $(document).on('click', '.paginate_button', function(e) {
             e.preventDefault();
             $('.dataTables_wrapper .dataTables_paginate .paginate_button.current').attr('style',
                 'color:white !important')
+        });
+        $(document).ready(function() {
+            $("input[type=search]").css("background", "#991b1b");
+            $("input[type=search]").attr("placeholder", "search");
+            $("input[type=search]").addClass('serachinput');
+            $("input[type=search]").addClass('bg-red-800');
+            $('#user-table').removeClass("no-footer dataTable");
         });
     </script>
     <script>
@@ -164,7 +182,7 @@
         @endif
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-  
+
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{-- tooltip logic starts here --}}
     <script>
