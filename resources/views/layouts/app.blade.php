@@ -163,9 +163,8 @@
                 'color:white !important')
         });
         $(document).ready(function() {
-            $("#attachment-table_filter > input[type=search]").css("background", "#991b1b");
-            $("#attachment-table_filter > input[type=search]").attr("placeholder", "search");
-            $("#attachment-table_filter > input[type=search]").addClass('bg-red-800');
+            $("#attachment-table_filter").attr("placeholder", "search");
+            $("#attachment-table_filter").addClass('bg-red-800');
         });
     </script>
     <script>
