@@ -216,6 +216,19 @@
         <h2 class="text-center text-2xl mb-5 text-red-700"> Deal name: {{ $user->project->name }} |
             {{ $user->project->team->name }} </h2>
     @endif
+    @forelse($assistants as $assistant)
+                    <div class="flex justify-between items-center mt-3">
+                        <span>
+                            <h3 class="text-xl font-normal">{{ $assistant->name }}</h3>
+                            <p class="text-gray-600">{{ $assistant->email }}</p>
+                        </span>
+                        <a class="removeAccess" href="{{ $assistant->id }}" data-id="{{ $assistant->id }}">
+                            <img class="icon w-10" src="{{ asset('icons/trash.svg') }}" alt="">
+                        </a>
+                    </div>
+                @empty
+                    <div class="text-center text-xl font-bold">Sorry! no data available</div>
+                @endforelse
     <div class="">
         @include('elems.upload-btn')
         <div class="grid grid-cols-3 my-3">
