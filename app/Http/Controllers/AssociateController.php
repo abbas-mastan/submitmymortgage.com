@@ -358,7 +358,9 @@ class AssociateController extends Controller
         $data = AdminService::filesCat($request, $id);
         $data['categories'] = config('smm.file_category');
         $user = User::find($id);
-        $data['assistants'] = $user->assistants;
+        $data['assistants'] = $user->assistants->filter(function ($assistant) {
+            return $assistant->active == 1;
+        });
         return view('admin.newpages.project-overview', $data);
     }
     public function redirectTo($route, $message)
