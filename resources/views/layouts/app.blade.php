@@ -163,11 +163,9 @@
                 'color:white !important')
         });
         $(document).ready(function() {
-            $("input[type=search]").css("background", "#991b1b");
-            $("input[type=search]").attr("placeholder", "search");
-            $("input[type=search]").addClass('serachinput');
-            $("input[type=search]").addClass('bg-red-800');
-            $('#user-table').removeClass("no-footer dataTable");
+            $("#attachment-table_filter > input[type=search]").css("background", "#991b1b");
+            $("#attachment-table_filter > input[type=search]").attr("placeholder", "search");
+            $("#attachment-table_filter > input[type=search]").addClass('bg-red-800');
         });
     </script>
     <script>
