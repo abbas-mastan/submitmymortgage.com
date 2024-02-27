@@ -50,6 +50,9 @@
         .textcolor {
             color: #963437;
         }
+        #attachment-table_length{
+            display: none;
+        }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
