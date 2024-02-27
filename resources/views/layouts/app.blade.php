@@ -51,7 +51,7 @@
             color: #963437;
         }
 
-        #attachment-table_length {
+        #attachment-table_length, #attachment-table_info{
             display: none;
         }
 
@@ -66,6 +66,10 @@
         #attachment-table_filter .dataTables_filter {
             margin-left: auto;
         }
+        #attachment-table_paginate{
+            justify-content: center;
+        }
+        
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
