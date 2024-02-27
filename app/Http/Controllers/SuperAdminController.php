@@ -394,6 +394,7 @@ class SuperAdminController extends Controller
         $data['assistantsusers'] = $data['user']->assistants->load('assistant');
         foreach ($data['assistantsusers'] as $assistant) {
             dump($assistant->assistant->name);
+            dump($assistant->assistant->active);
             if($assistant->assistant->active === 1){
                 $data['assistants'][]= $assistant->assistant;
             }
