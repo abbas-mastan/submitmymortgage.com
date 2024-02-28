@@ -74,6 +74,10 @@
             align-items: center;
         }
 
+        .serachinput::-webkit-input-placeholder {
+            color: white;
+        }
+
         #attachment-table_filter input[type="search"] {
             background-color: #963437;
             color: white;
@@ -195,6 +199,8 @@
         $(document).ready(function() {
             $("#attachment-table_filter").attr("placeholder", "search");
             $("#attachment-table_filter > input").addClass('bg-red-800');
+            $("input[type=search]").addClass('serachinput');
+            $("input[type=search]").attr("placeholder", "search");
             $("#attachment-table_filter > input").addClass('border-none text-white');
         });
     </script>
