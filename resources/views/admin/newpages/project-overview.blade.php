@@ -70,40 +70,8 @@
             filter: invert(1);
         }
 
-        .dataTables_wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+       
 
-        .dataTables_filter {
-            margin-left: auto;
-        }
-
-        .paginate_button {
-            padding: 5px !important;
-            margin: 0 6px;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
-            background: none;
-            color: black !important;
-            border-radius: 4px;
-            border: 1px solid #828282;
-        }
-
-        .dataTables_wrapper .dataTables_paginate .paginate_button:active {
-            background: skyblue;
-            color: rgb(221, 14, 14) !important;
-        }
-
-        .paginate_button.current {
-            background: #4676e5 !important;
-        }
-
-        .paginate_button.current {
-            color: #4676e5 !important;
-        }
     </style>
 @endsection
 @section('content')

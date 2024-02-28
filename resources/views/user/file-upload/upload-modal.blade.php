@@ -120,7 +120,7 @@ fixed bg-gray-500 bg-opacity-40
                     </div>
                 </div>
 
-                <img class="absolute right-0 mr-24 z-10 w-5 mt-2" src="{{ asset('icons/search.svg') }}" alt="">
+                <img class="absolute right-0 z-10 w-5 mt-2" style="margin-right: 15%;" src="{{ asset('icons/search.svg') }}" alt="">
 
                 <table class="user-table w-full stripe" id="attachment-table">
                     <thead class="">

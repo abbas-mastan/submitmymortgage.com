@@ -51,7 +51,8 @@
             color: #963437;
         }
 
-        #attachment-table_length, #attachment-table_info{
+        #attachment-table_length,
+        #attachment-table_info {
             display: none;
         }
 
@@ -63,13 +64,38 @@
             color: white;
         }
 
-        #attachment-table_filter .dataTables_filter {
+        #attachment-table_filter {
             margin-left: auto;
         }
-        #attachment-table_paginate{
-            justify-content: center;
+
+        #attachment-table_wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        
+
+        #attachment-table_filter input[type="search"] {
+            background-color: #963437;
+            color: white;
+            /* Replace "your-color" with the desired color value */
+        }
+
+        #attachment-table_paginate .paginate_button {
+            padding: 5px !important;
+            margin: 0 6px;
+        }
+
+        #attachment-table_paginate .paginate_button:hover {
+            background: none;
+            color: black !important;
+            border-radius: 4px;
+            border: 1px solid #828282;
+        }
+
+        #attachment-table_paginate .paginate_button.current {
+            background: #4676e5 !important;
+            color: white !important;
+        }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
@@ -167,9 +193,8 @@
                 'color:white !important')
         });
         $(document).ready(function() {
-            $("#attachment-table_filter").css("background", "#991b1b");
             $("#attachment-table_filter").attr("placeholder", "search");
-            $("#attachment-table_filter").addClass('bg-red-800');
+            $("#attachment-table_filter > input").addClass('bg-red-800');
             $("#attachment-table_filter > input").addClass('border-none text-white');
         });
     </script>
