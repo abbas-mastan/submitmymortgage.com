@@ -30,8 +30,8 @@
     <div class="w-full my-4">
         <table class="table-auto w-full">
             <thead class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white py-8">
-                <tr class="text-left">
-                    <th class="p-2" colspan="2">Gmail from</th>
+                <tr>
+                    <th class="p-2">Gmail from</th>
                     <th colspan="2">Total attachments</th>
                 </tr>
             </thead>
@@ -50,12 +50,12 @@
                             }
                         @endphp
                         <tr class="bg-gray-200">
-                            <td class="pl-2 pr-8 py-2" colspan="2">{{ $email ?? '' }}</td>
+                            <td class="p-2" colspan="2">{{ $email ?? '' }}</td>
                             <td colspan="2">
                                 @foreach ($message->getPayload()->getParts() as $key => $part)
                                     @if ($part->filename)
                                         <a href="{{ route('download', ['messageId' => $message->getId(), 'attachmentId' => $part['body']['attachmentId'], 'attachmentIndexId' => $part->getPartId()]) }}"
-                                            class="mr-2 bg-gradient-to-b from-gradientStart to-gradientEnd px-3 py-1 rounded text-white">
+                                            class="mr-2 bg-blue-500  btn-primary btn-success px-3 py-1 rounded text-white">
                                             {{ $part->filename }}
                                         </a>
                                     @endif

@@ -1,8 +1,8 @@
 /node_modules
 /public/hot
 /public/storage
-/public/gmail-attachments
-/public/uploaded-media
+/public/gmail-attachments/*
+/public/uploaded-media/*
 /storage/*.key
 /vendor
 .env

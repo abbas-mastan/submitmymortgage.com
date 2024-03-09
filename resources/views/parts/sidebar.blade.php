@@ -35,50 +35,15 @@
                 </li>
                 <x-tab href="all-users" title="All Users" />
                 <x-tab href="teams" title="Teams" />
-                <li class="-mt-4 hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <ul class="deals">
-                    <li class="pb-3 mb-1 sm:px-24 flex flex-row">
-                        <span
-                            class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </span>
-                        <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/projects') }}">
-                            <span class="tracking-wide sm:block capitalize text-white">Deals</span>
-                        </a>
-                    </li>
-                    <li class="hidden initialized ml-5 pb-3 mb-1 sm:px-24 flex flex-row">
-                        <span
-                            class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                        </span>
-                        <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/loan-intake') }}">
-                            <span class="tracking-wide sm:block  capitalize text-white">New Initialized Deals</span>
-                        </a>
-                    </li>
-                </ul>
-                <li class="-mt-4 line hidden sm:block">
-                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
-                        &nbsp;
-                    </span>
-                </li>
-                <li class="pb-3 mb-1 sm:px-24 flex flex-row">
-                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
-                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                    </span>
-                    <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/contacts') }}">
-                        <span class="tracking-wide sm:block  capitalize text-white">Contacts</span>
-                    </a>
-                </li>
+                <x-tab href="projects" title="Deals" />
                 @if (session('role') === 'Processor')
                     <x-tab href="application/-1" title="Loan Application" />
                 @endif
+                <x-tab href="contacts" title="Contacts" />
                 @if ($currentrole === 'Admin' || Gate::check('isSuperAdmin'))
                     <x-tab href="connections" title="Connections" />
                 @endif
+                <x-tab href="loan-intake" title="Loan Intakes" />
                 <x-tab href="applications" title="Loan Pipeline" />
                 <x-tab href="upload-files" title="Upload Files" />
                 <x-tab href="files" title="Files Uploaded" />
@@ -120,7 +85,11 @@
                 @php
                     $categories = config('smm.file_category');
                     array_unshift($categories, 'Basic Info');
-                    if (Auth::user()->categories()->exists()) {
+                    if (
+                        Auth::user()
+                            ->categories()
+                            ->exists()
+                    ) {
                         Auth::user()->load('categories');
                         foreach (Auth::user()->categories as $cat) {
                             $categories[] = $cat->name;
@@ -142,11 +111,11 @@
                         </a>
                     </li>
                     @if (!$loop->last)
-                        <li class="-mt-3 hidden sm:block">
-                            <span class="border-l-4  border-l-white  border-opacity-20 h-14  vertical-line-m">
-                                &nbsp;
-                            </span>
-                        </li>
+                    <li class="-mt-3 hidden sm:block">
+                        <span class="border-l-4  border-l-white  border-opacity-20 h-14  vertical-line-m">
+                            &nbsp;
+                        </span>
+                    </li>
                     @endif
                 @endforeach
                 <!-- Sidebar for user ends -->
@@ -167,8 +136,7 @@
                         <span class="tracking-wide sm:block capitalize text-themegreen"> Gmail Inbox</span>
                     @else
                         <div class="px-4 flex gap-3 items-center bg-white py-2 shadow rounded-full">
-                            <img src="{{ asset('assets/unnamed.png') }}" alt="gmail" class=""
-                                width="28px">
+                            <img src="{{ asset('assets/unnamed.png') }}" alt="gmail" class="" width="28px">
                             <span class="mt-1 mr-3 ml-2 text-md">
                                 Link to Gmail
                             </span>
