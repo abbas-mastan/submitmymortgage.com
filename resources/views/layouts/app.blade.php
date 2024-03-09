@@ -140,6 +140,22 @@
     @yield('foot')
     <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
     <script>
+        $('.deals, .initialized').hover(function() {
+            $('.initialized').removeClass('hidden');
+            $('.line').removeClass('sm:block');
+        }, function() {
+            $('.initialized').addClass('hidden');
+            $('.line').addClass('sm:block');
+        });
+
+        $('.initialized').hover(function() {
+            $('.initialized').removeClass('hidden');
+            $('.line').removeClass('sm:block');
+        }, function() {
+            $('.initialized').addClass('hidden');
+            $('.line').addClass('sm:block');
+        });
+
         $('.modalsort').click(function(e) {
             e.preventDefault();
             $('.uploadModalDropdown').toggleClass('hidden');
