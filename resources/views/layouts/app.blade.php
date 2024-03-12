@@ -125,7 +125,9 @@
                 </div>
                 <div class="flex px-5" style="padding-right:80px;padding-left:80px">
                     <div class="w-full">
-                        @include('parts.alerts')
+                        {{-- @if (\Request::route()->getName() !== 'add-user') --}}
+                            @include('parts.alerts')
+                        {{-- @endif --}}
                         @yield('content')
                     </div>
                 </div>

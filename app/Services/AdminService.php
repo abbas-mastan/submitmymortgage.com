@@ -2,34 +2,33 @@
 
 namespace App\Services;
 
-use Faker\Factory;
-use App\Models\Info;
-use App\Models\Team;
-use App\Models\User;
-use App\Models\Media;
+use App\Mail\AssistantMail;
 use App\Mail\UserMail;
-use App\Models\Company;
-use App\Models\Contact;
-use App\Models\Project;
 use App\Models\Assistant;
 use App\Models\Attachment;
-use App\Mail\AssistantMail;
-use Illuminate\Support\Str;
+use App\Models\Company;
+use App\Models\Contact;
+use App\Models\Info;
+use App\Models\Media;
+use App\Models\Project;
+use App\Models\Team;
+use App\Models\User;
+use App\Notifications\DealCreatedNotification;
+use App\Notifications\TeamNotification;
+use App\Notifications\UserCreatedNotification;
+use Faker\Factory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Auth\Events\Registered;
-use App\Notifications\TeamNotification;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
-use App\Notifications\DealCreatedNotification;
-use App\Notifications\UserCreatedNotification;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Password;
 
 class AdminService
 {
@@ -89,20 +88,7 @@ class AdminService
     {
         $isNewUser = ($id == -1);
         $user = $isNewUser ? new User() : User::find($id);
-        if (!$request->ajax()) {
-            $request->validate([
-                'email' => "sometimes:required|email|unique:users,email," . $user->id,
-                'name' => "required",
-                'company' => (Auth::check() && Auth::user()->role == 'Super Admin') ? 'required' : '',
-                'sendemail' => '',
-                'password' => ($isNewUser && !$request->sendemail) ? 'required|min:8|confirmed' : '',
-                'role' =>
-                #This is the custom Rule. Less than Admin Role Can't add User with the role === admin OR Processor
-                function ($attribute, $value, $fail) {
-                    self::validateCurrentUser($attribute, $value, $fail);
-                },
-            ]);
-        }
+        self::userValidation($request,$user,$isNewUser);
         if (!$isNewUser && $user->role === 'Assistant') {
             Assistant::where('assistant_id', $user->id)->delete();
         }
@@ -525,7 +511,7 @@ class AdminService
             'email' => -1 == $id ? 'required|unique:users,email' : '',
             'items' => 'required|sometimes',
             'company' => Auth::user()->role !== 'Super Admin' ? '' : 'sometimes:required',
-            'deal' => 'sometimes:required',
+            'deal' => Route::current()->getName()== 'share-items'?'required':'' ,
         ]);
 
         if ($validator->fails()) {
@@ -552,7 +538,7 @@ class AdminService
             $user->password = Hash::make($request->password);
         }
         if ($id == -1 && !$request->filled('password')) {
-            $user->password = Hash::make($faker->unique()->password(8));
+            $user->password = Hash::make($faker->unique()->password(12));
         }
         $user->created_by = Auth::id();
         if (!$request->company && $user->company_id) {
@@ -663,6 +649,33 @@ class AdminService
         $admin->notify(new DealCreatedNotification($user, $request));
         return response()->json('success', 200);
 
+    }
+
+    private static function userValidation($request,$user,$isNewUser)
+    {
+        if (!$request->ajax()) {
+            $request->validate([
+                'email' => "sometimes:required|email|unique:users,email," . $user->id,
+                'name' => "required",
+                'company' => (Auth::check() && Auth::user()->role == 'Super Admin') ? 'required' : '',
+                'sendemail' => '',
+                'password' => ($isNewUser && !$request->sendemail) || !Auth::check() ? ['required', Password::min(12)
+                        ->mixedCase()
+                        ->letters()
+                        ->numbers()
+                        ->symbols()
+                        ->uncompromised(), 'confirmed'] : '',
+                'role' =>
+                #This is the custom Rule. Less than Admin Role Can't add User with the role === admin OR Processor
+                function ($attribute, $value, $fail) {
+                    self::validateCurrentUser($attribute, $value, $fail);
+                },
+            ], [
+                'password.required'=> 'The password field is required.',
+                'password.confirmed'=> 'The password confirmation does not match.',
+                'password.*' => 'The password must be at least 12 characters long and contain a mix of uppercase and lowercase letters, numbers, and symbols.',
+            ]);
+        }
     }
 
 }

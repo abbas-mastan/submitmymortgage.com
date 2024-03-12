@@ -1,5 +1,4 @@
 @extends('layouts.empty')
-
 @section('content')
     <div class="container">
         <div class="row justify-content-center flex flex-col justify-center items-center h-screen">
@@ -17,9 +16,11 @@
                     {{ __('If you did not receive the email') }} 
                 </p>
                 <br>
-                <form action="{{ route('verification.send') }}" method="POST">
+                <form class="flex justify-between" action="{{ route('verification.send') }}" method="POST">
                     @csrf
                     <button class="bg-green-100 text-green-700 px-4 py-1.5 rounded-md" type="submit">{{ __('click here to request another') }}</button>
+                    <a href="{{url('logout')}}" class="bg-gray-500 text-white px-4 py-1.5 rounded-md" >{{ __('Logot') }}</a>
+
                 </form>
             </div>
         </div>

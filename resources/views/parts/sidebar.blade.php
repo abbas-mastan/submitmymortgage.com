@@ -96,12 +96,45 @@
                 <x-tab href="application/-1" title="Loan Application" />
                 <x-tab href="all-users" title="All Users" />
                 <x-tab href="teams" title="Teams" />
-                <x-tab href="projects" title="Deals" />
+                <ul class="deals">
+                    <li class="-mt-4 line sm:block">
+                        <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
+                            &nbsp;
+                        </span>
+                    </li>
+                    <li class="pb-3 mb-1 sm:px-24 flex flex-row">
+                        <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </span>
+                        <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/projects') }}">
+                            <span class="tracking-wide sm:block capitalize text-white">Deals</span>
+                        </a>
+                    </li>
+                    <li class="hidden initialized ml-5 pb-3 mb-1 sm:px-24 flex flex-row">
+                        <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
+                            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        </span>
+                        <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/loan-intake') }}">
+                            <span class="tracking-wide sm:block  capitalize text-white">New Initialized Deals</span>
+                        </a>
+                    </li>
+                </ul>
+                <li class="-mt-4 line hidden sm:block">
+                    <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
+                        &nbsp;
+                    </span>
+                </li>
+                <li class="pb-3 mb-1 sm:px-24 flex flex-row">
+                    <span class="hidden sm:block border-4 border-white  border-opacity-20 rounded-full text-xs  -ml-16">
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    </span>
+                    <a class="truncate ml-4" href="{{ url(getRoutePrefix() . '/contacts') }}">
+                        <span class="tracking-wide sm:block  capitalize text-white">Contacts</span>
+                    </a>
+                </li>
                 <x-tab href="upload-files" title="Upload Files" />
                 <x-tab href="files" title="Files Uploaded" />
                 <x-tab href="applications" title="Loan Pipeline" />
-                <x-tab href="loan-intake" title="Loan Intake" />
-                <x-tab href="contacts" title="Contacts" />
             @endcan
             @can('isUser')
                 <!-- Sidebar for Admin starts -->

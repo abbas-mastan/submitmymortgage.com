@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Factory;
+use App\Http\Requests\ApplicationRequest;
+use App\Http\Requests\IntakeFormRequest;
+use App\Models\Application;
+use App\Models\Contact;
 use App\Models\Info;
+use App\Models\IntakeForm;
+use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
-use App\Models\Contact;
-use App\Models\Project;
-use Illuminate\View\View;
-use App\Models\IntakeForm;
-use App\Models\Application;
 use App\Models\UserCategory;
-use Illuminate\Http\Request;
-use App\Services\UserService;
 use App\Services\AdminService;
 use App\Services\CommonService;
-use Illuminate\Support\Facades\Auth;
+use App\Services\UserService;
+use Faker\Factory;
 use Illuminate\Http\RedirectResponse;
-use App\Http\Requests\IntakeFormRequest;
-use App\Http\Requests\ApplicationRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\View\View;
 
 class AssociateController extends Controller
 {
@@ -275,6 +275,7 @@ class AssociateController extends Controller
 
         $data['borrowers'] = User::with('projects')->where('role', 'Borrower')->get(['id', 'name']);
         $data['projects'] = Project::where('created_by', $admin->id)
+            ->where('status', 'enable')
             ->orWhereHas('users', function ($query) use ($admin) {
                 $query->where('users.id', $admin->id);
             })
@@ -400,11 +401,11 @@ class AssociateController extends Controller
     {
         return CommonService::submitIntakeForm($request);
     }
-    
+
     public function loanIntake()
     {
         return CommonService::loanIntake();
-      
+
     }
     public function loanIntakeShow($id)
     {
@@ -426,6 +427,12 @@ class AssociateController extends Controller
         } else {
             return back()->with('msg_success', 'Assistant deleted successfully');
         }
-
     }
+
+    public function changeProjectStatus($type, Project $project)
+    {
+        $project->update(['status' => $type]);
+        return redirect(getRoutePrefix() . '/projects')->with('msg_success', "project $type" . "d successfully");
+    }
+
 }

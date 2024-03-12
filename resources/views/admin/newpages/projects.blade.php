@@ -55,7 +55,7 @@
                         <summary
                             class="bg-gradient-to-b from-gradientStart to-gradientEnd text-white py-2  text-xl flex justify-between items-center font-medium cursor-pointer list-none">
                             <span class="px-5"> {{ $project->name }} |
-                                {{ $project->team->name }}
+                                {{ $project->team->name }}{{$project->status}}
                             </span>
                             <span class="flex justify-between items-center">
                                 <span class="text-md mr-4">

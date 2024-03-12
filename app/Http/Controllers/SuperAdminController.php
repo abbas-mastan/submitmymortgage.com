@@ -2,25 +2,25 @@
 
 namespace App\Http\Controllers;
 
-use Faker\Factory;
-use App\Models\Info;
-use App\Models\Team;
-use App\Models\User;
+use App\Http\Requests\ApplicationRequest;
+use App\Http\Requests\IntakeFormRequest;
+use App\Models\Application;
 use App\Models\Company;
 use App\Models\Contact;
-use App\Models\Project;
-use Illuminate\View\View;
+use App\Models\Info;
 use App\Models\IntakeForm;
-use App\Models\Application;
+use App\Models\Project;
+use App\Models\Team;
+use App\Models\User;
 use App\Models\UserCategory;
-use Illuminate\Http\Request;
-use App\Services\UserService;
 use App\Services\AdminService;
 use App\Services\CommonService;
+use App\Services\UserService;
+use Faker\Factory;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Http\Requests\IntakeFormRequest;
-use App\Http\Requests\ApplicationRequest;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\View\View;
 
 class SuperAdminController extends Controller
 {
@@ -59,8 +59,8 @@ class SuperAdminController extends Controller
     {
         $projects = [];
         $teams = $company->teams()->with('projects')->get();
-        foreach($teams as $team){
-            foreach($team->projects as $project){
+        foreach ($teams as $team) {
+            foreach ($team->projects as $project) {
                 $borrower = User::find($project->borrower_id);
 
                 if ($borrower && $borrower->deleted_at === null) {
@@ -75,18 +75,18 @@ class SuperAdminController extends Controller
     public function LoginAsThisUser(Request $request)
     {
         $user = User::where('id', $request->user_id)->where('role', '<>', 'Super Admin')->first();
-        if($user->active != 1){
-            return back()->with('msg_error','Sorry this user has been disabled');
+        if ($user->active != 1) {
+            return back()->with('msg_error', 'Sorry this user has been disabled');
         }
-        if($user->email_verified_at !== null){
+        if ($user->email_verified_at !== null) {
             Auth::login($user);
             $request->session()->regenerate();
             $request->session()->put('role', $user->role);
             $request->session()->put('reLogin', Auth::id());
             $request->session()->put('url', url()->previous());
             return redirect('/dashboard');
-        }else{
-            return back()->with('msg_error','Sorry this user email is not verified');
+        } else {
+            return back()->with('msg_error', 'Sorry this user email is not verified');
         }
     }
 
@@ -193,17 +193,7 @@ class SuperAdminController extends Controller
     {
         return CommonService::fileUpload($request);
     }
-    //=====================================
-    //==================Profile related methods
-    //=====================================
-    //Showing courses and their respective classes
-    public function profile(Request $request)
-    {
-        $data[''] = '';
-        return view('admin.profile.profile', $data);
-    }
     //Updates profile data and picture
-
     public function doProfile(Request $request)
     {
         $msg = CommonService::doProfile($request);
@@ -362,7 +352,7 @@ class SuperAdminController extends Controller
     public function projects($id = null): View
     {
         $data['projects'] = Project::with('users.assistants')->latest()->get();
-        $data['enableProjects'] = Project::with(['creater', 'users.createdBy', 'team','borrower.assistants', 'borrower.createdBy'])->where('status', 'enable')->latest()->get();
+        $data['enableProjects'] = Project::with(['creater', 'users.createdBy', 'team', 'borrower.assistants', 'borrower.createdBy'])->where('status', 'enable')->latest()->get();
         $data['disableProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'disable')->latest()->get();
         $data['closeProjects'] = Project::with(['users.createdBy', 'team', 'borrower.createdBy'])->where('status', 'close')->latest()->get();
         $data['borrowers'] = User::where('role', 'Borrower')->latest()->get(['id', 'name', 'role']);
@@ -393,8 +383,8 @@ class SuperAdminController extends Controller
         $data['assistants'] = [];
         $data['assistantsusers'] = $data['user']->assistants->load('assistant');
         foreach ($data['assistantsusers'] as $assistant) {
-            if($assistant->assistant->active == 1){
-                $data['assistants'][]= $assistant->assistant;
+            if ($assistant->assistant->active == 1) {
+                $data['assistants'][] = $assistant->assistant;
             }
         }
         $data['catCount'] = [];
@@ -520,12 +510,16 @@ class SuperAdminController extends Controller
         return AdminService::shareItemWithAssistant($request, $id);
     }
 
-    public function removeAcess(Request $request,User $user)
+    public function removeAcess(Request $request, User $user)
     {
         $user->active = 2;
         $user->save();
-        if($request->ajax())return response()->json('access removed', 200);
-        else return back()->with('msg_success','Assistant deleted successfully');
+        if ($request->ajax()) {
+            return response()->json('access removed', 200);
+        } else {
+            return back()->with('msg_success', 'Assistant deleted successfully');
+        }
+
     }
 
     public function submitIntakeForm(IntakeFormRequest $request)
