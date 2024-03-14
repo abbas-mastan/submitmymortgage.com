@@ -19,17 +19,13 @@ use Illuminate\Support\Facades\Route;
 //    abort(403);
 //}
 Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->group(function () {
-    //==============================
-    //==========User related routes
-    //==============================
     Route::group(['controller' => SuperAdminController::class], function () {
         require __DIR__ . '/common.php';
+        Route::get('/logout-all-users', 'logoutAllUsers');
         Route::get('/delete-user-permenant/{user}', 'deleteUserPermenant')->withTrashed();
         Route::get('/restore-user/{user}', 'restoreUser')->withTrashed();
         Route::get('/verify-user/{user}', 'verifyUser');
-        //==============================
-        //==========Files related routes
-        //==============================
+    
         Route::post('/login-as-this-user', 'LoginAsThisUser');
         Route::get('/delete-attachment/{id}', 'deleteAttachment');
 

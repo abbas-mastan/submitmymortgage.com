@@ -88,7 +88,7 @@ class AdminService
     {
         $isNewUser = ($id == -1);
         $user = $isNewUser ? new User() : User::find($id);
-        self::userValidation($request,$user,$isNewUser);
+        self::userValidation($request, $user, $isNewUser);
         if (!$isNewUser && $user->role === 'Assistant') {
             Assistant::where('assistant_id', $user->id)->delete();
         }
@@ -138,8 +138,8 @@ class AdminService
                 // Password::sendResetLink($request->only('email'));
                 // Password::RESET_LINK_SENT;
                 $id = Crypt::encryptString($user->id);
-                DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(8)), 'created_at' => now()]);
-                $url = function () use ($id) {return Url::signedRoute('user.register', ['user' => $id]);};
+                DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
+                $url = function () use ($id) {return Url::signedRoute('user.register', ['user' => $id], now()->addMinutes(10));};
                 if ($request->role === 'Borrower') {
                     Mail::to($request->email)->send(new AssistantMail($url()));
                 } else {
@@ -147,8 +147,8 @@ class AdminService
                 }
             } else {
                 $id = Crypt::encryptString($user->id);
-                DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(8)), 'created_at' => now()]);
-                $url = function () use ($id) {return Url::signedRoute('borrower.register', ['user' => $id]);};
+                DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
+                $url = function () use ($id) {return Url::signedRoute('borrower.register', ['user' => $id], now()->addMinutes(10));};
                 Mail::to($request->email)->send(new AssistantMail($url()));
                 // event(new Registered($user));
 
@@ -510,8 +510,8 @@ class AdminService
         $validator = Validator::make($request->all(), [
             'email' => -1 == $id ? 'required|unique:users,email' : '',
             'items' => 'required|sometimes',
-            'company' => Auth::user()->role !== 'Super Admin' ? '' : 'sometimes:required',
-            'deal' => Route::current()->getName()== 'share-items'?'required':'' ,
+            'company' => Auth::user()->role !== 'Super Admin' && Route::current()->getName() !== 'share-items' ? '' : 'required',
+            'deal' => Route::current()->getName() == 'share-items' ? 'required' : '',
         ]);
 
         if ($validator->fails()) {
@@ -651,7 +651,7 @@ class AdminService
 
     }
 
-    private static function userValidation($request,$user,$isNewUser)
+    private static function userValidation($request, $user, $isNewUser)
     {
         if (!$request->ajax()) {
             $request->validate([
@@ -671,8 +671,8 @@ class AdminService
                     self::validateCurrentUser($attribute, $value, $fail);
                 },
             ], [
-                'password.required'=> 'The password field is required.',
-                'password.confirmed'=> 'The password confirmation does not match.',
+                'password.required' => 'The password field is required.',
+                'password.confirmed' => 'The password confirmation does not match.',
                 'password.*' => 'The password must be at least 12 characters long and contain a mix of uppercase and lowercase letters, numbers, and symbols.',
             ]);
         }

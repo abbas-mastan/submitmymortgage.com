@@ -21,6 +21,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\File;
+
 
 class SuperAdminController extends Controller
 {
@@ -30,13 +32,21 @@ class SuperAdminController extends Controller
     {
         $this->faker = Factory::create();
     }
+    
+    public function logoutAllUsers()
+    {
+        abort_if(Auth::user()->role !== 'Super Admin',403,'You are not allowed to this part of the world');
+        $sessionPath = storage_path('framework/sessions');
+        File::cleanDirectory($sessionPath);
+        return redirect('dashboard')->with('msg_success','All users logged out successfully');
+    }
 
     public function users(Request $request)
     {
         $data = AdminService::users($request);
         return view('admin.user.users', $data);
     }
-
+    
     public function addUser(Request $request, $id)
     {
         $data = AdminService::addUser($request, $id);

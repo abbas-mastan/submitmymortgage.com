@@ -2,38 +2,42 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\AssistantMail;
 use App\Models\User;
-use App\Services\AdminService;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Events\Verified;
+use App\Mail\UserMail;
+use App\Mail\AssistantMail;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
+use App\Services\AdminService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Validation\Rules\Password as PasswordRule;
-
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
+use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class AuthController extends Controller
 {
-    //Called when a user submits login form
-    //Or press login button in login form
-
     public function userRegister(Request $request)
     {
-        abort_if(!$request->hasValidSignature(), 403);
+        $expires = $request->input('expires');
         $id = Crypt::decryptString($request->user);
         $user = User::find($id);
-        $token = DB::table('password_resets')->where('email', $user->email)->value('token');
         if ($user->email_verified_at) {
             return redirect()->route('login');
         }
+        if (now()->timestamp > $expires) {
+            $request['user'] = $user;
+            $request['email'] = $user->email;
+            $this->emailVerificationResend($request);
+            return $this->doLogin($request);
+        }
+        abort_unless($request->hasValidSignature(), 403, 'The signature is not valid');
+        $token = DB::table('password_resets')->where('email', $user->email)->value('token');
         if ($user->role === 'Borrower' && $user->password !== 'null') {
             $user->email_verified_at = now();
             $user->save();
@@ -62,7 +66,7 @@ class AuthController extends Controller
                 $user->email_verified_at = now();
             }
             $user->save();
-        } else {
+        } else {  
             return back()->with('msg_error', 'Token does not match');
         }
         return $this->doLogin($request);
@@ -189,10 +193,13 @@ class AuthController extends Controller
     public function emailVerificationResend(Request $request)
     {
         // $request->user()->sendEmailVerificationNotification();
-        $id = Crypt::encryptString($request->user()->id);
-        DB::table('password_resets')->insert(['email' => $request->user()->email, 'token' => Hash::make(Str::random(8)), 'created_at' => now()]);
-        $url = function () use ($id) {return URL::signedRoute('borrower.register', ['user' => $id]);};
-        Mail::to($request->user()->email)->send(new AssistantMail($url()));
+        $role = $request->user()->role ?? $request->user->role;
+        $email = $request->user()->email ?? $request->user->email;
+        $requestId = $request->user()->id ?? $request->user->id;
+        $id = Crypt::encryptString($requestId);
+        DB::table('password_resets')->insert(['email' => $email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
+        $url = function () use ($id,$role) {return Url::signedRoute($role !== 'Borrower' && $role !== 'Assistant' ? 'user.register': 'borrower.register', ['user' => $id], now()->addMinutes(10));};
+        Mail::to($email)->send($role !== 'Borrower' && $role !== 'Assistant' ? new UserMail($url()) : new AssistantMail($url()));
         return back()->with('msg_info', 'Verification link sent!');
     }
 
@@ -207,9 +214,9 @@ class AuthController extends Controller
                     ->numbers()
                     ->symbols()
                     ->uncompromised(), 'confirmed'],
-        ],[
-            'password.required'=> 'The password field is required.',
-            'password.confirmed'=> 'The password confirmation does not match.',
+        ], [
+            'password.required' => 'The password field is required.',
+            'password.confirmed' => 'The password confirmation does not match.',
             'password.*' => 'The password must be at least 12 characters long and contain a mix of uppercase and lowercase letters, numbers, and symbols.',
         ]);
     }

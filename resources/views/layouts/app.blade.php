@@ -255,6 +255,7 @@
         });
 
         $(document).on("click", '.delete', function(e) {
+            e.preventDefault();
             function getPopupText(text) {
                 if (text == 'Accept') return 'Accepted!';
                 if (text == 'Reject') return 'Rejected!';
@@ -263,15 +264,20 @@
                 if (text == 'Enable') return 'Enabled!';
                 if (text == 'Disable') return 'Disabled!';
                 if (text == 'Unhide') return 'Showed!';
+                if (text == 'Logout All') return 'Logged out!';
                 else return 'Deleted!'
             }
             var textClass = $(this).attr('data');
             if (textClass) {
-                var titleText = 'Are you sure to ' + textClass.toLowerCase() + ' it?';
+                if(textClass == 'Logout All'){
+                    var titleText = 'Are you sure to Logout all users?';
+                }else{
+                    var titleText = 'Are you sure to ' + textClass.toLowerCase() + ' it?';
+                }
             }
 
             if (textClass == 'Reject' || textClass == 'Accept' || textClass == 'Hide' || textClass == 'Unhide' ||
-                textClass == 'Disable' || textClass == 'Enable' ||
+                textClass == 'Disable' || textClass == 'Enable' || textClass == 'Logout All' ||
                 textClass == 'Restore') {
                 middleSentenceOfModal = null;
             } else {
@@ -285,7 +291,6 @@
                     middleSentenceOfModal = "You won't be able to revert this!"
                 }
             }
-            e.preventDefault();
             Swal.fire({
                 title: titleText,
                 text: middleSentenceOfModal,

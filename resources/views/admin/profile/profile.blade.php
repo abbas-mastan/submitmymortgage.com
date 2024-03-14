@@ -11,7 +11,8 @@
 @section('content')
     <div class="w-1/2 mx-auto">
         <div class="flex justify-center items-center mt-4">
-            <img class="w-40 h-40 rounded-full" src="{{ asset(auth()->user()->pic ?? 'img/profile-default.svg') }}" alt="Profile Picture">
+            <img class="w-40 h-40 rounded-full" src="{{ asset(auth()->user()->pic ?? 'img/profile-default.svg') }}"
+                alt="Profile Picture">
         </div>
         <form action="{{ url(getRoutePrefix() . '/do-profile') }}" method="post" enctype="multipart/form-data">
             <div class="flex  justify-center mt-2">
@@ -21,7 +22,7 @@
              id="file-upload-btn">
                                 Browse..
                                 </button>   --}}
-                <input  type="file" name="file" id="file" accept="image/*">
+                <input type="file" name="file" id="file" accept="image/*">
             </div>
             <span id="passwordParent">
                 <div class="flex justify-between">
@@ -58,14 +59,20 @@
                 </button>
             </div>
         </form>
-        @if (Auth::user()->accessToken)
-            <div class="flex justify-center mt-2">
+        <div class="flex justify-between mt-2">
+            @if (Auth::user()->accessToken)
                 <a href="{{ url(getRoutePrefix() . '/disconnect-google') }}"
                     class="tracking-wide rounded-lg text-white px-7 py-2 text-xl capitalize bg-gradient-to-b from-gradientStart to-gradientEnd">
                     Disconnect from Google
                 </a>
-            </div>
-        @endif
+            @endif
+            @if (Auth::user()->role === 'Super Admin')
+                <a href="{{ url(getSuperAdminRoutePrefix() . '/logout-all-users') }}" data="Logout All"
+                    class="delete tracking-wide rounded-lg text-white px-7 py-2 text-xl capitalize bg-gradient-to-b from-gradientStart to-gradientEnd">
+                    Logout All Users
+                </a>
+            @endif
+        </div>
     </div>
 @endsection
 @section('foot')

@@ -27,6 +27,7 @@
                         Create Password
                     </a>
                 </div>
+                <p>This link will expire in 10 minutes.</p>
                 <p style="color:black;text-align:left;font-size: 1rem;" class="text-md">
                     Regards,<br> SubmitMyMortgage
                 </p>

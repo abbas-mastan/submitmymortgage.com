@@ -21,7 +21,7 @@
             @endcan
             @can('isUser')
                 <div class="pl-10">
-                    <a href="{{ url('/dashboard') }}">
+                    <a href="{{ url(getRoutePrefix() .'/dashboard') }}">
                         Mortgage Application Dashboard
                         </span>
                     </a>
@@ -29,7 +29,7 @@
             @endcan
             @can('isAssociate')
                 <div class="pl-10">
-                    <a href="{{ url('/dashboard') }}">
+                    <a href="{{ url(getRoutePrefix() .'/dashboard') }}">
                         <span class="text-xl font-semibold">
                             {{ session('role') === 'Associate' ? 'Associate' : 'Junior Associate' }}
                             &nbsp;Dashboard
