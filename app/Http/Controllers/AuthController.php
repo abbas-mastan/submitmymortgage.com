@@ -46,7 +46,6 @@ class AuthController extends Controller
             $request->session()->put('role', $user->role);
             return redirect('/dashboard');
         }
-
         return view('auth.reset-password', compact('token', 'user'));
     }
 
@@ -75,10 +74,10 @@ class AuthController extends Controller
     public function doLogin(Request $request)
     {
         $user = User::where('email', $request->email)->first();
-        if ($user->email_verified_at === null) {
-            $this->loginwithid($user->id);
-            return redirect()->route('verification.notice');
-        }
+        // if ($user->email_verified_at === null) {
+        //     $this->loginwithid($user->id);
+        //     return redirect()->route('verification.notice');
+        // }
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'active' => 1], $request->input('remember'))) {
             // Authentication passed...
             $request->session()->regenerate();
