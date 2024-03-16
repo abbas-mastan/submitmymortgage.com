@@ -143,7 +143,7 @@
                             <div>
                                 Company:
                                 <span class="textcolor">
-                                    {{ \App\Models\Company::find($message->data['company'])->name }}
+                                    {{ \App\Models\Company::find($message->data['company'])->name ?? '' }}
                                 </span>
                             </div>
                         @endif
