@@ -158,24 +158,25 @@
                         old('role', $user->role) === 'Borrower' ||
                         old('role') === 'Assistant' ||
                         $user->role === 'Borrower' ||
-                        $user->role === 'Assistant'
-                            ? 'hidden'
-                            : '';
+                        $user->role === 'Assistant' ||
+                        count($teams) >= 0 ? 'hidden' : '';
                 @endphp
                 <div class="flex justify-between">
                     <div class="border-2 rounded-lg p-1.5 mt-3 w-[100%] teamDiv {{ $hiddenClass }}">
                         <div class=" text-left mr-12">
-                            <label for="role" class="">Team Name </label>
+                            <label for="role" class="">Team Name</label>
                         </div>
                         <div class="mt-2 grid grid-cols-3 gap-2">
 
-                            @foreach ($teams as $team)
+                            @forelse ($teams as $team)
                                 <div>
                                     <input {{ in_array($team->id, $oldteams ?? []) ? 'checked' : '' }} type="checkbox"
                                         id="{{ $team->id }}" value="{{ $team->id }}" name="team[]">
                                     <label for="{{ $team->id }}">{{ $team->name }}</label>
                                 </div>
-                            @endforeach
+                            @empty
+                            <span class="text-red-700">No teams available</span>
+                            @endforelse
                         </div>
                     </div>
                 </div>
@@ -320,31 +321,20 @@
     <script>
         function showTooltip(flag) {
             switch (flag) {
-                case 1:
-                    document.getElementById("tooltip1").classList.remove("hidden");
-                    break;
                 case 2:
                     document.getElementById("tooltip2").classList.remove("hidden");
-                    break;
-                case 3:
-                    document.getElementById("tooltip3").classList.remove("hidden");
                     break;
             }
         }
 
         function hideTooltip(flag) {
             switch (flag) {
-                case 1:
-                    document.getElementById("tooltip1").classList.add("hidden");
-                    break;
                 case 2:
                     document.getElementById("tooltip2").classList.add("hidden");
                     break;
-                case 3:
-                    document.getElementById("tooltip3").classList.add("hidden");
-                    break;
             }
         }
+
         $("#sendemail").on('change', function(e) {
             e.preventDefault();
             if ($(this).is(":checked")) {
@@ -400,17 +390,20 @@
                     $('.userForm').attr('action', "{{ url(getRoutePrefix() . '/share-items/-1') }}");
                     $('.borrowerDiv').removeClass('hidden');
                     $('.teamDiv').addClass('hidden');
+                    $('#deal').removeAttr('disabled');
                     $('.userForm').submit(function(e) {
                         e.preventDefault();
                         shareItemWithAssistant('-1')
                     });
                 } else if (role === 'Borrower') {
                     $('.userForm').attr('action', "{{ url(getRoutePrefix() . '/do-user/-1') }}");
+                    $('#deal').attr('disabled', true);
                     $('.borrowerDiv').addClass('hidden');
                     $('.teamDiv').addClass('hidden');
                 } else {
                     $('.userForm').attr('action', "{{ url(getRoutePrefix() . '/do-user/-1') }}");
                     $('.borrowerDiv').addClass('hidden');
+                    $('#deal').attr('disabled', true);
                     $('.teamDiv').removeClass('hidden');
                 }
             });
@@ -544,7 +537,7 @@
                                         <label class="">Team Name</label>
                                     </div>
                                     <div class="mt-2 grid grid-cols-3 gap-2">
-                                            ${selectOptions}             
+                                            ${selectOptions}            
                                     </div>
                                 </div>
                             `);

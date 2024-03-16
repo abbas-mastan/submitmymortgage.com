@@ -168,7 +168,7 @@
                                         @if ($assistant && $assistant->assistant && $assistant->assistant->active != 2 && $assistant->assistant->active != 0)
                                             <tr class="border-none">
                                                 <td class="verifiedSerial w-14 pl-2 tracking-wide border border-l-0">
-                                                    {{ $serialNumber }}
+                                                    {{ $serialNumber++ }}
                                                 </td>
                                                 <td class=" pl-2 tracking-wide border border-l-0">
                                                     <a title="Click to view files uploaded by this user"

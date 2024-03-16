@@ -510,7 +510,12 @@ class AdminService
         $validator = Validator::make($request->all(), [
             'email' => -1 == $id ? 'required|unique:users,email' : '',
             'items' => 'required|sometimes',
-            'company' => Auth::user()->role !== 'Super Admin' && Route::current()->getName() !== 'share-items' ? '' : 'required',
+            'company' => 
+            Auth::user()->role !== 'Super Admin'
+             && Route::current()->getName() !== 'share-items' 
+             ? '' : 'required',
+             'company' => (Auth::check() && Auth::user()->role === 'Super Admin' && $request->role !== 'Borrower' && Route::current()->getName() === 'share-items') ? 'required' : '',
+
             'deal' => Route::current()->getName() == 'share-items' ? 'required' : '',
         ]);
 
@@ -657,7 +662,7 @@ class AdminService
             $request->validate([
                 'email' => "sometimes:required|email|unique:users,email," . $user->id,
                 'name' => "required",
-                'company' => (Auth::check() && Auth::user()->role == 'Super Admin') && $request->role !== 'Borrower' ? 'required' : '',
+                'company' => (Auth::check() && Auth::user()->role === 'Super Admin' && $request->role !== 'Borrower') ? 'required' : '',
                 'sendemail' => '',
                 'password' => ($isNewUser && !$request->sendemail) || !Auth::check() || $request->password ? ['required', Password::min(12)
                         ->mixedCase()
