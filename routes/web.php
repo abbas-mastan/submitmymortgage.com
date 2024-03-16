@@ -53,9 +53,9 @@ Route::post('/email/verification-notification', [AuthController::class, 'emailVe
 //Authentication required roots
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('/logout-from-this-user', [SuperAdminController::class, 'ReLoginFrom']);
     Route::middleware(['isPasswordExpired'])->group(function () {
     Route::view('email', 'deal-email');
-        Route::post('/logout-from-this-user', [SuperAdminController::class, 'ReLoginFrom']);
         Route::get('/dashboard', [HomeController::class, 'dashboard']);
         Route::get('/home', [HomeController::class, 'dashboard']);
         Route::get('/show-docx/{media}', [HomeController::class, 'showDocx']);

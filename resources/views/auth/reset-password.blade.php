@@ -117,10 +117,10 @@
                 <div class="mt-2">
                     <input type="password" required
                         class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                        name="password_confirmation" id="password" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
+                        name="password_confirmation" id="passwordconfirmation" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
                 </div>
             </div>
-            <div class="mt-5 text-center">
+            <div class="mt-5 flex {{ $expirePage && session()->has('reLogin') ? 'justify-evenly' : 'justify-center' }}">
 
                 <button type="submit"
                     class=" opacity-70  border-2 border-white rounded-md bg-white px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
@@ -131,10 +131,16 @@
                     @endif
                     Password
                 </button>
-
             </div>
-
         </form>
+        @if ($expirePage && session('reLogin'))
+            <form method="POST" action="{{ url('/logout-from-this-user') }}">
+                @csrf
+                <input type="hidden" name="user_id" value="{{ session('reLogin') }}">
+                <button
+                    class="mt-5  opacity-70 border-2 border-white rounded-md bg-white px-10 py-2 focus:outline-none focus:border-none focus:ring-1 focus:ring-blue-400">Logout</button>
+            </form>
+        @endif
 
     </div>
 @endsection
