@@ -18,6 +18,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Validation\Rules\Password as PasswordRule;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use PhpOffice\PhpSpreadsheet\IOFactory;
@@ -39,7 +40,7 @@ class CommonService
         $msg = "Profile updated.";
         $user = Auth::user();
         if ($request->password) {
-            $request->validate(['password' => 'confirmed']);
+            self::validatePassword($request);
             $user->password = Hash::make($request->password);
         }
         if ($request->file('file')) {
@@ -77,9 +78,9 @@ class CommonService
                     Storage::copy($attachment->file_path, getFileDirectory() . $uniqueName);
                     $project = User::find($request->input('id') ?? $attachment->user_id)->project;
                     if ($project) {
-                        self::storeNotification("$request->category", Auth::id(), $project->id,$request->category);
+                        self::storeNotification("$request->category", Auth::id(), $project->id, $request->category);
                     } else {
-                        self::storeNotification("$request->category", Auth::id(), $project->id,$request->category);
+                        self::storeNotification("$request->category", Auth::id(), $project->id, $request->category);
                     }
                 } catch (\Exception $e) {
                     return response()->json(['status' => "$e", 'filename' => $e]);
@@ -103,9 +104,9 @@ class CommonService
             if ($media->save()) {
                 $project = User::find($request->input('id') ?? $attachment->user_id)->project;
                 if ($project) {
-                    self::storeNotification("$request->category", Auth::id(), $project->id,$request->category);
+                    self::storeNotification("$request->category", Auth::id(), $project->id, $request->category);
                 } else {
-                    self::storeNotification("$request->category", Auth::id(), $project->id,$request->category);
+                    self::storeNotification("$request->category", Auth::id(), $project->id, $request->category);
                 }
                 return response()->json(['status' => "success", 'msg' => "File uploaded."]);
             }
@@ -357,7 +358,7 @@ class CommonService
 
     }
 
-    public static function storeNotification($message, $userid, $projectId = null,$category = null)
+    public static function storeNotification($message, $userid, $projectId = null, $category = null)
     {
 
         $project = Project::where('borrower_id', $userid)->first();
@@ -370,14 +371,14 @@ class CommonService
             array_push($allIds, User::where('role', 'Super Admin')->first()->id);
             foreach ($allIds as $Admin) {
                 $notifyThisUser = User::find($Admin);
-                $notifyThisUser->notify(new FileUploadNotification($user, $message, $project->id,$category));
+                $notifyThisUser->notify(new FileUploadNotification($user, $message, $project->id, $category));
             }
         } else {
             $admin = User::where('role', 'Super Admin')->first();
-            $admin->notify(new FileUploadNotification($user, $message,$category));
+            $admin->notify(new FileUploadNotification($user, $message, $category));
             if ($user->created_by) {
                 $createdby = User::find($user->created_by);
-                $createdby->notify(new FileUploadNotification($user, $message,$category));
+                $createdby->notify(new FileUploadNotification($user, $message, $category));
             }
         }
     }
@@ -619,5 +620,21 @@ class CommonService
             ->get();
 
         return $directlyCreatedUsers->merge($indirectlyCreatedUsers);
+    }
+
+    public static function validatePassword(Request $request)
+    {
+        $request->validate([
+            'password' => ['required', PasswordRule::min(12)
+                    ->mixedCase()
+                    ->letters()
+                    ->numbers()
+                    ->symbols()
+                    ->uncompromised(), 'confirmed'],
+        ],[
+            'password.required' => 'The password field is required.',
+            'password.confirmed' => 'The password confirmation does not match.',
+            'password.*' => 'The password must be at least 12 characters long and contain a mix of uppercase and lowercase letters, numbers, and symbols.',
+        ]);
     }
 }

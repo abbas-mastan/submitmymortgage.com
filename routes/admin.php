@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(function () {
     Route::group(['controller' => AdminController::class], function () {
         require __DIR__ . '/common.php';
+
+        // only Super Admin and admin can use these routes
         Route::get('/delete-user-permenant/{user}', 'deleteUserPermenant')->withTrashed();
         Route::get('/restore-user/{user}', 'restoreUser')->withTrashed();
         Route::get('/verify-user/{user}', 'verifyUser');

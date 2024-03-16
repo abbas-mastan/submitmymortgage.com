@@ -21,9 +21,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->group(function () {
     Route::group(['controller' => SuperAdminController::class], function () {
         require __DIR__ . '/common.php';
+        // This route logging out all users from the site
         Route::get('/logout-all-users', 'logoutAllUsers');
+
         Route::get('/delete-user-permenant/{user}', 'deleteUserPermenant')->withTrashed();
         Route::get('/restore-user/{user}', 'restoreUser')->withTrashed();
+        // this route verify the user email
         Route::get('/verify-user/{user}', 'verifyUser');
     
         Route::post('/login-as-this-user', 'LoginAsThisUser');
@@ -47,6 +50,7 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
 
     });
 
+    // These routes are only useable for Super Admin role
     Route::get('/restore-company/{company}', [AdminCompanyController::class, 'restore'])->withTrashed()->name('company.restore');
     Route::get('/delete-company-permanent/{company}', [AdminCompanyController::class, 'permanent'])->withTrashed();
     Route::get('/companies', [AdminCompanyController::class, 'index']);

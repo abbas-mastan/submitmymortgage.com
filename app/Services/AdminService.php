@@ -657,9 +657,9 @@ class AdminService
             $request->validate([
                 'email' => "sometimes:required|email|unique:users,email," . $user->id,
                 'name' => "required",
-                'company' => (Auth::check() && Auth::user()->role == 'Super Admin') ? 'required' : '',
+                'company' => (Auth::check() && Auth::user()->role == 'Super Admin') && $request->role !== 'Borrower' ? 'required' : '',
                 'sendemail' => '',
-                'password' => ($isNewUser && !$request->sendemail) || !Auth::check() ? ['required', Password::min(12)
+                'password' => ($isNewUser && !$request->sendemail) || !Auth::check() || $request->password ? ['required', Password::min(12)
                         ->mixedCase()
                         ->letters()
                         ->numbers()

@@ -108,7 +108,7 @@ class SuperAdminController extends Controller
         $request->session()->forget('reLogin');
         $request->session()->regenerate();
         $request->session()->put('role', $user->role);
-        return redirect()->intended(session('url'));
+        return redirect()->intended('/');
     }
 
     public function deleteUser(Request $request, $id)

@@ -2,22 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Mail\UserMail;
 use App\Mail\AssistantMail;
-use Illuminate\Support\Str;
-use Illuminate\Http\Request;
+use App\Mail\UserMail;
+use App\Models\User;
 use App\Services\AdminService;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
+use App\Services\CommonService;
+use Carbon\Carbon;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Verified;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Auth\Events\PasswordReset;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class AuthController extends Controller
@@ -56,6 +58,7 @@ class AuthController extends Controller
 
     public function setPasswordForNewUsers(Request $request)
     {
+        // this validation checking password and token also
         $this->passwordValidation($request);
         $token = DB::table('password_resets')->where('email', $request->email)->value('token');
         if ($token == $request->token) {
@@ -65,7 +68,7 @@ class AuthController extends Controller
                 $user->email_verified_at = now();
             }
             $user->save();
-        } else {  
+        } else {
             return back()->with('msg_error', 'Token does not match');
         }
         return $this->doLogin($request);
@@ -73,11 +76,6 @@ class AuthController extends Controller
 
     public function doLogin(Request $request)
     {
-        $user = User::where('email', $request->email)->first();
-        // if ($user->email_verified_at === null) {
-        //     $this->loginwithid($user->id);
-        //     return redirect()->route('verification.notice');
-        // }
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'active' => 1], $request->input('remember'))) {
             // Authentication passed...
             $request->session()->regenerate();
@@ -122,6 +120,7 @@ class AuthController extends Controller
 
     public function updatePassword(Request $request)
     {
+        // this validation checking password and token also
         $this->passwordValidation($request);
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),
@@ -197,9 +196,27 @@ class AuthController extends Controller
         $requestId = $request->user()->id ?? $request->user->id;
         $id = Crypt::encryptString($requestId);
         DB::table('password_resets')->insert(['email' => $email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
-        $url = function () use ($id,$role) {return Url::signedRoute($role !== 'Borrower' && $role !== 'Assistant' ? 'user.register': 'borrower.register', ['user' => $id], now()->addMinutes(10));};
+        $url = function () use ($id, $role) {return Url::signedRoute($role !== 'Borrower' && $role !== 'Assistant' ? 'user.register' : 'borrower.register', ['user' => $id], now()->addMinutes(10));};
         Mail::to($email)->send($role !== 'Borrower' && $role !== 'Assistant' ? new UserMail($url()) : new AssistantMail($url()));
         return back()->with('msg_info', 'Verification link sent!');
+    }
+
+    public function passwordExpired()
+    {
+        return view('auth.reset-password')->with('msg_info', 'Your password has expired. Please change it.');
+    }
+    public function expiredPasswordUpdate(Request $request)
+    {
+        // Checking current password
+        if (!Hash::check($request->current_password, $request->user()->password)) {
+            return redirect()->back()->withErrors(['current_password' => 'Current password is not correct']);
+        }
+        CommonService::validatePassword($request);
+        $request->user()->update([
+            'password' => bcrypt($request->password),
+            'password_changed_at' => Carbon::now()->toDateTimeString(),
+        ]);
+        return redirect()->back()->with(['msg_success' => 'Password changed successfully']);
     }
 
     private function passwordValidation(Request $request)

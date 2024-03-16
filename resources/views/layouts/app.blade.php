@@ -125,9 +125,9 @@
                 </div>
                 <div class="flex px-5" style="padding-right:80px;padding-left:80px">
                     <div class="w-full">
-                        {{-- @if (\Request::route()->getName() !== 'add-user') --}}
+                        @if (\Request::route()->getName() !== 'profile')
                             @include('parts.alerts')
-                        {{-- @endif --}}
+                        @endif
                         @yield('content')
                     </div>
                 </div>
@@ -256,6 +256,7 @@
 
         $(document).on("click", '.delete', function(e) {
             e.preventDefault();
+
             function getPopupText(text) {
                 if (text == 'Accept') return 'Accepted!';
                 if (text == 'Reject') return 'Rejected!';
@@ -269,9 +270,9 @@
             }
             var textClass = $(this).attr('data');
             if (textClass) {
-                if(textClass == 'Logout All'){
+                if (textClass == 'Logout All') {
                     var titleText = 'Are you sure to Logout all users?';
-                }else{
+                } else {
                     var titleText = 'Are you sure to ' + textClass.toLowerCase() + ' it?';
                 }
             }

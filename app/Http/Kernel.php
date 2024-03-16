@@ -67,5 +67,6 @@ class Kernel extends HttpKernel
 		'associate' => \App\Http\Middleware\AssociateMiddleware::class,
         'user' => \App\Http\Middleware\UserMiddleware::class,
 		'assistant' => \App\Http\Middleware\AssistantMiddleware::class,
+		'isPasswordExpired' => \App\Http\Middleware\PasswordExpiredMiddleware::class,
     ];
 }

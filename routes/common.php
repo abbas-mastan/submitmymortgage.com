@@ -17,7 +17,7 @@ Route::post('/confirm-password', function (Request $request) {
 })->middleware(['throttle:6,1']);
 
 //starts here. these routes are for update profile information
-Route::view('/profile', 'admin.profile.profile')->middleware('password.confirm');
+Route::view('/profile', 'admin.profile.profile')->name('profile')->middleware('password.confirm');
 Route::post('/do-profile', 'doProfile');
 //end here. these routes are for update profile information
 

@@ -9,30 +9,54 @@
                 @else
                     Reset
                 @endif
-                Passsword
+                Password
             </h1>
         </div>
+        @php
+            $routeName = Route::currentRouteName();
+            $expirePage = $routeName === 'password.expired';
+        @endphp
         <form
-            action="{{ url(\Request::route()->getName() === 'user.register' ? 'set-password-new-user' : '/reset-password') }}"
+            @if ($expirePage) action="{{ route('password.post_expired') }}"
+            @else
+            action="{{ url($routeName === 'user.register' ? 'set-password-new-user' : '/reset-password') }}" @endif
             method="post" class="w-full">
-            {{-- @include('parts.alerts') --}}
+            @include('parts.alerts')
             @csrf
-            <input value="{{ $token }}" type="hidden" name="token">
-            <div class="mt-10 mx-auto">
-                <div class=" text-left mr-12">
-                    <label for="username" class="text-white text-md xl:text-xl opacity-70">Email</label>
+            @if ($routeName !== 'password.expired')
+                <input value="{{ $token }}" type="hidden" name="token">
+                <div class="mt-10 mx-auto">
+                    <div class=" text-left mr-12">
+                        <label for="username" class="text-white text-md xl:text-xl opacity-70">Email</label>
+                    </div>
+                    <div class="mt-2">
+                        <input type="email" value="{{ old('email', $user->email ?? null) }}"
+                            class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            name="email" id="username" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email">
+                    </div>
                 </div>
-                <div class="mt-2">
-                    <input type="email" value="{{ old('email', $user->email ?? null) }}"
-                        class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                        name="email" id="username" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Email">
+            @endif
+            @if ($expirePage)
+                <div class="mt-3 mx-auto">
+                    <div class=" text-left mr-12">
+                        <label for="current_password" class="text-white text-md xl:text-xl opacity-70 flex">
+                            Current Password
+                        </label>
+
+                    </div>
+                    <div class="mt-2">
+                        <input type="password" required
+                            class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            name="current_password" id="current_password" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;********">
+                    </div>
                 </div>
-            </div>
+            @endif
+
             <div class="mt-3 mx-auto">
                 <div class=" text-left mr-12">
                     <label for="password" class="text-white text-md xl:text-xl flex">
                         <span class="opacity-70">
-                            Password
+                            {{ $expirePage ? 'New' : '' }} Password
                         </span>
                         <a tabindex="0" role="link" aria-label="tooltip 2"
                             class="ml-2 inline-flex items-centerfocus:outline-none focus:ring-gray-300 rounded-full focus:ring-offset-2 focus:ring-2 focus:bg-gray-200 relative"
@@ -84,7 +108,8 @@
             </div>
             <div class="mt-3 mx-auto">
                 <div class=" text-left mr-12">
-                    <label for="passwordconfirmation" class="text-white text-md xl:text-xl opacity-70 flex">Confirm
+                    <label for="passwordconfirmation"
+                        class="text-white text-md xl:text-xl opacity-70 flex">{{ $expirePage ? 'New' : '' }} Confirm
                         Password
                     </label>
 
