@@ -161,7 +161,7 @@ class UserController extends Controller
             'b_phone' => 'required',
             'b_email' => 'required',
             'b_address' => 'required',
-            'b_suite' => 'required',
+            'b_suite' => '',
             'b_city' => 'required',
             'b_state' => 'required',
             'b_zip' => 'required',

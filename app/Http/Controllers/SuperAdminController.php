@@ -446,7 +446,7 @@ class SuperAdminController extends Controller
     public function doContact(Request $request, $id = 0)
     {
         CommonService::doContact($request, $id);
-        return back()->with('success', 'Contact ' . ($id ? 'updated' : 'created') . ' successfully');
+        return back()->with('msg_success', 'Contact ' . ($id ? 'updated' : 'created') . ' successfully');
     }
 
     public function deleteContact(Contact $contact)
