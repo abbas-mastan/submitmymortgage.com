@@ -341,7 +341,7 @@ class AssociateController extends Controller
         $contact->loantype = $req['loantype'];
         $contact->user_id = Auth::id();
         $contact->save();
-        return back()->with('success', 'Contact ' . ($id ? 'updated' : 'created') . ' successfully');
+        return back()->with('msg_success', 'Contact ' . ($id ? 'updated' : 'created') . ' successfully');
     }
 
     public function deleteContact(Contact $contact)
@@ -433,6 +433,13 @@ class AssociateController extends Controller
     {
         $project->update(['status' => $type]);
         return redirect(getRoutePrefix() . '/projects')->with('msg_success', "project $type" . "d successfully");
+    }
+
+    //Updates the status of  a files
+    public function updateFileStatus(Request $request, $id)
+    {
+        $msg = AdminService::updateFileStatus($request, $id);
+        return back()->with($msg['msg_type'], $msg['msg_value']);
     }
 
 }

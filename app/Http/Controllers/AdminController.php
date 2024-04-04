@@ -464,7 +464,7 @@ class AdminController extends Controller
         $contact->loantype = $req['loantype'];
         $contact->user_id = Auth::id();
         $contact->save();
-        return back()->with('success', 'Contact ' . ($id ? 'updated' : 'created') . ' successfully');
+        return back()->with('msg_success', 'Contact ' . ($id ? 'updated' : 'created') . ' successfully');
     }
 
     public function deleteContact(Contact $contact)
