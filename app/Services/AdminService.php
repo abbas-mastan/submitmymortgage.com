@@ -252,15 +252,15 @@ class AdminService
                     ->where('company_id', Auth::user()->company_id)->get();
 
             } elseif ($user->role === 'Processor') {
-                $teams = Team::where('owner_id', $user->id)
-                    ->with(['users.createdBy', 'users.media'])
+                $projects = Project::where('created_by', $user->id)
                     ->orWhereHas('users', function ($query) use ($user) {
-                        $query->where('user_id', $user->id);
+                        $query->where('users.id', $user->id);
                     })
+                    ->with(['users.createdBy', 'borrower.createdBy', 'users.media'])
                     ->get();
-                $users = collect(); // Initialize a collection to store users
-                foreach ($teams as $team) {
-                    $users = $users->merge($team->users); // Merge users into the collection
+                $users = [];
+                foreach ($projects as $project) {
+                    $users[] = $project->borrower;
                 }
             } else {
                 $projects = Project::where('created_by', $user->id)
@@ -514,9 +514,9 @@ class AdminService
             Auth::user()->role !== 'Super Admin'
              && Route::current()->getName() !== 'share-items' 
              ? '' : 'required',
-             'company' => (Auth::check() && Auth::user()->role === 'Super Admin' && $request->role !== 'Borrower' && Route::current()->getName() === 'share-items') ? 'required' : '',
+             'company' => (Auth::check() && Auth::user()->role === 'Super Admin' && $request->role !== 'Borrower' && Route::current()->getName() !== 'share-items') ? 'required' : '',
 
-            'deal' => Route::current()->getName() == 'share-items' ? 'required' : '',
+            'deal' => Route::current()->getName() !== 'share-items' ? 'required' : '',
         ]);
 
         if ($validator->fails()) {

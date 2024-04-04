@@ -6,6 +6,7 @@
         #file {
             display: none;
         }
+
         .dataTables_info {
             margin-left: 10px;
         }
@@ -14,13 +15,18 @@
             margin-right: 10px;
             margin-bottom: 4px;
         }
+
+        #completed-table_wrapper .dataTables_filter input::placeholder {
+            color: gray;
+        }
     </style>
 @endsection
 @section('content')
     @component('components.modal-background', ['title' => 'Add a User'])
     @endcomponent
 
-    <x-flex-card title="Verified Users" id="verified" titlecounts="{{count($verified)}}" iconurl="{{ asset('icons/Users.svg') }}" />
+    <x-flex-card title="Verified Users" id="verified" titlecounts="{{ count($verified) }}"
+        iconurl="{{ asset('icons/Users.svg') }}" />
     <table class="w-full display verifiedUsersTable mb-26" id="{{ count($verified) > 10 ? 'completed-table' : null }}">
         <thead class="bg-gray-300">
             <tr>
@@ -118,9 +124,10 @@
         </tbody>
     </table>
 
-    <x-flex-card title="Unverified Users" id="unverified" titlecounts="{{count($unverified)}}" iconurl="{{ asset('icons/Users.svg') }}" />
+    <x-flex-card title="Unverified Users" id="unverified" titlecounts="{{ count($unverified) }}"
+        iconurl="{{ asset('icons/Users.svg') }}" />
     <table class="w-full display unVerifiedUsersTable mb-20" id="{{ count($unverified) > 10 ? 'user-table' : null }}">
-        <x-users-table-head/>
+        <x-users-table-head />
         <tbody>
             @php
                 $serialNumber = 1;
@@ -173,9 +180,10 @@
     </table>
 
     @if ($role === 'Super Admin')
-        <x-flex-card title="Deleted Users" id="deleted" titlecounts="{{count($trashed)}}" iconurl="{{ asset('icons/Users.svg') }}" />
+        <x-flex-card title="Deleted Users" id="deleted" titlecounts="{{ count($trashed) }}"
+            iconurl="{{ asset('icons/Users.svg') }}" />
         <table class="w-full display my-5 deletedUsersTable" id="{{ count($trashed) > 10 ? 'deleted-table' : '' }}">
-            <x-users-table-head/>
+            <x-users-table-head />
             <tbody>
                 @php $serialNumber = 1; @endphp
                 @forelse ($trashed as $user)

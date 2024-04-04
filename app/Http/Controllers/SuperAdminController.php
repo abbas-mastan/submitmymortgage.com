@@ -558,7 +558,7 @@ class SuperAdminController extends Controller
 
     public function doAssociate(Request $request)
     {
-        $validator = Validator::make($request->onlyf(['AssociateName', 'AssociateEmail']), [
+        $validator = Validator::make($request->only(['AssociateName', 'AssociateEmail']), [
             'AssociateEmail' => 'required|email:rfc,dns|unique:users,email',
         ]);
         if ($validator->fails()) {

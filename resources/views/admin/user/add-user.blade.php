@@ -336,22 +336,28 @@
         }
 
         $("#sendemail").on('change', function(e) {
-            e.preventDefault();
-            if ($(this).is(":checked")) {
-                $("[name='password']").attr('disabled', true);
-                $("[name='password_confirmation']").attr('disabled', true);
-                $("#passwordParent").addClass('hidden');
-            } else {
-                $("[name='password_confirmation']").removeAttr('disabled');
-                $("#passwordParent").removeClass('hidden');
-                $("#passwordParent").removeClass('hidden');
-            }
-        });
-        if ($("#sendemail").is(":checked")) {
+        e.preventDefault();
+        if ($(this).is(":checked")) {
+            $("[name='password']").attr('disabled', true);
+            $("[name='password_confirmation']").attr('disabled', true);
             $("#passwordParent").addClass('hidden');
         } else {
             $("[name='password']").removeAttr('disabled');
+            $("[name='password_confirmation']").removeAttr('disabled');
+            $("#passwordParent").removeClass('hidden');
         }
+    });
+
+    // Initial setup based on initial checked state of checkbox
+    if ($("#sendemail").is(":checked")) {
+        $("[name='password']").attr('disabled', true); // Disable password field
+        $("[name='password_confirmation']").attr('disabled', true); // Disable password confirmation field
+        $("#passwordParent").addClass('hidden'); // Hide passwordParent div
+    } else {
+        $("[name='password']").removeAttr('disabled'); // Enable password field
+        $("[name='password_confirmation']").removeAttr('disabled'); // Enable password confirmation field
+        $("#passwordParent").removeClass('hidden'); // Show passwordParent div
+    }
         let role = document.querySelector('#role');
         let financeDiv = document.querySelector('#finance-div');
         let loanDiv = document.querySelector('#loan_type_div');
