@@ -28,6 +28,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::view('/terms-and-condition', 'terms-and-condition');
     Route::view('/privacy-policy', 'privacy-policy');
     Route::view('/', 'index')->name("index");
+    Route::view('/trial', 'trial')->name("trial");
     Route::view('/login', 'auth.login')->name("login");
     Route::post('/do-login', [AuthController::class, 'doLogin']);
     Route::get('/register', [AuthController::class, 'register'])->name('register');
