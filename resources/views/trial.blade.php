@@ -20,7 +20,6 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/css/intlTelInput.css" rel="stylesheet"
         media="screen">
 
-
     <!-- fontawesome icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw=="
@@ -35,11 +34,9 @@
     <!-- custom css -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
 
-
-
     <style>
         .hero-section {
-            background: url("{{asset('assets/trialhero.jpg')}}") no-repeat;
+            background: url("{{ asset('assets/trialhero.jpg') }}") no-repeat;
             background-size: cover;
         }
     </style>
@@ -130,7 +127,11 @@
         <section class="containter-fluid trial-form" style="padding: 250px 0px">
             <div class="container align-content-center" style="height: 100%">
                 <div class="multi-form bg-white shadow-sm">
-                    <form id="regForm" class="main-form" action="">
+                    <form id="regForm" class="main-form require-validation" action="{{ route('stripePayment') }}"
+                        role="form" method="post" class="require-validation" data-cc-on-file="false"
+                        data-stripe-publishable-key="{{ env('STRIPE_PK') }}">
+                        method="POST">
+                        @csrf
                         <h4>Start Your 6 Week Free Trial!</h4>
 
                         <div class="tab">
@@ -138,16 +139,17 @@
                                 <div class="form-inp">
                                     <label class="labels" for="">Full Name</label>
                                     <input type="text" class="inputs" placeholder="Full Name" required
-                                        name="" id="">
+                                        name="name" id="">
                                 </div>
                                 <div class="form-inp">
                                     <label for="" class="labels">Email Address</label>
                                     <input type="text" class="inputs" placeholder="Email Adddress" required
-                                        name="" id="">
+                                        name="email" id="">
                                 </div>
                                 <div class="form-inp">
                                     <label for="" class="labels">Company Name</label>
-                                    <select name="" id="" class="selects form-select">
+                                    <select name="" name="company_name" id=""
+                                        class="selects form-select">
                                         <option value="">Company Name</option>
                                         <option value="">Company Name</option>
                                         <option value="">Company Name</option>
@@ -165,11 +167,11 @@
                                 <div class="form-inp-div">
                                     <div class="form-inps">
                                         <label class="label1" for="">Email</label>
-                                        <input type="email" class="input1" name=""
+                                        <input type="email" class="input1" name="email"
                                             placeholder="wnlgtzanrjvghpfufe@cwmxc.com" value="" id="">
                                     </div>
                                     <div class="form-inps">
-                                        <input id="phone" class="input1" type="tel">
+                                        <input id="phone" name="phone" class="input1" type="tel">
                                         <span id="valid-msg" class="hide">Valid</span>
                                         <span id="error-msg" class="hide">Invalid number</span>
                                     </div>
@@ -179,7 +181,7 @@
                                                 <div class="form-inp-row">
                                                     <label class="label1" for="">First Name</label>
                                                     <input class="input1" type="text" placeholder="First Name"
-                                                        value="" name="" id="">
+                                                        value="" name="first_name" id="">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-12 d-flex align-items-center">
@@ -187,7 +189,7 @@
                                                     <label class="label1" for="">Last Name</label>
 
                                                     <input class="input1" type="text" placeholder="Last Name"
-                                                        value="" name="" id="">
+                                                        value="" name="last_name" id="">
                                                 </div>
                                             </div>
                                         </div>
@@ -198,23 +200,23 @@
                                         <label>Address</label>
                                         <input type="text" class="input1"
                                             placeholder="Apartment, building, floor (optional)" value=""
-                                            name="" id="">
+                                            name="address" id="">
                                     </div>
                                     <div class="form-inps">
                                         <label for="">Country</label>
-                                        <select name="" class="select1 form-select" id="">
-                                            <option value="">United States</option>
-                                            <option value="">United States</option>
-                                            <option value="">United States</option>
+                                        <select name="country" class="select1 form-select" id="">
+                                            <option selected value="United States">United States</option>
+                                            <option value="US">America</option>
+
                                         </select>
 
                                     </div>
                                     <div class="form-inps">
                                         <label for="">State</label>
-                                        <select name="" class="select1 form-select" id="">
-                                            <option value="">Alabama</option>
-                                            <option value="">Alabama</option>
-                                            <option value="">Alabama</option>
+                                        <select name="state" class="select1 form-select" id="">
+                                            <option selected value="Alabama">Alabama</option>
+                                            <option value="Alabama">Alabama</option>
+                                            <option value="Alabama">Alabama</option>
                                         </select>
 
                                     </div>
@@ -223,37 +225,38 @@
                                             <div class="col-lg-6 col-12 form-col">
                                                 <div class="form-inp-row">
                                                     <input class="input1 city" type="text" placeholder="City"
-                                                        value="" name="" id="">
+                                                        value="" name="city" id="">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-12 d-flex align-items-center">
                                                 <input class="input1 postal-code" type="number"
-                                                    placeholder="Postal Code" value="" name="postal_code"
+                                                    placeholder="Postal Code" value="" name="pcode"
                                                     id="">
                                             </div>
                                         </div>
                                     </div>
 
                                 </div>
-                                <div class="form-inp-div">
+                                <div class="form-inp-div " id="card-element">
 
                                     <div class="form-inps flex-row card-inp">
                                         <i class="far fa-credit-card"></i>
-                                        <input class="input1" placeholder="Card Number">
+                                        <input class="input1 card-number" name="card" placeholder="Card Number">
                                     </div>
                                     <div class=" p-0">
                                         <div class="row w-100 ">
                                             <div class="col-lg-6 col-12 form-col">
                                                 <div class="form-inp-row">
                                                     {{-- <label class="label1" for="">First Name</label> --}}
-                                                    <input class="input1 card-number card-date" type="text"
-                                                        placeholder="MM / YY" value="" name=""
-                                                        id="">
+                                                    <input
+                                                        class="input1 card-number card-date card-expiry-month card-expiry-year"
+                                                        type="text" placeholder="MM / YY" value=""
+                                                        name="month" id="">
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-12 d-flex align-items-center">
-                                                <input class="input1 card-number" type="text" placeholder="CVV"
-                                                    value="" name="" id="">
+                                                <input class="input1 card-number card-cvc" type="text"
+                                                    placeholder="CVV" value="ccv" name="" id="">
                                             </div>
                                         </div>
                                     </div>
@@ -266,7 +269,6 @@
                                 <div class="form-last-btn-2">
                                     <button class="start-trial-button" type="submit">Start My Free Trial</button>
                                 </div>
-
 
                             </div>
                         </div>
@@ -297,7 +299,8 @@
     <footer class="main-footer">
         <div class="container">
             <div class="row text-center">
-                <div class="col-12"><img src="{{ asset('assets/logo/logo.svg') }}" class="img-fluid" alt="">
+                <div class="col-12"><img src="{{ asset('assets/logo/logo.svg') }}" class="img-fluid"
+                        alt="">
                 </div>
                 <!-- footer -->
                 <div class="col-12 footer">
@@ -385,9 +388,65 @@
             }
         });
 
-        // on keyup / change flag: reset
         telInput.on("keyup change", reset);
     </script>
+    <script src="https://js.stripe.com/v3/"></script>
+
+    <script>
+        var stripe = Stripe(
+            'pk_test_51OJzQIKSJiGkUIHaqrN85OKD3JsFk9fS4BX3ppok0eMQPvNck45RdOm8XQGDNXCvva6aRWqQZIw2U4WWmZwztAm100cYpBdXou'
+        );
+        var elements = stripe.elements();
+        var card = elements.create('card', {
+            style: {
+                display: "flex",
+                flexDirection: "column",
+                base: {
+                    iconColor: '#c4f0ff',
+                    color: 'black',
+                    fontWeight: '500',
+                    fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
+                    fontSize: '16px',
+                    fontSmoothing: 'antialiased',
+                    ':-webkit-autofill': {
+                        color: 'black',
+                    },
+                    '::placeholder': {
+                        color: '',
+                    },
+                },
+                invalid: {
+                    iconColor: '#FFC7EE',
+                    color: 'red',
+                },
+            },
+        });
+        card.mount('#card-element');
+        var form = document.getElementById('payment-form');
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            stripe.createToken(card).then(function(result) {
+                if (result.error) {
+                    var errorElement = document.getElementById('card-errors');
+                    errorElement.textContent = result.error.message;
+                } else {
+                    stripeTokenHandler(result.token);
+                }
+            });
+        });
+
+        function stripeTokenHandler(token) {
+            var form = document.getElementById('payment-form');
+            var hiddenInput = document.createElement('input');
+            hiddenInput.setAttribute('type', 'hidden');
+            hiddenInput.setAttribute('name', 'stripeToken');
+            hiddenInput.setAttribute('value', token.id);
+            form.appendChild(hiddenInput);
+            form.submit();
+        }
+    </script>
+
 </body>
 
 </html>
