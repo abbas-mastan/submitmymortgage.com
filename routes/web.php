@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GmailController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Artisan;
@@ -18,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
  */
+
 Route::get('/migrate', function () {
     // Artisan::call('migrate',['--path'=> '/database/migrations/2023_08_03_045920_add_soft_deletes_to_users_table','--force'=>true]);
     Artisan::call('cache:clear');
@@ -40,7 +42,6 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/set-password/{token}', [AuthController::class, 'sePassword'])->name('set.password');
     Route::get('/user-register', [AuthController::class, 'userRegister'])->name('user.register');
     Route::post('/set-password-new-user', [AuthController::class, 'setPasswordForNewUsers']);
-
 });
 Route::get('/logout', [AuthController::class, 'logout']);
 
@@ -56,7 +57,7 @@ Route::post('/email/verification-notification', [AuthController::class, 'emailVe
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/logout-from-this-user', [SuperAdminController::class, 'ReLoginFrom']);
     Route::middleware(['isPasswordExpired'])->group(function () {
-    Route::view('email', 'deal-email');
+        Route::view('email', 'deal-email');
         Route::get('/dashboard', [HomeController::class, 'dashboard']);
         Route::get('/home', [HomeController::class, 'dashboard']);
         Route::get('/show-docx/{media}', [HomeController::class, 'showDocx']);
@@ -69,7 +70,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 Route::get('password-expired', [AuthController::class, 'passwordExpired'])
     ->name('password.expired');
-Route::post('password-expired', [AuthController::class,'expiredPasswordUpdate'])
+Route::post('password-expired', [AuthController::class, 'expiredPasswordUpdate'])
     ->name('password.post_expired');
 //=====================Test Routes==================
 Route::get('/test', [TestController::class, 'test']);
+Route::post('trial', [StripeController::class, 'processPayment'])->name('stripePayment');
+// Route::get('success', [StripeController::class, 'success'])->name('payment_success');
+// Route::get('cancel', [StripeController::class, 'cancel'])->name('payment_cancel');

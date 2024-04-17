@@ -128,9 +128,13 @@
 
         <!-- get mortgage approval faster! -->
         <section class="containter-fluid trial-form" style="padding: 250px 0px">
-            <div class="container align-content-center h-100" >
-                <div class="multi-form bg-white shadow-sm rounded" >
-                    <form id="regForm" class="main-form" action="">
+            <div class="container align-content-center" style="height: 100%">
+                <div class="multi-form bg-white shadow-sm">
+                    <form id="regForm" class="main-form require-validation" action="{{ route('stripePayment') }}"
+                        role="form" method="post" class="require-validation" data-cc-on-file="false"
+                        data-stripe-publishable-key="{{ env('STRIPE_PK') }}">
+                        method="POST">
+                        @csrf
                         <h4>Start Your 6 Week Free Trial!</h4>
 
                         <div class="tab">
@@ -138,16 +142,17 @@
                                 <div class="form-inp">
                                     <label class="labels" for="">Full Name</label>
                                     <input type="text" class="inputs" placeholder="Full Name" required
-                                        name="" id="">
+                                        name="name" id="">
                                 </div>
                                 <div class="form-inp">
                                     <label for="" class="labels">Email Address</label>
                                     <input type="text" class="inputs" placeholder="Email Adddress" required
-                                        name="" id="">
+                                        name="email" id="">
                                 </div>
                                 <div class="form-inp">
                                     <label for="" class="labels">Company Name</label>
-                                    <select name="" id="" class="selects form-select">
+                                    <select name="" name="company_name" id=""
+                                        class="selects form-select">
                                         <option value="">Company Name</option>
                                         <option value="">Company Name</option>
                                         <option value="">Company Name</option>
