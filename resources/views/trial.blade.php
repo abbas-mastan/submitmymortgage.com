@@ -128,8 +128,8 @@
 
         <!-- get mortgage approval faster! -->
         <section class="containter-fluid trial-form" style="padding: 250px 0px">
-            <div class="container align-content-center" style="height: 100%">
-                <div class="multi-form bg-white shadow-sm">
+            <div class="container align-content-center h-100" >
+                <div class="multi-form bg-white shadow-sm rounded" >
                     <form id="regForm" class="main-form" action="">
                         <h4>Start Your 6 Week Free Trial!</h4>
 
