@@ -68,5 +68,6 @@ class Kernel extends HttpKernel
         'user' => \App\Http\Middleware\UserMiddleware::class,
 		'assistant' => \App\Http\Middleware\AssistantMiddleware::class,
 		'isPasswordExpired' => \App\Http\Middleware\PasswordExpiredMiddleware::class,
+		'trial' => \App\Http\Middleware\TrialMiddleware::class,
     ];
 }

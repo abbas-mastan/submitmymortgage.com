@@ -4,7 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'user', 'verified'])->prefix(getUserRoutePrefix())->group(function () {
+Route::middleware(['auth', 'user', 'verified','trial'])->prefix(getUserRoutePrefix())->group(function () {
     //==============================
     //==========Files related routes
     //==============================

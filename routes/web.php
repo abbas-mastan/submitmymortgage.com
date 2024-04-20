@@ -30,7 +30,6 @@ Route::group(['middleware' => 'guest'], function () {
     Route::view('/terms-and-condition', 'terms-and-condition');
     Route::view('/privacy-policy', 'privacy-policy');
     Route::view('/', 'index')->name("index");
-    Route::view('/trial', 'trial')->name("trial");
     Route::view('/login', 'auth.login')->name("login");
     Route::post('/do-login', [AuthController::class, 'doLogin']);
     Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -38,11 +37,11 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/forgot-password', [AuthController::class, 'forgotPassword'])->name('password.request');
     Route::post('/forgot-password', [AuthController::class, 'sendForgotPasswordLink'])->name('password.email');
     Route::get('/password/reset/{token}', [AuthController::class, 'resetPassword'])->name('password.reset');
-    Route::post('/reset-password', [AuthController::class, 'updatePassword'])->name('password.update');
     Route::get('/set-password/{token}', [AuthController::class, 'sePassword'])->name('set.password');
     Route::get('/user-register', [AuthController::class, 'userRegister'])->name('user.register');
-    Route::post('/set-password-new-user', [AuthController::class, 'setPasswordForNewUsers']);
 });
+Route::post('/reset-password', [AuthController::class, 'updatePassword'])->name('password.update');
+Route::post('/set-password-new-user', [AuthController::class, 'setPasswordForNewUsers']);
 Route::get('/logout', [AuthController::class, 'logout']);
 
 //Email verification links
@@ -56,7 +55,7 @@ Route::post('/email/verification-notification', [AuthController::class, 'emailVe
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/logout-from-this-user', [SuperAdminController::class, 'ReLoginFrom']);
-    Route::middleware(['isPasswordExpired'])->group(function () {
+    Route::middleware(['isPasswordExpired', 'trial'])->group(function () {
         Route::view('email', 'deal-email');
         Route::get('/dashboard', [HomeController::class, 'dashboard']);
         Route::get('/home', [HomeController::class, 'dashboard']);
@@ -67,6 +66,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/gmail-inbox', [GmailController::class, 'getGmailInbox']);
         Route::get('/gmail/download/{messageId}/attachments/{attachmentId}/{attachmentIndexId}', [GmailController::class, 'downloadAttachment'])->name('download');
     });
+    Route::get('premium-confirmation', [StripeController::class,'trialCompleted']);
+    Route::get('continue-to-premium', [StripeController::class,'continuePremium']);
 });
 Route::get('password-expired', [AuthController::class, 'passwordExpired'])
     ->name('password.expired');
@@ -74,6 +75,10 @@ Route::post('password-expired', [AuthController::class, 'expiredPasswordUpdate']
     ->name('password.post_expired');
 //=====================Test Routes==================
 Route::get('/test', [TestController::class, 'test']);
+Route::get('/trial', [StripeController::class, 'trial'])->name("trial");
 Route::post('trial', [StripeController::class, 'processPayment'])->name('stripePayment');
+// Route::middleware('trial',function(){
+Route::get('/trial-dashboard', [StripeController::class, 'trialDashboard'])->name("trial.dashboard");
+// });
 // Route::get('success', [StripeController::class, 'success'])->name('payment_success');
 // Route::get('cancel', [StripeController::class, 'cancel'])->name('payment_cancel');

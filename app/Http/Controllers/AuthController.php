@@ -78,10 +78,15 @@ class AuthController extends Controller
     {
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'active' => 1], $request->input('remember'))) {
             // Authentication passed...
+            $user = Auth::user();
             $request->session()->regenerate();
-            $request->session()->put('role', Auth::user()->role);
-            if (Auth::user()->role === 'Assistant') {
+            $request->session()->put('role', $user->role);
+            if ($user->role === 'Assistant') {
                 return redirect(getAssistantRoutePrefix() . '/submit-document');
+            }
+            if($user->trial && $user->trial->login_sequence < 1){
+                $user->trial->update(['login_sequence' => 1]);
+                return redirect()->intended('/dashboard')->with('msg_success','Your Trial started successfully');
             }
 
             return redirect()->intended('/dashboard');
@@ -121,6 +126,7 @@ class AuthController extends Controller
     public function updatePassword(Request $request)
     {
         // this validation checking password and token also
+        dd($request->all());
         $this->passwordValidation($request);
         $status = Password::reset(
             $request->only('email', 'password', 'password_confirmation', 'token'),

@@ -39,8 +39,12 @@
 
     <style>
         .hero-section {
-            background: url("{{asset('assets/trialhero.jpg')}}") no-repeat;
+            background: url("{{ asset('assets/trialhero.jpg') }}") no-repeat;
             background-size: cover;
+        }
+
+        .error {
+            color: #991b1b;
         }
     </style>
 </head>
@@ -130,14 +134,14 @@
         <section class="containter-fluid trial-form" style="padding: 250px 0px">
             <div class="container align-content-center" style="height: 100%">
                 <div class="multi-form bg-white shadow-sm">
-                    <form id="regForm" class="main-form require-validation" action="{{ route('stripePayment') }}"
-                        role="form" method="post" class="require-validation" data-cc-on-file="false"
-                        data-stripe-publishable-key="{{ env('STRIPE_PK') }}">
-                        method="POST">
+                    <form id="payment-form" class="main-form require-validation" action="{{ route('stripePayment') }}"
+                        method="post">
                         @csrf
                         <h4>Start Your 6 Week Free Trial!</h4>
-
-                        <div class="tab">
+                        @if (session()->has('stripe_error'))
+                            <div class="text-danger text-center my-3 fs-2">{{ session('stripe_error') }}</div>
+                        @endif
+                        {{-- <div class="tab">
                             <div class="form-inp-sec d-flex flex-column">
                                 <div class="form-inp">
                                     <label class="labels" for="">Full Name</label>
@@ -164,19 +168,24 @@
                                 </div>
                             </div>
 
-                        </div>
-                        <div class="tab">
+                        </div> --}}
+                        <div class="">
                             <div class="form-inp-sec d-flex flex-column">
                                 <div class="form-inp-div">
                                     <div class="form-inps">
                                         <label class="label1" for="">Email</label>
-                                        <input type="email" class="input1" name=""
-                                            placeholder="wnlgtzanrjvghpfufe@cwmxc.com" value="" id="">
+                                        <input type="email" class="input1" name="email"
+                                            value="{{ session()->has('user_data') ? session('user_data')['email'] : '' }}"
+                                            placeholder="wnlgtzanrjvghpfufe@cwmxc.com" id="">
+                                        <span class="error email_error"></span>
                                     </div>
                                     <div class="form-inps">
-                                        <input id="phone" class="input1" type="tel">
+                                        <input id="phone" name="phone" class="input1"
+                                            value="{{ session()->has('user_data') ? session('user_data')['phone'] : '' }}"
+                                            type="tel">
                                         <span id="valid-msg" class="hide">Valid</span>
                                         <span id="error-msg" class="hide">Invalid number</span>
+                                        <span class="error phone_error"></span>
                                     </div>
                                     <div class=" p-0">
                                         <div class="row w-100 ">
@@ -184,7 +193,9 @@
                                                 <div class="form-inp-row">
                                                     <label class="label1" for="">First Name</label>
                                                     <input class="input1" type="text" placeholder="First Name"
-                                                        value="" name="" id="">
+                                                        value="{{ session()->has('user_data') ? session('user_data')['first_name'] : '' }}"
+                                                        name="first_name" id="">
+                                                    <span class="error first_name_error"></span>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-12 d-flex align-items-center">
@@ -192,7 +203,9 @@
                                                     <label class="label1" for="">Last Name</label>
 
                                                     <input class="input1" type="text" placeholder="Last Name"
-                                                        value="" name="" id="">
+                                                        value="{{ session()->has('user_data') ? session('user_data')['last_name'] : '' }}"
+                                                        name="last_name" id="">
+                                                    <span class="error last_name_error"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -202,68 +215,59 @@
                                     <div class="form-inps">
                                         <label>Address</label>
                                         <input type="text" class="input1"
-                                            placeholder="Apartment, building, floor (optional)" value=""
-                                            name="" id="">
+                                            placeholder="Apartment, building, floor (optional)"
+                                            value="{{ session()->has('user_data') ? session('user_data')['address'] : '' }}"
+                                            name="address" id="">
+                                        <span class="error address_error"></span>
                                     </div>
                                     <div class="form-inps">
                                         <label for="">Country</label>
-                                        <select name="" class="select1 form-select" id="">
-                                            <option value="">United States</option>
-                                            <option value="">United States</option>
-                                            <option value="">United States</option>
+                                        <select name="country" class="select1 form-select" id="country">
+                                            <option class="text-secondary" selected value="">Select Country
+                                            </option>
                                         </select>
-
+                                        <span class="error country_error"></span>
                                     </div>
                                     <div class="form-inps">
                                         <label for="">State</label>
-                                        <select name="" class="select1 form-select" id="">
-                                            <option value="">Alabama</option>
-                                            <option value="">Alabama</option>
-                                            <option value="">Alabama</option>
+                                        <select name="state" class="select1 form-select" id="state">
+                                            <option selected value="">Select State</option>
                                         </select>
-
+                                        <span class="error state_error"></span>
                                     </div>
                                     <div class=" p-0">
                                         <div class="row w-100 ">
                                             <div class="col-lg-6 col-12 form-col">
                                                 <div class="form-inp-row">
                                                     <input class="input1 city" type="text" placeholder="City"
-                                                        value="" name="" id="">
+                                                        value="{{ session()->has('user_data') ? session('user_data')['city'] : '' }}"
+                                                        name="city" id="">
+                                                    <span class="error city_error"></span>
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-12 d-flex align-items-center">
-                                                <input class="input1 postal-code" type="number"
-                                                    placeholder="Postal Code" value="" name="postal_code"
-                                                    id="">
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                                <div class="form-inp-div">
-
-                                    <div class="form-inps flex-row card-inp">
-                                        <i class="far fa-credit-card"></i>
-                                        <input class="input1" placeholder="Card Number">
-                                    </div>
-                                    <div class=" p-0">
-                                        <div class="row w-100 ">
-                                            <div class="col-lg-6 col-12 form-col">
                                                 <div class="form-inp-row">
-                                                    {{-- <label class="label1" for="">First Name</label> --}}
-                                                    <input class="input1 card-number card-date" type="text"
-                                                        placeholder="MM / YY" value="" name=""
-                                                        id="">
+                                                    <input class="input1 postal-code" type="number"
+                                                        placeholder="Postal Code"
+                                                        value="{{ session()->has('user_data') ? session('user_data')['postal_code'] : '' }}"
+                                                        name="postal_code" id="">
+                                                    <span class="error postal_code_error"></span>
                                                 </div>
-                                            </div>
-                                            <div class="col-lg-6 col-12 d-flex align-items-center">
-                                                <input class="input1 card-number" type="text" placeholder="CVV"
-                                                    value="" name="" id="">
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
-                                <div class="form-last-p">
+
+                                <div class="form-inp-div stripe-div d-none">
+                                    <div class="ps-2 " id="card-element">
+                                        <!-- A Stripe Element will be inserted here. -->
+                                    </div>
+
+                                    <!-- Used to display Element errors. -->
+                                    <div class="ps-2 text-danger" id="card-errors" role="alert"></div>
+                                </div>
+                                <div class="d-none form-last-p">
                                     <p>Why? We ask for a payment method so that your subscription and business
                                         can continue without
                                         interruption after your trial ends.</p>
@@ -272,37 +276,20 @@
                                     <button class="start-trial-button" type="submit">Start My Free Trial</button>
                                 </div>
 
-
                             </div>
-                        </div>
-
-                        <!-- <div style="overflow: auto">
-                                    <div style="float: right">
-                                        <button type="button" id="prevBtn" onclick="nextPrev(-1)">
-                                            Previous
-                                        </button>
-                                        <button type="button" id="nextBtn" onclick="nextPrev(1)">
-                                            Next
-                                        </button>
-                                    </div>
-                                </div> -->
-                        <!-- Circles which indicates the steps of the form: -->
-                        <div style="text-align: center; margin-top: 40px; display: none">
-                            <span class="step"></span>
-                            <span class="step"></span>
-                            <span class="step"></span>
-                            <span class="step"></span>
                         </div>
                     </form>
                 </div>
             </div>
         </section>
     </main>
+
     <!-- why choose us footer -->
     <footer class="main-footer">
         <div class="container">
             <div class="row text-center">
-                <div class="col-12"><img src="{{ asset('assets/logo/logo.svg') }}" class="img-fluid" alt="">
+                <div class="col-12"><img src="{{ asset('assets/logo/logo.svg') }}" class="img-fluid"
+                        alt="">
                 </div>
                 <!-- footer -->
                 <div class="col-12 footer">
@@ -338,7 +325,7 @@
     <!-- jquery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"></script>
-    <script src="{{ asset('assets/trial/script.js') }}"></script>
+    {{-- <script src="{{ asset('assets/trial/script.js') }}"></script> --}}
     <script>
         var telInput = $("#phone"),
             errorMsg = $("#error-msg"),
@@ -385,6 +372,7 @@
                     validMsg.removeClass("hide");
                 } else {
                     telInput.addClass("error");
+                    errorMsg.addClass("text-danger");
                     errorMsg.removeClass("hide");
                 }
             }
@@ -393,6 +381,131 @@
         // on keyup / change flag: reset
         telInput.on("keyup change", reset);
     </script>
+
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        $(document).ready(function() {
+            @if (session()->has('user_data'))
+                var country = {!! json_encode(session('user_data')['country'] ?? '') !!};
+                var state = {!! json_encode(session('user_data')['state'] ?? '') !!};
+
+                // Select the corresponding options in the country and state select elements
+                if (country) {
+                    updateSelectedOption('country', country);
+                }
+
+                function updateSelectedOption(selectName, value) {
+                    $(`select[name="${selectName}"]`).val(value).trigger('change');
+                    // $('#payment-form').submit();
+                }
+                if (state) {
+                    updateSelectedOption('state', state);
+                    triggerAjax();
+                }
+            @endif
+
+
+            var paymentForm = $('#payment-form');
+            $('#payment-form input,#payment-form select').on('keyup change', function(e) {
+                e.preventDefault();
+                triggerAjax();
+            });
+            var stripe = Stripe(
+                'pk_test_51P6SBB09tId2vnnuXxFipyFJCk9XyEXZCBEUVfdRAbL09wiReraeAoKNNk3SfOq8rvlxMoNJwCIw1diOzwWmapRU00hyZJU7QX'
+            );
+            var elements = stripe.elements();
+            // Custom styling can be passed to options when creating an Element.
+            const style = {
+                base: {
+                    // Add your base input styles here. For example:
+                    fontSize: '16px',
+                    color: '#32325d',
+                    lineHeight: '50px',
+                    padding: '60px',
+                },
+            };
+
+            // Create an instance of the card Element.
+            const card = elements.create('card', {
+                style
+            });
+            
+            // Add an instance of the card Element into the `card-element` <div>.
+                card.mount('#card-element');
+            // Create a token or display an error when the form is submitted.
+            // Create a token or display an error when the form is submitted.
+            const form = document.getElementById('payment-form');
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                
+                const {
+                    token,
+                    error
+                } = await stripe.createToken(card);
+
+                if (error) {
+                    // Inform the customer that there was an error.
+                    const errorElement = document.getElementById(
+                        'card-errors');
+                    errorElement.textContent = error.message;
+                } else {
+                    // Send the token to your server.
+                    stripeTokenHandler(token);
+                }
+            });
+            
+            
+            const stripeTokenHandler = (token) => {
+                // Insert the token ID into the form so it gets submitted to the server
+                const form = document.getElementById('payment-form');
+                const hiddenInput = document.createElement('input');
+                hiddenInput.setAttribute('type', 'hidden');
+                hiddenInput.setAttribute('name', 'stripeToken');
+                hiddenInput.setAttribute('value', token.id);
+                form.appendChild(hiddenInput);
+                
+                // Submit the form
+                form.submit();
+            }
+        });
+        
+        function triggerAjax() {
+            var paymentForm = $('#payment-form');
+            $('.email_error').empty();
+            $('.phone_error').empty();
+            $('.first_name_error').empty();
+            $('.last_name_error').empty();
+            $('.address_error').empty();
+            $('.country_error').empty();
+            $('.state_error').empty();
+            $('.city_error').empty();
+            $('.postal_code_error').empty();
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                type: paymentForm.attr('method'),
+                url: paymentForm.attr('action'),
+                data: paymentForm.serialize(),
+                success: function(response) {
+                    console.log(response);
+                    if (response !== 'success') {
+                        $.each(response, function(indexInArray, error) {
+                            $('.' + indexInArray + '_error').text('');
+                            $('.' + indexInArray + '_error').text(response[
+                                indexInArray]);
+                        });
+                    } else {
+                        $('.stripe-div').removeClass('d-none');
+                        $('.form-last-p').removeClass('d-none');
+                    }
+                }
+            });
+        }
+    </script>
+    <script src="{{ asset('js/country_with_state.js') }}"></script>
 </body>
 
 </html>
