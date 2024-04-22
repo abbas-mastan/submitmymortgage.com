@@ -76,6 +76,8 @@ Route::post('password-expired', [AuthController::class, 'expiredPasswordUpdate']
 //=====================Test Routes==================
 Route::get('/test', [TestController::class, 'test']);
 Route::get('/trial', [StripeController::class, 'trial'])->name("trial");
+Route::get('/payment-success', [StripeController::class, 'StripeSuccess'])->name("success");
+Route::get('/payment-failed', [StripeController::class, 'StripeFailed'])->name("failed");
 Route::post('trial', [StripeController::class, 'processPayment'])->name('stripePayment');
 // Route::middleware('trial',function(){
 Route::get('/trial-dashboard', [StripeController::class, 'trialDashboard'])->name("trial.dashboard");

@@ -30,9 +30,10 @@ class TrialMiddleware
             }
         }
         if ($subscribedAt && $subscribedAt < $month) {
-            $msg_trial = 'Your monthly subscription completed. <br>Would you like to continue?';
-            Session::put('msg_trial',$msg_trial);
-            return redirect('premium-confirmation')->with('msg_trial',$msg_trial);
+            return redirect('/continue-to-premium');
+            // $msg_trial = 'Your monthly subscription completed. <br>Would you like to continue?';
+            // Session::put('msg_trial',$msg_trial);
+            // return redirect('premium-confirmation')->with('msg_trial',$msg_trial);
         }
 
         return $next($request);

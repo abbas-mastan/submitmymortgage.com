@@ -13,6 +13,16 @@
                 {!! $msg_trial !!}
             </div>
         @endisset
+        <form id="payment-form" class="main-form require-validation" action="{{ route('stripePayment') }}" method="post">
+            <div class="form-inp-div stripe-div d-none">
+                <div class="ps-2 " id="card-element">
+                    <!-- A Stripe Element will be inserted here. -->
+                </div>
+
+                <!-- Used to display Element errors. -->
+                <div class="ps-2 text-danger" id="card-errors" role="alert"></div>
+            </div>
+        </form>
         <div class="flex justify-between align-items-center mt-5">
             <a href="/continue-to-premium" class="px-4 py-1.5 text-white bg-blue-500">Yes</a>
             <a href="/logout" class="px-4 py-1.5 text-white bg-red-500">NO</a>

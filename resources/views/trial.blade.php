@@ -46,6 +46,11 @@
         .error {
             color: #991b1b;
         }
+
+        .loader {
+            float: right;
+            width: 45px;
+        }
     </style>
 </head>
 </head>
@@ -183,8 +188,8 @@
                                         <input id="phone" name="phone" class="input1"
                                             value="{{ session()->has('user_data') ? session('user_data')['phone'] : '' }}"
                                             type="tel">
-                                        <span id="valid-msg" class="hide">Valid</span>
-                                        <span id="error-msg" class="hide">Invalid number</span>
+                                        {{-- <span id="valid-msg" class="hide">Valid</span>
+                                        <span id="error-msg" class="hide">Invalid number</span> --}}
                                         <span class="error phone_error"></span>
                                     </div>
                                     <div class=" p-0">
@@ -273,7 +278,10 @@
                                         interruption after your trial ends.</p>
                                 </div>
                                 <div class="form-last-btn-2">
-                                    <button class="start-trial-button" type="submit">Start My Free Trial</button>
+                                    <button class="start-trial-button" type="submit">Start My Free Trial
+                                        <img class="loader d-none" src="{{ asset('assets/trial/loader.svg') }}"
+                                            alt="asdf">
+                                    </button>
                                 </div>
 
                             </div>
@@ -283,7 +291,6 @@
             </div>
         </section>
     </main>
-
     <!-- why choose us footer -->
     <footer class="main-footer">
         <div class="container">
@@ -406,7 +413,7 @@
 
 
             var paymentForm = $('#payment-form');
-            $('#payment-form input,#payment-form select').on('keyup change', function(e) {
+            $('#payment-form input,#payment-form select,#payment-form').on('keyup change submit', function(e) {
                 e.preventDefault();
                 triggerAjax();
             });
@@ -429,15 +436,15 @@
             const card = elements.create('card', {
                 style
             });
-            
+
             // Add an instance of the card Element into the `card-element` <div>.
-                card.mount('#card-element');
+            card.mount('#card-element');
             // Create a token or display an error when the form is submitted.
             // Create a token or display an error when the form is submitted.
             const form = document.getElementById('payment-form');
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
-                
+
                 const {
                     token,
                     error
@@ -453,8 +460,8 @@
                     stripeTokenHandler(token);
                 }
             });
-            
-            
+
+
             const stripeTokenHandler = (token) => {
                 // Insert the token ID into the form so it gets submitted to the server
                 const form = document.getElementById('payment-form');
@@ -463,13 +470,15 @@
                 hiddenInput.setAttribute('name', 'stripeToken');
                 hiddenInput.setAttribute('value', token.id);
                 form.appendChild(hiddenInput);
-                
+
                 // Submit the form
                 form.submit();
             }
         });
-        
+
         function triggerAjax() {
+            $('.loader').removeClass('d-none');
+            $('.start-trial-button').attr('disabled', true);
             var paymentForm = $('#payment-form');
             $('.email_error').empty();
             $('.phone_error').empty();
@@ -490,6 +499,8 @@
                 url: paymentForm.attr('action'),
                 data: paymentForm.serialize(),
                 success: function(response) {
+                    $('.loader').addClass('d-none');
+                    $('.start-trial-button').removeAttr('disabled');
                     console.log(response);
                     if (response !== 'success') {
                         $.each(response, function(indexInArray, error) {
