@@ -413,7 +413,7 @@
 
 
             var paymentForm = $('#payment-form');
-            $('#payment-form input,#payment-form select,#payment-form').on('keyup change submit', function(e) {
+            $('#payment-form').on('submit', function(e) {
                 e.preventDefault();
                 triggerAjax();
             });
@@ -501,7 +501,6 @@
                 success: function(response) {
                     $('.loader').addClass('d-none');
                     $('.start-trial-button').removeAttr('disabled');
-                    console.log(response);
                     if (response !== 'success') {
                         $.each(response, function(indexInArray, error) {
                             $('.' + indexInArray + '_error').text('');

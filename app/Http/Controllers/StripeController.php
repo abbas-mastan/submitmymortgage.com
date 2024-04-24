@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
-use App\Models\Trial;
-use Stripe\StripeClient;
 use App\Mail\AssistantMail;
-use Illuminate\Support\Str;
+use App\Models\Trial;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Stripe\StripeClient;
 
 class StripeController extends Controller
 {
@@ -51,12 +51,17 @@ class StripeController extends Controller
         } elseif (!$validator->fails() && $request->stripeToken) {
             $name = $request->first_name . ' ' . $request->last_name;
             try {
-
                 $stripe = new StripeClient(env('STRIPE_SK'));
                 $customer = $stripe->customers->create([
                     'description' => $name,
                     'email' => $request->email,
                     'source' => $request->stripeToken,
+                ]);
+                $stripe->charges->create([
+                    'amount' => 100 * 1,
+                    "currency" => "USD",
+                    'customer' => $customer->id,
+                    'description' => ' test desciption',
                 ]);
                 DB::table('users')->insert([
                     'email' => $request->email,
@@ -86,7 +91,7 @@ class StripeController extends Controller
                     'postal_code' => $request->postal_code,
                     'customer_id' => $customer->id, //$customer->id,
                     'user_id' => $user->id, //$customer->id,
-                    'trial_started_at' => '2024-04-09 14:53:50',
+                    'trial_started_at' => now(),
                 ]);
                 if ($user->email_verified_at == null) {
                     $this->loginwithid($user->id);
@@ -107,51 +112,81 @@ class StripeController extends Controller
         return Auth::loginUsingId($id);
     }
 
-    public function trialCompleted()
+    public function trialCompleted($msg)
     {
-        return view('premium-confirmation')->with('msg_trial', 'Your trial period has been completed.<br> Would you like to continue with premium?');
+        return view('payment-page')->with('msg_error', $msg);
     }
 
-    public function continuePremium()
+    public function continuePremium(Request $request)
     {
-        $user = Auth::user();
-        $stripe = new StripeClient(env('STRIPE_SK'));
+
         try {
+            $user = Auth::user();
+            $stripe = new StripeClient(env('STRIPE_SK'));
             $stripe->charges->create([
-                'amount' => 100 * 20,
+                'amount' => 100 * 1000,
                 "currency" => "USD",
                 'customer' => $user->trial->customer_id,
                 'description' => ' test desciption',
             ]);
             return redirect('/dashboard')->with('msg_success', 'Subscription completed successfully.');
         } catch (\Exception $e) {
+            $msg = $e->getMessage();
+            return view('payment-page')->with('msg_error', $msg);
             // if ($e->getStripeCode() === 'card_declined') {
-            $stripe = new \Stripe\StripeClient('sk_test_51P6SBB09tId2vnnum7ibbbCIHgacCrrJc1G78LXEYK81LKH0lfMgmVcAzFQySdadJok5xnOwRvEVNqw9m1aiV0qi00Kihjo2GB');
-            $session = $stripe->checkout->sessions->create([
-                'line_items' => [[
-                    'price_data' => [
-                        'currency' => 'usd',
-                        'product_data' => [
-                            'name' => 'Monthly Subscription',
-                        ],
-                        'unit_amount' => 100 * 200,
-                    ],
-                ]],
-                'mode' => 'payment',
-                'success_url' => route('success'),
-                'cancel_url' => route('failed'),
-            ]);
-            return redirect($session->url);
+            // $stripe = new \Stripe\StripeClient('sk_test_51P6SBB09tId2vnnum7ibbbCIHgacCrrJc1G78LXEYK81LKH0lfMgmVcAzFQySdadJok5xnOwRvEVNqw9m1aiV0qi00Kihjo2GB');
+            // $session = $stripe->checkout->sessions->create([
+            //     'line_items' => [[
+            //         'price_data' => [
+            //             'currency' => 'usd',
+            //             'product_data' => [
+            //                 'name' => 'Monthly Subscription',
+            //             ],
+            //             'unit_amount' => 100 * 200,
+            //         ],
+            //         'quantity' => 1,
+            //     ]],
+            //     'mode' => 'payment',
+            //     'success_url' => route('success'),
+            //     'cancel_url' => route('failed'),
+            // ]);
+            // return redirect($session->url);
         }
         // }
+    }
+
+    public function processPaymentWithStripe(Request $request)
+    {
+
+        $user = Auth::user();
+        $stripe = new StripeClient(env('STRIPE_SK'));
+        if ($request->stripeToken) {
+            try {
+
+                $customer = $stripe->customers->create([
+                    'description' => $user->name,
+                    'email' => $user->email,
+                    'source' => $request->stripeToken,
+                ]);
+            } catch (\Exception $e) {
+
+            }
+
+        }
+        $stripe->charges->create([
+            'amount' => 100 * 1000,
+            "currency" => "USD",
+            'customer' => $customer->id ?? $user->trial->customer_id,
+            'description' => ' test desciption',
+        ]);
     }
 
     public function stripeSuccess($msg = null)
     {
         $user = Auth::user();
         $user->trial->update([
-            'subscribed_at' => now(),
             'trial_started_at' => $user->trial->trial_started_at,
+            'subscribed_at' => now(),
         ]);
         return view('dashboard')->with('msg_success', $msg);
     }

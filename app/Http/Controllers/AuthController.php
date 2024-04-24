@@ -86,7 +86,7 @@ class AuthController extends Controller
             }
             if($user->trial && $user->trial->login_sequence < 1){
                 $user->trial->update(['login_sequence' => 1]);
-                return redirect()->intended('/dashboard')->with('msg_success','Your Trial started successfully');
+                return redirect()->intended('/dashboard')->with('msg_success','Your 7 days tria period started successfully!');
             }
 
             return redirect()->intended('/dashboard');

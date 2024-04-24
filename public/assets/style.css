@@ -1,0 +1,244 @@
+@import url("https://fonts.googleapis.com/css2?family=Lexend&display=swap");
+.btn-primary {
+  --bs-btn-border-color:#A90D0E;
+  --bs-btn-bg:#A90D0E;
+  --bs-btn-hover-bg:#CA7A1D;
+  --bs-btn-hover-border-color:#CA7A1D;
+  border-radius: 0;
+}
+
+.btn-secondary {
+  --bs-btn-border-color:#CA7A1D;
+  --bs-btn-bg:#CA7A1D;
+  --bs-btn-hover-bg:#A90D0E;
+  --bs-btn-hover-border-color:#A90D0E;
+  border-radius: 0;
+}
+
+.btn-outline-primary {
+  --bs-btn-color:#000;
+  --bs-btn-border-color:#000;
+  --bs-btn-hover-bg:#A90D0E;
+  --bs-btn-hover-border-color:#A90D0E;
+  --bs-btn-active-bg:#A90D0E;
+  --bs-btn-disabled-color:#A90D0E;
+  --bs-btn-disabled-border-color:#A90D0E;
+  border-radius: 0;
+}
+.btn-outline-primary img {
+  transition: all 0.2s;
+}
+.btn-outline-primary:hover img {
+  filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(185deg) brightness(104%) contrast(103%);
+}
+
+.text-title {
+  font-size: 32px;
+  font-weight: 500;
+}
+
+@media screen and (max-width: 485px) {
+  .text-title {
+    font-size: 24px;
+  }
+}
+body {
+  font-family: "Lexend", sans-serif;
+}
+
+.body-btns {
+  width: 220px;
+}
+
+#navbarSupportedContent .nav-item .nav-link {
+  color: #000;
+  transition: all 0.2s;
+}
+#navbarSupportedContent .nav-item .nav-link:hover {
+  color: #CA7A1D;
+}
+
+.hero-section {
+  background: url('{{ asset("assets/homepage-top-banner-desktop.jpg") }}') no-repeat;
+  background-size: cover;
+  background-position: center;
+}
+.hero-section .hero-row {
+  padding: 150px 0 125px 0;
+}
+.hero-section .hero-row .hero-title {
+  font-size: 46px;
+  font-weight: 700;
+}
+.hero-section .hero-row .hero-paragraph {
+  margin-bottom: 75px;
+}
+
+.key-features {
+  margin: 150px 0;
+}
+.key-features .right-side .key-features-list {
+  line-height: 36px;
+  padding-left: 0;
+}
+.key-features .right-side .key-features-list li {
+  display: flex;
+  align-items: center;
+}
+.key-features .right-side .key-features-list li .list-icon {
+  margin-right: 20px;
+}
+
+.why-choose-us {
+  background: linear-gradient(180deg, #F7F7F7 0%, rgba(247, 247, 247, 0) 91.41%);
+  padding: 65px 0 0 0;
+}
+.why-choose-us .why-choose-us-top .why-choose-us-top-right {
+  margin-top: -125px;
+}
+.why-choose-us .why-choose-us-top p {
+  text-align: justify;
+}
+
+.customers-review {
+  margin: 180px 0;
+  margin-bottom: 120px;
+}
+.customers-review .reviews {
+  display: flex;
+  gap: 18px;
+  padding-right: 5px;
+}
+.customers-review .reviews .owl-carousel .owl-stage-outer {
+  padding-top: 30px;
+}
+.customers-review .reviews .owl-carousel .owl-stage-outer .each-review-card {
+  position: relative;
+  border: 1px solid #000;
+  padding: 40px 30px 25px;
+  width: 100%;
+  text-align: justify;
+}
+.customers-review .reviews .owl-carousel .owl-stage-outer .each-review-card .stars {
+  position: absolute;
+  font-size: 18px;
+  top: -26px;
+  left: 50%;
+  background: #fff;
+  transform: translateX(-50%);
+  padding: 10px;
+  border-radius: 30px;
+  box-shadow: 0 3px 3px 1px rgba(0, 0, 0, 0.1);
+  color: #ffc107;
+}
+.customers-review .reviews .owl-carousel .owl-nav, .customers-review .reviews .owl-carousel .owl-dots {
+  display: none;
+}
+
+.get-mortgage p {
+  text-align: justify;
+}
+.get-mortgage .right {
+  position: relative;
+  padding: 0;
+  background: url("./../assets/business.jpg") no-repeat center;
+  background-size: cover;
+}
+.get-mortgage .right::after {
+  content: "";
+  background: linear-gradient(142deg, #fff 26%, transparent 1%);
+  width: 100%;
+  position: absolute;
+  z-index: 1;
+  height: 100%;
+  top: -1px;
+  left: -1px;
+}
+
+.main-footer {
+  margin: 110px 0 0 0;
+}
+.main-footer .footer {
+  margin: 30px 0 10px 0;
+  font-weight: 300;
+  font-size: 14px;
+}
+
+@media screen and (max-width: 1399px) {
+  .get-mortgage .right::after {
+    background: linear-gradient(129deg, #fff 25%, transparent 1%);
+  }
+}
+
+@media screen and (max-width: 1199px) {
+  .get-mortgage .left {
+    position: relative;
+    color: #fff;
+    padding: 25px;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url("./../assets/business.jpg");
+    background-size: cover;
+    background-position: right;
+  }
+  .get-mortgage .right {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  header {
+    height: 100px;
+  }
+  header nav.navbar {
+    position: absolute;
+    width: 100%;
+    background: white;
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .key-features {
+    margin: 70px 0 140px 0;
+  }
+  .customers-review {
+    margin: 100px 0;
+  }
+  .customers-review .reviews {
+    flex-direction: column;
+  }
+  .customers-review .reviews .each-review-card {
+    margin-top: 15px;
+    width: 100% !important;
+  }
+}
+
+@media screen and (max-width: 485px) {
+  .get-mortgage .left {
+    background-position: center;
+  }
+  header .navbar .navbar-brand {
+    margin: 0;
+    width: 140px;
+  }
+  .hero-section {
+    background: linear-gradient(to right, rgba(255, 255, 255, 0.3) 100%, rgba(0, 0, 0, 0.2)), url("./../assets/hero-mobile.jpg");
+  }
+  .hero-section .hero-row {
+    padding: 150px 0 125px 0;
+  }
+  .hero-section .hero-row .hero-title {
+    font-size: 34px;
+    font-weight: 700;
+  }
+  .hero-section .hero-row .hero-paragraph {
+    text-align: justify;
+  }
+  
+}
+
+@media (max-width: 991.98px) {
+  #firstHero {
+      background: url('{{ asset("assets/homepage-top-banner-desktop.jpg") }}') no-repeat !important;
+      background-size: contain !important;
+      background-position: center;
+  }
+}

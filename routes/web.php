@@ -21,15 +21,23 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::get('/migrate', function () {
-    // Artisan::call('migrate',['--path'=> '/database/migrations/2023_08_03_045920_add_soft_deletes_to_users_table','--force'=>true]);
-    Artisan::call('cache:clear');
+    Artisan::call('migrate', [
+        '--path' => '/database/migrations/2024_04_06_020733_create_customers_table.php',
+        '--force' => true,
+    ]);
+    // Artisan::call('cache:clear');
     dd('migrate!');
 });
 
 Route::group(['middleware' => 'guest'], function () {
     Route::view('/terms-and-condition', 'terms-and-condition');
     Route::view('/privacy-policy', 'privacy-policy');
-    Route::view('/', 'index')->name("index");
+    Route::view('/', 'front-pages/homepage')->name("index");
+    Route::view('/about', 'front-pages/about')->name("about");
+    Route::view('/verification', 'front-pages/verification')->name("verification");
+    Route::view('/origination', 'front-pages/originations')->name("origination");
+    Route::view('/platform', 'front-pages/platform')->name("platform");
+    Route::view('/closing', 'front-pages/closing')->name("closing");
     Route::view('/login', 'auth.login')->name("login");
     Route::post('/do-login', [AuthController::class, 'doLogin']);
     Route::get('/register', [AuthController::class, 'register'])->name('register');
@@ -66,8 +74,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/gmail-inbox', [GmailController::class, 'getGmailInbox']);
         Route::get('/gmail/download/{messageId}/attachments/{attachmentId}/{attachmentIndexId}', [GmailController::class, 'downloadAttachment'])->name('download');
     });
-    Route::get('premium-confirmation', [StripeController::class,'trialCompleted']);
-    Route::get('continue-to-premium', [StripeController::class,'continuePremium']);
+    Route::get('premium-confirmation', [StripeController::class, 'trialCompleted']);
+    Route::get('continue-to-premium', [StripeController::class, 'continuePremium']);
+    Route::post('continue-stripe-payment', [StripeController::class, 'processPaymentWithStripe']);
 });
 Route::get('password-expired', [AuthController::class, 'passwordExpired'])
     ->name('password.expired');
@@ -81,6 +90,7 @@ Route::get('/payment-failed', [StripeController::class, 'StripeFailed'])->name("
 Route::post('trial', [StripeController::class, 'processPayment'])->name('stripePayment');
 // Route::middleware('trial',function(){
 Route::get('/trial-dashboard', [StripeController::class, 'trialDashboard'])->name("trial.dashboard");
+Route::view('homepage','homepage');
 // });
 // Route::get('success', [StripeController::class, 'success'])->name('payment_success');
 // Route::get('cancel', [StripeController::class, 'cancel'])->name('payment_cancel');

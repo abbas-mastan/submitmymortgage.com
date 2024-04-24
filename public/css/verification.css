@@ -1,0 +1,335 @@
+/* Reset default margin and padding */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.section-heading {
+    font-family: Montserrat;
+    color: #a90d0e;
+    /* Font color */
+    text-align: center;
+    margin-bottom: 30px;
+    /* Adjust margin as needed */
+    padding-top: 2%;
+}
+
+.about-text {
+    font-size: 15px;
+    font-family: "Montserrat";
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    line-height: 1.2;
+    margin-top: 10px;
+    /* Adjust the margin-top as needed */
+    margin-bottom: 10px;
+    /* Adjust the margin-bottom as needed */
+    padding-top: 3%;
+    padding-bottom: 3%;
+    padding-left: 18%;
+    padding-right: 18%;
+    text-align: center;
+}
+
+#navbarSupportedContent .nav-item .nav-link {
+    color: #000;
+    transition: all 0.2s;
+}
+
+#navbarSupportedContent .nav-item .nav-link:hover {
+    color: #ca7a1d;
+}
+
+/* Styling the hero banner */
+.hero-banner {
+    background-image: url("../assets/top-banner-desktop.jpg");
+    /* Replace 'your-background-image.jpg' with your image path */
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    /* Adjust the height as needed */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: calc((100vw / 112) * 39);
+    color: #fff;
+    /* Text color */
+}
+
+/* Styling the text content */
+.hero-content {
+    max-width: 800px;
+    /* Adjust the max-width as needed */
+}
+
+.hero-content h1 {
+    font-size: 3em;
+    /* Adjust the font size as needed */
+    margin-bottom: 20px;
+}
+
+/* Styling the CTA button */
+.cta-button {
+    background-color: #a90d0e;
+    /* Button background color */
+    color: #fff;
+    /* Button text color */
+    padding: 10px 40px;
+    font-size: 1.2em;
+    /* Adjust the font size as needed */
+    text-decoration: none;
+    border: none;
+    transition: background-color 0.3s ease;
+    font-family: Montserrat;
+}
+
+.cta-button:hover {
+    background-color: white;
+    /* Button background color on hover */
+    border: 1px solid black;
+    color: black;
+}
+
+.heading-text {
+    color: #a90d0e;
+    font-family: Montserrat;
+}
+
+.subheading {
+    font-family: Montserrat;
+    font-weight: 500;
+    color: black;
+    font-size: 20px;
+    margin-bottom: 5%;
+}
+
+/* Styling for the hero banner */
+.hero-banner {
+    background-image: url("../assets/top-banner-desktop.jpg");
+    background-size: cover;
+    background-position: center;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: calc((100vw / 112) * 39);
+    color: #fff;
+}
+
+/* Styling for the text content */
+.hero-content {
+    max-width: 800px;
+}
+
+.hero-content h1 {
+    font-size: 3em;
+    margin-bottom: 20px;
+}
+
+/* Styling for the CTA button */
+.cta-button {
+    background-color: #a90d0e;
+    color: #fff;
+    padding: 10px 40px;
+    font-size: 1.2em;
+    text-decoration: none;
+    border: none;
+    transition: background-color 0.3s ease;
+    font-family: Montserrat;
+}
+
+.cta-button:hover {
+    background-color: white;
+    border: 1px solid black;
+    color: black;
+}
+
+/* Styling for the four columns section */
+.four-columns-section {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    padding: 0 8%;
+    margin-top: 50px;
+}
+
+/* Styling for each column */
+.column {
+    flex-basis: 22%;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Styling for the icon */
+.icon img {
+    width: 50px;
+    margin-bottom: 20px;
+}
+
+/* Styling for the heading */
+.heading {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    font-family: Montserrat;
+    color: #a90d0e;
+}
+
+/* Styling for the text */
+.text {
+    font-size: 1em;
+    color: black;
+    font-family: Montserrat;
+    font-weight: 500;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+    /* Show only one column at a time */
+    .column {
+        flex-basis: 100%;
+    }
+}
+
+.hero-banner-3 {
+    background-image: url("../assets/trial-banner-image.jpg");
+    /* Replace 'your-background-image.jpg' with your image path */
+    background-size: cover;
+    background-position: center;
+    height: calc((100vw / 112) * 49);
+    /* Set the height to achieve a 224:103 aspect ratio */
+    display: flex;
+    margin-top: 5%;
+}
+
+/* Styling the text content */
+.hero-content-3 {
+    padding-left: 18%;
+    /* Adjust the left padding as needed */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #fff;
+    /* Text color */
+    padding-right: 40%;
+    font-family: Montserrat;
+}
+
+.hero-content-3 h1 {
+    font-size: 2.5em;
+    /* Adjust the font size as needed */
+    margin-bottom: 10px;
+}
+
+.hero-content-3 p {
+    font-size: 1.2em;
+    /* Adjust the font size as needed */
+}
+
+.cta-button-2 {
+    background-color: #a90d0e;
+    /* Button background color */
+    color: #fff;
+    /* Button text color */
+    padding: 10px 40px;
+    font-size: 1.2em;
+    /* Adjust the font size as needed */
+    text-decoration: none;
+    border: none;
+    transition: background-color 0.3s ease;
+    font-family: Montserrat;
+}
+
+@media (max-width: 768px) {
+    .hero-banner-3 {
+        height: auto;
+        /* Set height to auto for smaller screens */
+        background-image: url("../assets/submit-mortgage-banner-mobile.jpg");
+        /* Replace 'new-mobile-image.jpg' with your new image path */
+        background-size: cover;
+        /* Ensure background image covers the container */
+        background-position: center;
+        /* Center the background image */
+        padding: 20px;
+        /* Adjust padding for smaller screens */
+    }
+
+    .hero-content-3 {
+        max-width: 100%;
+        /* Allow text content to take full width */
+        text-align: center;
+        /* Center-align text */
+        padding: 18% 10%;
+    }
+}
+
+@media (max-width: 767px) {
+    .hero-banner {
+        background-image: url("../assets/top-banner-mobile.jpg");
+        /* Replace 'your-background-image.jpg' with your image path */
+        height: calc((100vw / 384) * 493);
+        /* Set the height to achieve a 384:493 aspect ratio */
+    }
+
+    .about-text {
+        padding: 5% 10%;
+    }
+}
+
+.button-box {
+    margin-top: 2%;
+}
+
+/* Center the menu items horizontally between the logo and login button */
+.navbar-nav {
+    font-family: Montserrat, sans-serif;
+    font-size: 15px;
+    padding: 0;
+    color: black;
+    text-decoration: uppercase;
+}
+
+.nav-link {
+    color: black;
+    text-transform: uppercase !important;
+    font-weight: 600;
+}
+
+.navbar-nav .nav-item {
+    margin: 0 10px;
+}
+
+.navbar-brand,
+.navbar-nav,
+.ms-lg-auto {
+    display: flex;
+    align-items: center;
+}
+
+.ms-lg-auto {
+    margin-left: auto;
+}
+
+@media (max-width: 991.98px) {
+    /* Hide the navbar toggle button and menu items on mobile */
+    .navbar-toggler,
+    .navbar-nav {
+        display: none;
+    }
+
+    /* Show login and register buttons on mobile */
+    .d-lg-none {
+        display: block !important;
+    }
+
+    #firstHero {
+        /* Set the background image */
+        background: url("../assets/mobile-top-banner.jpg") no-repeat !important;
+
+        /* Ensure the background covers the entire element */
+        background-size: cover !important;
+        background-position: center;
+    }
+}

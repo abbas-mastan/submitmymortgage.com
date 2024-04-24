@@ -20,7 +20,7 @@ class TrialMiddleware
     {
 
         $user = Auth::user();
-        $subscribedAt = $user->trial->subscribed_at;
+        $subscribedAt = $user->trial->subscribed_at ?? null;
         $month = now()->subDays(30);
         if (Auth::check() && $user->role === 'Borrower' && $user->trial && !$subscribedAt) {
             $trialStartDate = $user->trial->trial_started_at;

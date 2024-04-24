@@ -12,8 +12,8 @@
                 @endif
 
                 <p>
-                    {{ __('Before proceeding, please check your email for a verification link.') }}
-                    {{ __('If you did not receive the email') }} 
+                    Please check your email for a verification link.
+                    {{-- {{ __('If you did not receive the email') }}  --}}
                 </p>
                 <br>
                 <form class="flex justify-between" action="{{ route('verification.send') }}" method="POST">

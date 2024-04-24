@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -66,14 +67,37 @@
         </div>
     </div>
     </div>
-    <header>
-        <nav class="navbar navbar-expand-lg py-4">
+    <header class="sticky-top bg-white">
+        <nav class="navbar navbar-expand-lg bg-white py-4">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <img src="{{ asset('assets/logo/logo.svg') }}" class="img-fluid" alt="">
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">Link</a>
+                        </li>
+                    </ul>
+                    <div class="ms-lg-5">
+                        <a href="{{ route('login') }}" class="btn btn-outline-primary" type="button">LOGIN</a>
+                        <a href="{{ route('register') }}" class="btn btn-secondary ms-2" type="button">REGISTER</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        {{-- <nav class="navbar navbar-expand-lg py-4">
             <div class="container">
                 <a class="navbar-brand" href="/">
                     <img src="{{ asset('assets/logo/logo.svg') }}" class="img-fluid" alt="">
                 </a>
                 <!-- the button and ul menu are currently displayed none -->
-                <button class="navbar-toggler d-none" type="button" data-bs-toggle="collapse"
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -103,7 +127,7 @@
                     <a href="{{ route('register') }}" class="btn btn-secondary ms-2" type="button">REGISTER</a>
                 </div>
             </div>
-        </nav>
+        </nav> --}}
     </header>
     <main>
         <!-- hero section -->
