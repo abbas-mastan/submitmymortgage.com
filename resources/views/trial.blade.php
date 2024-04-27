@@ -264,7 +264,7 @@
 
                                 </div>
 
-                                <div class="form-inp-div stripe-div d-none">
+                                <div class="form-inp-div stripe-div">
                                     <div class="ps-2 " id="card-element">
                                         <!-- A Stripe Element will be inserted here. -->
                                     </div>
@@ -272,7 +272,7 @@
                                     <!-- Used to display Element errors. -->
                                     <div class="ps-2 text-danger" id="card-errors" role="alert"></div>
                                 </div>
-                                <div class="d-none form-last-p">
+                                <div class="form-last-p">
                                     <p>Why? We ask for a payment method so that your subscription and business
                                         can continue without
                                         interruption after your trial ends.</p>
@@ -413,10 +413,14 @@
 
 
             var paymentForm = $('#payment-form');
+
             $('#payment-form').on('submit', function(e) {
                 e.preventDefault();
-                triggerAjax();
+                if (validateFields()) {
+                    triggerAjax();
+                }
             });
+
             var stripe = Stripe(
                 'pk_test_51P6SBB09tId2vnnuXxFipyFJCk9XyEXZCBEUVfdRAbL09wiReraeAoKNNk3SfOq8rvlxMoNJwCIw1diOzwWmapRU00hyZJU7QX'
             );
@@ -444,7 +448,6 @@
             const form = document.getElementById('payment-form');
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
-
                 const {
                     token,
                     error
@@ -480,15 +483,6 @@
             $('.loader').removeClass('d-none');
             $('.start-trial-button').attr('disabled', true);
             var paymentForm = $('#payment-form');
-            $('.email_error').empty();
-            $('.phone_error').empty();
-            $('.first_name_error').empty();
-            $('.last_name_error').empty();
-            $('.address_error').empty();
-            $('.country_error').empty();
-            $('.state_error').empty();
-            $('.city_error').empty();
-            $('.postal_code_error').empty();
             $.ajaxSetup({
                 headers: {
                     'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -513,6 +507,59 @@
                     }
                 }
             });
+        }
+
+
+        function validateFields() {
+            $('.email_error').empty();
+            $('.phone_error').empty();
+            $('.first_name_error').empty();
+            $('.last_name_error').empty();
+            $('.address_error').empty();
+            $('.country_error').empty();
+            $('.state_error').empty();
+            $('.city_error').empty();
+            $('.postal_code_error').empty();
+            var isValid = true; // Set a flag to track validation status
+
+            if ($('input[name=email]').val() === '') {
+                $('.email_error').text('This field is required');
+                isValid = false; // Set flag to false if validation fails
+            }
+            if ($('input[name=phone]').val() === '') {
+                $('.phone_error').text('This field is required');
+                isValid = false; // Set flag to false if validation fails
+            }
+            if ($('input[name=first_name]').val() === '') {
+                $('.first_name_error').text('This field is required');
+                isValid = false;
+            }
+            if ($('input[name=last_name]').val() === '') {
+                $('.last_name_error').text('This field is required');
+                isValid = false;
+            }
+            if ($('input[name=address]').val() === '') {
+                $('.address_error').text('This field is required');
+                isValid = false;
+            }
+            if ($('select[name=country]').val() == -1) {
+                $('.country_error').text('This field is required');
+                isValid = false;
+            }
+            if ($('select[name=state]').val() === '') {
+                $('.state_error').text('This field is required');
+                isValid = false;
+            }
+            if ($('input[name=city]').val() === '') {
+                $('.city_error').text('This field is required');
+                isValid = false;
+            }
+            if ($('input[name=postal_code]').val() === '') {
+                $('.postal_code_error').text('This field is required');
+                isValid = false;
+            }
+
+            return isValid; //
         }
     </script>
     <script src="{{ asset('js/country_with_state.js') }}"></script>

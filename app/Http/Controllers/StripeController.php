@@ -66,11 +66,9 @@ class StripeController extends Controller
                 DB::table('users')->insert([
                     'email' => $request->email,
                     'name' => $name,
-                    'role' => 'Borrower',
+                    'role' => 'Admin',
                     'password' => 'null',
                     'pic' => 'img/profile-default.svg',
-                    'finance_type' => 'purchase',
-                    'loan_type' => 'Private Loan',
                     'created_at' => now(),
                 ]);
 
