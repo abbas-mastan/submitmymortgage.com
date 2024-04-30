@@ -5,9 +5,8 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 
-class TrialMiddleware
+class SubscriptionMiddleware
 {
     /**
      * Handle an incoming request.
@@ -18,7 +17,6 @@ class TrialMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-
         $user = Auth::user();
         $subscribedAt = $user->trial->subscribed_at ?? null;
         $month = now()->subDays(30);
@@ -32,7 +30,6 @@ class TrialMiddleware
         if ($subscribedAt && $subscribedAt < $month) {
             return redirect('/continue-to-premium');
         }
-
         return $next($request);
     }
 }

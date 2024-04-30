@@ -3,7 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GmailController;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\StripeController;
+use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Artisan;
@@ -63,7 +63,7 @@ Route::post('/email/verification-notification', [AuthController::class, 'emailVe
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/logout-from-this-user', [SuperAdminController::class, 'ReLoginFrom']);
-    Route::middleware(['isPasswordExpired', 'trial'])->group(function () {
+    Route::middleware(['isPasswordExpired', 'subscription'])->group(function () {
         Route::view('email', 'deal-email');
         Route::get('/dashboard', [HomeController::class, 'dashboard']);
         Route::get('/home', [HomeController::class, 'dashboard']);
@@ -74,9 +74,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/gmail-inbox', [GmailController::class, 'getGmailInbox']);
         Route::get('/gmail/download/{messageId}/attachments/{attachmentId}/{attachmentIndexId}', [GmailController::class, 'downloadAttachment'])->name('download');
     });
-    Route::get('premium-confirmation', [StripeController::class, 'trialCompleted']);
-    Route::get('continue-to-premium', [StripeController::class, 'continuePremium']);
-    Route::post('continue-stripe-payment', [StripeController::class, 'processPaymentWithStripe']);
+    Route::get('premium-confirmation', [SubscriptionController::class, 'trialCompleted']);
+    Route::get('continue-to-premium', [SubscriptionController::class, 'continuePremium']);
+    Route::post('continue-stripe-payment', [SubscriptionController::class, 'processPaymentWithStripe']);
 });
 Route::get('password-expired', [AuthController::class, 'passwordExpired'])
     ->name('password.expired');
@@ -84,13 +84,13 @@ Route::post('password-expired', [AuthController::class, 'expiredPasswordUpdate']
     ->name('password.post_expired');
 //=====================Test Routes==================
 Route::get('/test', [TestController::class, 'test']);
-Route::get('/trial', [StripeController::class, 'trial'])->name("trial");
-Route::get('/payment-success', [StripeController::class, 'StripeSuccess'])->name("success");
-Route::get('/payment-failed', [StripeController::class, 'StripeFailed'])->name("failed");
-Route::post('trial', [StripeController::class, 'processPayment'])->name('stripePayment');
+Route::view('/trial','trial')->name("trial");
+Route::get('/payment-success', [SubscriptionController::class, 'StripeSuccess'])->name("success");
+Route::get('/payment-failed', [SubscriptionController::class, 'StripeFailed'])->name("failed");
+Route::post('trial', [SubscriptionController::class, 'processPayment'])->name('stripePayment');
 // Route::middleware('trial',function(){
-Route::get('/trial-dashboard', [StripeController::class, 'trialDashboard'])->name("trial.dashboard");
+Route::get('/trial-dashboard', [SubscriptionController::class, 'trialDashboard'])->name("trial.dashboard");
 Route::view('homepage','homepage');
 // });
-// Route::get('success', [StripeController::class, 'success'])->name('payment_success');
-// Route::get('cancel', [StripeController::class, 'cancel'])->name('payment_cancel');
+// Route::get('success', [SubscriptionController::class, 'success'])->name('payment_success');
+// Route::get('cancel', [SubscriptionController::class, 'cancel'])->name('payment_cancel');

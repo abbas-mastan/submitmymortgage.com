@@ -2,25 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\AssistantMail;
-use App\Models\Trial;
 use App\Models\User;
+use App\Mail\AdminMail;
+use Stripe\StripeClient;
+use App\Mail\AssistantMail;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-use Stripe\StripeClient;
 
-class StripeController extends Controller
+class SubscriptionController extends Controller
 {
-
-  public function processPayment(Request $request)
+    public function processPayment(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email|unique:users,email',
@@ -40,37 +39,30 @@ class StripeController extends Controller
         } elseif (!$validator->fails() && $request->stripeToken) {
             $name = $request->first_name . ' ' . $request->last_name;
             try {
-                $stripe = new StripeClient(env('STRIPE_SK'));
-                $customer = $stripe->customers->create([
-                    'description' => $name,
-                    'email' => $request->email,
-                    'source' => $request->stripeToken,
-                ]);
-                $charge = $stripe->charges->create([
-                    'amount' => 100 * 1,
-                    "currency" => "USD",
-                    'customer' => $customer->id,
-                    'description' => ' test desciption',
-                ]);
-                $stripe->refunds->create(['charge' => $charge->id]);
-                dd('success');
-                DB::table('users')->insert([
-                    'email' => $request->email,
-                    'name' => $name,
-                    'role' => 'Admin',
-                    'password' => 'null',
-                    'pic' => 'img/profile-default.svg',
-                    'created_at' => now(),
-                ]);
+                $customer = $this->charge($request,$name);                
+                if($customer){
+                    // DB::table('card_details')->insert([
+                    //     'user_id' => auth()->user()->id,
+                    //     'customer_id' => $customer->id ,
+                    //     'card_id' => $customer->default_source,
+                    // ]);
+                    DB::table('users')->insert([
+                        'email' => $request->email,
+                        'name' => $name,
+                        'role' => 'Admin',
+                        'password' => 'null',
+                        'pic' => 'img/profile-default.svg',
+                        'created_at' => now(),
+                    ]);
+                }
 
                 $msg['msg_info'] = 'Please check your email inbox to verify email.';
                 $user = User::where('email', $request->email)->first();
 
                 $id = Crypt::encryptString($user->id);
                 DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
-                $url = function () use ($id) {return Url::signedRoute('user.register', ['user' => $id], now()->addMinutes(10));};
-                Mail::to($request->email)->send(new AssistantMail($url()));
-
+                $url = function () use ($id) {return URL::signedRoute('user.register', ['user' => $id], now()->addMinutes(10));};
+                Mail::to($request->email)->send(new AdminMail($url()));
                 DB::table('trials')->insert([
                     'address' => $request->address,
                     'phone' => $request->phone,
@@ -96,6 +88,25 @@ class StripeController extends Controller
         }
     }
 
+
+    public function charge($request,$name)
+    {
+        $stripe = new StripeClient(env('STRIPE_SK'));
+        $customer = $stripe->customers->create([
+            'description' => $name,
+            'email' => $request->email,
+            'source' => $request->stripeToken,
+        ]);
+        $charge = $stripe->charges->create([
+            'amount' => 100 * 1,
+            "currency" => "USD",
+            'customer' => $customer->id,
+            'description' => ' test desciption',
+        ]);
+        $stripe->refunds->create(['charge' => $charge->id]);
+        return $customer;
+    }
+
     public function loginwithid($id)
     {
         return Auth::loginUsingId($id);
@@ -108,7 +119,6 @@ class StripeController extends Controller
 
     public function continuePremium(Request $request)
     {
-
         try {
             $user = Auth::user();
             $stripe = new StripeClient(env('STRIPE_SK'));
@@ -122,26 +132,7 @@ class StripeController extends Controller
         } catch (\Exception $e) {
             $msg = $e->getMessage();
             return view('payment-page')->with('msg_error', $msg);
-            // if ($e->getStripeCode() === 'card_declined') {
-            // $stripe = new \Stripe\StripeClient('sk_test_51P6SBB09tId2vnnum7ibbbCIHgacCrrJc1G78LXEYK81LKH0lfMgmVcAzFQySdadJok5xnOwRvEVNqw9m1aiV0qi00Kihjo2GB');
-            // $session = $stripe->checkout->sessions->create([
-            //     'line_items' => [[
-            //         'price_data' => [
-            //             'currency' => 'usd',
-            //             'product_data' => [
-            //                 'name' => 'Monthly Subscription',
-            //             ],
-            //             'unit_amount' => 100 * 200,
-            //         ],
-            //         'quantity' => 1,
-            //     ]],
-            //     'mode' => 'payment',
-            //     'success_url' => route('success'),
-            //     'cancel_url' => route('failed'),
-            // ]);
-            // return redirect($session->url);
         }
-        // }
     }
 
     public function processPaymentWithStripe(Request $request)
@@ -183,5 +174,4 @@ class StripeController extends Controller
     {
         dd('payment failed');
     }
-
 }

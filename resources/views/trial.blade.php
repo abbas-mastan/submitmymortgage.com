@@ -44,12 +44,69 @@
         }
 
         .error {
-            color: #991b1b;
+            color: #e03545;
         }
 
         .loader {
             float: right;
             width: 45px;
+        }
+
+        .team-size-button,
+        .team-size-button:hover {
+            background-color: #991b1b;
+            padding: 12px 0;
+            padding-top: 8px;
+            width: 60%;
+            display: block;
+            justify-content: center;
+            font-size: 20px;
+            text-align: center;
+            color: white;
+            text-decoration: none;
+        }
+
+        .subs-plan,
+        .subs-plan:hover {
+            border-bottom: 2px solid #991b1b;
+            text-decoration: none;
+            color: black;
+            cursor: pointer;
+        }
+
+        .monthly span:nth-child(3),
+        .yearly span:nth-child(3) {
+            color: #991b1b;
+            font-size: 20px;
+        }
+
+        .monthly span:nth-child(2),
+        .yearly span:nth-child(2) {
+            font-size: 20px;
+        }
+
+        .monthly span:nth-child(3) span,
+        .yearly span:nth-child(3) span {
+            font-size: 16px;
+        }
+
+        .monthly label,
+        .yearly label {
+            border-bottom: 1px solid black;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 10px;
+        }
+
+        .modal-content {
+            width: 660px !important;
+            height: 450px !important;
+        }
+
+        .red {
+            color: #991b1b;
         }
     </style>
 </head>
@@ -96,6 +153,7 @@
         </nav>
     </header>
     <main>
+
         <!-- hero section -->
         <section class="hero-section">
             <div class="container">
@@ -141,6 +199,115 @@
                 <div class="multi-form bg-white shadow-sm">
                     <form id="payment-form" class="main-form require-validation" action="{{ route('stripePayment') }}"
                         method="post">
+                        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered px-5 py-2">
+                                <div class="modal-content rounded-0">
+                                    <div class="border-0 text-center p-3 pb-0">
+                                        <button type="button" class="btn-close float-end fs-6"
+                                            data-bs-dismiss="modal" aria-label="Close"></button><br>
+                                        <h3 class="text-center m-0" id="exampleModalLabel" style="  color: #991b1b;">
+                                            Select a Plan
+                                        </h3>
+                                        <div class="d-flex justify-content-center gap-3 mt-3">
+                                            <a class="subs-plan monthly-btn fs-5 px-2">Monthly</a>
+                                            <a class="subs-plan yearly-btn fs-5 px-2">Yearly<span
+                                                    style="font-size: 14px"> (Save
+                                                    25%)</span></a>
+                                        </div>
+                                    </div>
+                                    <div class="modal-body pb-0">
+                                        <div class="col-12 d-flex flex-column align-items-center p-3 pb-0 pt-0">
+                                            <div style="border: 1px solid black"
+                                                class="table table-border text-center">
+                                                <div class="monthly">
+                                                    <label for="monthly-plan-1">
+                                                        <input type="radio" hidden name="monthly-plan"
+                                                            value="monthly-plan-1" id="monthly-plan-1">
+                                                        <span>1-2 People</span>
+                                                        <span>$500/<span>Month</span></span>
+                                                    </label>
+
+                                                    <label for="monthly-plan-2">
+                                                        <input type="radio" hidden name="monthly-plan"
+                                                            value="monthly-plan-2" id="monthly-plan-2">
+                                                        <span>3-5 People</span>
+                                                        <span>$1000/<span>Month</span></span>
+                                                    </label>
+                                                    <label for="monthly-plan-3">
+                                                        <input type="radio" hidden name="monthly-plan"
+                                                            value="monthly-plan-3" id="monthly-plan-3">
+                                                        <span>6-10 People</span>
+                                                        <span>$1500/<span>Month</span></span>
+                                                    </label>
+                                                    <label for="monthly-plan-4">
+                                                        <input type="radio" hidden name="monthly-plan"
+                                                            value="monthly-plan-4" id="monthly-plan-4">
+                                                        <span>11-15 People</span>
+                                                        <span>$2000/<span>Month</span></span>
+                                                    </label>
+                                                    <label for="monthly-plan-5">
+                                                        <input type="radio" hidden name="monthly-plan"
+                                                            value="monthly-plan-5" id="monthly-plan-5">
+                                                        <span>16-20 People</span>
+                                                        <span>$2500/<span>Month</span></span>
+                                                    </label>
+                                                    <label class="border-0" for="monthly-plan-6">
+                                                        <input type="radio" hidden name="monthly-plan"
+                                                            value="monthly-plan-6" id="monthly-plan-6">
+                                                        <span>21+ People</span>
+                                                        <span class="fs-6">Request Custom Quote</span>
+                                                    </label>
+                                                </div>
+                                                <div class="yearly">
+                                                    <label for="yearly-plan-1">
+                                                        <input type="radio" hidden name="yearly-plan"
+                                                            value="yearly-plan-1" id="yearly-plan-1">
+                                                        <span>1-2 People</span>
+                                                        <span>$4,500/<span>Year</span>
+                                                        </span>
+                                                    </label>
+                                                    <label for="yearly-plan-2">
+                                                        <input type="radio" hidden name="yearly-plan"
+                                                            value="yearly-plan-2" id="yearly-plan-2">
+                                                        <span>3-5 People</span>
+                                                        <span>$9,000/<span>Year</span>
+                                                        </span>
+                                                    </label>
+                                                    <label for="yearly-plan-3">
+                                                        <input type="radio" hidden name="yearly-plan"
+                                                            value="yearly-plan-3" id="yearly-plan-3">
+                                                        <span>6-10 People</span>
+                                                        <span>$13,500/<span>Year</span>
+                                                    </label>
+                                                    </td>
+                                                    <label for="yearly-plan-4">
+                                                        <input type="radio" hidden name="yearly-plan"
+                                                            value="yearly-plan-4" id="yearly-plan-4">
+                                                        <span>11-15 People</span>
+                                                        <span>$18,000/<span>Year</span>
+                                                    </label>
+                                                    </td>
+                                                    <label for="yearly-plan-5">
+                                                        <input type="radio" hidden name="yearly-plan"
+                                                            value="yearly-plan-5" id="yearly-plan-5">
+                                                        <span>16-20 People</span>
+                                                        <span>$22,500/<span>Year</span>
+                                                    </label>
+                                                    </td>
+                                                    <label class="border-0" for="yearly-plan-6">
+                                                        <input type="radio" hidden name="yearly-plan"
+                                                            value="yearly-plan-6" id="yearly-plan-6">
+                                                        <span>21+ People</span>
+                                                        <span class="fs-6">Request Custom Quote</span>
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         @csrf
                         <h4>Start Your 6 Week Free Trial!</h4>
                         @if (session()->has('stripe_error'))
@@ -216,6 +383,24 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="position-relative">
+                                    <div class="d-flex flex-column align-items-center">
+                                        <h2 class="text-center red">{{ session()->has('user_data') ? session('user_data')['team_size'] : 'What Size is Your Team?' }}</h2>
+                                        <a type="button" class="team-size-button selectTeamSize"
+                                            data-bs-toggle="modal" data-bs-target="#exampleModal">Selct Team
+                                            Size</a>
+                                        <span class="error team_size_error"></span>
+                                        <input type="hidden" name="team_size"
+                                            value="{{ session()->has('user_data') ? session('user_data')['team_size'] : '' }}">
+                                    </div>
+                                    <div class="d-flex flex-column align-items-center mt-4">
+                                        <h2 class="text-center red">When you want to Do your
+                                            training?</h2>
+                                        <a href="#"
+                                            class="team-size-button text-white text-decoration-none">Selct a Date</a>
+                                    </div>
+
+                                </div>
                                 <div class="form-inp-div">
                                     <div class="form-inps">
                                         <label>Address</label>
@@ -264,7 +449,7 @@
 
                                 </div>
 
-                                <div class="form-inp-div stripe-div">
+                                <div class="form-inp-div stripe-div py-3">
                                     <div class="ps-2 " id="card-element">
                                         <!-- A Stripe Element will be inserted here. -->
                                     </div>
@@ -411,9 +596,42 @@
                 }
             @endif
 
+            $($('input[name=monthly-plan]')).click(function(e) {
+                e.preventDefault();
+                var monthly = $(this).parent().text();
+                $('input[name=team_size]').val(($(this).val()));
+                $('.btn-close').click();
+                $('.selectTeamSize').text(monthly);
+            });
+            $($('input[name=yearly-plan]')).click(function(e) {
+                e.preventDefault();
+                var yearly = $(this).parent().text();
+                $('input[name=team_size]').val(($(this).val()));
+                $('.btn-close').click();
+                $('.selectTeamSize').text(yearly);
+
+            });
+
+            $('.yearly-btn').addClass('border-bottom-0');
+            $('.yearly').addClass('d-none');
+            $('.yearly-btn').click(function(e) {
+                e.preventDefault();
+                $('.yearly-btn').removeClass('border-bottom-0');
+                $('.monthly-btn').addClass('border-bottom-0');
+                $('.monthly').addClass('d-none');
+                $('.yearly').removeClass('d-none');
+
+            });
+            $('.monthly-btn').click(function(e) {
+                e.preventDefault();
+                $('.yearly-btn').addClass('border-bottom-0');
+                $('.yearly').addClass('d-none');
+                $('.monthly-btn').removeClass('border-bottom-0');
+                $('.monthly').removeClass('d-none');
+            });
+
 
             var paymentForm = $('#payment-form');
-
             $('#payment-form').on('submit', function(e) {
                 e.preventDefault();
                 if (validateFields()) {
@@ -431,13 +649,12 @@
                     // Add your base input styles here. For example:
                     fontSize: '16px',
                     color: '#32325d',
-                    lineHeight: '50px',
-                    padding: '60px',
                 },
             };
 
             // Create an instance of the card Element.
             const card = elements.create('card', {
+                hidePostalCode:true,
                 style
             });
 
@@ -459,7 +676,10 @@
                         'card-errors');
                     errorElement.textContent = error.message;
                 } else {
+                    const errorElement = document.getElementById(
+                        'card-errors');
                     // Send the token to your server.
+                    errorElement.textContent = '';
                     stripeTokenHandler(token);
                 }
             });
@@ -475,7 +695,9 @@
                 form.appendChild(hiddenInput);
 
                 // Submit the form
-                form.submit();
+                if (validateFields()) {
+                    form.submit();
+                }
             }
         });
 
@@ -520,42 +742,49 @@
             $('.state_error').empty();
             $('.city_error').empty();
             $('.postal_code_error').empty();
+            $('.team_size_error').empty();
             var isValid = true; // Set a flag to track validation status
+            var msg = 'This field is required';
+            console.log($('input[name=team_size]').val());
+            if ($('input[name=team_size]').val() === '') {
 
+                $('.team_size_error').text('Please select your team size.');
+                isValid = false; // Set flag to false if validation fails
+            }
             if ($('input[name=email]').val() === '') {
-                $('.email_error').text('This field is required');
+                $('.email_error').text(msg);
                 isValid = false; // Set flag to false if validation fails
             }
             if ($('input[name=phone]').val() === '') {
-                $('.phone_error').text('This field is required');
+                $('.phone_error').text(msg);
                 isValid = false; // Set flag to false if validation fails
             }
             if ($('input[name=first_name]').val() === '') {
-                $('.first_name_error').text('This field is required');
+                $('.first_name_error').text(msg);
                 isValid = false;
             }
             if ($('input[name=last_name]').val() === '') {
-                $('.last_name_error').text('This field is required');
+                $('.last_name_error').text(msg);
                 isValid = false;
             }
             if ($('input[name=address]').val() === '') {
-                $('.address_error').text('This field is required');
+                $('.address_error').text(msg);
                 isValid = false;
             }
             if ($('select[name=country]').val() == -1) {
-                $('.country_error').text('This field is required');
+                $('.country_error').text(msg);
                 isValid = false;
             }
             if ($('select[name=state]').val() === '') {
-                $('.state_error').text('This field is required');
+                $('.state_error').text(msg);
                 isValid = false;
             }
             if ($('input[name=city]').val() === '') {
-                $('.city_error').text('This field is required');
+                $('.city_error').text(msg);
                 isValid = false;
             }
             if ($('input[name=postal_code]').val() === '') {
-                $('.postal_code_error').text('This field is required');
+                $('.postal_code_error').text(msg);
                 isValid = false;
             }
 
