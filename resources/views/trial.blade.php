@@ -34,6 +34,7 @@
         integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
     <!-- custom css -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
 
 
@@ -385,21 +386,26 @@
                                 </div>
                                 <div class="position-relative">
                                     <div class="d-flex flex-column align-items-center">
-                                        <h2 class="text-center red">{{ session()->has('user_data') ? session('user_data')['team_size'] : 'What Size is Your Team?' }}</h2>
+                                        <h2 class="text-center red">
+                                            {{ session()->has('user_data') ? session('user_data')['team_size'] : 'What Size is Your Team?' }}
+                                        </h2>
                                         <a type="button" class="team-size-button selectTeamSize"
-                                            data-bs-toggle="modal" data-bs-target="#exampleModal">Selct Team
+                                            data-bs-toggle="modal" data-bs-target="#exampleModal">Select Team
                                             Size</a>
                                         <span class="error team_size_error"></span>
                                         <input type="hidden" name="team_size"
                                             value="{{ session()->has('user_data') ? session('user_data')['team_size'] : '' }}">
                                     </div>
                                     <div class="d-flex flex-column align-items-center mt-4">
-                                        <h2 class="text-center red">When you want to Do your
-                                            training?</h2>
-                                        <a href="#"
-                                            class="team-size-button text-white text-decoration-none">Selct a Date</a>
+                                        <h2 class="text-center red">When you want to Do your training?</h2>
+                                        <label for="training"
+                                            class="team-size-button text-white text-decoration-none">
+                                            <input onfocus="this.showPicker()" min="{{ date('Y-m-d') }}"
+                                                {{-- max="{{ date('Y-m-d', strtotime('next Thursday')) }}"  --}} type="text" name="training" id="training"
+                                                class="position-absolute" style="z-index: -1;">
+                                            Select a Date
+                                        </label>
                                     </div>
-
                                 </div>
                                 <div class="form-inp-div">
                                     <div class="form-inps">
@@ -496,6 +502,8 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+
     <script>
         $(document).ready(function() {
             $('.card-date').on('keyup', function(e) {
@@ -505,6 +513,15 @@
                     $(this).val(0 + cardDate + '/');
                 }
             });
+
+            $('#training').datepicker({
+                minDate: 0,
+                beforeShowDay: function(date) {
+                    var day = date.getDay();
+                    return [day === 4]; // 4 is Thursday
+                }
+            });
+
         });
     </script>
     <!-- bootstrap js -->
@@ -596,6 +613,7 @@
                 }
             @endif
 
+
             $($('input[name=monthly-plan]')).click(function(e) {
                 e.preventDefault();
                 var monthly = $(this).parent().text();
@@ -654,7 +672,7 @@
 
             // Create an instance of the card Element.
             const card = elements.create('card', {
-                hidePostalCode:true,
+                hidePostalCode: true,
                 style
             });
 
