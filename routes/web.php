@@ -86,6 +86,7 @@ Route::post('password-expired', [AuthController::class, 'expiredPasswordUpdate']
 Route::get('/test', [TestController::class, 'test']);
 Route::view('/trial','trial')->name("trial");
 Route::get('/payment-success', [SubscriptionController::class, 'StripeSuccess'])->name("success");
+Route::post('/custome-quote', [SubscriptionController::class, 'CustomQuote'])->name("custom.quote");
 Route::get('/payment-failed', [SubscriptionController::class, 'StripeFailed'])->name("failed");
 Route::post('trial', [SubscriptionController::class, 'processPayment'])->name('stripePayment');
 // Route::middleware('trial',function(){

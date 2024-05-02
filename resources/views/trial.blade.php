@@ -109,6 +109,19 @@
         .red {
             color: #991b1b;
         }
+
+        .secondModal {
+            max-width: 660px !important;
+            height: 530px !important;
+        }
+
+        .custom-quote {
+            background-color: #d3d3d380;
+        }
+
+        .bg-red {
+            background-color: #991b1b
+        }
     </style>
 </head>
 </head>
@@ -155,6 +168,84 @@
     </header>
     <main>
 
+        <!-- Button trigger modal -->
+        <button type="button" class="d-none btn btn-primary custom-quote" data-bs-toggle="modal"
+            data-bs-target="#custom-quote">
+            Launch demo modal
+        </button>
+
+        <!-- Modal -->
+        <div class="modal fade" id="custom-quote" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-lg justify-content-center">
+                <div class="modal-content secondModal">
+                    <div class="d-flex justify-content-end p-3">
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <h1 class="modal-title text-center red" id="exampleModalLabel">Request a Custom Quote</h1>
+                    <div class="modal-body">
+                        <div class="custom-quote border border-1 border-secondary rounded">
+                            <form action="{{ route('custom.quote') }}" method="POST" class="custom-quote-form">
+                                @csrf
+                                <input type="hidden" name="team_size">
+                                <div class="form-inps">
+                                    <label class="label1" for="">Email</label>
+                                    <input type="email" class="input1" name="email"
+                                        value="{{ session()->has('user_data') ? session('user_data')['email'] : '' }}"
+                                        placeholder="wnlgtzanrjvghpfufe@cwmxc.com" id="">
+                                    <span class="error email_error"></span>
+                                </div>
+                                <div class="form-inps">
+                                    <input id="phone" name="phone" class="input1"
+                                        value="{{ session()->has('user_data') ? session('user_data')['phone'] : '' }}"
+                                        type="tel">
+                                    {{-- <span id="valid-msg" class="hide">Valid</span>
+                                <span id="error-msg" class="hide">Invalid number</span> --}}
+                                    <span class="error phone_error"></span>
+                                </div>
+                                <div class=" p-0">
+                                    <div class="row w-100 ">
+                                        <div class="col-lg-6 col-12 form-col">
+                                            <div class="form-inp-row">
+                                                <label class="label1" for="">First
+                                                    Name</label>
+                                                <input class="input1" type="text" placeholder="First Name"
+                                                    value="{{ session()->has('user_data') ? session('user_data')['first_name'] : '' }}"
+                                                    name="first_name" id="">
+                                                <span class="error first_name_error"></span>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6 col-12 d-flex align-items-center">
+                                            <div class="form-inp-row">
+                                                <label class="label1" for="">Last
+                                                    Name</label>
+                                                <input class="input1" type="text" placeholder="Last Name"
+                                                    value="{{ session()->has('user_data') ? session('user_data')['last_name'] : '' }}"
+                                                    name="last_name" id="">
+                                                <span class="error last_name_error"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-inps border-top border-1 border-secondary border-bottom-0">
+                                    <label class="label1" for="">Company Name</label>
+                                    <input class="input1" type="text" placeholder="Company Name"
+                                        value="{{ session()->has('user_data') ? session('user_data')['company'] : '' }}"
+                                        name="company" id="">
+                                    <span class="error company_error"></span>
+                                </div>
+                        </div>
+                    </div>
+                    <div class="d-flex pb-3 ps-3">
+                        <button type="submit" class="bg-red text-white rounded-0 fs-5 w-50"
+                            style="padding:15px 0 40px;">Submit</button>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+
         <!-- hero section -->
         <section class="hero-section">
             <div class="container">
@@ -169,7 +260,7 @@
             </div>
         </section>
         <!-- our key features -->
-        <section class="container-fluid" style="background-color: #991b1b">
+        <section class="container-fluid bg-red">
             <div class="container py-5 ">
                 <div class="row text-center text-white gap-5 gap-md-0">
                     <div class="col-md-4">
@@ -198,8 +289,8 @@
         <section class="containter-fluid trial-form" style="padding: 250px 0px">
             <div class="container align-content-center" style="height: 100%">
                 <div class="multi-form bg-white shadow-sm">
-                    <form id="payment-form" class="main-form require-validation" action="{{ route('stripePayment') }}"
-                        method="post">
+                    <form id="payment-form" class="main-form require-validation"
+                        action="{{ route('stripePayment') }}" method="post">
                         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                             aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered px-5 py-2">
@@ -207,10 +298,10 @@
                                     <div class="border-0 text-center p-3 pb-0">
                                         <button type="button" class="btn-close float-end fs-6"
                                             data-bs-dismiss="modal" aria-label="Close"></button><br>
-                                        <h3 class="text-center m-0" id="exampleModalLabel" style="  color: #991b1b;">
+                                        <h3 class="text-center m-0" id="modal-title" style="  color: #991b1b;">
                                             Select a Plan
                                         </h3>
-                                        <div class="d-flex justify-content-center gap-3 mt-3">
+                                        <div class="time-plans d-flex justify-content-center gap-3 mt-3">
                                             <a class="subs-plan monthly-btn fs-5 px-2">Monthly</a>
                                             <a class="subs-plan yearly-btn fs-5 px-2">Yearly<span
                                                     style="font-size: 14px"> (Save
@@ -314,37 +405,44 @@
                         @if (session()->has('stripe_error'))
                             <div class="text-danger text-center my-3 fs-2">{{ session('stripe_error') }}</div>
                         @endif
-                        {{-- <div class="tab">
+                        <div class="tab1">
                             <div class="form-inp-sec d-flex flex-column">
                                 <div class="form-inp">
-                                    <label class="labels" for="">Full Name</label>
-                                    <input type="text" class="inputs" placeholder="Full Name" required
-                                        name="name" id="">
+                                    <label class="labels" for="">First Name</label>
+                                    <input type="text" class="inputs tab1-first_name" placeholder="First Name"
+                                        required name="name" id="">
+                                    <span class="error tab1-first_name_error"></span>
+
+                                </div>
+                                <div class="form-inp">
+                                    <label class="labels" for="">Last Name</label>
+                                    <input type="text" class="inputs tab1-last_name" placeholder="Last Name"
+                                        required name="name" id="">
+                                    <span class="error tab1-last_name_error"></span>
                                 </div>
                                 <div class="form-inp">
                                     <label for="" class="labels">Email Address</label>
-                                    <input type="text" class="inputs" placeholder="Email Adddress" required
-                                        name="email" id="">
+                                    <input type="email" class="inputs tab1-email" placeholder="Email Adddress"
+                                        required name="email" id="">
+                                    <span class="error tab1-email_error"></span>
                                 </div>
                                 <div class="form-inp">
                                     <label for="" class="labels">Company Name</label>
-                                    <select name="" name="company_name" id=""
-                                        class="selects form-select">
-                                        <option value="">Company Name</option>
-                                        <option value="">Company Name</option>
-                                        <option value="">Company Name</option>
-                                    </select>
+                                    <input type="text" class="inputs tab1-company_name" placeholder="Company Name"
+                                        required name="company" id="">
+                                    <span class="error tab1-company_name_error"></span>
+
                                 </div>
                                 <div class="form-btn">
-                                    <button type="button" id="nextBtn" class="btn btn-outline-primary px-5"
-                                        onclick="nextPrev(1)">Next</button>
+                                    <button type="button" id="nextBtn"
+                                        class="btn btn-outline-primary px-5 next">Next</button>
                                 </div>
                             </div>
 
-                        </div> --}}
-                        <div class="">
+                        </div>
+                        <div class="tab2 d-none">
                             <div class="form-inp-sec d-flex flex-column">
-                                <div class="form-inp-div">
+                                <div class="form-inp-div user-details">
                                     <div class="form-inps">
                                         <label class="label1" for="">Email</label>
                                         <input type="email" class="input1" name="email"
@@ -353,7 +451,7 @@
                                         <span class="error email_error"></span>
                                     </div>
                                     <div class="form-inps">
-                                        <input id="phone" name="phone" class="input1"
+                                        <input id="phone-main" name="phone" class="input1"
                                             value="{{ session()->has('user_data') ? session('user_data')['phone'] : '' }}"
                                             type="tel">
                                         {{-- <span id="valid-msg" class="hide">Valid</span>
@@ -534,14 +632,40 @@
     <!-- jquery -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"></script>
-    {{-- <script src="{{ asset('assets/trial/script.js') }}"></script> --}}
+    {{-- <script src="{{ asset('assets/trial/trial.js') }}"></script> --}}
     <script>
-        var telInput = $("#phone"),
-            errorMsg = $("#error-msg"),
-            validMsg = $("#valid-msg");
+        var telInput = $("#phone");
+        var telInputmain = $("#phone-main");
+        errorMsg = $("#error-msg");
+        validMsg = $("#valid-msg");
 
         // initialise plugin
         telInput.intlTelInput({
+
+            allowExtensions: true,
+            formatOnDisplay: true,
+            autoFormat: true,
+            autoHideDialCode: true,
+            autoPlaceholder: true,
+            defaultCountry: "us",
+            ipinfoToken: "yolo",
+
+            nationalMode: false,
+            numberType: "MOBILE",
+            //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
+            preferredCountries: ['sa', 'ae', 'qa', 'om', 'bh', 'kw', 'ma'],
+            preventInvalidNumbers: true,
+            separateDialCode: false,
+            initialCountry: "us",
+            geoIpLookup: function(callback) {
+                $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
+                    var countryCode = (resp && resp.country) ? resp.country : "";
+                    callback(countryCode);
+                });
+            },
+            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"
+        });
+        telInputmain.intlTelInput({
 
             allowExtensions: true,
             formatOnDisplay: true,
@@ -589,6 +713,23 @@
 
         // on keyup / change flag: reset
         telInput.on("keyup change", reset);
+
+
+        telInputmain.blur(function() {
+            reset();
+            if ($.trim(telInputmain.val())) {
+                if (telInputmain.intlTelInput("isValidNumber")) {
+                    validMsg.removeClass("hide");
+                } else {
+                    telInputmain.addClass("error");
+                    errorMsg.addClass("text-danger");
+                    errorMsg.removeClass("hide");
+                }
+            }
+        });
+
+        // on keyup / change flag: reset
+        telInputmain.on("keyup change", reset);
     </script>
 
     <script src="https://js.stripe.com/v3/"></script>
@@ -614,21 +755,56 @@
             @endif
 
 
+            $('.next').click(function(e) {
+                e.preventDefault();
+                validateFirstTab();
+                if (validateFirstTab()) {
+                    $('.tab1').addClass('d-none');
+                    $('.tab2').removeClass('d-none');
+                    $('.main-form input[name=last_name]').val($('.tab1-last_name').val());
+                    $('.main-form input[name=first_name]').val($('.tab1-first_name').val());
+                    $('.main-form input[name=email]').val($('.tab1-email').val());
+
+                }
+            });
+
+
             $($('input[name=monthly-plan]')).click(function(e) {
                 e.preventDefault();
                 var monthly = $(this).parent().text();
                 $('input[name=team_size]').val(($(this).val()));
-                $('.btn-close').click();
-                $('.selectTeamSize').text(monthly);
+                if ($(this).val() === 'monthly-plan-6') {
+                    customPlan();
+                } else {
+                    $('.btn-close').clicK();
+                    $('.selectTeamSize').text(monthly);
+                }
             });
+
             $($('input[name=yearly-plan]')).click(function(e) {
                 e.preventDefault();
-                var yearly = $(this).parent().text();
                 $('input[name=team_size]').val(($(this).val()));
-                $('.btn-close').click();
-                $('.selectTeamSize').text(yearly);
-
+                if ($(this).val() === 'yearly-plan-6') {
+                    customPlan();
+                } else {
+                    var yearly = $(this).parent().text();
+                    $('.selectTeamSize').text(yearly);
+                }
             });
+
+
+            function customPlan() {
+                $('.btn-close').click();
+                $('.custom-quote').click();
+                $('.custom-quote-form input[name=email]').val($('.main-form input[name=email]').val());
+                $('.custom-quote-form input[name=phone]').val($('.main-form input[name=phone]').val());
+                $('.custom-quote-form input[name=first_name]').val($(
+                    '.main-form input[name=first_name]').val());
+                $('.custom-quote-form input[name=last_name]').val($('.main-form input[name=last_name]')
+                    .val());
+                $('.custom-quote-form input[name=company]').val($('.main-form input[name="company"]').val());
+            }
+
 
             $('.yearly-btn').addClass('border-bottom-0');
             $('.yearly').addClass('d-none');
@@ -714,7 +890,8 @@
 
                 // Submit the form
                 if (validateFields()) {
-                    form.submit();
+                    triggerAjax();
+                    // form.submit();
                 }
             }
         });
@@ -733,6 +910,10 @@
                 url: paymentForm.attr('action'),
                 data: paymentForm.serialize(),
                 success: function(response) {
+                    if (response === 'redirect') {
+                        window.location.replace('email/verify');
+                    }
+                    console.log(response);
                     $('.loader').addClass('d-none');
                     $('.start-trial-button').removeAttr('disabled');
                     if (response !== 'success') {
@@ -745,10 +926,63 @@
                         $('.stripe-div').removeClass('d-none');
                         $('.form-last-p').removeClass('d-none');
                     }
+                },
+                error: function(jqXHR, excption) {
+                    console.log(excption);
                 }
             });
         }
 
+
+        $('.custom-quote-form').submit(function(e) {
+            e.preventDefault();
+            var paymentForm = $('.custom-quote-form');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+            $.ajax({
+                type: paymentForm.attr('method'),
+                url: paymentForm.attr('action'),
+                data: paymentForm.serialize(),
+                success: function(response) {
+                    console.log(response);
+                },
+                error: function(jqXHR, excption) {
+                    console.log(excption);
+                }
+            });
+        });
+
+
+
+
+        function validateFirstTab() {
+            var isValid = true;
+            $('.tab1-first_name_error').empty();
+            $('.tab1-last_name_error').empty();
+            $('.tab1-email_error').empty();
+            $('.tab1-company_name_error').empty();
+            if ($('.tab1-first_name').val() === '') {
+                $('.tab1-first_name_error').text('This field is required.');
+                isValid = false; // Set flag to false if validation fails
+            }
+            if ($('.tab1-last_name').val() === '') {
+                $('.tab1-last_name_error').text('This field is required.');
+                isValid = false; // Set flag to false if validation fails
+            }
+            if ($('.tab1-email').val() === '') {
+                $('.tab1-email_error').text('This field is required.');
+                isValid = false; // Set flag to false if validation fails
+
+            }
+            if ($('.tab1-company_name').val() === '') {
+                $('.tab1-company_name_error').text('This field is required.');
+                isValid = false; // Set flag to false if validation fails
+            }
+            return isValid;
+        }
 
         function validateFields() {
             $('.email_error').empty();
@@ -765,27 +999,27 @@
             var msg = 'This field is required';
             console.log($('input[name=team_size]').val());
             if ($('input[name=team_size]').val() === '') {
-
                 $('.team_size_error').text('Please select your team size.');
                 isValid = false; // Set flag to false if validation fails
             }
-            if ($('input[name=email]').val() === '') {
+            if ($('.main-form input[name=email]').val() === '') {
+                alert('email is required');
                 $('.email_error').text(msg);
                 isValid = false; // Set flag to false if validation fails
             }
-            if ($('input[name=phone]').val() === '') {
+            if ($('.main-form input[name=phone]').val() === '') {
                 $('.phone_error').text(msg);
                 isValid = false; // Set flag to false if validation fails
             }
-            if ($('input[name=first_name]').val() === '') {
+            if ($('.main-form input[name=first_name]').val() === '') {
                 $('.first_name_error').text(msg);
                 isValid = false;
             }
-            if ($('input[name=last_name]').val() === '') {
+            if ($('.main-form input[name=last_name]').val() === '') {
                 $('.last_name_error').text(msg);
                 isValid = false;
             }
-            if ($('input[name=address]').val() === '') {
+            if ($('.main-form input[name=address]').val() === '') {
                 $('.address_error').text(msg);
                 isValid = false;
             }

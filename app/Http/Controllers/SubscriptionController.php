@@ -2,45 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Mail\AdminMail;
-use Stripe\StripeClient;
-use App\Mail\AssistantMail;
-use Illuminate\Support\Str;
+use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Stripe\StripeClient;
 
 class SubscriptionController extends Controller
 {
     public function processPayment(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email|unique:users,email',
-            'phone' => 'required',
-            'first_name' => 'required',
-            'last_name' => 'required',
-            'team_size' => 'required',
-            'address' => 'required',
-            'country' => 'required',
-            'state' => 'required',
-            'city' => 'required',
-            'postal_code' => 'required',
-            // 'stripeToken' => 'required_with_all:email,phone,first_name,last_name,address,country,state,city,postal_code',
-        ]);
+        $validator = $this->ValidateUser($request);
         if ($validator->fails()) {
             return response()->json($validator->errors());
         } elseif (!$validator->fails() && $request->stripeToken) {
             $name = $request->first_name . ' ' . $request->last_name;
             try {
-                $customer = $this->charge($request,$name);                
-                if($customer){
+                $customer = $this->charge($request, $name);
+                if ($customer) {
                     // DB::table('card_details')->insert([
                     //     'user_id' => auth()->user()->id,
                     //     'customer_id' => $customer->id ,
@@ -76,20 +63,61 @@ class SubscriptionController extends Controller
                 ]);
                 if ($user->email_verified_at == null) {
                     $this->loginwithid($user->id);
-                    return redirect()->route('verification.notice');
+                    return response()->json('redirect');
+                    // return redirect()->route('verification.notice');
                 }
                 return response()->json('user-created');
             } catch (\Exception $e) {
                 Session::put('user_data', $request->all());
-                return back()->with('stripe_error', $e->getMessage());
+                return response()->json($e->getMessage());
+                // return back()->with('stripe_error', $e->getMessage());
             }
         } else {
             return response()->json('success');
         }
     }
 
+    public function CustomQuote(Request $request)
+    {
+        // if($request->team_size === 'monthly-plan-6'){
+        //     return response()->json('true');
+        // }else{
+        //     return response()->json('false');
+        // }
+        // return response()->json($request->all());
+        $validator = $this->ValidateUser($request);
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+    }
 
-    public function charge($request,$name)
+    protected function ValidateUser($request)
+    {
+        $customValidation = function ($attribute, $value, $fail) use ($request) {
+            if ($this->customValidation($request->team_size)) {
+                if (empty($value)) {
+                    $fail('The ' . $attribute . ' field is required.');
+                }
+            }
+        };
+        return Validator::make($request->all(), [
+            'email' => 'required|email|unique:users,email',
+            'phone' => 'required',
+            'first_name' => 'required',
+            'last_name' => 'required',
+            'team_size' => 'required',
+            'address' =>$customValidation,
+            'country' => $customValidation,
+            'state' => $customValidation,
+            'city' => $customValidation,
+            'postal_code' => $customValidation,
+            // 'stripeToken' => 'required_with_all:email,phone,first_name,last_name,address,country,state,city,postal_code',
+        ]);
+    }
+
+    
+
+    public function charge($request, $name)
     {
         $stripe = new StripeClient(env('STRIPE_SK'));
         $customer = $stripe->customers->create([
