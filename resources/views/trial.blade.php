@@ -776,7 +776,7 @@
                 if ($(this).val() === 'monthly-plan-6') {
                     customPlan();
                 } else {
-                    $('.btn-close').clicK();
+                    $('.btn-close').click();
                     $('.selectTeamSize').text(monthly);
                 }
             });
@@ -825,223 +825,277 @@
             });
 
 
-            var paymentForm = $('#payment-form');
-            $('#payment-form').on('submit', function(e) {
+            //     var paymentForm = $('#payment-form');
+            //     $('#payment-form').on('submit', function(e) {
+            //         e.preventDefault();
+            //         if (validateFields()) {
+            //             triggerAjax();
+            //         }
+            //     });
+
+            //     var stripe = Stripe(
+            //         'pk_test_51P6SBB09tId2vnnuXxFipyFJCk9XyEXZCBEUVfdRAbL09wiReraeAoKNNk3SfOq8rvlxMoNJwCIw1diOzwWmapRU00hyZJU7QX'
+            //     );
+            //     var elements = stripe.elements();
+            //     // Custom styling can be passed to options when creating an Element.
+            //     const style = {
+            //         base: {
+            //             // Add your base input styles here. For example:
+            //             fontSize: '16px',
+            //             color: '#32325d',
+            //         },
+            //     };
+
+            //     // Create an instance of the card Element.
+            //     const card = elements.create('card', {
+            //         hidePostalCode: true,
+            //         style
+            //     });
+
+            //     // Add an instance of the card Element into the `card-element` <div>.
+            //     card.mount('#card-element');
+            //     // Create a token or display an error when the form is submitted.
+            //     // Create a token or display an error when the form is submitted.
+            //     const form = document.getElementById('payment-form');
+            //     form.addEventListener('submit', async (event) => {
+            //         event.preventDefault();
+            //         const {
+            //             token,
+            //             error
+            //         } = await stripe.createToken(card);
+
+            //         if (error) {
+            //             // Inform the customer that there was an error.
+            //             const errorElement = document.getElementById(
+            //                 'card-errors');
+            //             errorElement.textContent = error.message;
+            //         } else {
+            //             const errorElement = document.getElementById(
+            //                 'card-errors');
+            //             // Send the token to your server.
+            //             errorElement.textContent = '';
+            //             // console.log(token);
+            //             stripeTokenHandler(token);
+            //         }
+            //     });
+
+
+            //     const stripeTokenHandler = (token) => {
+            //         // Insert the token ID into the form so it gets submitted to the server
+            //         const form = document.getElementById('payment-form');
+            //         const hiddenInput = document.createElement('input');
+            //         hiddenInput.setAttribute('type', 'hidden');
+            //         hiddenInput.setAttribute('name', 'stripeToken');
+            //         hiddenInput.setAttribute('value', token.id);
+            //         form.appendChild(hiddenInput);
+
+            //         // Submit the form
+            //         if (validateFields()) {
+            //             triggerAjax(token);
+            //             // form.submit();
+            //         }
+            //     }
+            // });
+
+
+
+
+
+
+
+
+
+
+
+
+
+            $('.custom-quote-form').submit(function(e) {
                 e.preventDefault();
-                if (validateFields()) {
-                    triggerAjax();
+                var paymentForm = $('.custom-quote-form');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    type: paymentForm.attr('method'),
+                    url: paymentForm.attr('action'),
+                    data: paymentForm.serialize(),
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(jqXHR, excption) {
+                        console.log(excption);
+                    }
+                });
+            });
+
+
+
+
+            function validateFirstTab() {
+                var isValid = true;
+                $('.tab1-first_name_error').empty();
+                $('.tab1-last_name_error').empty();
+                $('.tab1-email_error').empty();
+                $('.tab1-company_name_error').empty();
+                if ($('.tab1-first_name').val() === '') {
+                    $('.tab1-first_name_error').text('This field is required.');
+                    isValid = false; // Set flag to false if validation fails
                 }
-            });
-
-            var stripe = Stripe(
-                'pk_test_51P6SBB09tId2vnnuXxFipyFJCk9XyEXZCBEUVfdRAbL09wiReraeAoKNNk3SfOq8rvlxMoNJwCIw1diOzwWmapRU00hyZJU7QX'
-            );
-            var elements = stripe.elements();
-            // Custom styling can be passed to options when creating an Element.
-            const style = {
-                base: {
-                    // Add your base input styles here. For example:
-                    fontSize: '16px',
-                    color: '#32325d',
-                },
-            };
-
-            // Create an instance of the card Element.
-            const card = elements.create('card', {
-                hidePostalCode: true,
-                style
-            });
-
-            // Add an instance of the card Element into the `card-element` <div>.
-            card.mount('#card-element');
-            // Create a token or display an error when the form is submitted.
-            // Create a token or display an error when the form is submitted.
-            const form = document.getElementById('payment-form');
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                const {
-                    token,
-                    error
-                } = await stripe.createToken(card);
-
-                if (error) {
-                    // Inform the customer that there was an error.
-                    const errorElement = document.getElementById(
-                        'card-errors');
-                    errorElement.textContent = error.message;
-                } else {
-                    const errorElement = document.getElementById(
-                        'card-errors');
-                    // Send the token to your server.
-                    errorElement.textContent = '';
-                    stripeTokenHandler(token);
+                if ($('.tab1-last_name').val() === '') {
+                    $('.tab1-last_name_error').text('This field is required.');
+                    isValid = false; // Set flag to false if validation fails
                 }
-            });
+                if ($('.tab1-email').val() === '') {
+                    $('.tab1-email_error').text('This field is required.');
+                    isValid = false; // Set flag to false if validation fails
+
+                }
+                if ($('.tab1-company_name').val() === '') {
+                    $('.tab1-company_name_error').text('This field is required.');
+                    isValid = false; // Set flag to false if validation fails
+                }
+                return isValid;
+            }
 
 
-            const stripeTokenHandler = (token) => {
-                // Insert the token ID into the form so it gets submitted to the server
+
+
+            // stripe code 
+            if (window.Stripe) {
+                var stripe = Stripe("{{ env('STRIPE_PK') }}");
+                var elements = stripe.elements();
+                var card = elements.create('card', {
+                    hidePostalCode: true
+                });
+                card.mount('#card-element');
+                card.addEventListener('change', function(event) {
+                    var displayError = document.getElementById('card-errors')
+                    displayError.textContent = event.error ? event.error.message : '';
+                });
                 const form = document.getElementById('payment-form');
-                const hiddenInput = document.createElement('input');
-                hiddenInput.setAttribute('type', 'hidden');
-                hiddenInput.setAttribute('name', 'stripeToken');
-                hiddenInput.setAttribute('value', token.id);
-                form.appendChild(hiddenInput);
+                form.addEventListener('submit', function(ev) {
+                    ev.preventDefault();
+                    $('.loader').removeClass('d-none');
+                    stripe.createToken(card).then(function(result) {
+                        $('.loader').addClass('d-none');
+                        validateFields();
+                        if (result.error) {
+                            var errorElement = document.getElementById('card-errors');
+                            errorElement.textContent = result.error.message;
+                        } else {
+                            if (validateFields()) {
+                                console.log(result.token);
+                                $('#payment-form').append(`<input type="hidden" value="${result.token.card.id}" name="card">`);
+                                $('#payment-form').append(`<input type="hidden" value="${result.token.id}" name="stripeToken">`);
+                                $('#payment-form').append(`<input type="hidden" value="${result.token.card.last4}" name="card_no">`);
+                                $('#payment-form').append(`<input type="hidden" value="${result.token.card.brand}" name="brand">`);
+                                $('#payment-form').append(`<input type="hidden" value="${result.token.card.exp_month}" name="month">`);
+                                $('#payment-form').append(`<input type="hidden" value="${result.token.card.exp_year}" name="year">`);
+                                $('#payment-form').append(`<input type="hidden" value="${result.token.card.name}" name="name">`);
+                                triggerAjax();
+                            }
+                        }
+                    });
+                });
+            }
 
-                // Submit the form
-                if (validateFields()) {
-                    triggerAjax();
-                    // form.submit();
+            function validateFields() {
+                $('.email_error').empty();
+                $('.phone_error').empty();
+                $('.first_name_error').empty();
+                $('.last_name_error').empty();
+                $('.address_error').empty();
+                $('.country_error').empty();
+                $('.state_error').empty();
+                $('.city_error').empty();
+                $('.postal_code_error').empty();
+                $('.team_size_error').empty();
+                var isValid = true; // Set a flag to track validation status
+                var msg = 'This field is required';
+                if ($('input[name=team_size]').val() === '') {
+                    $('.team_size_error').text('Please select your team size.');
+                    isValid = false; // Set flag to false if validation fails
                 }
+                if ($('.main-form input[name=email]').val() === '') {
+                    $('.email_error').text(msg);
+                    isValid = false; // Set flag to false if validation fails
+                }
+                if ($('.main-form input[name=phone]').val() === '') {
+                    $('.phone_error').text(msg);
+                    isValid = false; // Set flag to false if validation fails
+                }
+                if ($('.main-form input[name=first_name]').val() === '') {
+                    $('.first_name_error').text(msg);
+                    isValid = false;
+                }
+                if ($('.main-form input[name=last_name]').val() === '') {
+                    $('.last_name_error').text(msg);
+                    isValid = false;
+                }
+                if ($('.main-form input[name=address]').val() === '') {
+                    $('.address_error').text(msg);
+                    isValid = false;
+                }
+                if ($('select[name=country]').val() == -1) {
+                    $('.country_error').text(msg);
+                    isValid = false;
+                }
+                if ($('select[name=state]').val() === '') {
+                    $('.state_error').text(msg);
+                    isValid = false;
+                }
+                if ($('input[name=city]').val() === '') {
+                    $('.city_error').text(msg);
+                    isValid = false;
+                }
+                if ($('input[name=postal_code]').val() === '') {
+                    $('.postal_code_error').text(msg);
+                    isValid = false;
+                }
+
+                return isValid; //
+            }
+
+            function triggerAjax() {
+                $('.loader').removeClass('d-none');
+                $('.start-trial-button').attr('disabled', true);
+                var paymentForm = $('#payment-form');
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $.ajax({
+                    type: paymentForm.attr('method'),
+                    url: paymentForm.attr('action'),
+                    data: paymentForm.serialize(),
+                    success: function(response) {
+                        $('.loader').addClass('d-none');
+                        console.log('asdf');
+                        console.log(response);
+                        if (response === 'redirect') {
+                            window.location.replace('email/verify');
+                        }
+                        $('.start-trial-button').removeAttr('disabled');
+                        if (response !== 'success') {
+                            $.each(response, function(indexInArray, error) {
+                                $('.' + indexInArray + '_error').text('');
+                                $('.' + indexInArray + '_error').text(response[
+                                    indexInArray]);
+                            });
+                        } else {
+                            $('.stripe-div').removeClass('d-none');
+                            $('.form-last-p').removeClass('d-none');
+                        }
+                    },
+                    error: function(jqXHR, excption) {
+                        console.log(excption);
+                    }
+                });
             }
         });
-
-        function triggerAjax() {
-            $('.loader').removeClass('d-none');
-            $('.start-trial-button').attr('disabled', true);
-            var paymentForm = $('#payment-form');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                type: paymentForm.attr('method'),
-                url: paymentForm.attr('action'),
-                data: paymentForm.serialize(),
-                success: function(response) {
-                    if (response === 'redirect') {
-                        window.location.replace('email/verify');
-                    }
-                    console.log(response);
-                    $('.loader').addClass('d-none');
-                    $('.start-trial-button').removeAttr('disabled');
-                    if (response !== 'success') {
-                        $.each(response, function(indexInArray, error) {
-                            $('.' + indexInArray + '_error').text('');
-                            $('.' + indexInArray + '_error').text(response[
-                                indexInArray]);
-                        });
-                    } else {
-                        $('.stripe-div').removeClass('d-none');
-                        $('.form-last-p').removeClass('d-none');
-                    }
-                },
-                error: function(jqXHR, excption) {
-                    console.log(excption);
-                }
-            });
-        }
-
-
-        $('.custom-quote-form').submit(function(e) {
-            e.preventDefault();
-            var paymentForm = $('.custom-quote-form');
-            $.ajaxSetup({
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                }
-            });
-            $.ajax({
-                type: paymentForm.attr('method'),
-                url: paymentForm.attr('action'),
-                data: paymentForm.serialize(),
-                success: function(response) {
-                    console.log(response);
-                },
-                error: function(jqXHR, excption) {
-                    console.log(excption);
-                }
-            });
-        });
-
-
-
-
-        function validateFirstTab() {
-            var isValid = true;
-            $('.tab1-first_name_error').empty();
-            $('.tab1-last_name_error').empty();
-            $('.tab1-email_error').empty();
-            $('.tab1-company_name_error').empty();
-            if ($('.tab1-first_name').val() === '') {
-                $('.tab1-first_name_error').text('This field is required.');
-                isValid = false; // Set flag to false if validation fails
-            }
-            if ($('.tab1-last_name').val() === '') {
-                $('.tab1-last_name_error').text('This field is required.');
-                isValid = false; // Set flag to false if validation fails
-            }
-            if ($('.tab1-email').val() === '') {
-                $('.tab1-email_error').text('This field is required.');
-                isValid = false; // Set flag to false if validation fails
-
-            }
-            if ($('.tab1-company_name').val() === '') {
-                $('.tab1-company_name_error').text('This field is required.');
-                isValid = false; // Set flag to false if validation fails
-            }
-            return isValid;
-        }
-
-        function validateFields() {
-            $('.email_error').empty();
-            $('.phone_error').empty();
-            $('.first_name_error').empty();
-            $('.last_name_error').empty();
-            $('.address_error').empty();
-            $('.country_error').empty();
-            $('.state_error').empty();
-            $('.city_error').empty();
-            $('.postal_code_error').empty();
-            $('.team_size_error').empty();
-            var isValid = true; // Set a flag to track validation status
-            var msg = 'This field is required';
-            console.log($('input[name=team_size]').val());
-            if ($('input[name=team_size]').val() === '') {
-                $('.team_size_error').text('Please select your team size.');
-                isValid = false; // Set flag to false if validation fails
-            }
-            if ($('.main-form input[name=email]').val() === '') {
-                alert('email is required');
-                $('.email_error').text(msg);
-                isValid = false; // Set flag to false if validation fails
-            }
-            if ($('.main-form input[name=phone]').val() === '') {
-                $('.phone_error').text(msg);
-                isValid = false; // Set flag to false if validation fails
-            }
-            if ($('.main-form input[name=first_name]').val() === '') {
-                $('.first_name_error').text(msg);
-                isValid = false;
-            }
-            if ($('.main-form input[name=last_name]').val() === '') {
-                $('.last_name_error').text(msg);
-                isValid = false;
-            }
-            if ($('.main-form input[name=address]').val() === '') {
-                $('.address_error').text(msg);
-                isValid = false;
-            }
-            if ($('select[name=country]').val() == -1) {
-                $('.country_error').text(msg);
-                isValid = false;
-            }
-            if ($('select[name=state]').val() === '') {
-                $('.state_error').text(msg);
-                isValid = false;
-            }
-            if ($('input[name=city]').val() === '') {
-                $('.city_error').text(msg);
-                isValid = false;
-            }
-            if ($('input[name=postal_code]').val() === '') {
-                $('.postal_code_error').text(msg);
-                isValid = false;
-            }
-
-            return isValid; //
-        }
     </script>
     <script src="{{ asset('js/country_with_state.js') }}"></script>
 </body>

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Mail\AdminMail;
+use App\Models\CardDetails;
 use App\Models\User;
+use App\Models\SubscriptionPlans;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
@@ -18,21 +20,26 @@ use Stripe\StripeClient;
 
 class SubscriptionController extends Controller
 {
+
+    public function createSubscription(Request $request)
+    {
+        try {
+
+        } catch (\Exception $e) {
+            return response()->json($e);
+        }
+    }
+
     public function processPayment(Request $request)
     {
         $validator = $this->ValidateUser($request);
         if ($validator->fails()) {
             return response()->json($validator->errors());
-        } elseif (!$validator->fails() && $request->stripeToken) {
+        } else {
             $name = $request->first_name . ' ' . $request->last_name;
             try {
                 $customer = $this->charge($request, $name);
                 if ($customer) {
-                    // DB::table('card_details')->insert([
-                    //     'user_id' => auth()->user()->id,
-                    //     'customer_id' => $customer->id ,
-                    //     'card_id' => $customer->default_source,
-                    // ]);
                     DB::table('users')->insert([
                         'email' => $request->email,
                         'name' => $name,
@@ -41,8 +48,9 @@ class SubscriptionController extends Controller
                         'pic' => 'img/profile-default.svg',
                         'created_at' => now(),
                     ]);
+                } else {
+                    return response()->json('customer not created');
                 }
-
                 $msg['msg_info'] = 'Please check your email inbox to verify email.';
                 $user = User::where('email', $request->email)->first();
 
@@ -50,21 +58,15 @@ class SubscriptionController extends Controller
                 DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
                 $url = function () use ($id) {return URL::signedRoute('user.register', ['user' => $id], now()->addMinutes(10));};
                 Mail::to($request->email)->send(new AdminMail($url()));
-                DB::table('trials')->insert([
-                    'address' => $request->address,
-                    'phone' => $request->phone,
-                    'country' => $request->country,
-                    'state' => $request->state,
-                    'city' => $request->city,
-                    'postal_code' => $request->postal_code,
-                    'customer_id' => $customer->id, //$customer->id,
-                    'user_id' => $user->id, //$customer->id,
-                    'trial_started_at' => now(),
-                ]);
+                $this->insertCardDetails($request, $customer, $user->id);
+                $this->createTrial($request, $customer->id, $user->id);
+                $subscriptionPlan = SubscriptionPlans::where('name',$request->team_size)->first();
+                if($subscriptionPlan){
+                    
+                }
                 if ($user->email_verified_at == null) {
                     $this->loginwithid($user->id);
                     return response()->json('redirect');
-                    // return redirect()->route('verification.notice');
                 }
                 return response()->json('user-created');
             } catch (\Exception $e) {
@@ -72,19 +74,63 @@ class SubscriptionController extends Controller
                 return response()->json($e->getMessage());
                 // return back()->with('stripe_error', $e->getMessage());
             }
-        } else {
-            return response()->json('success');
         }
+    }
+    public function charge($request, $name)
+    {
+        $stripe = new StripeClient(env('STRIPE_SK'));
+        $customer = $stripe->customers->create([
+            'description' => $name,
+            'email' => $request->email,
+            'source' => $request->stripeToken,
+        ]);
+        $charge = $stripe->charges->create([
+            'amount' => 100 * 1,
+            "currency" => "USD",
+            'customer' => $customer->id,
+            'description' => ' test desciption',
+        ]);
+        $stripe->refunds->create(['charge' => $charge->id]);
+        return $customer;
+    }
+
+    protected function insertCardDetails($request, $customer, $user_id)
+    {
+        CardDetails::updateOrCreate(
+            [
+                'user_id' => $user_id,
+                'card_no' => $request->card_no,
+            ],
+            [
+                'user_id' => $user_id,
+                'customer_id' => $customer->id,
+                'card_id' => $request->card,
+                'brand' => $request->brand,
+                'month' => $request->month,
+                'year' => $request->year,
+                'card_no' => $request->card_no,
+                'name' => $request->name ?? '',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+    }
+    protected function createTrial($request, $customer_id, $user_id)
+    {
+        DB::table('trials')->insert([
+            'address' => $request->address,
+            'phone' => $request->phone,
+            'country' => $request->country,
+            'state' => $request->state,
+            'city' => $request->city,
+            'postal_code' => $request->postal_code,
+            'customer_id' => $customer_id, //$customer->id,
+            'user_id' => $user_id, //$customer->id,
+            'trial_started_at' => now(),
+        ]);
     }
 
     public function CustomQuote(Request $request)
     {
-        // if($request->team_size === 'monthly-plan-6'){
-        //     return response()->json('true');
-        // }else{
-        //     return response()->json('false');
-        // }
-        // return response()->json($request->all());
         $validator = $this->ValidateUser($request);
         if ($validator->fails()) {
             return response()->json($validator->errors());
@@ -106,7 +152,7 @@ class SubscriptionController extends Controller
             'first_name' => 'required',
             'last_name' => 'required',
             'team_size' => 'required',
-            'address' =>$customValidation,
+            'address' => $customValidation,
             'country' => $customValidation,
             'state' => $customValidation,
             'city' => $customValidation,
@@ -115,24 +161,12 @@ class SubscriptionController extends Controller
         ]);
     }
 
-    
-
-    public function charge($request, $name)
+    protected function customValidation($value)
     {
-        $stripe = new StripeClient(env('STRIPE_SK'));
-        $customer = $stripe->customers->create([
-            'description' => $name,
-            'email' => $request->email,
-            'source' => $request->stripeToken,
-        ]);
-        $charge = $stripe->charges->create([
-            'amount' => 100 * 1,
-            "currency" => "USD",
-            'customer' => $customer->id,
-            'description' => ' test desciption',
-        ]);
-        $stripe->refunds->create(['charge' => $charge->id]);
-        return $customer;
+        if ($value === 'monthly-plan-6' || $value === 'yearly-plan-6') {
+            return false; // Address should not be required
+        }
+        return true; // Address should be required
     }
 
     public function loginwithid($id)

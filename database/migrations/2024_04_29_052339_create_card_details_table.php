@@ -18,6 +18,9 @@ class CreateCardDetailsTable extends Migration
             $table->foreignId('user_id')->constrained();
             $table->string('customer_id');
             $table->string('card_id')->nullable();
+            $table->string('name')->nullable();
+            $table->string('card_no')->nullable();
+            $table->string('brand')->nullable();
             $table->string('month')->nullable();
             $table->string('year')->nullable();
             $table->timestamps();
