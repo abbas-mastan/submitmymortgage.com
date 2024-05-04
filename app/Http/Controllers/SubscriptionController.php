@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\SubscriptionHelper;
 use App\Mail\AdminMail;
 use App\Models\CardDetails;
-use App\Models\User;
 use App\Models\SubscriptionPlans;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -20,15 +20,6 @@ use Stripe\StripeClient;
 
 class SubscriptionController extends Controller
 {
-
-    public function createSubscription(Request $request)
-    {
-        try {
-
-        } catch (\Exception $e) {
-            return response()->json($e);
-        }
-    }
 
     public function processPayment(Request $request)
     {
@@ -38,7 +29,7 @@ class SubscriptionController extends Controller
         } else {
             $name = $request->first_name . ' ' . $request->last_name;
             try {
-                $customer = $this->charge($request, $name);
+                $customer = SubscriptionHelper::charge($request);
                 if ($customer) {
                     DB::table('users')->insert([
                         'email' => $request->email,
@@ -49,52 +40,37 @@ class SubscriptionController extends Controller
                         'created_at' => now(),
                     ]);
                 } else {
-                    return response()->json('customer not created');
+                    return response()->json('something went wrong');
                 }
                 $msg['msg_info'] = 'Please check your email inbox to verify email.';
                 $user = User::where('email', $request->email)->first();
-
-                $id = Crypt::encryptString($user->id);
+                $customer_id = $customer->id;
+                $user_id = $user->id;
+                $id = Crypt::encryptString($user_id);
                 DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
                 $url = function () use ($id) {return URL::signedRoute('user.register', ['user' => $id], now()->addMinutes(10));};
                 Mail::to($request->email)->send(new AdminMail($url()));
-                $this->insertCardDetails($request, $customer, $user->id);
-                $this->createTrial($request, $customer->id, $user->id);
-                $subscriptionPlan = SubscriptionPlans::where('name',$request->team_size)->first();
-                if($subscriptionPlan){
-                    
+                $this->insertCardDetails($request, $customer_id, $user_id);
+                $this->createTrial($request, $customer_id, $user_id);
+                $subscriptionPlan = SubscriptionPlans::where('name', $request->team_size)->first();
+                if ($subscriptionPlan) {
+                    $subscriptionData = SubscriptionHelper::startTrialSubscription($customer_id, $user_id, $subscriptionPlan);
                 }
-                if ($user->email_verified_at == null) {
+                if ($user->email_verified_at == null && $subscriptionData) {
                     $this->loginwithid($user->id);
                     return response()->json('redirect');
                 }
-                return response()->json('user-created');
+                return response()->json('something went wrong');
             } catch (\Exception $e) {
-                Session::put('user_data', $request->all());
-                return response()->json($e->getMessage());
+                return response()->json('something went wrong');
+                // Session::put('user_data', $request->all());
+                // return response()->json($e->getMessage());
                 // return back()->with('stripe_error', $e->getMessage());
             }
         }
     }
-    public function charge($request, $name)
-    {
-        $stripe = new StripeClient(env('STRIPE_SK'));
-        $customer = $stripe->customers->create([
-            'description' => $name,
-            'email' => $request->email,
-            'source' => $request->stripeToken,
-        ]);
-        $charge = $stripe->charges->create([
-            'amount' => 100 * 1,
-            "currency" => "USD",
-            'customer' => $customer->id,
-            'description' => ' test desciption',
-        ]);
-        $stripe->refunds->create(['charge' => $charge->id]);
-        return $customer;
-    }
 
-    protected function insertCardDetails($request, $customer, $user_id)
+    protected function insertCardDetails($request, $customer_id, $user_id)
     {
         CardDetails::updateOrCreate(
             [
@@ -103,7 +79,7 @@ class SubscriptionController extends Controller
             ],
             [
                 'user_id' => $user_id,
-                'customer_id' => $customer->id,
+                'customer_id' => $customer_id,
                 'card_id' => $request->card,
                 'brand' => $request->brand,
                 'month' => $request->month,

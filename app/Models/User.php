@@ -54,6 +54,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Trial::class);
     }
+    public function userSubscriptionInfo()
+    {
+        return $this->hasOne(UserSubscriptionInfo::class);
+    }
     public function infos()
     {
         return $this->hasMany(Info::class);
@@ -158,4 +162,11 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(IntakeForm::class);
     }
+    
+    public function subscriptionDetails()       
+    {
+        return $this->hasOne(SubscriptionDetails::class);
+    }
+
+    
 }

@@ -11,4 +11,3 @@ class SubscriptionPlans extends Model
     
     protected $guarded = [];
 }
-this plan is maximum for 2 peoples 

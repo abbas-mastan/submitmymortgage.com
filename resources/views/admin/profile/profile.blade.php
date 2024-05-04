@@ -9,6 +9,12 @@
 @endsection
 
 @section('content')
+
+@php
+    foreach ($stripedata->data as $value) {
+        echo $value->id.'<br>';
+    }
+@endphp
     <div class="w-1/2 mx-auto">
         <div class="flex justify-center items-center mt-4">
             <img class="w-40 h-40 rounded-full" src="{{ asset(auth()->user()->pic ?? 'img/profile-default.svg') }}"

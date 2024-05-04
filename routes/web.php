@@ -84,6 +84,10 @@ Route::post('password-expired', [AuthController::class, 'expiredPasswordUpdate']
     ->name('password.post_expired');
 //=====================Test Routes==================
 Route::get('/test', [TestController::class, 'test']);
+Route::get('/testing',function(){
+    dd(strtotime('2 days'));
+});
+
 Route::view('/trial','trial')->name("trial");
 Route::get('/payment-success', [SubscriptionController::class, 'StripeSuccess'])->name("success");
 Route::post('/custome-quote', [SubscriptionController::class, 'CustomQuote'])->name("custom.quote");
