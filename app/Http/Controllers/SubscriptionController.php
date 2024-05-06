@@ -60,9 +60,9 @@ class SubscriptionController extends Controller
                     $this->loginwithid($user->id);
                     return response()->json('redirect');
                 }
-                return response()->json('something went wrong');
+                return response()->json('ssomething went wrong');
             } catch (\Exception $e) {
-                return response()->json('something went wrong');
+                return response()->json(['type' => 'stripe_error', 'message' => $e->getMessage()]);
                 // Session::put('user_data', $request->all());
                 // return response()->json($e->getMessage());
                 // return back()->with('stripe_error', $e->getMessage());
@@ -136,7 +136,6 @@ class SubscriptionController extends Controller
             // 'stripeToken' => 'required_with_all:email,phone,first_name,last_name,address,country,state,city,postal_code',
         ]);
     }
-
     protected function customValidation($value)
     {
         if ($value === 'monthly-plan-6' || $value === 'yearly-plan-6') {
@@ -158,13 +157,11 @@ class SubscriptionController extends Controller
     public function continuePremium(Request $request)
     {
         try {
-            $user = Auth::user();
+            $user = Auth::user()->subscriptionDetails;
             $stripe = new StripeClient(env('STRIPE_SK'));
-            $stripe->charges->create([
-                'amount' => 100 * 1000,
-                "currency" => "USD",
-                'customer' => $user->trial->customer_id,
-                'description' => ' test desciption',
+            $stripe->subscriptions->create([
+                'customer' => $user->stripe_customer_id,
+                'items' => [['price' => $user->subscription_plan_price_id]],
             ]);
             return redirect('/dashboard')->with('msg_success', 'Subscription completed successfully.');
         } catch (\Exception $e) {
@@ -199,15 +196,11 @@ class SubscriptionController extends Controller
         ]);
     }
 
-    public function stripeSuccess($msg = null)
-    {
-        $user = Auth::user();
-        $user->trial->update([
-            'trial_started_at' => $user->trial->trial_started_at,
-            'subscribed_at' => now(),
-        ]);
-        return view('dashboard')->with('msg_success', $msg);
-    }
+    // public function cancelSubscription()
+    // {
+    //     $user = Auth::user();
+    //     $user->cardDetails->
+    // }
     public function stripeFailed()
     {
         dd('payment failed');

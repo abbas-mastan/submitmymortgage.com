@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 //{
 //    abort(403);
 //}
-Route::middleware(['auth', 'admin'])->prefix(getAdminRoutePrefix())->group(function () {
+Route::middleware(['auth', 'admin','subscription'])->prefix(getAdminRoutePrefix())->group(function () {
     Route::group(['controller' => AdminController::class], function () {
         require __DIR__ . '/common.php';
 

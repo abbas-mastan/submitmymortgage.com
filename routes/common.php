@@ -1,11 +1,11 @@
 <?php
+
+use App\Http\Controllers\AdminController;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Http;
 
 Route::view('confirm-password', 'auth/password-confirm')->name('password.confirm');
 Route::post('/confirm-password', function (Request $request) {
@@ -19,14 +19,7 @@ Route::post('/confirm-password', function (Request $request) {
 })->middleware(['throttle:6,1']);
 
 //starts here. these routes are for update profile information
-Route::get('/profile', function(){
-    $stripe = new \Stripe\StripeClient('sk_test_51P6SBB09tId2vnnum7ibbbCIHgacCrrJc1G78LXEYK81LKH0lfMgmVcAzFQySdadJok5xnOwRvEVNqw9m1aiV0qi00Kihjo2GB');
-    $sub_id = Auth::user()->subscriptionDetails->stripe_subscription_id;
-    $stripedata  = $stripe->subscriptions->retrieve($sub_id,[]);
-    $stripe->subscriptions->update($sub_id, ['trial_end' => 'now']);
-    dd($stripedata->jsonSerialize());
-    return view('admin.profile.profile',compact('stripedata'));
-})->name('profile')->middleware('password.confirm');
+Route::get('/profile',[AdminController::class,'profile'])->name('profile')->middleware('password.confirm');
 Route::post('/do-profile', 'doProfile');
 //end here. these routes are for update profile information
 

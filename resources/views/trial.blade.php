@@ -986,6 +986,8 @@
             function triggerAjax() {
                 $('.loader').removeClass('d-none');
                 $('.start-trial-button').attr('disabled', true);
+                $('.start-trial-button').css('cursor', 'not-allowed');
+                $('#card-errors').text('');
                 var paymentForm = $('#payment-form');
                 $.ajaxSetup({
                     headers: {
@@ -999,6 +1001,10 @@
                     success: function(response) {
                         console.log(response);
                         $('.loader').addClass('d-none');
+                        $('.start-trial-button').css('cursor', 'pointer');
+                        if(response.type === 'stripe_error'){
+                            $('#card-errors').text(response.message);
+                        }
                         if (response === 'redirect') {
                             window.location.replace('email/verify');
                         }

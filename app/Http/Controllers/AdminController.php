@@ -153,7 +153,7 @@ class AdminController extends Controller
     //Showing courses and their respective classes
     public function profile(Request $request)
     {
-        $data[''] = '';
+        $data['card'] = Auth::user()->cardDetails;
         return view('admin.profile.profile', $data);
     }
     //Updates profile data and picture

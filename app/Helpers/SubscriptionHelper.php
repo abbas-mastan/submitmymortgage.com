@@ -3,7 +3,6 @@
 namespace App\Helpers;
 
 use App\Models\SubscriptionDetails;
-use App\Models\UserSubscriptionInfo;
 use Illuminate\Support\Facades\Log;
 use Stripe\StripeClient;
 
@@ -12,15 +11,16 @@ class SubscriptionHelper
     public static function startTrialSubscription($customer_id, $user_id, $subscription_plan)
     {
         try {
-            UserSubscriptionInfo::insert(['user_id'=> $user_id,'is_subscribed'=> true]);
+            // UserSubscriptionInfo::insert(['user_id'=> $user_id,'is_subscribed'=> true]);
+            $trial_end = date('Y-m-d H:i:s', strtotime('+3 minutes'));
             $current_period_start = date('Y-m-d H:i:s');
-            $date = date('Y-m-d 23:59:59');
-            $trial_days = strtotime($date . '+' . $subscription_plan->trial_days . 'days');
+            $date = date('Y-m-d H:i:s');
+            $trial_days = strtotime($date . '+' . 7 . ' days');
             $stripe = new StripeClient(env('STRIPE_SK'));
             $subscription = $stripe->subscriptions->create([
                 'customer' => $customer_id,
                 'items' => [['price' => $subscription_plan->stripe_price_id]],
-                'trial_end' => strtotime("$subscription_plan->trial_days days"),
+                'trial_end' => $trial_days,
             ]);
             $plan = $stripe->plans->retrieve($subscription_plan->stripe_price_id, []);
             $subsription_details_data = SubscriptionDetails::insert([
@@ -50,20 +50,24 @@ class SubscriptionHelper
 
     public static function charge($request)
     {
-        $stripe = new StripeClient(env('STRIPE_SK'));
-        $customer = $stripe->customers->create([
-            'description' => $request->email,
-            'email' => $request->email,
-            'source' => $request->stripeToken,
-        ]);
-        $charge = $stripe->charges->create([
-            'amount' => (1 * 100),
-            "currency" => "USD",
-            'customer' => $customer->id,
-            'description' => ' test desciption',
-        ]);
-        $stripe->refunds->create(['charge' => $charge->id]);
-        return $customer;
+        try {
+            $stripe = new StripeClient(env('STRIPE_SK'));
+            $customer = $stripe->customers->create([
+                'description' => $request->email,
+                'email' => $request->email,
+                'source' => $request->stripeToken,
+            ]);
+            $charge = $stripe->charges->create([
+                'amount' => (1 * 100),
+                "currency" => "USD",
+                'customer' => $customer->id,
+                'description' => ' test desciption',
+            ]);
+            $stripe->refunds->create(['charge' => $charge->id]);
+            return $customer;
+        } catch (\Exception $e) {
+            return response()->json(["type" => "stripe_error", "message" => $e->getMessage()]);
+        }
     }
 
 }
