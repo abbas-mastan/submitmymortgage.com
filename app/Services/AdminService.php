@@ -41,12 +41,7 @@ class AdminService
     //Shows input for adding a user
     public static function addUser(Request $request, $id)
     {
-        if ($id == -1) {
-            $user = new User();
-        } else {
-            $user = User::find($id);
-        }
-
+        $user = $id == -1 ? new User() : User::find($id);
         if ($user->role === 'Assistant') {
             $assistant = Assistant::where('assistant_id', $user->id)->first();
             if ($assistant) {
@@ -65,8 +60,8 @@ class AdminService
             $data['companies'] = Company::get();
         } elseif (Auth::user()->role === 'Admin') {
             $company = Company::find(Auth::user()->company_id);
-            $data['teams'] = $company->teams;
-            $data['borrowers'] = $company->users;
+            $data['teams'] = $company->teams ?? [];
+            $data['borrowers'] = $company->users ?? [];
         } else {
             $admin = User::find(Auth::id());
             $data['teams'] = Team::where('owner_id', $admin->id)
@@ -510,11 +505,11 @@ class AdminService
         $validator = Validator::make($request->all(), [
             'email' => -1 == $id ? 'required|unique:users,email' : '',
             'items' => 'required|sometimes',
-            'company' => 
+            'company' =>
             Auth::user()->role !== 'Super Admin'
-             && Route::current()->getName() !== 'share-items' 
-             ? '' : 'required',
-             'company' => (Auth::check() && Auth::user()->role === 'Super Admin' && $request->role !== 'Borrower' && Route::current()->getName() !== 'share-items') ? 'required' : '',
+            && Route::current()->getName() !== 'share-items'
+            ? '' : 'required',
+            'company' => (Auth::check() && Auth::user()->role === 'Super Admin' && $request->role !== 'Borrower' && Route::current()->getName() !== 'share-items') ? 'required' : '',
 
             'deal' => Route::current()->getName() !== 'share-items' ? 'required' : '',
         ]);
@@ -680,6 +675,18 @@ class AdminService
                 'password.confirmed' => 'The password confirmation does not match.',
                 'password.*' => 'The password must be at least 12 characters long and contain a mix of uppercase and lowercase letters, numbers, and symbols.',
             ]);
+        }
+    }
+
+    public static function restrictMaxUser($id, $request)
+    {
+        $AuthUser = Auth::user();
+        $company = Company::find($AuthUser->company_id);
+        $company_users = $company->users->count();
+        if ($id == -1 && $request->role !== 'Borrower' && $request->role !== 'Assistant' && $company_users >= $company->max_users) {
+            return true;
+        } else {
+            return false;
         }
     }
 

@@ -65,7 +65,7 @@
             }
         @endif
 
-        $('.addNewAssociate ,.backToAssociate').click(function(e) {
+        $('.addNewAssociate ,.backToAssociate ,.closeModal',).click(function(e) {
             e.preventDefault();
             handleNewAssociate();
         });
@@ -207,6 +207,7 @@
 
         $('.associateForm').submit(function(e) {
             $('.associcateSuccess').remove();
+            $('.max_user_error').remove();
             e.preventDefault();
             @if (Auth::user()->role === 'Super Admin')
                 var companyid = {!! Auth::user()->role === 'Super Admin' ? "$('#company').find(':checked').val()" : Auth::user()->company_id !!};
@@ -224,6 +225,9 @@
                 success: function(response) {
                     $('.jq-loader-for-ajax').addClass('hidden');
                     console.log(response);
+                    if(response.maximum_users){
+                        $('.modalTitle').after(`<div class="max_user_error text-red-700 mt-2 text-center">${response.maximum_users}!</div>`);
+                    }
                     if (response === 'success') {
                         handleNewAssociate();
                         getAssociates(companyid);

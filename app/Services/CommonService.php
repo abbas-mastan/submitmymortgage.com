@@ -559,6 +559,7 @@ class CommonService
         } elseif ($user->role === 'Admin') {
             $allUsers = User::where('company_id', $user->company_id)
                 ->where('role', '!=', 'Admin')
+                ->where('role', '!=', 'Super Admin')
                 ->with(['createdBy'])
                 ->latest()
                 ->get();

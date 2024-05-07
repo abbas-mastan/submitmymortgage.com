@@ -44,7 +44,7 @@ class SubscriptionHelper
             return $subsription_details_data;
         } catch (\Exception $e) {
             Log::info($e->getMessage());
-            return null;
+            return response()->json(['type'=> 'stripe_error','message'=> $e->getMessage()]);
         }
     }
 

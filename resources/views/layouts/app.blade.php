@@ -265,6 +265,7 @@
                 if (text == 'Enable') return 'Enabled!';
                 if (text == 'Disable') return 'Disabled!';
                 if (text == 'Unhide') return 'Showed!';
+                if (text == 'cancel') return 'Canceled!';
                 if (text == 'Logout All') return 'Logged out!';
                 else return 'Deleted!'
             }
@@ -287,6 +288,9 @@
                         'This is not a permanent delete. You can restore it from deleted users anytime';
                     titleText = 'Are you sure to delete this user?';
                     textClass = "Delete";
+                } else if (textClass == 'cancel') {
+                    middleSentenceOfModal = null;
+                    titleText = 'Are you sure to cancel your subscription?';
                 } else {
                     textClass = "Delete";
                     middleSentenceOfModal = "You won't be able to revert this!"
@@ -299,7 +303,8 @@
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: textClass,
+                cancelButtonText: textClass == 'cancel' ? 'NO' : 'Cancel',
+                confirmButtonText: textClass == 'cancel' ? 'Yes' : textClass,
             }).then((result) => {
                 if (result.isConfirmed) {
                     location.href = $(this).attr('href');

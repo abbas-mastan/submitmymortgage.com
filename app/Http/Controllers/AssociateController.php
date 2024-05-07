@@ -45,6 +45,10 @@ class AssociateController extends Controller
 
     public function doUser(Request $request, $id)
     {
+        $checkMaximumUsers = AdminService::restrictMaxUser($id, $request);
+        if ($checkMaximumUsers) {
+            return redirect(url()->previous())->with('msg_error', 'Your Team Size Exceeds Plan Limit');
+        }
         $msg = AdminService::doUser($request, $id);
         return redirect('/dashboard')->with($msg['msg_type'], $msg['msg_value']);
     }

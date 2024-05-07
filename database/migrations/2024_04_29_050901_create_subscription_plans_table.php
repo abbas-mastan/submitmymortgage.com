@@ -19,6 +19,7 @@ class CreateSubscriptionPlansTable extends Migration
             $table->string('stripe_price_id');
             $table->integer('trial_days');
             $table->float('amount',10,2);
+            $table->integer('max_users');
             $table->boolean('enable')->default(true);
             $table->timestamps();
         });

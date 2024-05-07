@@ -46,6 +46,10 @@ class AdminController extends Controller
     //Saves the record of a newly inserted teacher in database
     public function doUser(Request $request, $id)
     {
+        $checkMaximumUsers = AdminService::restrictMaxUser($id, $request);
+        if ($checkMaximumUsers) {
+            return redirect(url()->previous())->with('msg_error', 'Your Team Size Exceeds Plan Limit');
+        }
         $msg = AdminService::doUser($request, $id);
         return redirect('/dashboard')->with($msg['msg_type'], $msg['msg_value']);
     }
@@ -601,10 +605,14 @@ class AdminController extends Controller
 
     public function doAssociate(Request $request)
     {
+        if (AdminService::restrictMaxUser(-1, $request)) {
+            return response()->json(['maximum_users' => 'Your Team Size Exceeds Plan Limit']);
+        }
         $validator = Validator::make($request->only(['AssociateName', 'AssociateEmail']), [
             'AssociateEmail' => 'required|email:rfc,dns|unique:users,email',
             'AssociateName' => '',
         ]);
+
         if ($validator->fails()) {
             $errors = $validator->errors()->toArray();
             $response = ['error' => []];

@@ -96,7 +96,7 @@
                         <td class="flex pl-2 justify-center tracking-wide border border-r-0">
                             <a data="{{ $role === $superadminrole ? 'temporary' : 'Delete' }}" class="delete"
                                 href="{{ url(getRoutePrefix() . '/delete-user/' . $user->id) }}">
-                                <button class="bg-themered  tracking-wide font-semibold capitalize text-xl">
+                                <button class="bg-themered tracking-wide font-semibold capitalize text-xl">
                                     <img style="-webkit-writing-mode: vertical-lr;" src="{{ asset('icons/trash.svg') }}"
                                         alt="" class="p-1 w-7">
                                 </button>

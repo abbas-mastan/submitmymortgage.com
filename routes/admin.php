@@ -1,8 +1,9 @@
 <?php
 
-use App\Http\Controllers\AdminCompanyController;
-use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminCompanyController;
+use App\Http\Controllers\SubscriptionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,7 @@ Route::middleware(['auth', 'admin','subscription'])->prefix(getAdminRoutePrefix(
         Route::post('/do-associate', 'doAssociate');
         Route::post('/get-associates/{company?}', 'getAssociates');
         Route::get('/delete-attachment/{id}', 'deleteAttachment');
+        Route::get('/cancel-subscription',[SubscriptionController::class,'cancelSubscription'])->name('cancel.subscription');
         Route::get('/getUsersByCompany/{company}', [AdminCompanyController::class, 'getUsersByCompany']);
     });
 });

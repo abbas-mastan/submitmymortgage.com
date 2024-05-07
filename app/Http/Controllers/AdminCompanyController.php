@@ -17,12 +17,17 @@ class AdminCompanyController extends Controller
 
     public function store(Request $request, $id = 0)
     {
+        
         if ($id > 0) {
             $comp = Company::find($id);
             $comp->name = $request->name;
+            $comp->max_users = $request->max_users ?? $comp->max_users;
             $comp->save();
         } else {
-            Company::create(['name' => $request->name]);
+            Company::create([
+                'name' => $request->name,
+                'max_users' => $request->max_users ?? NULL
+            ]);
         }
 
         return back()->with('msg_success', 'Company' . ($id > 0 ? ' updated ' : ' created ') . 'successfully');
