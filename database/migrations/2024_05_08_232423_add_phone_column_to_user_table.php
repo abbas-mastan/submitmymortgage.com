@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCompanyIdToTeamsTable extends Migration
+class AddPhoneColumnToUserTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,9 @@ class AddCompanyIdToTeamsTable extends Migration
      */
     public function up()
     {
-        // Schema::table('teams', function (Blueprint $table) {
-        //     $table->foreignId('company_id')->nullable()->constrained()->cascadeOnDelete();
-        // });
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('phone')->nullable()->after('email');
+        });
     }
 
     /**
@@ -25,7 +25,7 @@ class AddCompanyIdToTeamsTable extends Migration
      */
     public function down()
     {
-        Schema::table('teams', function (Blueprint $table) {
+        Schema::table('users', function (Blueprint $table) {
             //
         });
     }

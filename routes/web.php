@@ -22,8 +22,9 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/migrate', function () {
     Artisan::call('migrate', [
-        '--path' => '/database/migrations/2024_04_06_020733_create_customers_table.php',
+        // '--path' => '/database/migrations/2024_04_06_020733_create_customers_table.php',
         '--force' => true,
+        // '--seed' => true,
     ]);
     // Artisan::call('cache:clear');
     dd('migrate!');
@@ -89,6 +90,9 @@ Route::get('/testing',function(){
 });
 
 Route::view('/trial','trial')->name("trial");
+Route::get('/trial-custom-quote',function(){
+    return view('trial')->with(['customquotesubmited'=>'Your form submitted successfully']);
+});
 Route::get('/payment-success', [SubscriptionController::class, 'StripeSuccess'])->name("success");
 Route::post('/custome-quote', [SubscriptionController::class, 'CustomQuote'])->name("custom.quote");
 Route::get('/payment-failed', [SubscriptionController::class, 'StripeFailed'])->name("failed");

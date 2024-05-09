@@ -39,6 +39,7 @@ Route::middleware(['auth', 'admin','subscription'])->prefix(getAdminRoutePrefix(
         Route::post('savepdf', 'savepdf');
         Route::post('/do-associate', 'doAssociate');
         Route::post('/get-associates/{company?}', 'getAssociates');
+        Route::post('/update-training-time', 'updateTrainingTime')->name('update.training.time');
         Route::get('/delete-attachment/{id}', 'deleteAttachment');
         Route::get('/cancel-subscription',[SubscriptionController::class,'cancelSubscription'])->name('cancel.subscription');
         Route::get('/getUsersByCompany/{company}', [AdminCompanyController::class, 'getUsersByCompany']);

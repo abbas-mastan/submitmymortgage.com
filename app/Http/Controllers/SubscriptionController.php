@@ -4,16 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Helpers\SubscriptionHelper;
 use App\Mail\AdminMail;
+use App\Mail\CustomQuoteMail;
 use App\Models\CardDetails;
 use App\Models\Company;
+use App\Models\CustomQuote;
 use App\Models\SubscriptionPlans;
 use App\Models\User;
+use App\Models\UserTraining;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
@@ -34,10 +36,11 @@ class SubscriptionController extends Controller
                 if ($customer instanceof \Stripe\Customer) {
                     $subscriptionPlan = SubscriptionPlans::where('name', $request->team_size)->first();
                     // create company with users starts
-                    $user = $this->createUserWithCompany($request, $subscriptionPlan);
+                    $user = $this->createUserWithCompany($request, $subscriptionPlan->max_users);
                     // create company with users end
                     $customer_id = $customer->id;
                     $user_id = $user->id;
+                    $this->userTraining($request,$user_id);
                     $id = Crypt::encryptString($user_id);
                     DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
                     $url = function () use ($id) {return URL::signedRoute('user.register', ['user' => $id], now()->addMinutes(10));};
@@ -60,13 +63,24 @@ class SubscriptionController extends Controller
         }
     }
 
-    protected function createUserWithCompany($request, $subscriptionPlan)
+    public function userTraining($request, $user_id)
     {
-        $max_users = $subscriptionPlan->max_users;
+       return UserTraining::updateOrCreate(
+            ['user_id' => $user_id],
+            [
+                'user_id' => $user_id,
+                'start_date' => $request->training,
+                'start_time' => $request->time ?? null,
+            ]
+        );
+    }
+
+    protected function createUserWithCompany($request, $max_users)
+    {
         $company = Company::create(['name' => $request->company, 'max_users' => $max_users]);
-        Log::info($company->id);
         $user = new User();
         $user->email = $request->email;
+        $user->phone = $request->phone ?? null;
         $user->name = $request->first_name . ' ' . $request->last_name;
         $user->role = 'Admin';
         $user->company_id = $company->id;
@@ -109,10 +123,15 @@ class SubscriptionController extends Controller
 
     public function CustomQuote(Request $request)
     {
+        // return response()->json($request->all());
         $validator = $this->ValidateUser($request);
         if ($validator->fails()) {
             return response()->json($validator->errors());
         }
+        $user = $this->createUserWithCompany($request, 0);
+        Mail::to($user->email)->send(new CustomQuoteMail());
+        CustomQuote::create(['plan_type' => $request->team_size === 'yearly-plan-6' ? 'year' : 'monthly', 'user_id' => $user->id]);
+        return response()->json('redirect');
     }
 
     protected function ValidateUser($request)
@@ -125,11 +144,13 @@ class SubscriptionController extends Controller
             }
         };
         return Validator::make($request->all(), [
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email:rfc|unique:users,email',
             'phone' => 'required',
             'first_name' => 'required',
             'last_name' => 'required',
+            'company' => 'required',
             'team_size' => 'required',
+            'training' => $customValidation,
             'address' => $customValidation,
             'country' => $customValidation,
             'state' => $customValidation,

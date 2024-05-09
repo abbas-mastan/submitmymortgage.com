@@ -1,3 +1,4 @@
+div
 <!DOCTYPE html>
 <html lang="en">
 
@@ -35,9 +36,6 @@
     <!-- custom css -->
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
-
-
     <style>
         .hero-section {
             background: url("{{ asset('assets/trialhero.jpg') }}") no-repeat;
@@ -111,8 +109,15 @@
         }
 
         .secondModal {
-            max-width: 660px !important;
             height: 530px !important;
+        }
+
+        .secondModalHeight {
+            height: 574px !important;
+        }
+
+        .secondModalHeightIncrease {
+            height: 630px !important;
         }
 
         .custom-quote {
@@ -121,6 +126,11 @@
 
         .bg-red {
             background-color: #991b1b
+        }
+
+        .custom-quote-btn:hover {
+            background-color: #CA7A1D;
+            border: 0;
         }
     </style>
 </head>
@@ -166,8 +176,8 @@
             </div>
         </nav>
     </header>
+    <a href="#text-success" class="d-none scroll">scroll</a>
     <main>
-
         <!-- Button trigger modal -->
         <button type="button" class="d-none btn btn-primary custom-quote" data-bs-toggle="modal"
             data-bs-target="#custom-quote">
@@ -177,7 +187,7 @@
         <!-- Modal -->
         <div class="modal fade" id="custom-quote" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg justify-content-center">
-                <div class="modal-content secondModal">
+                <div class="modal-content secondModal" style="max-width: 660px !important;">
                     <div class="d-flex justify-content-end p-3">
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -235,16 +245,21 @@
                                 </div>
                         </div>
                     </div>
-                    <div class="d-flex pb-3 ps-3">
-                        <button type="submit" class="bg-red text-white rounded-0 fs-5 w-50"
-                            style="padding:15px 0 40px;">Submit</button>
+                    <div class="d-flex pb-3 ps-3 pe-3">
+                        <button type="submit"
+                            class="custom-quote-btn btn-primary d-flex justify-content-center align-items-center bg-red text-white rounded-0 fs-5 w-100 py-4"
+                            style="border-radius: 8px !important;">
+                            <span class="custom-quote-submit-btn-text">
+                                Submit
+                            </span>
+                            <img width="8%" class="custom-quote-loader d-none"
+                                src="{{ asset('assets/trial/loader.svg') }}" alt="loading...">
+                        </button>
                     </div>
                     </form>
                 </div>
             </div>
         </div>
-
-
 
         <!-- hero section -->
         <section class="hero-section">
@@ -286,9 +301,10 @@
         </section>
 
         <!-- get mortgage approval faster! -->
-        <section class="containter-fluid trial-form" style="padding: 250px 0px">
+        <section id="trial-form" class="containter-fluid trial-form" style="padding: 250px 0px">
             <div class="container align-content-center" style="height: 100%">
                 <div class="multi-form bg-white shadow-sm">
+                    <div id="text-success" class="d-block text-success text-center"></div>
                     <form id="payment-form" class="main-form require-validation"
                         action="{{ route('stripePayment') }}" method="post">
                         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
@@ -431,14 +447,13 @@
                                     <input type="text" class="inputs tab1-company_name" placeholder="Company Name"
                                         required name="company" id="">
                                     <span class="error tab1-company_name_error"></span>
-
                                 </div>
                                 <div class="form-btn">
                                     <button type="button" id="nextBtn"
-                                        class="btn btn-outline-primary px-5 next">Next</button>
+                                        class="btn btn-outline-primary next w-100 d-flex justify-content-center align-items-center py-4 mt-3"
+                                        style="border-radius: 8px;">Next</button>
                                 </div>
                             </div>
-
                         </div>
                         <div class="tab2 d-none">
                             <div class="form-inp-sec d-flex flex-column">
@@ -472,7 +487,6 @@
                                             <div class="col-lg-6 col-12 d-flex align-items-center">
                                                 <div class="form-inp-row">
                                                     <label class="label1" for="">Last Name</label>
-
                                                     <input class="input1" type="text" placeholder="Last Name"
                                                         value="{{ session()->has('user_data') ? session('user_data')['last_name'] : '' }}"
                                                         name="last_name" id="">
@@ -498,11 +512,13 @@
                                         <h2 class="text-center red">When you want to Do your training?</h2>
                                         <label for="training"
                                             class="team-size-button text-white text-decoration-none">
-                                            <input onfocus="this.showPicker()" min="{{ date('Y-m-d') }}"
-                                                {{-- max="{{ date('Y-m-d', strtotime('next Thursday')) }}"  --}} type="text" name="training" id="training"
-                                                class="position-absolute" style="z-index: -1;">
+                                            <input autocomplete="off" onfocus="this.showPicker()"
+                                                min="{{ date('Y-m-d') }}" {{-- max="{{ date('Y-m-d', strtotime('next Thursday')) }}"  --}} type="text"
+                                                name="training" id="training" class="position-absolute"
+                                                style="z-index: -1">
                                             Select a Date
                                         </label>
+                                        <span class="error training_error"></span>
                                     </div>
                                 </div>
                                 <div class="form-inp-div">
@@ -550,14 +566,11 @@
                                             </div>
                                         </div>
                                     </div>
-
                                 </div>
-
                                 <div class="form-inp-div stripe-div py-3">
                                     <div class="ps-2 " id="card-element">
                                         <!-- A Stripe Element will be inserted here. -->
                                     </div>
-
                                     <!-- Used to display Element errors. -->
                                     <div class="ps-2 text-danger" id="card-errors" role="alert"></div>
                                 </div>
@@ -569,10 +582,9 @@
                                 <div class="form-last-btn-2">
                                     <button class="start-trial-button" type="submit">Start My Free Trial
                                         <img class="loader d-none" src="{{ asset('assets/trial/loader.svg') }}"
-                                            alt="asdf">
+                                            alt="loader">
                                     </button>
                                 </div>
-
                             </div>
                         </div>
                     </form>
@@ -602,6 +614,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
+    {{-- date input logic starts here --}}
     <script>
         $(document).ready(function() {
             $('.card-date').on('keyup', function(e) {
@@ -613,7 +626,7 @@
             });
 
             $('#training').datepicker({
-                minDate: 0,
+                minDate: "+8d",
                 beforeShowDay: function(date) {
                     var day = date.getDay();
                     return [day === 4]; // 4 is Thursday
@@ -622,6 +635,7 @@
 
         });
     </script>
+    {{-- date input logic end here --}}
     <!-- bootstrap js -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
         integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
@@ -824,7 +838,15 @@
                 $('.monthly').removeClass('d-none');
             });
 
+
             $('.custom-quote-form').submit(function(e) {
+                $('.custom-quote-submit-btn-text').addClass('d-none');
+                $('.custom-quote-loader').removeClass('d-none');
+                $('.custom-quote-form .email_error').text('');
+                $('.custom-quote-form .phone_error').text('');
+                $('.custom-quote-form .first_name_error').text('');
+                $('.custom-quote-form .last_name_error').text('');
+                $('.custom-quote-form .company_error').text('');
                 e.preventDefault();
                 var paymentForm = $('.custom-quote-form');
                 $.ajaxSetup({
@@ -837,16 +859,44 @@
                     url: paymentForm.attr('action'),
                     data: paymentForm.serialize(),
                     success: function(response) {
+                        $('.custom-quote-submit-btn-text').removeClass('d-none');
+                        $('.custom-quote-loader').addClass('d-none');
                         console.log(response);
+                        if (response == 'redirect') {
+                            $('.custom-quote-form').find('input').val('');
+                            $('#payment-form').find('input').val('');
+                            $('.btn-close').click();
+                            $('.scroll').click();
+                            $('.tab1').removeClass('d-none');
+                            $('.tab2').addClass('d-none');
+                            $('.text-success').text(
+                                'Your form submitted. Please check your email inbox!');
+                            // window.location.replace('trial-custom-quote');
+                        }
+                        if (response !== 'success') {
+                            var errorCount = Object.keys(response).length;
+                            if (errorCount == 1 || errorCount == 2) {
+                                $('.modal-content').removeClass('secondModal');
+                                $('.modal-content').addClass('secondModalHeight');
+                            } else if (errorCount > 2) {
+                                $('.modal-content').removeClass('secondModalHeight');
+                                $('.modal-content').removeClass('secondModal');
+                                $('.modal-content').addClass('secondModalHeightIncrease');
+                            }
+                            $.each(response, function(indexInArray, error) {
+                                $('.custom-quote-form .' + indexInArray + '_error')
+                                    .text('');
+                                $('.custom-quote-form .' + indexInArray + '_error')
+                                    .text(response[
+                                        indexInArray]);
+                            });
+                        }
                     },
                     error: function(jqXHR, excption) {
                         console.log(excption);
                     }
                 });
             });
-
-
-
 
             function validateFirstTab() {
                 var isValid = true;
@@ -937,10 +987,15 @@
                 $('.city_error').empty();
                 $('.postal_code_error').empty();
                 $('.team_size_error').empty();
+                $('.training_error').empty();
                 var isValid = true; // Set a flag to track validation status
                 var msg = 'This field is required';
                 if ($('input[name=team_size]').val() === '') {
                     $('.team_size_error').text('Please select your team size.');
+                    isValid = false; // Set flag to false if validation fails
+                }
+                if ($('input[name=training]').val() === '') {
+                    $('.training_error').text('Please select training date.');
                     isValid = false; // Set flag to false if validation fails
                 }
                 if ($('.main-form input[name=email]').val() === '') {
@@ -1002,7 +1057,7 @@
                         console.log(response);
                         $('.loader').addClass('d-none');
                         $('.start-trial-button').css('cursor', 'pointer');
-                        if(response.type === 'stripe_error'){
+                        if (response.type === 'stripe_error') {
                             $('#card-errors').text(response.message);
                         }
                         if (response === 'redirect') {
@@ -1017,7 +1072,7 @@
                             });
                         }
                         if (response === 'something went wrong') {
-                            alert(response);
+                            alert(response + " please try again");
                             window.location.reload();
                         }
                     },

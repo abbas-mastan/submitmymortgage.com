@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationRequest;
 use App\Http\Requests\IntakeFormRequest;
+use App\Mail\TrainingMailToSuperAdmin;
 use App\Models\Application;
 use App\Models\Company;
 use App\Models\Contact;
@@ -19,6 +20,7 @@ use App\Services\UserService;
 use Faker\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
@@ -52,6 +54,18 @@ class AdminController extends Controller
         }
         $msg = AdminService::doUser($request, $id);
         return redirect('/dashboard')->with($msg['msg_type'], $msg['msg_value']);
+    }
+
+    public function updateTrainingTime(Request $request)
+    {
+        $user = Auth::user();
+        $request['training'] = $user->training->start_date;
+        $sub_controller = new SubscriptionController();
+        $training = $sub_controller->userTraining($request, $user->id);
+        if ($training) {
+            Mail::to($user->email)->send(new TrainingMailToSuperAdmin($request->time));
+            return back()->with(['msg_success','Your training will start soon']);
+        }
     }
 
     public function deleteUser(Request $request, $id)

@@ -7,6 +7,7 @@ use App\Http\Requests\IntakeFormRequest;
 use App\Models\Application;
 use App\Models\Company;
 use App\Models\Contact;
+use App\Models\CustomQuote;
 use App\Models\Info;
 use App\Models\IntakeForm;
 use App\Models\Project;
@@ -611,5 +612,11 @@ class SuperAdminController extends Controller
     {
         $user->delete();
         return back()->with('msg_success', 'Connection deleted successfully');
+    }
+
+    public function customQuotes() 
+    {
+        $customQuotes = CustomQuote::with('user')->get();
+        return view('superadmin.custom-quotes',compact('customQuotes'));
     }
 }

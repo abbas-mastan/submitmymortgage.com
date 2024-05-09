@@ -19,6 +19,7 @@
                             <span class="tracking-wide sm:block  capitalize text-white">Companies</span>
                         </a>
                     </li>
+                    <x-tab href="custom-quote" title="Custom Quote" />
                     <li class="-mt-4 hidden sm:block">
                         <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
                             &nbsp;
