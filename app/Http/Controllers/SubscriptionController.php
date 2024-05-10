@@ -25,6 +25,27 @@ use Stripe\StripeClient;
 class SubscriptionController extends Controller
 {
 
+    public function finishTrial()
+    {
+        $user = Auth::user();
+        $sub_id = $user->subscriptionDetails->stripe_subscription_id;
+        $cus_id = $user->subscriptionDetails->stripe_customer_id;
+        $stripe = new StripeClient(env('STRIPE_SK'));
+        $subscription_old = $stripe->subscriptions->retrieve($sub_id, []);
+
+        $trial_days = date('Y-m-d H:i:s',$subscription_old->current_period_end);
+        $subscription = $stripe->subscriptions->create([
+            'customer' => $cus_id,
+            'items' => [['price' => $sub_id]],
+            'trial_end' => $trial_days,
+        ]);
+
+        dd($subscription);
+        dump(date('Y-m-d H:i:s', $subscription->current_period_start));
+        dump(date('Y-m-d H:i:s', $subscription->current_period_end));
+        dd($subscription);
+    }
+
     public function processPayment(Request $request)
     {
         $validator = $this->ValidateUser($request);
@@ -40,7 +61,7 @@ class SubscriptionController extends Controller
                     // create company with users end
                     $customer_id = $customer->id;
                     $user_id = $user->id;
-                    $this->userTraining($request,$user_id);
+                    $this->userTraining($request, $user_id);
                     $id = Crypt::encryptString($user_id);
                     DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
                     $url = function () use ($id) {return URL::signedRoute('user.register', ['user' => $id], now()->addMinutes(10));};
@@ -65,7 +86,7 @@ class SubscriptionController extends Controller
 
     public function userTraining($request, $user_id)
     {
-       return UserTraining::updateOrCreate(
+        return UserTraining::updateOrCreate(
             ['user_id' => $user_id],
             [
                 'user_id' => $user_id,

@@ -99,6 +99,7 @@ Route::get('/payment-failed', [SubscriptionController::class, 'StripeFailed'])->
 Route::post('trial', [SubscriptionController::class, 'processPayment'])->name('stripePayment');
 // Route::middleware('trial',function(){
 Route::get('/trial-dashboard', [SubscriptionController::class, 'trialDashboard'])->name("trial.dashboard");
+Route::get('/subscribe', [SubscriptionController::class, 'finishTrial']);
 Route::view('homepage','homepage');
 // });
 // Route::get('success', [SubscriptionController::class, 'success'])->name('payment_success');

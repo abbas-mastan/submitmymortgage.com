@@ -24,7 +24,7 @@ class SubscriptionMiddleware
             $stripedata = $stripe->subscriptions->retrieve($sub_id, []);
             $data = $stripedata->jsonSerialize();
             $period_end_at = date('Y-m-d H:i:s', $data['current_period_end']);
-            if ($period_end_at < now() && $data['canceled_at']) {
+            if ($period_end_at < now()) {
                 return redirect('/continue-to-premium');
             }
         }

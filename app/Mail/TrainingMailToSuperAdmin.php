@@ -29,7 +29,6 @@ class TrainingMailToSuperAdmin extends Mailable
     public function build()
     {
         $time = $this->time;
-        $user = Auth::user();
-        return $this->subject("Training Time for !")->view('notifications::traing-mail-to-super-admin', compact('time'));
+        return $this->subject("Training Date & Time")->view('notifications::traing-mail-to-super-admin', compact('time'));
     }
 }

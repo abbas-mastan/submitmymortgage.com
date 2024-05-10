@@ -63,7 +63,7 @@ class AdminController extends Controller
         $sub_controller = new SubscriptionController();
         $training = $sub_controller->userTraining($request, $user->id);
         if ($training) {
-            Mail::to($user->email)->send(new TrainingMailToSuperAdmin($request->time));
+            Mail::to("shaun@submitmymortgage.com")->send(new TrainingMailToSuperAdmin($request->time));
             return back()->with(['msg_success','Your training will start soon']);
         }
     }

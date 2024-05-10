@@ -13,7 +13,6 @@
         }
     </style>
 </head>
-
 <body style="background-color: #edf2f7;">
     @php($user = Auth::user())
     <div style="padding: 50px">
@@ -63,5 +62,4 @@
         </div>
     </div>
 </body>
-
 </html>

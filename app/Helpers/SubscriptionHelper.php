@@ -11,8 +11,6 @@ class SubscriptionHelper
     public static function startTrialSubscription($customer_id, $user_id, $subscription_plan)
     {
         try {
-            // UserSubscriptionInfo::insert(['user_id'=> $user_id,'is_subscribed'=> true]);
-            $trial_end = date('Y-m-d H:i:s', strtotime('+3 minutes'));
             $current_period_start = date('Y-m-d H:i:s');
             $date = date('Y-m-d H:i:s');
             $trial_days = strtotime($date . '+' . 7 . ' days');
@@ -38,8 +36,8 @@ class SubscriptionHelper
                 'created' => date('Y-m-d H:i:s', $plan->created),
                 'trial_end' => $trial_days,
                 'status' => 'active',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s'),
+                'created_at' => $date,
+                'updated_at' => $date,
             ]);
             return $subsription_details_data;
         } catch (\Exception $e) {

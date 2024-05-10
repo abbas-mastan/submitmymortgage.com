@@ -1,4 +1,3 @@
-div
 <!DOCTYPE html>
 <html lang="en">
 
@@ -134,7 +133,6 @@ div
         }
     </style>
 </head>
-</head>
 
 <body>
     <header>
@@ -183,7 +181,6 @@ div
             data-bs-target="#custom-quote">
             Launch demo modal
         </button>
-
         <!-- Modal -->
         <div class="modal fade" id="custom-quote" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg justify-content-center">
