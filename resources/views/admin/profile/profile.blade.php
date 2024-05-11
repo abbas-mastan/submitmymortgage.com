@@ -3,8 +3,10 @@
     @php($user = Auth::user())
     <div class="w-1/2 mx-auto">
         <div class="flex justify-center items-center mt-4">
-            <img class="w-40 h-40 rounded-full" src="{{ asset(auth()->user()->pic ?? 'img/profile-default.svg') }}"
-                alt="Profile Picture">
+            <label for="file">
+                <img class="w-40 h-40 rounded-full" src="{{ asset(auth()->user()->pic ?? 'img/profile-default.svg') }}"
+                    alt="Profile Picture">
+            </label>
         </div>
         <form action="{{ url(getRoutePrefix() . '/do-profile') }}" method="post" enctype="multipart/form-data">
             <div class="flex justify-center mt-2">
@@ -17,9 +19,9 @@
                 <input type="file" name="file" id="file" accept="image/*">
             </div>
             <span id="passwordParent">
-                <div class="flex justify-between">
-                    <div class="mt-3 w-[49%]">
-                        <div class=" text-left mr-12">
+                <div class="xl:flex xl:gap-3 items-center">
+                    <div class="mt-3 xl:w-[49%]">
+                        <div class="text-left mr-12">
                             <label for="password" class="">Password</label>
                         </div>
                         <div class="mt-2">
@@ -31,7 +33,7 @@
                             <span class="text-red-700">{{ $message }}</span>
                         @enderror
                     </div>
-                    <div class="mt-3 w-[49%]">
+                    <div class="mt-3 xl:w-[49%]">
                         <div class=" text-left mr-12">
                             <label for="password_confirmation" class="">Confirm Password</label>
                         </div>
@@ -68,39 +70,37 @@
 
     </div>
     @if ($user->role === 'Admin')
-        <div class="w-1/2 mt-3 mx-auto justify-center bg-white py-24 sm:py-32 py-8 shadow-2xl">
-            <div class="mx-auto max-w-7xl px-6 lg:px-8">
-                <div
-                    class="mx-auto mt-10 grid max-w-lg items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:grid-cols-5">
-                    <h2 class="text-center text-lg font-semibold leading-8 text-gray-900">Subscription Details</h2>
-                    <table class="border-separate border border-slate-500 ...">
-                        <thead>
-                            <tr>
-                                <th class="border border-slate-600 p-2 text-center">Card No</th>
-                                <th class="border border-slate-600 p-2 text-center">Brand</th>
-                                <th class="border border-slate-600 p-2 text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td class="border border-slate-700 p-2 text-center">xxxx xxxx xxxx
-                                    {{ $card->card_no }}
-                                </td>
-                                <td class="border border-slate-700 p-2 text-center">{{ $card->brand }}</td>
-                                <td class="border border-slate-700 p-2 text-center">
-                                    {{-- <a href="#" class="bg-red-600 px-2 py-2 text-white">Change Card</a> --}}
-                                    @if ($user->userSubscriptionInfo->is_subscribed)
-                                        <a href="{{ route('cancel.subscription') }}"
-                                            class="flex justify-center bg-red-700 px-2 py-2 text-white delete" data="cancel">Cancel
-                                            Subscription</a>
-                                    @else
-                                        <a class="bg-blue-500 px-2 py-2 text-white" disabled data="cancel">Cancelled</a>
-                                    @endif
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        <div class="w-1/2 mt-3 p-10 mx-auto justify-center bg-white shadow-2xl">
+            <div class="flex justify-center flex-col">
+                <h2 class="text-center text-lg font-semibold leading-8 text-gray-900">Subscription Details</h2>
+                <table class="border border-slate-500 w-full">
+                    <thead>
+                        <tr>
+                            <th class="border border-slate-600 p-2 text-center">Card No</th>
+                            <th class="border border-slate-600 p-2 text-center">Brand</th>
+                            <th class="border border-slate-600 p-2 text-center">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border border-slate-700 p-2 text-center">xxxx xxxx xxxx
+                                {{ $card->card_no }}
+                            </td>
+                            <td class="border border-slate-700 p-2 text-center">{{ $card->brand }}</td>
+                            <td class="border border-slate-700 p-2 text-center">
+                                {{-- <a href="#" class="bg-red-600 px-2 py-2 text-white">Change Card</a> --}}
+                                @if ($user->userSubscriptionInfo->is_subscribed)
+                                    <a href="{{ route('cancel.subscription') }}"
+                                        class="flex justify-center bg-red-700 md:px-2 px-0 text-sm sm:text-md py-2 text-white delete"
+                                        data="cancel">Cancel
+                                        Subscription</a>
+                                @else
+                                    <a class="bg-blue-500 px-2 py-2 text-danger" disabled data="cancel">Cancelled</a>
+                                @endif
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     @endif

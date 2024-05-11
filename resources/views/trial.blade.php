@@ -441,7 +441,7 @@
                                 </div>
                                 <div class="form-btn">
                                     <button type="button" id="nextBtn"
-                                        class="btn btn-outline-primary next w-100 d-flex justify-content-center align-items-center py-4 mt-3"
+                                        class="btn btn-primary next w-100 d-flex justify-content-center align-items-center py-4 mt-3"
                                         style="border-radius: 8px;">Next</button>
                                 </div>
                             </div>
@@ -544,7 +544,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-6 col-12 d-flex align-items-center">
-                                                <div class="form-inp-row">
+                                                <div class="form-inp-row w-100">
                                                     <input class="input1 postal-code" type="number"
                                                         placeholder="Postal Code" name="postal_code" id="">
                                                     <span class="error postal_code_error"></span>
@@ -794,27 +794,34 @@
             }
             $($('input[name=monthly-plan]')).click(function(e) {
                 e.preventDefault();
-                var monthly = $(this).parent().text();
+                var buttontextteamsize = $(this).parent().html();
+                var monthly = `<div class="d-flex justify-content-around">
+                    ${buttontextteamsize}
+                    </div>`;
                 $('input[name=team_size]').val(($(this).val()));
                 $('.team_size_error').empty();
                 if ($(this).val() === 'monthly-plan-6') {
                     customPlan();
                 } else {
                     $('.btn-close').click();
-                    $('.selectTeamSize').text(monthly);
+                    $('.selectTeamSize').html(monthly);
                 }
             });
 
             $($('input[name=yearly-plan]')).click(function(e) {
                 e.preventDefault();
-                var yearly = $(this).parent().text();
+                var buttontextteamsize = $(this).parent().html();
+                var yearly = `<div class="d-flex justify-content-around">
+                    ${buttontextteamsize}
+                    </div>`;
+
                 $('input[name=team_size]').val(($(this).val()));
                 $('.team_size_error').empty();
                 if ($(this).val() === 'yearly-plan-6') {
                     customPlan();
                 } else {
                     $('.btn-close').click();
-                    $('.selectTeamSize').text(yearly);
+                    $('.selectTeamSize').html(yearly);
                 }
             });
 

@@ -313,10 +313,14 @@
                     location.href = $(this).attr('href');
                     Swal.fire(
                         getPopupText(textClass),
-                        'Your' + (textClass == 'Disable' || textClass == 'Enable' ? ' team ' :
+                        if(textClass == 'cancel'){
+                            'Subscription cancelled successfully'
+                        }else{
+                            'Your' + (textClass == 'Disable' || textClass == 'Enable' ? ' team ' :
                             ' file ') +
-                        ' has been ' + getPopupText(textClass) + ' .',
-                        'success'
+                            ' has been ' + getPopupText(textClass) + ' .',
+                            'success'
+                        }
                     )
                 }
             })
