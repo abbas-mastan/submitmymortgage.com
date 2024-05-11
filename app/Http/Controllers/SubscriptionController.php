@@ -28,22 +28,17 @@ class SubscriptionController extends Controller
     public function finishTrial()
     {
         $user = Auth::user();
+        $stripe = new StripeClient(env('STRIPE_SK'));
         $sub_id = $user->subscriptionDetails->stripe_subscription_id;
         $cus_id = $user->subscriptionDetails->stripe_customer_id;
-        $stripe = new StripeClient(env('STRIPE_SK'));
+        $price_id = $user->subscriptionDetails->subscription_plan_price_id;
         $subscription_old = $stripe->subscriptions->retrieve($sub_id, []);
+        $subscription = $stripe->subscriptions->resume(
+            $sub_id,
+            ['billing_cycle_anchor' => 'now']
+        );
 
-        $trial_days = date('Y-m-d H:i:s',$subscription_old->current_period_end);
-        $subscription = $stripe->subscriptions->create([
-            'customer' => $cus_id,
-            'items' => [['price' => $sub_id]],
-            'trial_end' => $trial_days,
-        ]);
-
-        dd($subscription);
-        dump(date('Y-m-d H:i:s', $subscription->current_period_start));
-        dump(date('Y-m-d H:i:s', $subscription->current_period_end));
-        dd($subscription);
+        dd($subscription->jsonSerialize());
     }
 
     public function processPayment(Request $request)
@@ -95,7 +90,6 @@ class SubscriptionController extends Controller
             ]
         );
     }
-
     protected function createUserWithCompany($request, $max_users)
     {
         $company = Company::create(['name' => $request->company, 'max_users' => $max_users]);

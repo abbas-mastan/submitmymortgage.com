@@ -682,8 +682,9 @@ class AdminService
     {
         $AuthUser = Auth::user();
         $company = Company::find($AuthUser->company_id);
-        $company_users = $company->users->count();
-        if ($id == -1 && $request->role !== 'Borrower' && $request->role !== 'Assistant' && $company_users >= $company->max_users) {
+        $company_users = $company->users;
+        $count = $company_users->where('role', '!=', 'Borrower')->where('role', '!==', 'Assistant')->count();
+        if ($id == -1 && $request->role !== 'Borrower' && $request->role !== 'Assistant' && $count >= $company->max_users) {
             return true;
         } else {
             return false;

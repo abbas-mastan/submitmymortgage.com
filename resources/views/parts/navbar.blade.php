@@ -21,7 +21,7 @@
             @endcan
             @can('isUser')
                 <div class="pl-10">
-                    <a href="{{ url(getRoutePrefix() .'/dashboard') }}">
+                    <a href="{{ url(getRoutePrefix() . '/dashboard') }}">
                         Mortgage Application Dashboard
                         </span>
                     </a>
@@ -29,7 +29,7 @@
             @endcan
             @can('isAssociate')
                 <div class="pl-10">
-                    <a href="{{ url(getRoutePrefix() .'/dashboard') }}">
+                    <a href="{{ url(getRoutePrefix() . '/dashboard') }}">
                         <span class="text-xl font-semibold">
                             {{ session('role') === 'Associate' ? 'Associate' : 'Junior Associate' }}
                             &nbsp;Dashboard
@@ -40,18 +40,21 @@
         </div>
     </div>
     <div class="col-span-1 flex justify-end">
-        <div class="flex mr-3">
-            <div class="">
-                <a href="{{ url(getRoutePrefix() . '/profile') }}" class="">
-                    <img class="rounded-full w-12 h-12"
-                        src="{{ asset(auth()->user()->pic ?? 'img/profile-default.svg') }}" alt=""
-                        srcset="">
-                </a>
+        <a href="{{ url(getRoutePrefix() . '/profile') }}" class="flex mr-3">
+            <div class="relative">
+                <img class="rounded-full w-12 h-12" src="{{ asset(auth()->user()->pic ?? 'img/profile-default.svg') }}"
+                    alt="" srcset="">
+                    <svg class="profile-dropdown-btn absolute bottom-0 right-0 w-5 h-5 rounded-full bg-gray-300 border border-2 border-white" fill="none" height="35" width="35" shape-rendering="geometricPrecision"
+                        stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                        viewBox="0 0 24 24">
+                        <path d="M6 9l6 6 6-6"></path>
+                    </svg>
             </div>
             <div class="pt-3 ">
                 <span class="ml-3 capitalize">Welcome, {{ auth()->user()->getFirstName() }}</span>
             </div>
-        </div>
+
+        </a>
         <div class="flex mr-3 pt-2 ">
             <a href="{{ url('/') }}" class="font-bold">
                 <img src="{{ asset('icons/bell.svg') }}" alt="" class="">

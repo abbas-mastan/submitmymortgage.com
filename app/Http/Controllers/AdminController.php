@@ -58,13 +58,19 @@ class AdminController extends Controller
 
     public function updateTrainingTime(Request $request)
     {
+        $request->validate([
+            'time' => 'required|in:09:00,10:00,11:00',
+        ],[
+            'time.required'=> 'This field is required'
+        ]);
+    
         $user = Auth::user();
         $request['training'] = $user->training->start_date;
         $sub_controller = new SubscriptionController();
         $training = $sub_controller->userTraining($request, $user->id);
         if ($training) {
             Mail::to("shaun@submitmymortgage.com")->send(new TrainingMailToSuperAdmin($request->time));
-            return back()->with(['msg_success','Your training will start soon']);
+            return back()->with('msg_success','Your Training Date & Time have been submitted');
         }
     }
 
@@ -620,7 +626,7 @@ class AdminController extends Controller
     public function doAssociate(Request $request)
     {
         if (AdminService::restrictMaxUser(-1, $request)) {
-            return response()->json(['maximum_users' => 'Your Team Size Exceeds Plan Limit']);
+            return response()->json(['maximum_users' => 'Your Team Size Exceeds your Plan Limit']);
         }
         $validator = Validator::make($request->only(['AssociateName', 'AssociateEmail']), [
             'AssociateEmail' => 'required|email:rfc,dns|unique:users,email',

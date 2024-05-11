@@ -13,9 +13,9 @@ class AddCompanyIdToTeamsTable extends Migration
      */
     public function up()
     {
-        // Schema::table('teams', function (Blueprint $table) {
-        //     $table->foreignId('company_id')->nullable()->constrained()->cascadeOnDelete();
-        // });
+        Schema::table('teams', function (Blueprint $table) {
+            $table->foreignId('company_id')->nullable()->constrained()->cascadeOnDelete();
+        });
     }
 
     /**

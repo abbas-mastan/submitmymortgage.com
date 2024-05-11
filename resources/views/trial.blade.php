@@ -197,14 +197,11 @@
                                 <div class="form-inps">
                                     <label class="label1" for="">Email</label>
                                     <input type="email" class="input1" name="email"
-                                        value="{{ session()->has('user_data') ? session('user_data')['email'] : '' }}"
                                         placeholder="wnlgtzanrjvghpfufe@cwmxc.com" id="">
                                     <span class="error email_error"></span>
                                 </div>
                                 <div class="form-inps">
-                                    <input id="phone" name="phone" class="input1"
-                                        value="{{ session()->has('user_data') ? session('user_data')['phone'] : '' }}"
-                                        type="tel">
+                                    <input id="phone" name="phone" class="input1" type="tel">
                                     {{-- <span id="valid-msg" class="hide">Valid</span>
                                 <span id="error-msg" class="hide">Invalid number</span> --}}
                                     <span class="error phone_error"></span>
@@ -216,7 +213,6 @@
                                                 <label class="label1" for="">First
                                                     Name</label>
                                                 <input class="input1" type="text" placeholder="First Name"
-                                                    value="{{ session()->has('user_data') ? session('user_data')['first_name'] : '' }}"
                                                     name="first_name" id="">
                                                 <span class="error first_name_error"></span>
                                             </div>
@@ -226,7 +222,6 @@
                                                 <label class="label1" for="">Last
                                                     Name</label>
                                                 <input class="input1" type="text" placeholder="Last Name"
-                                                    value="{{ session()->has('user_data') ? session('user_data')['last_name'] : '' }}"
                                                     name="last_name" id="">
                                                 <span class="error last_name_error"></span>
                                             </div>
@@ -235,9 +230,8 @@
                                 </div>
                                 <div class="form-inps border-top border-1 border-secondary border-bottom-0">
                                     <label class="label1" for="">Company Name</label>
-                                    <input class="input1" type="text" placeholder="Company Name"
-                                        value="{{ session()->has('user_data') ? session('user_data')['company'] : '' }}"
-                                        name="company" id="">
+                                    <input class="input1" type="text" placeholder="Company Name" name="company"
+                                        id="">
                                     <span class="error company_error"></span>
                                 </div>
                         </div>
@@ -457,18 +451,18 @@
                                 <div class="form-inp-div user-details">
                                     <div class="form-inps">
                                         <label class="label1" for="">Email</label>
-                                        <input type="email" class="input1" name="email"
-                                            value="{{ session()->has('user_data') ? session('user_data')['email'] : '' }}"
+                                        <input type="email" class="input1 tab2email" name="email"
                                             placeholder="wnlgtzanrjvghpfufe@cwmxc.com" id="">
                                         <span class="error email_error"></span>
                                     </div>
                                     <div class="form-inps">
-                                        <input id="phone-main" name="phone" class="input1"
-                                            value="{{ session()->has('user_data') ? session('user_data')['phone'] : '' }}"
-                                            type="tel">
-                                        {{-- <span id="valid-msg" class="hide">Valid</span>
-                                        <span id="error-msg" class="hide">Invalid number</span> --}}
-                                        <span class="error phone_error"></span>
+                                        <div>
+                                            <input id="phone-main" name="phone" class="input1" type="tel">
+                                            {{-- <span id="valid-msg" class="hide">Valid</span>
+                                            <span id="error-msg" class="hide">Invalid number</span> --}}
+                                            <br>
+                                            <span class="error phone_error"></span>
+                                        </div>
                                     </div>
                                     <div class=" p-0">
                                         <div class="row w-100 ">
@@ -476,7 +470,6 @@
                                                 <div class="form-inp-row">
                                                     <label class="label1" for="">First Name</label>
                                                     <input class="input1" type="text" placeholder="First Name"
-                                                        value="{{ session()->has('user_data') ? session('user_data')['first_name'] : '' }}"
                                                         name="first_name" id="">
                                                     <span class="error first_name_error"></span>
                                                 </div>
@@ -485,7 +478,6 @@
                                                 <div class="form-inp-row">
                                                     <label class="label1" for="">Last Name</label>
                                                     <input class="input1" type="text" placeholder="Last Name"
-                                                        value="{{ session()->has('user_data') ? session('user_data')['last_name'] : '' }}"
                                                         name="last_name" id="">
                                                     <span class="error last_name_error"></span>
                                                 </div>
@@ -502,8 +494,7 @@
                                             data-bs-toggle="modal" data-bs-target="#exampleModal">Select Team
                                             Size</a>
                                         <span class="error team_size_error"></span>
-                                        <input type="hidden" name="team_size"
-                                            value="{{ session()->has('user_data') ? session('user_data')['team_size'] : '' }}">
+                                        <input type="hidden" name="team_size">
                                     </div>
                                     <div class="d-flex flex-column align-items-center mt-4">
                                         <h2 class="text-center red">When you want to Do your training?</h2>
@@ -513,7 +504,9 @@
                                                 min="{{ date('Y-m-d') }}" {{-- max="{{ date('Y-m-d', strtotime('next Thursday')) }}"  --}} type="text"
                                                 name="training" id="training" class="position-absolute"
                                                 style="z-index: -1">
-                                            Select a Date
+                                            <span class="training-label">
+                                                Select a Date
+                                            </span>
                                         </label>
                                         <span class="error training_error"></span>
                                     </div>
@@ -522,9 +515,8 @@
                                     <div class="form-inps">
                                         <label>Address</label>
                                         <input type="text" class="input1"
-                                            placeholder="Apartment, building, floor (optional)"
-                                            value="{{ session()->has('user_data') ? session('user_data')['address'] : '' }}"
-                                            name="address" id="">
+                                            placeholder="Apartment, building, floor (optional)" name="address"
+                                            id="">
                                         <span class="error address_error"></span>
                                     </div>
                                     <div class="form-inps">
@@ -547,7 +539,6 @@
                                             <div class="col-lg-6 col-12 form-col">
                                                 <div class="form-inp-row">
                                                     <input class="input1 city" type="text" placeholder="City"
-                                                        value="{{ session()->has('user_data') ? session('user_data')['city'] : '' }}"
                                                         name="city" id="">
                                                     <span class="error city_error"></span>
                                                 </div>
@@ -555,9 +546,7 @@
                                             <div class="col-lg-6 col-12 d-flex align-items-center">
                                                 <div class="form-inp-row">
                                                     <input class="input1 postal-code" type="number"
-                                                        placeholder="Postal Code"
-                                                        value="{{ session()->has('user_data') ? session('user_data')['postal_code'] : '' }}"
-                                                        name="postal_code" id="">
+                                                        placeholder="Postal Code" name="postal_code" id="">
                                                     <span class="error postal_code_error"></span>
                                                 </div>
                                             </div>
@@ -589,6 +578,7 @@
             </div>
         </section>
     </main>
+
     <!-- why choose us footer -->
     <footer class="main-footer">
         <div class="container">
@@ -765,7 +755,6 @@
                 }
             @endif
 
-
             $('.next').click(function(e) {
                 e.preventDefault();
                 validateFirstTab();
@@ -779,11 +768,35 @@
                 }
             });
 
+            $('#phone-main').on('keyup change', function(e) {
+                if ($(this).val() !== '') {
+                    $('.phone_error').empty();
+                }
+            });
 
+            $('#payment-form input ,#payment-form select').on('keyup change', function(e) {
+                var inputValue = $(this).val();
+                var isEmailField = $(this).attr('type') === 'email';
+                var $errorSpan = $(this).closest('div').find('span.error');
+
+                if (inputValue.trim() === '') {
+                    $errorSpan.text('This field is required');
+                } else if (isEmailField && !isEmail(inputValue)) {
+                    $errorSpan.text('Enter a valid email');
+                } else {
+                    $errorSpan.empty();
+                }
+            });
+
+            function isEmail(email) {
+                var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+                return regex.test(email);
+            }
             $($('input[name=monthly-plan]')).click(function(e) {
                 e.preventDefault();
                 var monthly = $(this).parent().text();
                 $('input[name=team_size]').val(($(this).val()));
+                $('.team_size_error').empty();
                 if ($(this).val() === 'monthly-plan-6') {
                     customPlan();
                 } else {
@@ -796,12 +809,18 @@
                 e.preventDefault();
                 var yearly = $(this).parent().text();
                 $('input[name=team_size]').val(($(this).val()));
+                $('.team_size_error').empty();
                 if ($(this).val() === 'yearly-plan-6') {
                     customPlan();
                 } else {
                     $('.btn-close').click();
                     $('.selectTeamSize').text(yearly);
                 }
+            });
+
+            $('input[name=training]').change(function(e) {
+                e.preventDefault();
+                $('.training-label').text($(this).val());
             });
 
             function customPlan() {
@@ -816,7 +835,6 @@
                 $('.custom-quote-form input[name=company]').val($('.main-form input[name="company"]').val());
             }
 
-
             $('.yearly-btn').addClass('border-bottom-0');
             $('.yearly').addClass('d-none');
             $('.yearly-btn').click(function(e) {
@@ -827,6 +845,7 @@
                 $('.yearly').removeClass('d-none');
 
             });
+
             $('.monthly-btn').click(function(e) {
                 e.preventDefault();
                 $('.yearly-btn').addClass('border-bottom-0');
@@ -834,7 +853,6 @@
                 $('.monthly-btn').removeClass('border-bottom-0');
                 $('.monthly').removeClass('d-none');
             });
-
 
             $('.custom-quote-form').submit(function(e) {
                 $('.custom-quote-submit-btn-text').addClass('d-none');
@@ -912,7 +930,9 @@
                 if ($('.tab1-email').val() === '') {
                     $('.tab1-email_error').text('This field is required.');
                     isValid = false; // Set flag to false if validation fails
-
+                } else if (!isEmail($('.tab1-email').val())) {
+                    $('.tab1-email_error').text('Enter a valid email');
+                    isValid = false; // Set flag to false if validation fails
                 }
                 if ($('.tab1-company_name').val() === '') {
                     $('.tab1-company_name_error').text('This field is required.');
@@ -981,6 +1001,7 @@
                 $('.address_error').empty();
                 $('.country_error').empty();
                 $('.state_error').empty();
+                $('.training_error').empty();
                 $('.city_error').empty();
                 $('.postal_code_error').empty();
                 $('.team_size_error').empty();
@@ -995,8 +1016,11 @@
                     $('.training_error').text('Please select training date.');
                     isValid = false; // Set flag to false if validation fails
                 }
-                if ($('.main-form input[name=email]').val() === '') {
+                if ($('.main-form .tab2email').val() === '') {
                     $('.email_error').text(msg);
+                    isValid = false; // Set flag to false if validation fails
+                } else if (!isEmail($('.tab2email').val())) {
+                    $('.email_error').text('Enter a valid email');
                     isValid = false; // Set flag to false if validation fails
                 }
                 if ($('.main-form input[name=phone]').val() === '') {

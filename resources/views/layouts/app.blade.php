@@ -100,6 +100,9 @@
             background: #4676e5 !important;
             color: white !important;
         }
+
+        .profile-dropdown-btn {
+        }
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" />

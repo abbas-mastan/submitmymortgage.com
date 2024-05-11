@@ -3,6 +3,31 @@
 {{-- @endif --}}
 <div class="flex justify-evenly gap-8 align-center">
     <div class="sm:w-2/3 w-full">
+        @if (Auth::user()->training && Auth::user()->training->start_time === null)
+            <div class="shadow-lg p-5 mt-2">
+                <form class="" action="{{ route('update.training.time') }}" method="post">
+                    @csrf
+                    <div class="flex items-center gap-3">
+                        <select class="rounded-lg" name="time" id="">
+                            <option value="">Select Training Time</option>
+                            <option value="09:00">09:00 AM PST</option>
+                            <option value="10:00">10:00 AM PST</option>
+                            <option value="11:00">11:00 AM PST
+                            </option>
+                        </select>
+
+                        <button type="submit"
+                            class="block tracking-wide rounded-lg text-white px-7 py-2 text-xl capitalize bg-gradient-to-b from-gradientStart to-gradientEnd">
+                            Submit
+                        </button>
+                    </div>
+                    @error('time')
+                        <span class="text-red-700">{{ $message }}</span>
+                    @enderror
+                </form>
+            </div>
+        @endif
+
         <div @class([
             'flex',
             'flex-col',
