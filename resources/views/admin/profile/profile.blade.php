@@ -95,7 +95,7 @@
                                         data="cancel">Cancel
                                         Subscription</a>
                                 @else
-                                    <a class="bg-blue-500 px-2 py-2 text-danger" disabled data="cancel">Cancelled</a>
+                                    <a class="text-red-700" disabled data="cancel">Subscription Cancelled</a>
                                 @endif
                             </td>
                         </tr>

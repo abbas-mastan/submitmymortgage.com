@@ -2,24 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\AssistantMail;
-use App\Mail\UserMail;
+use Carbon\Carbon;
 use App\Models\User;
+use App\Mail\UserMail;
+use App\Mail\AdminMail;
+use App\Mail\AssistantMail;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 use App\Services\AdminService;
 use App\Services\CommonService;
-use Carbon\Carbon;
-use Illuminate\Auth\Events\PasswordReset;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\URL;
+use Illuminate\Auth\Events\Verified;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\Support\Facades\URL;
-use Illuminate\Support\Str;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Validation\Rules\Password as PasswordRule;
 
 class AuthController extends Controller
@@ -84,9 +86,9 @@ class AuthController extends Controller
             if ($user->role === 'Assistant') {
                 return redirect(getAssistantRoutePrefix() . '/submit-document');
             }
-            if($user->trial && $user->trial->login_sequence < 1){
+            if ($user->trial && $user->trial->login_sequence < 1) {
                 $user->trial->update(['login_sequence' => 1]);
-                return redirect()->intended('/dashboard')->with('msg_success','Your 7 days trial
+                return redirect()->intended('/dashboard')->with('msg_success', 'Your 7 days trial
                  period started successfully!');
             }
 
@@ -197,14 +199,19 @@ class AuthController extends Controller
 
     public function emailVerificationResend(Request $request)
     {
-        // $request->user()->sendEmailVerificationNotification();
-        $role = $request->user()->role ?? $request->user->role;
-        $email = $request->user()->email ?? $request->user->email;
-        $requestId = $request->user()->id ?? $request->user->id;
+        $user = Auth::user();
+        $role = $request->user->role ?? $user->role;
+        $email = $request->user->email ?? $user->email;
+        $requestId =$request->user->id?? $user->id;
         $id = Crypt::encryptString($requestId);
         DB::table('password_resets')->insert(['email' => $email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
         $url = function () use ($id, $role) {return Url::signedRoute($role !== 'Borrower' && $role !== 'Assistant' ? 'user.register' : 'borrower.register', ['user' => $id], now()->addMinutes(10));};
-        Mail::to($email)->send($role !== 'Borrower' && $role !== 'Assistant' ? new UserMail($url()) : new AssistantMail($url()));
+        $user = User::find($requestId);
+        if ($user->userSubscriptionInfo()) {
+            Mail::to($email)->send(new AdminMail($url()));
+        } else {
+            Mail::to($email)->send($role !== 'Borrower' && $role !== 'Assistant' ? new UserMail($url()) : new AssistantMail($url()));
+        }
         return back()->with('msg_info', 'Verification link sent!');
     }
 

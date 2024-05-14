@@ -11,13 +11,14 @@
                 @endif
                 <p>
                     Please check your email for a verification link.
-                    {{-- {{ __('If you did not receive the email') }}  --}}
                 </p>
                 <br>
                 <form class="flex justify-between" action="{{ route('verification.send') }}" method="POST">
                     @csrf
-                    <button class="bg-green-100 text-green-700 px-4 py-1.5 rounded-md" type="submit">{{ __('Request another link') }}</button>
-                    <a href="{{url('logout')}}" class="bg-gray-500 text-white px-4 py-1.5 rounded-md" >{{ __('Logout') }}</a>
+                    <button class="bg-green-100 text-green-700 px-4 py-1.5 rounded-md"
+                        type="submit">{{ __('Request another link') }}</button>
+                    <a href="{{ url('logout') }}"
+                        class="bg-gray-500 text-white px-4 py-1.5 rounded-md">{{ __('Logout') }}</a>
                 </form>
             </div>
         </div>

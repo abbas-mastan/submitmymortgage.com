@@ -40,7 +40,7 @@
                     Mortgage. Whether you're streamlining your loan processes, communicating seamlessly with clients, or
                     optimizing your business operations, we're here to support you every step of the way.
                     If you have any questions or need assistance during your trial period, feel free to reach out to our
-                    support team at support@submitmymortgage.com or by phone at 310 869 7617. We're here to ensure your
+                    support team at <a href="mailto:support@submitmymortgage.com">support@submitmymortgage.com</a> or by phone at <a href="tel:+310 869 7617">310 869 7617</a>. We're here to ensure your
                     experience with Submit My Mortgage is smooth and productive and we cannot wait for you to
                     supercharge your business using our platform. Be sure to take advantage of our free training for
                     your whole staff, so everyone can work better together.

@@ -11,7 +11,6 @@ class SubscriptionHelper
     public static function startTrialSubscription($customer_id, $user_id, $subscription_plan)
     {
         try {
-            $current_period_start = date('Y-m-d H:i:s');
             $date = date('Y-m-d H:i:s');
             $trial_days = strtotime($date . '+' . 7 . ' days');
             $stripe = new StripeClient(env('STRIPE_SK'));
@@ -31,8 +30,8 @@ class SubscriptionHelper
                 'plan_amount_currency' => 'USD',
                 'plan_interval' => $plan->interval,
                 'plan_interval_count' => $plan->interval_count,
-                'plan_starts_at' => $current_period_start,
-                'plan_end_at' => date('Y-m-d H:i:s', strtotime('+1 month', strtotime($current_period_start))),
+                'plan_starts_at' => $date,
+                'plan_end_at' => date('Y-m-d H:i:s', strtotime('+1 month', strtotime($date))),
                 'created' => date('Y-m-d H:i:s', $plan->created),
                 'trial_end' => $trial_days,
                 'status' => 'active',
@@ -59,7 +58,7 @@ class SubscriptionHelper
                 'amount' => (1 * 100),
                 "currency" => "USD",
                 'customer' => $customer->id,
-                'description' => ' test desciption',
+                'description' => 'card-testing',
             ]);
             $stripe->refunds->create(['charge' => $charge->id]);
             return $customer;

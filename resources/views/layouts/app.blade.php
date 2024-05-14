@@ -101,8 +101,7 @@
             color: white !important;
         }
 
-        .profile-dropdown-btn {
-        }
+        .profile-dropdown-btn {}
     </style>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
     <link href="{{ asset('css/app.css') }}" rel="stylesheet" />
@@ -272,6 +271,25 @@
                 if (text == 'Logout All') return 'Logged out!';
                 else return 'Deleted!'
             }
+
+            function getSuccessMsg(textClass) {
+                if (textClass === 'cancel') {
+                    return {
+                        title: "Cancelled!",
+                        text: "Your subscription has been cancelled.",
+                        icon: "success"
+                    }
+                } else {
+                    return {
+                        title: getPopupText(textClass),
+                        text: 'Your' + (textClass == 'Disable' || textClass == 'Enable' ? ' team ' :
+                                ' file ') +
+                            ' has been ' + getPopupText(textClass) + ' .',
+                        icon: 'success'
+                    }
+                }
+            }
+
             var textClass = $(this).attr('data');
             if (textClass) {
                 if (textClass == 'Logout All') {
@@ -312,15 +330,7 @@
                 if (result.isConfirmed) {
                     location.href = $(this).attr('href');
                     Swal.fire(
-                        getPopupText(textClass),
-                        if(textClass == 'cancel'){
-                            'Subscription cancelled successfully'
-                        }else{
-                            'Your' + (textClass == 'Disable' || textClass == 'Enable' ? ' team ' :
-                            ' file ') +
-                            ' has been ' + getPopupText(textClass) + ' .',
-                            'success'
-                        }
+                        getSuccessMsg(textClass)
                     )
                 }
             })

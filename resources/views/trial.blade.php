@@ -184,7 +184,7 @@
         <!-- Modal -->
         <div class="modal fade" id="custom-quote" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg justify-content-center">
-                <div class="modal-content secondModal" style="max-width: 660px !important;">
+                <div class="modal-content secondModal customQuoteModal" style="max-width: 660px !important;">
                     <div class="d-flex justify-content-end p-3">
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
@@ -301,7 +301,7 @@
                         <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
                             aria-hidden="true">
                             <div class="modal-dialog modal-dialog-centered px-5 py-2">
-                                <div class="modal-content rounded-0">
+                                <div class="modal-content plansModal rounded-0">
                                     <div class="border-0 text-center p-3 pb-0">
                                         <button type="button" class="btn-close float-end fs-6"
                                             data-bs-dismiss="modal" aria-label="Close"></button><br>
@@ -775,6 +775,7 @@
             });
 
             $('#payment-form input ,#payment-form select').on('keyup change', function(e) {
+                $('#text-success').text('');
                 var inputValue = $(this).val();
                 var isEmailField = $(this).attr('type') === 'email';
                 var $errorSpan = $(this).closest('div').find('span.error');
@@ -832,6 +833,8 @@
 
             function customPlan() {
                 $('.btn-close').click();
+                $('.customQuoteModal').removeClass('secondModalHeightIncrease');
+                $('.customQuoteModal').addClass('secondModal');
                 $('.custom-quote').click();
                 $('.custom-quote-form input[name=email]').val($('.main-form input[name=email]').val());
                 $('.custom-quote-form input[name=phone]').val($('.main-form input[name=phone]').val());
@@ -885,25 +888,26 @@
                         $('.custom-quote-loader').addClass('d-none');
                         console.log(response);
                         if (response == 'redirect') {
-                            $('.custom-quote-form').find('input').val('');
-                            $('#payment-form').find('input').val('');
+                            $('.custom-quote-form')[0].reset();
+                            $('#payment-form')[0].reset();
+                            $('.customQuoteModal').removeClass('secondModalHeightIncrease');
                             $('.btn-close').click();
-                            $('.scroll').click();
                             $('.tab1').removeClass('d-none');
                             $('.tab2').addClass('d-none');
-                            $('.text-success').text(
-                                'Your form submitted. Please check your email inbox!');
+                            $('.text-success').html(
+                                '<span>Your Request for Custom Quote has been submitted.<br> Please check your email inbox! </span>'
+                            );
                             // window.location.replace('trial-custom-quote');
                         }
                         if (response !== 'success') {
                             var errorCount = Object.keys(response).length;
                             if (errorCount == 1 || errorCount == 2) {
-                                $('.modal-content').removeClass('secondModal');
-                                $('.modal-content').addClass('secondModalHeight');
+                                $('.customQuoteModal').removeClass('secondModal');
+                                $('.customQuoteModal').addClass('secondModalHeight');
                             } else if (errorCount > 2) {
-                                $('.modal-content').removeClass('secondModalHeight');
-                                $('.modal-content').removeClass('secondModal');
-                                $('.modal-content').addClass('secondModalHeightIncrease');
+                                $('.customQuoteModal').removeClass('secondModalHeight');
+                                $('.customQuoteModal').removeClass('secondModal');
+                                $('.customQuoteModal').addClass('secondModalHeightIncrease');
                             }
                             $.each(response, function(indexInArray, error) {
                                 $('.custom-quote-form .' + indexInArray + '_error')

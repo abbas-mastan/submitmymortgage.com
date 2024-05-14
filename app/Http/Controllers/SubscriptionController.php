@@ -165,14 +165,14 @@ class SubscriptionController extends Controller
             'last_name' => 'required',
             'company' => 'required',
             'team_size' => 'required',
-            'training' => $customValidation,
+            'training' => [$customValidation,'date'],
             'address' => $customValidation,
             'country' => $customValidation,
             'state' => $customValidation,
             'city' => $customValidation,
             'postal_code' => $customValidation,
             // 'stripeToken' => 'required_with_all:email,phone,first_name,last_name,address,country,state,city,postal_code',
-        ]);
+        ],['training.date'=>'Field data is not valid']);
     }
     protected function customValidation($value)
     {
