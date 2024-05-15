@@ -8,6 +8,8 @@ use App\Mail\CustomQuoteMail;
 use App\Models\CardDetails;
 use App\Models\Company;
 use App\Models\CustomQuote;
+use App\Models\PaymentDetail;
+use App\Models\SubscriptionDetails;
 use App\Models\SubscriptionPlans;
 use App\Models\User;
 use App\Models\UserTraining;
@@ -165,14 +167,14 @@ class SubscriptionController extends Controller
             'last_name' => 'required',
             'company' => 'required',
             'team_size' => 'required',
-            'training' => [$customValidation,'date'],
+            'training' => [$customValidation, 'date'],
             'address' => $customValidation,
             'country' => $customValidation,
             'state' => $customValidation,
             'city' => $customValidation,
             'postal_code' => $customValidation,
             // 'stripeToken' => 'required_with_all:email,phone,first_name,last_name,address,country,state,city,postal_code',
-        ],['training.date'=>'Field data is not valid']);
+        ], ['training.date' => 'Field data is not valid']);
     }
     protected function customValidation($value)
     {
@@ -242,5 +244,29 @@ class SubscriptionController extends Controller
         $stripe->subscriptions->cancel($sub_id, []);
         $user->userSubscriptionInfo->update(['is_subscribed' => false]);
         return back()->with(['msg_success', 'Subscription cancled!']);
+    }
+
+    public function storeWebhookData(Request $request)
+    {
+        if (data_get($request, 'data.object.object') === 'charge' && data_get($request, 'type') !== 'charge.refunded') {
+            $subscriptionDetails = SubscriptionDetails::where('stripe_customer_id', data_get($request, 'data.object.customer'))->first();
+            $user = User::find($subscriptionDetails->user_id);
+            if (data_get($request, 'type') === 'charge.succeeded' && data_get($request, 'data.object.description') !== 'card-testing') {
+                PaymentDetail::create([
+                    'user_id' => $user->id,
+                    'amount' => data_get($request, 'data.object.amount_captured') / 100,
+                    'payment_date' => date('Y-m-d H:i:s', data_get($request, 'created')),
+                ]);
+                $user->userSubscriptionInfo->update(['is_subscribed' => true, 'trials_completed' => true]);
+            }
+            if (data_get($request, 'type') === 'charge.failed' && data_get($request, 'data.object.description') !== 'card-testing') {
+                $user->userSubscriptionInfo->update(['is_subscribed' => false, 'trials_completed' => true]);
+            }
+        }
+    }
+
+    public function paymentHistory()
+    {
+
     }
 }

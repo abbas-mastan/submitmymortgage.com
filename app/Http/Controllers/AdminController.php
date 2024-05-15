@@ -50,7 +50,7 @@ class AdminController extends Controller
     {
         $checkMaximumUsers = AdminService::restrictMaxUser($id, $request);
         if ($checkMaximumUsers) {
-            return redirect(url()->previous())->with('msg_error', 'Your Team Size Exceeds Plan Limit');
+            return redirect(url()->previous())->with('msg_error', 'Your Team Size Exceeds Your Plan Limit');
         }
         $msg = AdminService::doUser($request, $id);
         return redirect('/dashboard')->with($msg['msg_type'], $msg['msg_value']);
@@ -626,7 +626,7 @@ class AdminController extends Controller
     public function doAssociate(Request $request)
     {
         if (AdminService::restrictMaxUser(-1, $request)) {
-            return response()->json(['maximum_users' => 'Your Team Size Exceeds your Plan Limit']);
+            return response()->json(['maximum_users' => 'Your Team Size Exceeds Your Plan Limit']);
         }
         $validator = Validator::make($request->only(['AssociateName', 'AssociateEmail']), [
             'AssociateEmail' => 'required|email:rfc,dns|unique:users,email',

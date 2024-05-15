@@ -616,7 +616,7 @@ class SuperAdminController extends Controller
 
     public function customQuotes() 
     {
-        $customQuotes = CustomQuote::with('user')->get();
+        $customQuotes = CustomQuote::with('user')->latest()->get();
         return view('superadmin.custom-quotes',compact('customQuotes'));
     }
 }

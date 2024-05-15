@@ -452,7 +452,7 @@
                                     <div class="form-inps">
                                         <label class="label1" for="">Email</label>
                                         <input type="email" class="input1 tab2email" name="email"
-                                            placeholder="wnlgtzanrjvghpfufe@cwmxc.com" id="">
+                                            placeholder="example@example.com" id="">
                                         <span class="error email_error"></span>
                                     </div>
                                     <div class="form-inps">
@@ -956,7 +956,17 @@
                 var stripe = Stripe("{{ env('STRIPE_PK') }}");
                 var elements = stripe.elements();
                 var card = elements.create('card', {
-                    hidePostalCode: true
+                    hidePostalCode: true,
+                    style: {
+                        base: {
+                            fontWeight: '500',
+                            fontSize: '17px',
+                            fontFamily: 'Lexend, sans-serif',
+                            '::placeholder': {
+                                color: '#c7bbbb',
+                            },
+                        }
+                    }
                 });
                 card.mount('#card-element');
                 card.addEventListener('change', function(event) {

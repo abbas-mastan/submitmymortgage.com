@@ -12,7 +12,7 @@ class SubscriptionHelper
     {
         try {
             $date = date('Y-m-d H:i:s');
-            $trial_days = strtotime($date . '+' . 7 . ' days');
+            $trial_days = strtotime($date . '+' . 2 . ' minutes');
             $stripe = new StripeClient(env('STRIPE_SK'));
             $subscription = $stripe->subscriptions->create([
                 'customer' => $customer_id,

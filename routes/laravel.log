@@ -2693,3 +2693,2328 @@
 )  
 [2024-05-14 06:51:38] production.INFO: customer.subscription.updated  
 [2024-05-14 06:51:38] production.INFO: cus_Q6YqUbjaRv7iJz  
+[2024-05-14 07:36:19] production.INFO: array (
+  'id' => 'evt_3PGMSi09tId2vnnu1DIKyf42',
+  'object' => 'event',
+  'api_version' => '2024-04-10',
+  'created' => 1715697377,
+  'data' => 
+  array (
+    'object' => 
+    array (
+      'id' => 'ch_3PGMSi09tId2vnnu1lDyMCfG',
+      'object' => 'charge',
+      'amount' => 50000,
+      'amount_captured' => 50000,
+      'amount_refunded' => 0,
+      'application' => NULL,
+      'application_fee' => NULL,
+      'application_fee_amount' => NULL,
+      'balance_transaction' => 'txn_3PGMSi09tId2vnnu1jR8wQRO',
+      'billing_details' => 
+      array (
+        'address' => 
+        array (
+          'city' => NULL,
+          'country' => NULL,
+          'line1' => NULL,
+          'line2' => NULL,
+          'postal_code' => NULL,
+          'state' => NULL,
+        ),
+        'email' => NULL,
+        'name' => NULL,
+        'phone' => NULL,
+      ),
+      'calculated_statement_descriptor' => 'Stripe',
+      'captured' => true,
+      'created' => 1715697377,
+      'currency' => 'usd',
+      'customer' => 'cus_Q3w2YQBvafl0Ju',
+      'description' => 'Subscription update',
+      'destination' => NULL,
+      'dispute' => NULL,
+      'disputed' => false,
+      'failure_balance_transaction' => NULL,
+      'failure_code' => NULL,
+      'failure_message' => NULL,
+      'fraud_details' => 
+      array (
+      ),
+      'invoice' => 'in_1PGLVo09tId2vnnupov2hMxQ',
+      'livemode' => false,
+      'metadata' => 
+      array (
+      ),
+      'on_behalf_of' => NULL,
+      'order' => NULL,
+      'outcome' => 
+      array (
+        'network_status' => 'approved_by_network',
+        'reason' => NULL,
+        'risk_level' => 'normal',
+        'risk_score' => 50,
+        'seller_message' => 'Payment complete.',
+        'type' => 'authorized',
+      ),
+      'paid' => true,
+      'payment_intent' => 'pi_3PGMSi09tId2vnnu1sALQ8yb',
+      'payment_method' => 'card_1PDoAE09tId2vnnuw1fCSCxt',
+      'payment_method_details' => 
+      array (
+        'card' => 
+        array (
+          'amount_authorized' => 50000,
+          'brand' => 'visa',
+          'checks' => 
+          array (
+            'address_line1_check' => NULL,
+            'address_postal_code_check' => NULL,
+            'cvc_check' => NULL,
+          ),
+          'country' => 'US',
+          'exp_month' => 6,
+          'exp_year' => 2055,
+          'extended_authorization' => 
+          array (
+            'status' => 'disabled',
+          ),
+          'fingerprint' => 'LfRQq8DvPNlVTGV2',
+          'funding' => 'credit',
+          'incremental_authorization' => 
+          array (
+            'status' => 'unavailable',
+          ),
+          'installments' => NULL,
+          'last4' => '1111',
+          'mandate' => NULL,
+          'multicapture' => 
+          array (
+            'status' => 'unavailable',
+          ),
+          'network' => 'visa',
+          'network_token' => 
+          array (
+            'used' => false,
+          ),
+          'overcapture' => 
+          array (
+            'maximum_amount_capturable' => 50000,
+            'status' => 'unavailable',
+          ),
+          'three_d_secure' => NULL,
+          'wallet' => NULL,
+        ),
+        'type' => 'card',
+      ),
+      'radar_options' => 
+      array (
+      ),
+      'receipt_email' => NULL,
+      'receipt_number' => NULL,
+      'receipt_url' => 'https://pay.stripe.com/receipts/invoices/CAcaFwoVYWNjdF8xUDZTQkIwOXRJZDJ2bm51KOLtjbIGMgZfjbqm0BE6LBYQjL7NvtKqrlOze983fe45WG2kU1uKDkDHF48jHbhCQO8bC0Jt-Xhe_HG4?s=ap',
+      'refunded' => false,
+      'review' => NULL,
+      'shipping' => NULL,
+      'source' => 
+      array (
+        'id' => 'card_1PDoAE09tId2vnnuw1fCSCxt',
+        'object' => 'card',
+        'address_city' => NULL,
+        'address_country' => NULL,
+        'address_line1' => NULL,
+        'address_line1_check' => NULL,
+        'address_line2' => NULL,
+        'address_state' => NULL,
+        'address_zip' => NULL,
+        'address_zip_check' => NULL,
+        'brand' => 'Visa',
+        'country' => 'US',
+        'customer' => 'cus_Q3w2YQBvafl0Ju',
+        'cvc_check' => NULL,
+        'dynamic_last4' => NULL,
+        'exp_month' => 6,
+        'exp_year' => 2055,
+        'fingerprint' => 'LfRQq8DvPNlVTGV2',
+        'funding' => 'credit',
+        'last4' => '1111',
+        'metadata' => 
+        array (
+        ),
+        'name' => NULL,
+        'tokenization_method' => NULL,
+        'wallet' => NULL,
+      ),
+      'source_transfer' => NULL,
+      'statement_descriptor' => NULL,
+      'statement_descriptor_suffix' => NULL,
+      'status' => 'succeeded',
+      'transfer_data' => NULL,
+      'transfer_group' => NULL,
+    ),
+  ),
+  'livemode' => false,
+  'pending_webhooks' => 1,
+  'request' => 
+  array (
+    'id' => NULL,
+    'idempotency_key' => 'in_1PGLVo09tId2vnnupov2hMxQ-initial_attempt-6b141b971b63377f4',
+  ),
+  'type' => 'charge.succeeded',
+)  
+[2024-05-14 07:36:19] production.INFO: charge.succeeded  
+[2024-05-14 07:36:19] production.INFO: cus_Q3w2YQBvafl0Ju  
+[2024-05-14 07:51:57] production.INFO: array (
+  'id' => 'evt_3PGMhp09tId2vnnu1GMtF1cF',
+  'object' => 'event',
+  'api_version' => '2024-04-10',
+  'created' => 1715698315,
+  'data' => 
+  array (
+    'object' => 
+    array (
+      'id' => 'ch_3PGMhp09tId2vnnu1hxj0P7R',
+      'object' => 'charge',
+      'amount' => 50000,
+      'amount_captured' => 50000,
+      'amount_refunded' => 0,
+      'application' => NULL,
+      'application_fee' => NULL,
+      'application_fee_amount' => NULL,
+      'balance_transaction' => 'txn_3PGMhp09tId2vnnu139qjsAC',
+      'billing_details' => 
+      array (
+        'address' => 
+        array (
+          'city' => NULL,
+          'country' => NULL,
+          'line1' => NULL,
+          'line2' => NULL,
+          'postal_code' => NULL,
+          'state' => NULL,
+        ),
+        'email' => NULL,
+        'name' => NULL,
+        'phone' => NULL,
+      ),
+      'calculated_statement_descriptor' => 'Stripe',
+      'captured' => true,
+      'created' => 1715698315,
+      'currency' => 'usd',
+      'customer' => 'cus_Q6YqUbjaRv7iJz',
+      'description' => 'Subscription update',
+      'destination' => NULL,
+      'dispute' => NULL,
+      'disputed' => false,
+      'failure_balance_transaction' => NULL,
+      'failure_code' => NULL,
+      'failure_message' => NULL,
+      'fraud_details' => 
+      array (
+      ),
+      'invoice' => 'in_1PGLlP09tId2vnnuMmiaWAYr',
+      'livemode' => false,
+      'metadata' => 
+      array (
+      ),
+      'on_behalf_of' => NULL,
+      'order' => NULL,
+      'outcome' => 
+      array (
+        'network_status' => 'approved_by_network',
+        'reason' => NULL,
+        'risk_level' => 'normal',
+        'risk_score' => 64,
+        'seller_message' => 'Payment complete.',
+        'type' => 'authorized',
+      ),
+      'paid' => true,
+      'payment_intent' => 'pi_3PGMhp09tId2vnnu1BMYGx3p',
+      'payment_method' => 'card_1PGLiN09tId2vnnu9AQQqpfN',
+      'payment_method_details' => 
+      array (
+        'card' => 
+        array (
+          'amount_authorized' => 50000,
+          'brand' => 'visa',
+          'checks' => 
+          array (
+            'address_line1_check' => NULL,
+            'address_postal_code_check' => NULL,
+            'cvc_check' => NULL,
+          ),
+          'country' => 'US',
+          'exp_month' => 5,
+          'exp_year' => 2055,
+          'extended_authorization' => 
+          array (
+            'status' => 'disabled',
+          ),
+          'fingerprint' => 'LfRQq8DvPNlVTGV2',
+          'funding' => 'credit',
+          'incremental_authorization' => 
+          array (
+            'status' => 'unavailable',
+          ),
+          'installments' => NULL,
+          'last4' => '1111',
+          'mandate' => NULL,
+          'multicapture' => 
+          array (
+            'status' => 'unavailable',
+          ),
+          'network' => 'visa',
+          'network_token' => 
+          array (
+            'used' => false,
+          ),
+          'overcapture' => 
+          array (
+            'maximum_amount_capturable' => 50000,
+            'status' => 'unavailable',
+          ),
+          'three_d_secure' => NULL,
+          'wallet' => NULL,
+        ),
+        'type' => 'card',
+      ),
+      'radar_options' => 
+      array (
+      ),
+      'receipt_email' => NULL,
+      'receipt_number' => NULL,
+      'receipt_url' => 'https://pay.stripe.com/receipts/invoices/CAcaFwoVYWNjdF8xUDZTQkIwOXRJZDJ2bm51KIz1jbIGMgaoVdE4xNI6LBYv2PZ6BGvkPAyBoh2bnPBFyd3RZTnHGHR00fwEufcZ3h36Z6kZwPT3WDla?s=ap',
+      'refunded' => false,
+      'review' => NULL,
+      'shipping' => NULL,
+      'source' => 
+      array (
+        'id' => 'card_1PGLiN09tId2vnnu9AQQqpfN',
+        'object' => 'card',
+        'address_city' => NULL,
+        'address_country' => NULL,
+        'address_line1' => NULL,
+        'address_line1_check' => NULL,
+        'address_line2' => NULL,
+        'address_state' => NULL,
+        'address_zip' => NULL,
+        'address_zip_check' => NULL,
+        'brand' => 'Visa',
+        'country' => 'US',
+        'customer' => 'cus_Q6YqUbjaRv7iJz',
+        'cvc_check' => NULL,
+        'dynamic_last4' => NULL,
+        'exp_month' => 5,
+        'exp_year' => 2055,
+        'fingerprint' => 'LfRQq8DvPNlVTGV2',
+        'funding' => 'credit',
+        'last4' => '1111',
+        'metadata' => 
+        array (
+        ),
+        'name' => NULL,
+        'tokenization_method' => NULL,
+        'wallet' => NULL,
+      ),
+      'source_transfer' => NULL,
+      'statement_descriptor' => NULL,
+      'statement_descriptor_suffix' => NULL,
+      'status' => 'succeeded',
+      'transfer_data' => NULL,
+      'transfer_group' => NULL,
+    ),
+  ),
+  'livemode' => false,
+  'pending_webhooks' => 1,
+  'request' => 
+  array (
+    'id' => NULL,
+    'idempotency_key' => 'in_1PGLlP09tId2vnnuMmiaWAYr-initial_attempt-20ad59a59a0a58b23',
+  ),
+  'type' => 'charge.succeeded',
+)  
+[2024-05-14 07:51:57] production.INFO: charge.succeeded  
+[2024-05-14 07:51:57] production.INFO: cus_Q6YqUbjaRv7iJz  
+[2024-05-14 23:44:01] production.INFO: array (
+  'id' => 'evt_1PGbZD09tId2vnnuJpGCkBMf',
+  'object' => 'event',
+  'api_version' => '2024-04-10',
+  'created' => 1715755438,
+  'data' => 
+  array (
+    'object' => 
+    array (
+      'id' => 'sub_1PE4Dz09tId2vnnuhEsyG4Er',
+      'object' => 'subscription',
+      'application' => NULL,
+      'application_fee_percent' => NULL,
+      'automatic_tax' => 
+      array (
+        'enabled' => false,
+        'liability' => NULL,
+      ),
+      'billing_cycle_anchor' => 1715755414,
+      'billing_cycle_anchor_config' => NULL,
+      'billing_thresholds' => NULL,
+      'cancel_at' => NULL,
+      'cancel_at_period_end' => false,
+      'canceled_at' => NULL,
+      'cancellation_details' => 
+      array (
+        'comment' => NULL,
+        'feedback' => NULL,
+        'reason' => NULL,
+      ),
+      'collection_method' => 'charge_automatically',
+      'created' => 1715150614,
+      'currency' => 'usd',
+      'current_period_end' => 1718433814,
+      'current_period_start' => 1715755414,
+      'customer' => 'cus_Q4CdQybj82yklc',
+      'days_until_due' => NULL,
+      'default_payment_method' => NULL,
+      'default_source' => NULL,
+      'default_tax_rates' => 
+      array (
+      ),
+      'description' => NULL,
+      'discount' => NULL,
+      'discounts' => 
+      array (
+      ),
+      'ended_at' => NULL,
+      'invoice_settings' => 
+      array (
+        'account_tax_ids' => NULL,
+        'issuer' => 
+        array (
+          'type' => 'self',
+        ),
+      ),
+      'items' => 
+      array (
+        'object' => 'list',
+        'data' => 
+        array (
+          0 => 
+          array (
+            'id' => 'si_Q4CdqTHSO8b0hs',
+            'object' => 'subscription_item',
+            'billing_thresholds' => NULL,
+            'created' => 1715150615,
+            'discounts' => 
+            array (
+            ),
+            'metadata' => 
+            array (
+            ),
+            'plan' => 
+            array (
+              'id' => 'price_1PDhkz09tId2vnnuTMT0PkXL',
+              'object' => 'plan',
+              'active' => true,
+              'aggregate_usage' => NULL,
+              'amount' => 100000,
+              'amount_decimal' => '100000',
+              'billing_scheme' => 'per_unit',
+              'created' => 1715064249,
+              'currency' => 'usd',
+              'interval' => 'month',
+              'interval_count' => 1,
+              'livemode' => false,
+              'metadata' => 
+              array (
+              ),
+              'meter' => NULL,
+              'nickname' => NULL,
+              'product' => 'prod_Q3pP7Cj7zfp3K7',
+              'tiers_mode' => NULL,
+              'transform_usage' => NULL,
+              'trial_period_days' => NULL,
+              'usage_type' => 'licensed',
+            ),
+            'price' => 
+            array (
+              'id' => 'price_1PDhkz09tId2vnnuTMT0PkXL',
+              'object' => 'price',
+              'active' => true,
+              'billing_scheme' => 'per_unit',
+              'created' => 1715064249,
+              'currency' => 'usd',
+              'custom_unit_amount' => NULL,
+              'livemode' => false,
+              'lookup_key' => NULL,
+              'metadata' => 
+              array (
+              ),
+              'nickname' => NULL,
+              'product' => 'prod_Q3pP7Cj7zfp3K7',
+              'recurring' => 
+              array (
+                'aggregate_usage' => NULL,
+                'interval' => 'month',
+                'interval_count' => 1,
+                'meter' => NULL,
+                'trial_period_days' => NULL,
+                'usage_type' => 'licensed',
+              ),
+              'tax_behavior' => 'unspecified',
+              'tiers_mode' => NULL,
+              'transform_quantity' => NULL,
+              'type' => 'recurring',
+              'unit_amount' => 100000,
+              'unit_amount_decimal' => '100000',
+            ),
+            'quantity' => 1,
+            'subscription' => 'sub_1PE4Dz09tId2vnnuhEsyG4Er',
+            'tax_rates' => 
+            array (
+            ),
+          ),
+        ),
+        'has_more' => false,
+        'total_count' => 1,
+        'url' => '/v1/subscription_items?subscription=sub_1PE4Dz09tId2vnnuhEsyG4Er',
+      ),
+      'latest_invoice' => 'in_1PGbZ709tId2vnnuUSBfJFRO',
+      'livemode' => false,
+      'metadata' => 
+      array (
+      ),
+      'next_pending_invoice_item_invoice' => NULL,
+      'on_behalf_of' => NULL,
+      'pause_collection' => NULL,
+      'payment_settings' => 
+      array (
+        'payment_method_options' => NULL,
+        'payment_method_types' => NULL,
+        'save_default_payment_method' => 'off',
+      ),
+      'pending_invoice_item_interval' => NULL,
+      'pending_setup_intent' => NULL,
+      'pending_update' => NULL,
+      'plan' => 
+      array (
+        'id' => 'price_1PDhkz09tId2vnnuTMT0PkXL',
+        'object' => 'plan',
+        'active' => true,
+        'aggregate_usage' => NULL,
+        'amount' => 100000,
+        'amount_decimal' => '100000',
+        'billing_scheme' => 'per_unit',
+        'created' => 1715064249,
+        'currency' => 'usd',
+        'interval' => 'month',
+        'interval_count' => 1,
+        'livemode' => false,
+        'metadata' => 
+        array (
+        ),
+        'meter' => NULL,
+        'nickname' => NULL,
+        'product' => 'prod_Q3pP7Cj7zfp3K7',
+        'tiers_mode' => NULL,
+        'transform_usage' => NULL,
+        'trial_period_days' => NULL,
+        'usage_type' => 'licensed',
+      ),
+      'quantity' => 1,
+      'schedule' => NULL,
+      'start_date' => 1715150614,
+      'status' => 'active',
+      'test_clock' => NULL,
+      'transfer_data' => NULL,
+      'trial_end' => 1715755414,
+      'trial_settings' => 
+      array (
+        'end_behavior' => 
+        array (
+          'missing_payment_method' => 'create_invoice',
+        ),
+      ),
+      'trial_start' => 1715150614,
+    ),
+    'previous_attributes' => 
+    array (
+      'current_period_end' => 1715755414,
+      'current_period_start' => 1715150614,
+      'latest_invoice' => 'in_1PE4Dz09tId2vnnusV7pOlc5',
+      'status' => 'trialing',
+    ),
+  ),
+  'livemode' => false,
+  'pending_webhooks' => 1,
+  'request' => 
+  array (
+    'id' => NULL,
+    'idempotency_key' => NULL,
+  ),
+  'type' => 'customer.subscription.updated',
+)  
+[2024-05-14 23:44:01] production.INFO: customer.subscription.updated  
+[2024-05-14 23:44:01] production.INFO: cus_Q4CdQybj82yklc  
+[2024-05-15 00:07:01] production.INFO: array (
+  'id' => 'evt_1PGbvS09tId2vnnuJd704IAq',
+  'object' => 'event',
+  'api_version' => '2024-04-10',
+  'created' => 1715756817,
+  'data' => 
+  array (
+    'object' => 
+    array (
+      'id' => 'sub_1PE4Zr09tId2vnnuilJobBem',
+      'object' => 'subscription',
+      'application' => NULL,
+      'application_fee_percent' => NULL,
+      'automatic_tax' => 
+      array (
+        'enabled' => false,
+        'liability' => NULL,
+      ),
+      'billing_cycle_anchor' => 1715756769,
+      'billing_cycle_anchor_config' => NULL,
+      'billing_thresholds' => NULL,
+      'cancel_at' => NULL,
+      'cancel_at_period_end' => false,
+      'canceled_at' => NULL,
+      'cancellation_details' => 
+      array (
+        'comment' => NULL,
+        'feedback' => NULL,
+        'reason' => NULL,
+      ),
+      'collection_method' => 'charge_automatically',
+      'created' => 1715151971,
+      'currency' => 'usd',
+      'current_period_end' => 1718435169,
+      'current_period_start' => 1715756769,
+      'customer' => 'cus_Q4CzEDXKt9OaRj',
+      'days_until_due' => NULL,
+      'default_payment_method' => NULL,
+      'default_source' => NULL,
+      'default_tax_rates' => 
+      array (
+      ),
+      'description' => NULL,
+      'discount' => NULL,
+      'discounts' => 
+      array (
+      ),
+      'ended_at' => NULL,
+      'invoice_settings' => 
+      array (
+        'account_tax_ids' => NULL,
+        'issuer' => 
+        array (
+          'type' => 'self',
+        ),
+      ),
+      'items' => 
+      array (
+        'object' => 'list',
+        'data' => 
+        array (
+          0 => 
+          array (
+            'id' => 'si_Q4Czu4waNYRKf6',
+            'object' => 'subscription_item',
+            'billing_thresholds' => NULL,
+            'created' => 1715151972,
+            'discounts' => 
+            array (
+            ),
+            'metadata' => 
+            array (
+            ),
+            'plan' => 
+            array (
+              'id' => 'price_1PDhk109tId2vnnueRGJ22ef',
+              'object' => 'plan',
+              'active' => true,
+              'aggregate_usage' => NULL,
+              'amount' => 50000,
+              'amount_decimal' => '50000',
+              'billing_scheme' => 'per_unit',
+              'created' => 1715064189,
+              'currency' => 'usd',
+              'interval' => 'month',
+              'interval_count' => 1,
+              'livemode' => false,
+              'metadata' => 
+              array (
+              ),
+              'meter' => NULL,
+              'nickname' => NULL,
+              'product' => 'prod_Q3pOGHwHgQtx4o',
+              'tiers_mode' => NULL,
+              'transform_usage' => NULL,
+              'trial_period_days' => NULL,
+              'usage_type' => 'licensed',
+            ),
+            'price' => 
+            array (
+              'id' => 'price_1PDhk109tId2vnnueRGJ22ef',
+              'object' => 'price',
+              'active' => true,
+              'billing_scheme' => 'per_unit',
+              'created' => 1715064189,
+              'currency' => 'usd',
+              'custom_unit_amount' => NULL,
+              'livemode' => false,
+              'lookup_key' => NULL,
+              'metadata' => 
+              array (
+              ),
+              'nickname' => NULL,
+              'product' => 'prod_Q3pOGHwHgQtx4o',
+              'recurring' => 
+              array (
+                'aggregate_usage' => NULL,
+                'interval' => 'month',
+                'interval_count' => 1,
+                'meter' => NULL,
+                'trial_period_days' => NULL,
+                'usage_type' => 'licensed',
+              ),
+              'tax_behavior' => 'unspecified',
+              'tiers_mode' => NULL,
+              'transform_quantity' => NULL,
+              'type' => 'recurring',
+              'unit_amount' => 50000,
+              'unit_amount_decimal' => '50000',
+            ),
+            'quantity' => 1,
+            'subscription' => 'sub_1PE4Zr09tId2vnnuilJobBem',
+            'tax_rates' => 
+            array (
+            ),
+          ),
+        ),
+        'has_more' => false,
+        'total_count' => 1,
+        'url' => '/v1/subscription_items?subscription=sub_1PE4Zr09tId2vnnuilJobBem',
+      ),
+      'latest_invoice' => 'in_1PGbvQ09tId2vnnuH0v418dH',
+      'livemode' => false,
+      'metadata' => 
+      array (
+      ),
+      'next_pending_invoice_item_invoice' => NULL,
+      'on_behalf_of' => NULL,
+      'pause_collection' => NULL,
+      'payment_settings' => 
+      array (
+        'payment_method_options' => NULL,
+        'payment_method_types' => NULL,
+        'save_default_payment_method' => 'off',
+      ),
+      'pending_invoice_item_interval' => NULL,
+      'pending_setup_intent' => NULL,
+      'pending_update' => NULL,
+      'plan' => 
+      array (
+        'id' => 'price_1PDhk109tId2vnnueRGJ22ef',
+        'object' => 'plan',
+        'active' => true,
+        'aggregate_usage' => NULL,
+        'amount' => 50000,
+        'amount_decimal' => '50000',
+        'billing_scheme' => 'per_unit',
+        'created' => 1715064189,
+        'currency' => 'usd',
+        'interval' => 'month',
+        'interval_count' => 1,
+        'livemode' => false,
+        'metadata' => 
+        array (
+        ),
+        'meter' => NULL,
+        'nickname' => NULL,
+        'product' => 'prod_Q3pOGHwHgQtx4o',
+        'tiers_mode' => NULL,
+        'transform_usage' => NULL,
+        'trial_period_days' => NULL,
+        'usage_type' => 'licensed',
+      ),
+      'quantity' => 1,
+      'schedule' => NULL,
+      'start_date' => 1715151971,
+      'status' => 'active',
+      'test_clock' => NULL,
+      'transfer_data' => NULL,
+      'trial_end' => 1715756769,
+      'trial_settings' => 
+      array (
+        'end_behavior' => 
+        array (
+          'missing_payment_method' => 'create_invoice',
+        ),
+      ),
+      'trial_start' => 1715151971,
+    ),
+    'previous_attributes' => 
+    array (
+      'current_period_end' => 1715756769,
+      'current_period_start' => 1715151971,
+      'latest_invoice' => 'in_1PE4Zr09tId2vnnujY6HnAFp',
+      'status' => 'trialing',
+    ),
+  ),
+  'livemode' => false,
+  'pending_webhooks' => 1,
+  'request' => 
+  array (
+    'id' => NULL,
+    'idempotency_key' => NULL,
+  ),
+  'type' => 'customer.subscription.updated',
+)  
+[2024-05-15 00:07:01] production.INFO: customer.subscription.updated  
+[2024-05-15 00:07:01] production.INFO: cus_Q4CzEDXKt9OaRj  
+[2024-05-15 00:10:20] production.INFO: array (
+  'id' => 'evt_1PGbyg09tId2vnnuIahIAJox',
+  'object' => 'event',
+  'api_version' => '2024-04-10',
+  'created' => 1715757018,
+  'data' => 
+  array (
+    'object' => 
+    array (
+      'id' => 'sub_1PE4dS09tId2vnnuBLpbBtsI',
+      'object' => 'subscription',
+      'application' => NULL,
+      'application_fee_percent' => NULL,
+      'automatic_tax' => 
+      array (
+        'enabled' => false,
+        'liability' => NULL,
+      ),
+      'billing_cycle_anchor' => 1715756993,
+      'billing_cycle_anchor_config' => NULL,
+      'billing_thresholds' => NULL,
+      'cancel_at' => NULL,
+      'cancel_at_period_end' => false,
+      'canceled_at' => NULL,
+      'cancellation_details' => 
+      array (
+        'comment' => NULL,
+        'feedback' => NULL,
+        'reason' => NULL,
+      ),
+      'collection_method' => 'charge_automatically',
+      'created' => 1715152194,
+      'currency' => 'usd',
+      'current_period_end' => 1718435393,
+      'current_period_start' => 1715756993,
+      'customer' => 'cus_Q4D3XPiL9hZt2C',
+      'days_until_due' => NULL,
+      'default_payment_method' => NULL,
+      'default_source' => NULL,
+      'default_tax_rates' => 
+      array (
+      ),
+      'description' => NULL,
+      'discount' => NULL,
+      'discounts' => 
+      array (
+      ),
+      'ended_at' => NULL,
+      'invoice_settings' => 
+      array (
+        'account_tax_ids' => NULL,
+        'issuer' => 
+        array (
+          'type' => 'self',
+        ),
+      ),
+      'items' => 
+      array (
+        'object' => 'list',
+        'data' => 
+        array (
+          0 => 
+          array (
+            'id' => 'si_Q4D37pXWjqoh89',
+            'object' => 'subscription_item',
+            'billing_thresholds' => NULL,
+            'created' => 1715152194,
+            'discounts' => 
+            array (
+            ),
+            'metadata' => 
+            array (
+            ),
+            'plan' => 
+            array (
+              'id' => 'price_1PDhk109tId2vnnueRGJ22ef',
+              'object' => 'plan',
+              'active' => true,
+              'aggregate_usage' => NULL,
+              'amount' => 50000,
+              'amount_decimal' => '50000',
+              'billing_scheme' => 'per_unit',
+              'created' => 1715064189,
+              'currency' => 'usd',
+              'interval' => 'month',
+              'interval_count' => 1,
+              'livemode' => false,
+              'metadata' => 
+              array (
+              ),
+              'meter' => NULL,
+              'nickname' => NULL,
+              'product' => 'prod_Q3pOGHwHgQtx4o',
+              'tiers_mode' => NULL,
+              'transform_usage' => NULL,
+              'trial_period_days' => NULL,
+              'usage_type' => 'licensed',
+            ),
+            'price' => 
+            array (
+              'id' => 'price_1PDhk109tId2vnnueRGJ22ef',
+              'object' => 'price',
+              'active' => true,
+              'billing_scheme' => 'per_unit',
+              'created' => 1715064189,
+              'currency' => 'usd',
+              'custom_unit_amount' => NULL,
+              'livemode' => false,
+              'lookup_key' => NULL,
+              'metadata' => 
+              array (
+              ),
+              'nickname' => NULL,
+              'product' => 'prod_Q3pOGHwHgQtx4o',
+              'recurring' => 
+              array (
+                'aggregate_usage' => NULL,
+                'interval' => 'month',
+                'interval_count' => 1,
+                'meter' => NULL,
+                'trial_period_days' => NULL,
+                'usage_type' => 'licensed',
+              ),
+              'tax_behavior' => 'unspecified',
+              'tiers_mode' => NULL,
+              'transform_quantity' => NULL,
+              'type' => 'recurring',
+              'unit_amount' => 50000,
+              'unit_amount_decimal' => '50000',
+            ),
+            'quantity' => 1,
+            'subscription' => 'sub_1PE4dS09tId2vnnuBLpbBtsI',
+            'tax_rates' => 
+            array (
+            ),
+          ),
+        ),
+        'has_more' => false,
+        'total_count' => 1,
+        'url' => '/v1/subscription_items?subscription=sub_1PE4dS09tId2vnnuBLpbBtsI',
+      ),
+      'latest_invoice' => 'in_1PGbya09tId2vnnuKwyzD7m5',
+      'livemode' => false,
+      'metadata' => 
+      array (
+      ),
+      'next_pending_invoice_item_invoice' => NULL,
+      'on_behalf_of' => NULL,
+      'pause_collection' => NULL,
+      'payment_settings' => 
+      array (
+        'payment_method_options' => NULL,
+        'payment_method_types' => NULL,
+        'save_default_payment_method' => 'off',
+      ),
+      'pending_invoice_item_interval' => NULL,
+      'pending_setup_intent' => NULL,
+      'pending_update' => NULL,
+      'plan' => 
+      array (
+        'id' => 'price_1PDhk109tId2vnnueRGJ22ef',
+        'object' => 'plan',
+        'active' => true,
+        'aggregate_usage' => NULL,
+        'amount' => 50000,
+        'amount_decimal' => '50000',
+        'billing_scheme' => 'per_unit',
+        'created' => 1715064189,
+        'currency' => 'usd',
+        'interval' => 'month',
+        'interval_count' => 1,
+        'livemode' => false,
+        'metadata' => 
+        array (
+        ),
+        'meter' => NULL,
+        'nickname' => NULL,
+        'product' => 'prod_Q3pOGHwHgQtx4o',
+        'tiers_mode' => NULL,
+        'transform_usage' => NULL,
+        'trial_period_days' => NULL,
+        'usage_type' => 'licensed',
+      ),
+      'quantity' => 1,
+      'schedule' => NULL,
+      'start_date' => 1715152194,
+      'status' => 'active',
+      'test_clock' => NULL,
+      'transfer_data' => NULL,
+      'trial_end' => 1715756993,
+      'trial_settings' => 
+      array (
+        'end_behavior' => 
+        array (
+          'missing_payment_method' => 'create_invoice',
+        ),
+      ),
+      'trial_start' => 1715152194,
+    ),
+    'previous_attributes' => 
+    array (
+      'current_period_end' => 1715756993,
+      'current_period_start' => 1715152194,
+      'latest_invoice' => 'in_1PE4dS09tId2vnnuWPEds681',
+      'status' => 'trialing',
+    ),
+  ),
+  'livemode' => false,
+  'pending_webhooks' => 1,
+  'request' => 
+  array (
+    'id' => NULL,
+    'idempotency_key' => NULL,
+  ),
+  'type' => 'customer.subscription.updated',
+)  
+[2024-05-15 00:10:20] production.INFO: customer.subscription.updated  
+[2024-05-15 00:10:20] production.INFO: cus_Q4D3XPiL9hZt2C  
+[2024-05-15 00:25:27] production.INFO: array (
+  'id' => 'evt_1PGcDJ09tId2vnnu9XGxwb3g',
+  'object' => 'event',
+  'api_version' => '2024-04-10',
+  'created' => 1715757924,
+  'data' => 
+  array (
+    'object' => 
+    array (
+      'id' => 'sub_1PE4sH09tId2vnnunYg4o63T',
+      'object' => 'subscription',
+      'application' => NULL,
+      'application_fee_percent' => NULL,
+      'automatic_tax' => 
+      array (
+        'enabled' => false,
+        'liability' => NULL,
+      ),
+      'billing_cycle_anchor' => 1715757913,
+      'billing_cycle_anchor_config' => NULL,
+      'billing_thresholds' => NULL,
+      'cancel_at' => NULL,
+      'cancel_at_period_end' => false,
+      'canceled_at' => NULL,
+      'cancellation_details' => 
+      array (
+        'comment' => NULL,
+        'feedback' => NULL,
+        'reason' => NULL,
+      ),
+      'collection_method' => 'charge_automatically',
+      'created' => 1715153113,
+      'currency' => 'usd',
+      'current_period_end' => 1718436313,
+      'current_period_start' => 1715757913,
+      'customer' => 'cus_Q4DIPSK4N05Sby',
+      'days_until_due' => NULL,
+      'default_payment_method' => NULL,
+      'default_source' => NULL,
+      'default_tax_rates' => 
+      array (
+      ),
+      'description' => NULL,
+      'discount' => NULL,
+      'discounts' => 
+      array (
+      ),
+      'ended_at' => NULL,
+      'invoice_settings' => 
+      array (
+        'account_tax_ids' => NULL,
+        'issuer' => 
+        array (
+          'type' => 'self',
+        ),
+      ),
+      'items' => 
+      array (
+        'object' => 'list',
+        'data' => 
+        array (
+          0 => 
+          array (
+            'id' => 'si_Q4DI7qK3IRwaF0',
+            'object' => 'subscription_item',
+            'billing_thresholds' => NULL,
+            'created' => 1715153114,
+            'discounts' => 
+            array (
+            ),
+            'metadata' => 
+            array (
+            ),
+            'plan' => 
+            array (
+              'id' => 'price_1PDhk109tId2vnnueRGJ22ef',
+              'object' => 'plan',
+              'active' => true,
+              'aggregate_usage' => NULL,
+              'amount' => 50000,
+              'amount_decimal' => '50000',
+              'billing_scheme' => 'per_unit',
+              'created' => 1715064189,
+              'currency' => 'usd',
+              'interval' => 'month',
+              'interval_count' => 1,
+              'livemode' => false,
+              'metadata' => 
+              array (
+              ),
+              'meter' => NULL,
+              'nickname' => NULL,
+              'product' => 'prod_Q3pOGHwHgQtx4o',
+              'tiers_mode' => NULL,
+              'transform_usage' => NULL,
+              'trial_period_days' => NULL,
+              'usage_type' => 'licensed',
+            ),
+            'price' => 
+            array (
+              'id' => 'price_1PDhk109tId2vnnueRGJ22ef',
+              'object' => 'price',
+              'active' => true,
+              'billing_scheme' => 'per_unit',
+              'created' => 1715064189,
+              'currency' => 'usd',
+              'custom_unit_amount' => NULL,
+              'livemode' => false,
+              'lookup_key' => NULL,
+              'metadata' => 
+              array (
+              ),
+              'nickname' => NULL,
+              'product' => 'prod_Q3pOGHwHgQtx4o',
+              'recurring' => 
+              array (
+                'aggregate_usage' => NULL,
+                'interval' => 'month',
+                'interval_count' => 1,
+                'meter' => NULL,
+                'trial_period_days' => NULL,
+                'usage_type' => 'licensed',
+              ),
+              'tax_behavior' => 'unspecified',
+              'tiers_mode' => NULL,
+              'transform_quantity' => NULL,
+              'type' => 'recurring',
+              'unit_amount' => 50000,
+              'unit_amount_decimal' => '50000',
+            ),
+            'quantity' => 1,
+            'subscription' => 'sub_1PE4sH09tId2vnnunYg4o63T',
+            'tax_rates' => 
+            array (
+            ),
+          ),
+        ),
+        'has_more' => false,
+        'total_count' => 1,
+        'url' => '/v1/subscription_items?subscription=sub_1PE4sH09tId2vnnunYg4o63T',
+      ),
+      'latest_invoice' => 'in_1PGcDD09tId2vnnu0Ba9ijBm',
+      'livemode' => false,
+      'metadata' => 
+      array (
+      ),
+      'next_pending_invoice_item_invoice' => NULL,
+      'on_behalf_of' => NULL,
+      'pause_collection' => NULL,
+      'payment_settings' => 
+      array (
+        'payment_method_options' => NULL,
+        'payment_method_types' => NULL,
+        'save_default_payment_method' => 'off',
+      ),
+      'pending_invoice_item_interval' => NULL,
+      'pending_setup_intent' => NULL,
+      'pending_update' => NULL,
+      'plan' => 
+      array (
+        'id' => 'price_1PDhk109tId2vnnueRGJ22ef',
+        'object' => 'plan',
+        'active' => true,
+        'aggregate_usage' => NULL,
+        'amount' => 50000,
+        'amount_decimal' => '50000',
+        'billing_scheme' => 'per_unit',
+        'created' => 1715064189,
+        'currency' => 'usd',
+        'interval' => 'month',
+        'interval_count' => 1,
+        'livemode' => false,
+        'metadata' => 
+        array (
+        ),
+        'meter' => NULL,
+        'nickname' => NULL,
+        'product' => 'prod_Q3pOGHwHgQtx4o',
+        'tiers_mode' => NULL,
+        'transform_usage' => NULL,
+        'trial_period_days' => NULL,
+        'usage_type' => 'licensed',
+      ),
+      'quantity' => 1,
+      'schedule' => NULL,
+      'start_date' => 1715153113,
+      'status' => 'active',
+      'test_clock' => NULL,
+      'transfer_data' => NULL,
+      'trial_end' => 1715757913,
+      'trial_settings' => 
+      array (
+        'end_behavior' => 
+        array (
+          'missing_payment_method' => 'create_invoice',
+        ),
+      ),
+      'trial_start' => 1715153113,
+    ),
+    'previous_attributes' => 
+    array (
+      'current_period_end' => 1715757913,
+      'current_period_start' => 1715153113,
+      'latest_invoice' => 'in_1PE4sH09tId2vnnuAY0e5GUo',
+      'status' => 'trialing',
+    ),
+  ),
+  'livemode' => false,
+  'pending_webhooks' => 1,
+  'request' => 
+  array (
+    'id' => NULL,
+    'idempotency_key' => NULL,
+  ),
+  'type' => 'customer.subscription.updated',
+)  
+[2024-05-15 00:25:27] production.INFO: customer.subscription.updated  
+[2024-05-15 00:25:27] production.INFO: cus_Q4DIPSK4N05Sby  
+[2024-05-15 00:44:55] production.INFO: array (
+  'id' => 'evt_3PGcW709tId2vnnu1YZ37ajo',
+  'object' => 'event',
+  'api_version' => '2024-04-10',
+  'created' => 1715759094,
+  'data' => 
+  array (
+    'object' => 
+    array (
+      'id' => 'ch_3PGcW709tId2vnnu18G8kUQM',
+      'object' => 'charge',
+      'amount' => 100000,
+      'amount_captured' => 100000,
+      'amount_refunded' => 0,
+      'application' => NULL,
+      'application_fee' => NULL,
+      'application_fee_amount' => NULL,
+      'balance_transaction' => 'txn_3PGcW709tId2vnnu1AhMcvq3',
+      'billing_details' => 
+      array (
+        'address' => 
+        array (
+          'city' => NULL,
+          'country' => NULL,
+          'line1' => NULL,
+          'line2' => NULL,
+          'postal_code' => NULL,
+          'state' => NULL,
+        ),
+        'email' => NULL,
+        'name' => NULL,
+        'phone' => NULL,
+      ),
+      'calculated_statement_descriptor' => 'Stripe',
+      'captured' => true,
+      'created' => 1715759093,
+      'currency' => 'usd',
+      'customer' => 'cus_Q4CdQybj82yklc',
+      'description' => 'Subscription update',
+      'destination' => NULL,
+      'dispute' => NULL,
+      'disputed' => false,
+      'failure_balance_transaction' => NULL,
+      'failure_code' => NULL,
+      'failure_message' => NULL,
+      'fraud_details' => 
+      array (
+      ),
+      'invoice' => 'in_1PGbZ709tId2vnnuUSBfJFRO',
+      'livemode' => false,
+      'metadata' => 
+      array (
+      ),
+      'on_behalf_of' => NULL,
+      'order' => NULL,
+      'outcome' => 
+      array (
+        'network_status' => 'approved_by_network',
+        'reason' => NULL,
+        'risk_level' => 'normal',
+        'risk_score' => 29,
+        'seller_message' => 'Payment complete.',
+        'type' => 'authorized',
+      ),
+      'paid' => true,
+      'payment_intent' => 'pi_3PGcW709tId2vnnu1YtpnXG8',
+      'payment_method' => 'card_1PE4Do09tId2vnnuijgrKtI3',
+      'payment_method_details' => 
+      array (
+        'card' => 
+        array (
+          'amount_authorized' => 100000,
+          'brand' => 'visa',
+          'checks' => 
+          array (
+            'address_line1_check' => NULL,
+            'address_postal_code_check' => NULL,
+            'cvc_check' => NULL,
+          ),
+          'country' => 'US',
+          'exp_month' => 11,
+          'exp_year' => 2055,
+          'extended_authorization' => 
+          array (
+            'status' => 'disabled',
+          ),
+          'fingerprint' => 'LfRQq8DvPNlVTGV2',
+          'funding' => 'credit',
+          'incremental_authorization' => 
+          array (
+            'status' => 'unavailable',
+          ),
+          'installments' => NULL,
+          'last4' => '1111',
+          'mandate' => NULL,
+          'multicapture' => 
+          array (
+            'status' => 'unavailable',
+          ),
+          'network' => 'visa',
+          'network_token' => 
+          array (
+            'used' => false,
+          ),
+          'overcapture' => 
+          array (
+            'maximum_amount_capturable' => 100000,
+            'status' => 'unavailable',
+          ),
+          'three_d_secure' => NULL,
+          'wallet' => NULL,
+        ),
+        'type' => 'card',
+      ),
+      'radar_options' => 
+      array (
+      ),
+      'receipt_email' => NULL,
+      'receipt_number' => NULL,
+      'receipt_url' => 'https://pay.stripe.com/receipts/invoices/CAcaFwoVYWNjdF8xUDZTQkIwOXRJZDJ2bm51KPbPkbIGMgZJW6PDxP06LBZLdoVf4o-d336ZH5OJSD4oOyEwOMOwEbyfd1pJCkn3mdachxdtvRQc_iVW?s=ap',
+      'refunded' => false,
+      'review' => NULL,
+      'shipping' => NULL,
+      'source' => 
+      array (
+        'id' => 'card_1PE4Do09tId2vnnuijgrKtI3',
+        'object' => 'card',
+        'address_city' => NULL,
+        'address_country' => NULL,
+        'address_line1' => NULL,
+        'address_line1_check' => NULL,
+        'address_line2' => NULL,
+        'address_state' => NULL,
+        'address_zip' => NULL,
+        'address_zip_check' => NULL,
+        'brand' => 'Visa',
+        'country' => 'US',
+        'customer' => 'cus_Q4CdQybj82yklc',
+        'cvc_check' => NULL,
+        'dynamic_last4' => NULL,
+        'exp_month' => 11,
+        'exp_year' => 2055,
+        'fingerprint' => 'LfRQq8DvPNlVTGV2',
+        'funding' => 'credit',
+        'last4' => '1111',
+        'metadata' => 
+        array (
+        ),
+        'name' => NULL,
+        'tokenization_method' => NULL,
+        'wallet' => NULL,
+      ),
+      'source_transfer' => NULL,
+      'statement_descriptor' => NULL,
+      'statement_descriptor_suffix' => NULL,
+      'status' => 'succeeded',
+      'transfer_data' => NULL,
+      'transfer_group' => NULL,
+    ),
+  ),
+  'livemode' => false,
+  'pending_webhooks' => 1,
+  'request' => 
+  array (
+    'id' => NULL,
+    'idempotency_key' => 'in_1PGbZ709tId2vnnuUSBfJFRO-initial_attempt-d4f0d4d5e9ca66545',
+  ),
+  'type' => 'charge.succeeded',
+)  
+[2024-05-15 00:44:55] production.INFO: charge.succeeded  
+[2024-05-15 00:44:55] production.INFO: cus_Q4CdQybj82yklc  
+[2024-05-15 01:01:52] production.INFO: array (
+  'id' => 'evt_1PGcmD09tId2vnnuOmetJXes',
+  'object' => 'event',
+  'api_version' => '2024-04-10',
+  'created' => 1715760083,
+  'data' => 
+  array (
+    'object' => 
+    array (
+      'id' => 'sub_1PFArE09tId2vnnuCZVG71lk',
+      'object' => 'subscription',
+      'application' => NULL,
+      'application_fee_percent' => NULL,
+      'automatic_tax' => 
+      array (
+        'enabled' => false,
+        'liability' => NULL,
+      ),
+      'billing_cycle_anchor' => 1716019238,
+      'billing_cycle_anchor_config' => NULL,
+      'billing_thresholds' => NULL,
+      'cancel_at' => NULL,
+      'cancel_at_period_end' => false,
+      'canceled_at' => NULL,
+      'cancellation_details' => 
+      array (
+        'comment' => NULL,
+        'feedback' => NULL,
+        'reason' => NULL,
+      ),
+      'collection_method' => 'charge_automatically',
+      'created' => 1715414440,
+      'currency' => 'usd',
+      'current_period_end' => 1716019238,
+      'current_period_start' => 1715414440,
+      'customer' => 'cus_Q5LXxvTc6plUxX',
+      'days_until_due' => NULL,
+      'default_payment_method' => NULL,
+      'default_source' => NULL,
+      'default_tax_rates' => 
+      array (
+      ),
+      'description' => NULL,
+      'discount' => NULL,
+      'discounts' => 
+      array (
+      ),
+      'ended_at' => NULL,
+      'invoice_settings' => 
+      array (
+        'account_tax_ids' => NULL,
+        'issuer' => 
+        array (
+          'type' => 'self',
+        ),
+      ),
+      'items' => 
+      array (
+        'object' => 'list',
+        'data' => 
+        array (
+          0 => 
+          array (
+            'id' => 'si_Q5LYQn0iEBkGEp',
+            'object' => 'subscription_item',
+            'billing_thresholds' => NULL,
+            'created' => 1715414440,
+            'discounts' => 
+            array (
+            ),
+            'metadata' => 
+            array (
+            ),
+            'plan' => 
+            array (
+              'id' => 'price_1PDhk109tId2vnnueRGJ22ef',
+              'object' => 'plan',
+              'active' => true,
+              'aggregate_usage' => NULL,
+              'amount' => 50000,
+              'amount_decimal' => '50000',
+              'billing_scheme' => 'per_unit',
+              'created' => 1715064189,
+              'currency' => 'usd',
+              'interval' => 'month',
+              'interval_count' => 1,
+              'livemode' => false,
+              'metadata' => 
+              array (
+              ),
+              'meter' => NULL,
+              'nickname' => NULL,
+              'product' => 'prod_Q3pOGHwHgQtx4o',
+              'tiers_mode' => NULL,
+              'transform_usage' => NULL,
+              'trial_period_days' => NULL,
+              'usage_type' => 'licensed',
+            ),
+            'price' => 
+            array (
+              'id' => 'price_1PDhk109tId2vnnueRGJ22ef',
+              'object' => 'price',
+              'active' => true,
+              'billing_scheme' => 'per_unit',
+              'created' => 1715064189,
+              'currency' => 'usd',
+              'custom_unit_amount' => NULL,
+              'livemode' => false,
+              'lookup_key' => NULL,
+              'metadata' => 
+              array (
+              ),
+              'nickname' => NULL,
+              'product' => 'prod_Q3pOGHwHgQtx4o',
+              'recurring' => 
+              array (
+                'aggregate_usage' => NULL,
+                'interval' => 'month',
+                'interval_count' => 1,
+                'meter' => NULL,
+                'trial_period_days' => NULL,
+                'usage_type' => 'licensed',
+              ),
+              'tax_behavior' => 'unspecified',
+              'tiers_mode' => NULL,
+              'transform_quantity' => NULL,
+              'type' => 'recurring',
+              'unit_amount' => 50000,
+              'unit_amount_decimal' => '50000',
+            ),
+            'quantity' => 1,
+            'subscription' => 'sub_1PFArE09tId2vnnuCZVG71lk',
+            'tax_rates' => 
+            array (
+            ),
+          ),
+        ),
+        'has_more' => false,
+        'total_count' => 1,
+        'url' => '/v1/subscription_items?subscription=sub_1PFArE09tId2vnnuCZVG71lk',
+      ),
+      'latest_invoice' => 'in_1PFArE09tId2vnnuY7uuQNzy',
+      'livemode' => false,
+      'metadata' => 
+      array (
+      ),
+      'next_pending_invoice_item_invoice' => NULL,
+      'on_behalf_of' => NULL,
+      'pause_collection' => NULL,
+      'payment_settings' => 
+      array (
+        'payment_method_options' => NULL,
+        'payment_method_types' => NULL,
+        'save_default_payment_method' => 'off',
+      ),
+      'pending_invoice_item_interval' => NULL,
+      'pending_setup_intent' => NULL,
+      'pending_update' => NULL,
+      'plan' => 
+      array (
+        'id' => 'price_1PDhk109tId2vnnueRGJ22ef',
+        'object' => 'plan',
+        'active' => true,
+        'aggregate_usage' => NULL,
+        'amount' => 50000,
+        'amount_decimal' => '50000',
+        'billing_scheme' => 'per_unit',
+        'created' => 1715064189,
+        'currency' => 'usd',
+        'interval' => 'month',
+        'interval_count' => 1,
+        'livemode' => false,
+        'metadata' => 
+        array (
+        ),
+        'meter' => NULL,
+        'nickname' => NULL,
+        'product' => 'prod_Q3pOGHwHgQtx4o',
+        'tiers_mode' => NULL,
+        'transform_usage' => NULL,
+        'trial_period_days' => NULL,
+        'usage_type' => 'licensed',
+      ),
+      'quantity' => 1,
+      'schedule' => NULL,
+      'start_date' => 1715414440,
+      'status' => 'trialing',
+      'test_clock' => NULL,
+      'transfer_data' => NULL,
+      'trial_end' => 1716019238,
+      'trial_settings' => 
+      array (
+        'end_behavior' => 
+        array (
+          'missing_payment_method' => 'create_invoice',
+        ),
+      ),
+      'trial_start' => 1715414440,
+    ),
+  ),
+  'livemode' => false,
+  'pending_webhooks' => 1,
+  'request' => 
+  array (
+    'id' => NULL,
+    'idempotency_key' => NULL,
+  ),
+  'type' => 'customer.subscription.trial_will_end',
+)  
+[2024-05-15 01:01:52] production.INFO: customer.subscription.trial_will_end  
+[2024-05-15 01:01:52] production.INFO: cus_Q5LXxvTc6plUxX  
+[2024-05-15 01:07:11] production.INFO: array (
+  'id' => 'evt_3PGcrg09tId2vnnu1ZS5RGTL',
+  'object' => 'event',
+  'api_version' => '2024-04-10',
+  'created' => 1715760430,
+  'data' => 
+  array (
+    'object' => 
+    array (
+      'id' => 'ch_3PGcrg09tId2vnnu1eoQvpZx',
+      'object' => 'charge',
+      'amount' => 50000,
+      'amount_captured' => 50000,
+      'amount_refunded' => 0,
+      'application' => NULL,
+      'application_fee' => NULL,
+      'application_fee_amount' => NULL,
+      'balance_transaction' => 'txn_3PGcrg09tId2vnnu1p4o6ndB',
+      'billing_details' => 
+      array (
+        'address' => 
+        array (
+          'city' => NULL,
+          'country' => NULL,
+          'line1' => NULL,
+          'line2' => NULL,
+          'postal_code' => NULL,
+          'state' => NULL,
+        ),
+        'email' => NULL,
+        'name' => NULL,
+        'phone' => NULL,
+      ),
+      'calculated_statement_descriptor' => 'Stripe',
+      'captured' => true,
+      'created' => 1715760429,
+      'currency' => 'usd',
+      'customer' => 'cus_Q4CzEDXKt9OaRj',
+      'description' => 'Subscription update',
+      'destination' => NULL,
+      'dispute' => NULL,
+      'disputed' => false,
+      'failure_balance_transaction' => NULL,
+      'failure_code' => NULL,
+      'failure_message' => NULL,
+      'fraud_details' => 
+      array (
+      ),
+      'invoice' => 'in_1PGbvQ09tId2vnnuH0v418dH',
+      'livemode' => false,
+      'metadata' => 
+      array (
+      ),
+      'on_behalf_of' => NULL,
+      'order' => NULL,
+      'outcome' => 
+      array (
+        'network_status' => 'approved_by_network',
+        'reason' => NULL,
+        'risk_level' => 'normal',
+        'risk_score' => 49,
+        'seller_message' => 'Payment complete.',
+        'type' => 'authorized',
+      ),
+      'paid' => true,
+      'payment_intent' => 'pi_3PGcrg09tId2vnnu1gS7j3yg',
+      'payment_method' => 'card_1PE4ZX09tId2vnnuWkpcP9Ho',
+      'payment_method_details' => 
+      array (
+        'card' => 
+        array (
+          'amount_authorized' => 50000,
+          'brand' => 'visa',
+          'checks' => 
+          array (
+            'address_line1_check' => NULL,
+            'address_postal_code_check' => NULL,
+            'cvc_check' => NULL,
+          ),
+          'country' => 'US',
+          'exp_month' => 11,
+          'exp_year' => 2055,
+          'extended_authorization' => 
+          array (
+            'status' => 'disabled',
+          ),
+          'fingerprint' => 'LfRQq8DvPNlVTGV2',
+          'funding' => 'credit',
+          'incremental_authorization' => 
+          array (
+            'status' => 'unavailable',
+          ),
+          'installments' => NULL,
+          'last4' => '1111',
+          'mandate' => NULL,
+          'multicapture' => 
+          array (
+            'status' => 'unavailable',
+          ),
+          'network' => 'visa',
+          'network_token' => 
+          array (
+            'used' => false,
+          ),
+          'overcapture' => 
+          array (
+            'maximum_amount_capturable' => 50000,
+            'status' => 'unavailable',
+          ),
+          'three_d_secure' => NULL,
+          'wallet' => NULL,
+        ),
+        'type' => 'card',
+      ),
+      'radar_options' => 
+      array (
+      ),
+      'receipt_email' => NULL,
+      'receipt_number' => NULL,
+      'receipt_url' => 'https://pay.stripe.com/receipts/invoices/CAcaFwoVYWNjdF8xUDZTQkIwOXRJZDJ2bm51KK7akbIGMgZD7KuJI2E6LBbEInTL7oIWUgkMt8PdoGcbsQxHhte-blkCONRcaQGXCAJSwa0FCXD0rLgf?s=ap',
+      'refunded' => false,
+      'review' => NULL,
+      'shipping' => NULL,
+      'source' => 
+      array (
+        'id' => 'card_1PE4ZX09tId2vnnuWkpcP9Ho',
+        'object' => 'card',
+        'address_city' => NULL,
+        'address_country' => NULL,
+        'address_line1' => NULL,
+        'address_line1_check' => NULL,
+        'address_line2' => NULL,
+        'address_state' => NULL,
+        'address_zip' => NULL,
+        'address_zip_check' => NULL,
+        'brand' => 'Visa',
+        'country' => 'US',
+        'customer' => 'cus_Q4CzEDXKt9OaRj',
+        'cvc_check' => NULL,
+        'dynamic_last4' => NULL,
+        'exp_month' => 11,
+        'exp_year' => 2055,
+        'fingerprint' => 'LfRQq8DvPNlVTGV2',
+        'funding' => 'credit',
+        'last4' => '1111',
+        'metadata' => 
+        array (
+        ),
+        'name' => NULL,
+        'tokenization_method' => NULL,
+        'wallet' => NULL,
+      ),
+      'source_transfer' => NULL,
+      'statement_descriptor' => NULL,
+      'statement_descriptor_suffix' => NULL,
+      'status' => 'succeeded',
+      'transfer_data' => NULL,
+      'transfer_group' => NULL,
+    ),
+  ),
+  'livemode' => false,
+  'pending_webhooks' => 1,
+  'request' => 
+  array (
+    'id' => NULL,
+    'idempotency_key' => 'in_1PGbvQ09tId2vnnuH0v418dH-initial_attempt-68f54f003c435f7e7',
+  ),
+  'type' => 'charge.succeeded',
+)  
+[2024-05-15 01:07:11] production.INFO: charge.succeeded  
+[2024-05-15 01:07:11] production.INFO: cus_Q4CzEDXKt9OaRj  
+[2024-05-15 01:11:07] production.INFO: array (
+  'id' => 'evt_3PGcvU09tId2vnnu1U5mACgI',
+  'object' => 'event',
+  'api_version' => '2024-04-10',
+  'created' => 1715760666,
+  'data' => 
+  array (
+    'object' => 
+    array (
+      'id' => 'ch_3PGcvU09tId2vnnu1CjEbzvk',
+      'object' => 'charge',
+      'amount' => 50000,
+      'amount_captured' => 50000,
+      'amount_refunded' => 0,
+      'application' => NULL,
+      'application_fee' => NULL,
+      'application_fee_amount' => NULL,
+      'balance_transaction' => 'txn_3PGcvU09tId2vnnu1Utv8WcS',
+      'billing_details' => 
+      array (
+        'address' => 
+        array (
+          'city' => NULL,
+          'country' => NULL,
+          'line1' => NULL,
+          'line2' => NULL,
+          'postal_code' => NULL,
+          'state' => NULL,
+        ),
+        'email' => NULL,
+        'name' => NULL,
+        'phone' => NULL,
+      ),
+      'calculated_statement_descriptor' => 'Stripe',
+      'captured' => true,
+      'created' => 1715760665,
+      'currency' => 'usd',
+      'customer' => 'cus_Q4D3XPiL9hZt2C',
+      'description' => 'Subscription update',
+      'destination' => NULL,
+      'dispute' => NULL,
+      'disputed' => false,
+      'failure_balance_transaction' => NULL,
+      'failure_code' => NULL,
+      'failure_message' => NULL,
+      'fraud_details' => 
+      array (
+      ),
+      'invoice' => 'in_1PGbya09tId2vnnuKwyzD7m5',
+      'livemode' => false,
+      'metadata' => 
+      array (
+      ),
+      'on_behalf_of' => NULL,
+      'order' => NULL,
+      'outcome' => 
+      array (
+        'network_status' => 'approved_by_network',
+        'reason' => NULL,
+        'risk_level' => 'normal',
+        'risk_score' => 39,
+        'seller_message' => 'Payment complete.',
+        'type' => 'authorized',
+      ),
+      'paid' => true,
+      'payment_intent' => 'pi_3PGcvU09tId2vnnu1hClUa3c',
+      'payment_method' => 'card_1PE4dI09tId2vnnuU8k8idRf',
+      'payment_method_details' => 
+      array (
+        'card' => 
+        array (
+          'amount_authorized' => 50000,
+          'brand' => 'visa',
+          'checks' => 
+          array (
+            'address_line1_check' => NULL,
+            'address_postal_code_check' => NULL,
+            'cvc_check' => NULL,
+          ),
+          'country' => 'US',
+          'exp_month' => 11,
+          'exp_year' => 2055,
+          'extended_authorization' => 
+          array (
+            'status' => 'disabled',
+          ),
+          'fingerprint' => 'LfRQq8DvPNlVTGV2',
+          'funding' => 'credit',
+          'incremental_authorization' => 
+          array (
+            'status' => 'unavailable',
+          ),
+          'installments' => NULL,
+          'last4' => '1111',
+          'mandate' => NULL,
+          'multicapture' => 
+          array (
+            'status' => 'unavailable',
+          ),
+          'network' => 'visa',
+          'network_token' => 
+          array (
+            'used' => false,
+          ),
+          'overcapture' => 
+          array (
+            'maximum_amount_capturable' => 50000,
+            'status' => 'unavailable',
+          ),
+          'three_d_secure' => NULL,
+          'wallet' => NULL,
+        ),
+        'type' => 'card',
+      ),
+      'radar_options' => 
+      array (
+      ),
+      'receipt_email' => NULL,
+      'receipt_number' => NULL,
+      'receipt_url' => 'https://pay.stripe.com/receipts/invoices/CAcaFwoVYWNjdF8xUDZTQkIwOXRJZDJ2bm51KJrckbIGMgbRX9aA7tM6LBa9560xvmb6z1CRcVMpDzfTji1nKIGp_RRCdku2zIK3qTUmFGcocPeLvWFa?s=ap',
+      'refunded' => false,
+      'review' => NULL,
+      'shipping' => NULL,
+      'source' => 
+      array (
+        'id' => 'card_1PE4dI09tId2vnnuU8k8idRf',
+        'object' => 'card',
+        'address_city' => NULL,
+        'address_country' => NULL,
+        'address_line1' => NULL,
+        'address_line1_check' => NULL,
+        'address_line2' => NULL,
+        'address_state' => NULL,
+        'address_zip' => NULL,
+        'address_zip_check' => NULL,
+        'brand' => 'Visa',
+        'country' => 'US',
+        'customer' => 'cus_Q4D3XPiL9hZt2C',
+        'cvc_check' => NULL,
+        'dynamic_last4' => NULL,
+        'exp_month' => 11,
+        'exp_year' => 2055,
+        'fingerprint' => 'LfRQq8DvPNlVTGV2',
+        'funding' => 'credit',
+        'last4' => '1111',
+        'metadata' => 
+        array (
+        ),
+        'name' => NULL,
+        'tokenization_method' => NULL,
+        'wallet' => NULL,
+      ),
+      'source_transfer' => NULL,
+      'statement_descriptor' => NULL,
+      'statement_descriptor_suffix' => NULL,
+      'status' => 'succeeded',
+      'transfer_data' => NULL,
+      'transfer_group' => NULL,
+    ),
+  ),
+  'livemode' => false,
+  'pending_webhooks' => 1,
+  'request' => 
+  array (
+    'id' => NULL,
+    'idempotency_key' => 'in_1PGbya09tId2vnnuKwyzD7m5-initial_attempt-0fbf88f883935f030',
+  ),
+  'type' => 'charge.succeeded',
+)  
+[2024-05-15 01:11:07] production.INFO: charge.succeeded  
+[2024-05-15 01:11:07] production.INFO: cus_Q4D3XPiL9hZt2C  
+[2024-05-15 01:26:26] production.INFO: array (
+  'id' => 'evt_3PGdAH09tId2vnnu1xB3VAWt',
+  'object' => 'event',
+  'api_version' => '2024-04-10',
+  'created' => 1715761584,
+  'data' => 
+  array (
+    'object' => 
+    array (
+      'id' => 'ch_3PGdAH09tId2vnnu1PrhFtGI',
+      'object' => 'charge',
+      'amount' => 50000,
+      'amount_captured' => 50000,
+      'amount_refunded' => 0,
+      'application' => NULL,
+      'application_fee' => NULL,
+      'application_fee_amount' => NULL,
+      'balance_transaction' => 'txn_3PGdAH09tId2vnnu1SR32Ol5',
+      'billing_details' => 
+      array (
+        'address' => 
+        array (
+          'city' => NULL,
+          'country' => NULL,
+          'line1' => NULL,
+          'line2' => NULL,
+          'postal_code' => NULL,
+          'state' => NULL,
+        ),
+        'email' => NULL,
+        'name' => NULL,
+        'phone' => NULL,
+      ),
+      'calculated_statement_descriptor' => 'Stripe',
+      'captured' => true,
+      'created' => 1715761583,
+      'currency' => 'usd',
+      'customer' => 'cus_Q4DIPSK4N05Sby',
+      'description' => 'Subscription update',
+      'destination' => NULL,
+      'dispute' => NULL,
+      'disputed' => false,
+      'failure_balance_transaction' => NULL,
+      'failure_code' => NULL,
+      'failure_message' => NULL,
+      'fraud_details' => 
+      array (
+      ),
+      'invoice' => 'in_1PGcDD09tId2vnnu0Ba9ijBm',
+      'livemode' => false,
+      'metadata' => 
+      array (
+      ),
+      'on_behalf_of' => NULL,
+      'order' => NULL,
+      'outcome' => 
+      array (
+        'network_status' => 'approved_by_network',
+        'reason' => NULL,
+        'risk_level' => 'normal',
+        'risk_score' => 52,
+        'seller_message' => 'Payment complete.',
+        'type' => 'authorized',
+      ),
+      'paid' => true,
+      'payment_intent' => 'pi_3PGdAH09tId2vnnu1H25wF3D',
+      'payment_method' => 'card_1PE4s809tId2vnnuxcIhkhXd',
+      'payment_method_details' => 
+      array (
+        'card' => 
+        array (
+          'amount_authorized' => 50000,
+          'brand' => 'visa',
+          'checks' => 
+          array (
+            'address_line1_check' => NULL,
+            'address_postal_code_check' => NULL,
+            'cvc_check' => NULL,
+          ),
+          'country' => 'US',
+          'exp_month' => 11,
+          'exp_year' => 2055,
+          'extended_authorization' => 
+          array (
+            'status' => 'disabled',
+          ),
+          'fingerprint' => 'LfRQq8DvPNlVTGV2',
+          'funding' => 'credit',
+          'incremental_authorization' => 
+          array (
+            'status' => 'unavailable',
+          ),
+          'installments' => NULL,
+          'last4' => '1111',
+          'mandate' => NULL,
+          'multicapture' => 
+          array (
+            'status' => 'unavailable',
+          ),
+          'network' => 'visa',
+          'network_token' => 
+          array (
+            'used' => false,
+          ),
+          'overcapture' => 
+          array (
+            'maximum_amount_capturable' => 50000,
+            'status' => 'unavailable',
+          ),
+          'three_d_secure' => NULL,
+          'wallet' => NULL,
+        ),
+        'type' => 'card',
+      ),
+      'radar_options' => 
+      array (
+      ),
+      'receipt_email' => NULL,
+      'receipt_number' => NULL,
+      'receipt_url' => 'https://pay.stripe.com/receipts/invoices/CAcaFwoVYWNjdF8xUDZTQkIwOXRJZDJ2bm51KLDjkbIGMgZqBOyqMuA6LBb0qWof8aXy9HwL-zs_4h3nNF73YywpsfSnoY-oZZRB55GG73YreDEK8fRo?s=ap',
+      'refunded' => false,
+      'review' => NULL,
+      'shipping' => NULL,
+      'source' => 
+      array (
+        'id' => 'card_1PE4s809tId2vnnuxcIhkhXd',
+        'object' => 'card',
+        'address_city' => NULL,
+        'address_country' => NULL,
+        'address_line1' => NULL,
+        'address_line1_check' => NULL,
+        'address_line2' => NULL,
+        'address_state' => NULL,
+        'address_zip' => NULL,
+        'address_zip_check' => NULL,
+        'brand' => 'Visa',
+        'country' => 'US',
+        'customer' => 'cus_Q4DIPSK4N05Sby',
+        'cvc_check' => NULL,
+        'dynamic_last4' => NULL,
+        'exp_month' => 11,
+        'exp_year' => 2055,
+        'fingerprint' => 'LfRQq8DvPNlVTGV2',
+        'funding' => 'credit',
+        'last4' => '1111',
+        'metadata' => 
+        array (
+        ),
+        'name' => NULL,
+        'tokenization_method' => NULL,
+        'wallet' => NULL,
+      ),
+      'source_transfer' => NULL,
+      'statement_descriptor' => NULL,
+      'statement_descriptor_suffix' => NULL,
+      'status' => 'succeeded',
+      'transfer_data' => NULL,
+      'transfer_group' => NULL,
+    ),
+  ),
+  'livemode' => false,
+  'pending_webhooks' => 1,
+  'request' => 
+  array (
+    'id' => NULL,
+    'idempotency_key' => 'in_1PGcDD09tId2vnnu0Ba9ijBm-initial_attempt-5822f767fb88033a4',
+  ),
+  'type' => 'charge.succeeded',
+)  
+[2024-05-15 01:26:26] production.INFO: charge.succeeded  
+[2024-05-15 01:26:26] production.INFO: cus_Q4DIPSK4N05Sby  
+[2024-05-15 02:22:41] production.INFO: array (
+  'id' => 'evt_1PGe2m09tId2vnnuJZMxUnpl',
+  'object' => 'event',
+  'api_version' => '2024-04-10',
+  'created' => 1715764954,
+  'data' => 
+  array (
+    'object' => 
+    array (
+      'id' => 'sub_1PFC7r09tId2vnnusdAVZ1nx',
+      'object' => 'subscription',
+      'application' => NULL,
+      'application_fee_percent' => NULL,
+      'automatic_tax' => 
+      array (
+        'enabled' => false,
+        'liability' => NULL,
+      ),
+      'billing_cycle_anchor' => 1716024114,
+      'billing_cycle_anchor_config' => NULL,
+      'billing_thresholds' => NULL,
+      'cancel_at' => NULL,
+      'cancel_at_period_end' => false,
+      'canceled_at' => NULL,
+      'cancellation_details' => 
+      array (
+        'comment' => NULL,
+        'feedback' => NULL,
+        'reason' => NULL,
+      ),
+      'collection_method' => 'charge_automatically',
+      'created' => 1715419315,
+      'currency' => 'usd',
+      'current_period_end' => 1716024114,
+      'current_period_start' => 1715419315,
+      'customer' => 'cus_Q5MrSX0WzY2xb6',
+      'days_until_due' => NULL,
+      'default_payment_method' => NULL,
+      'default_source' => NULL,
+      'default_tax_rates' => 
+      array (
+      ),
+      'description' => NULL,
+      'discount' => NULL,
+      'discounts' => 
+      array (
+      ),
+      'ended_at' => NULL,
+      'invoice_settings' => 
+      array (
+        'account_tax_ids' => NULL,
+        'issuer' => 
+        array (
+          'type' => 'self',
+        ),
+      ),
+      'items' => 
+      array (
+        'object' => 'list',
+        'data' => 
+        array (
+          0 => 
+          array (
+            'id' => 'si_Q5MrB4zev3aP7L',
+            'object' => 'subscription_item',
+            'billing_thresholds' => NULL,
+            'created' => 1715419315,
+            'discounts' => 
+            array (
+            ),
+            'metadata' => 
+            array (
+            ),
+            'plan' => 
+            array (
+              'id' => 'price_1PDhkz09tId2vnnuTMT0PkXL',
+              'object' => 'plan',
+              'active' => true,
+              'aggregate_usage' => NULL,
+              'amount' => 100000,
+              'amount_decimal' => '100000',
+              'billing_scheme' => 'per_unit',
+              'created' => 1715064249,
+              'currency' => 'usd',
+              'interval' => 'month',
+              'interval_count' => 1,
+              'livemode' => false,
+              'metadata' => 
+              array (
+              ),
+              'meter' => NULL,
+              'nickname' => NULL,
+              'product' => 'prod_Q3pP7Cj7zfp3K7',
+              'tiers_mode' => NULL,
+              'transform_usage' => NULL,
+              'trial_period_days' => NULL,
+              'usage_type' => 'licensed',
+            ),
+            'price' => 
+            array (
+              'id' => 'price_1PDhkz09tId2vnnuTMT0PkXL',
+              'object' => 'price',
+              'active' => true,
+              'billing_scheme' => 'per_unit',
+              'created' => 1715064249,
+              'currency' => 'usd',
+              'custom_unit_amount' => NULL,
+              'livemode' => false,
+              'lookup_key' => NULL,
+              'metadata' => 
+              array (
+              ),
+              'nickname' => NULL,
+              'product' => 'prod_Q3pP7Cj7zfp3K7',
+              'recurring' => 
+              array (
+                'aggregate_usage' => NULL,
+                'interval' => 'month',
+                'interval_count' => 1,
+                'meter' => NULL,
+                'trial_period_days' => NULL,
+                'usage_type' => 'licensed',
+              ),
+              'tax_behavior' => 'unspecified',
+              'tiers_mode' => NULL,
+              'transform_quantity' => NULL,
+              'type' => 'recurring',
+              'unit_amount' => 100000,
+              'unit_amount_decimal' => '100000',
+            ),
+            'quantity' => 1,
+            'subscription' => 'sub_1PFC7r09tId2vnnusdAVZ1nx',
+            'tax_rates' => 
+            array (
+            ),
+          ),
+        ),
+        'has_more' => false,
+        'total_count' => 1,
+        'url' => '/v1/subscription_items?subscription=sub_1PFC7r09tId2vnnusdAVZ1nx',
+      ),
+      'latest_invoice' => 'in_1PFC7r09tId2vnnu0f9Wp9iB',
+      'livemode' => false,
+      'metadata' => 
+      array (
+      ),
+      'next_pending_invoice_item_invoice' => NULL,
+      'on_behalf_of' => NULL,
+      'pause_collection' => NULL,
+      'payment_settings' => 
+      array (
+        'payment_method_options' => NULL,
+        'payment_method_types' => NULL,
+        'save_default_payment_method' => 'off',
+      ),
+      'pending_invoice_item_interval' => NULL,
+      'pending_setup_intent' => NULL,
+      'pending_update' => NULL,
+      'plan' => 
+      array (
+        'id' => 'price_1PDhkz09tId2vnnuTMT0PkXL',
+        'object' => 'plan',
+        'active' => true,
+        'aggregate_usage' => NULL,
+        'amount' => 100000,
+        'amount_decimal' => '100000',
+        'billing_scheme' => 'per_unit',
+        'created' => 1715064249,
+        'currency' => 'usd',
+        'interval' => 'month',
+        'interval_count' => 1,
+        'livemode' => false,
+        'metadata' => 
+        array (
+        ),
+        'meter' => NULL,
+        'nickname' => NULL,
+        'product' => 'prod_Q3pP7Cj7zfp3K7',
+        'tiers_mode' => NULL,
+        'transform_usage' => NULL,
+        'trial_period_days' => NULL,
+        'usage_type' => 'licensed',
+      ),
+      'quantity' => 1,
+      'schedule' => NULL,
+      'start_date' => 1715419315,
+      'status' => 'trialing',
+      'test_clock' => NULL,
+      'transfer_data' => NULL,
+      'trial_end' => 1716024114,
+      'trial_settings' => 
+      array (
+        'end_behavior' => 
+        array (
+          'missing_payment_method' => 'create_invoice',
+        ),
+      ),
+      'trial_start' => 1715419315,
+    ),
+  ),
+  'livemode' => false,
+  'pending_webhooks' => 1,
+  'request' => 
+  array (
+    'id' => NULL,
+    'idempotency_key' => NULL,
+  ),
+  'type' => 'customer.subscription.trial_will_end',
+)  
+[2024-05-15 02:22:41] production.INFO: customer.subscription.trial_will_end  
+[2024-05-15 02:22:41] production.INFO: cus_Q5MrSX0WzY2xb6  
+[2024-05-15 03:09:10] production.ERROR: Attempt to read property "user_id" on null {"exception":"[object] (ErrorException(code: 0): Attempt to read property \"user_id\" on null at /home/u466255773/domains/submitmymortgage.com/public_html/app/Http/Controllers/SubscriptionController.php:254)
+
+[2024-05-15 05:28:20] production.INFO: 1  
+[2024-05-15 05:28:20] production.INFO: 1  
+[2024-05-15 05:28:20] production.INFO:   
