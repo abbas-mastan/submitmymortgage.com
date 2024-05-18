@@ -12,7 +12,7 @@ class SubscriptionHelper
     {
         try {
             $date = date('Y-m-d H:i:s');
-            $trial_days = strtotime($date . '+' . 2 . ' minutes');
+            $trial_days = strtotime($date . '+' . 7 . ' days');
             $stripe = new StripeClient(env('STRIPE_SK'));
             $subscription = $stripe->subscriptions->create([
                 'customer' => $customer_id,
@@ -41,7 +41,7 @@ class SubscriptionHelper
             return $subsription_details_data;
         } catch (\Exception $e) {
             Log::info($e->getMessage());
-            return response()->json(['type'=> 'stripe_error','message'=> $e->getMessage()]);
+            return response()->json(['type' => 'stripe_error', 'message' => $e->getMessage()]);
         }
     }
 

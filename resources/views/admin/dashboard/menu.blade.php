@@ -3,10 +3,28 @@
 {{-- @endif --}}
 <div class="flex justify-evenly gap-8 align-center">
     <div class="sm:w-2/3 w-full">
-        @if (Auth::user()->training && Auth::user()->training->start_time === null)
+        @php $user = Auth::user(); @endphp
+        @if ($user->training && $user->training->start_time === null)
+            @php
+                // Convert the date string to a Unix timestamp
+                $timestamp = strtotime($user->training->start_date);
+                // Check if the conversion was successful
+                if ($timestamp) {
+                    // Create a DateTime object from the timestamp
+                    $date = new DateTime();
+                    $date->setTimestamp($timestamp);
+                    // Format the date as "DayOfWeek, Month Year"
+                    $trainingDate = $date->format('l, F j, Y');
+                }
+
+            @endphp
             <div class="shadow-lg p-5 mt-2">
                 <form class="" action="{{ route('update.training.time') }}" method="post">
                     @csrf
+                    <div class="mb-2">
+                        Training Date : 
+                        {{$trainingDate}}
+                    </div>
                     <div class="flex items-center gap-3">
                         <select class="rounded-lg" name="time" id="">
                             <option value="">Select Training Time</option>
@@ -15,7 +33,6 @@
                             <option value="11:00">11:00 AM PST
                             </option>
                         </select>
-
                         <button type="submit"
                             class="block tracking-wide rounded-lg text-white px-7 py-2 text-xl capitalize bg-gradient-to-b from-gradientStart to-gradientEnd">
                             Submit

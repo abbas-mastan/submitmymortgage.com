@@ -103,6 +103,36 @@
                 </table>
             </div>
         </div>
+
+        <div class="w-1/2 mt-3 p-10 mx-auto justify-center bg-white shadow-2xl">
+            <div class="flex justify-center flex-col">
+                <h2 class="text-center text-lg font-semibold leading-8 text-gray-900">Payment History</h2>
+                <table class="mt-3 border border-slate-500 w-full">
+                    <thead>
+                        <tr>
+                            <th class="border border-slate-600 p-2 text-center">S.No</th>
+                            <th class="border border-slate-600 p-2 text-center">Amount</th>
+                            <th class="border border-slate-600 p-2 text-center">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($user->payments as $payment)
+                            <tr>
+                                <td class="border border-slate-700 p-2 text-center">
+                                    {{ $loop->iteration }}
+                                </td>
+                                <td class="border border-slate-700 p-2 text-center">
+                                    {{ '$'.number_format($payment->amount,2) }}
+                                </td>
+                                <td class="border border-slate-700 p-2 text-center">
+                                    {{ $payment->payment_date }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
     @endif
 @endsection
 @section('foot')

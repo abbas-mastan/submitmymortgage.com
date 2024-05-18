@@ -44,6 +44,16 @@ return [
             'timeout' => null,
             'auth_mode' => null,
         ],
+        'super_admin' => [
+            'transport' => 'smtp',
+            'host' => env('SUPER_ADMIN_MAIL_HOST', 'smtp.mailgun.org'),
+            'port' => env('MAIL_PORT', 587),
+            'encryption' => env('MAIL_ENCRYPTION', 'tls'),
+            'username' => env('SUPER_ADMIN_MAIL_USERNAME'),
+            'password' => env('SUPER_ADMIN_MAIL_PASSWORD'),
+            'timeout' => null,
+            'auth_mode' => null,
+        ],
 
         'ses' => [
             'transport' => 'ses',

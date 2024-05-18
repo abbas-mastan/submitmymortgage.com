@@ -81,7 +81,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/gmail/download/{messageId}/attachments/{attachmentId}/{attachmentIndexId}', [GmailController::class, 'downloadAttachment'])->name('download');
     });
     Route::get('premium-confirmation', [SubscriptionController::class, 'trialCompleted']);
-    Route::get('continue-to-premium', [SubscriptionController::class, 'continuePremium']);
+    Route::post('continue-to-premium', [SubscriptionController::class, 'continuePremium']);
     Route::post('continue-stripe-payment', [SubscriptionController::class, 'processPaymentWithStripe']);
 });
 Route::get('password-expired', [AuthController::class, 'passwordExpired'])
@@ -92,19 +92,12 @@ Route::post('password-expired', [AuthController::class, 'expiredPasswordUpdate']
 Route::get('/test', [TestController::class, 'test']);
 Route::post('/charge-webhook',[SubscriptionController::class,'storeWebhookData']);
 Route::get('payment-history',[SubscriptionController::class,'paymentHistory']);
-Route::get('testing',function(){
-    dump(date('Y-m-d H:i:s','1718455328'));
-    dump(date('Y-m-d H:i:s','1715776928'));
-    dump(date('Y-m-d H:i:s','1715776928'));
-    dump(date('Y-m-d H:i:s','1715776808'));
-});
 Route::view('/trial', 'trial')->name("trial");
 Route::get('/payment-success', [SubscriptionController::class, 'StripeSuccess'])->name("success");
 Route::post('/custome-quote', [SubscriptionController::class, 'CustomQuote'])->name("custom.quote");
 Route::get('/payment-failed', [SubscriptionController::class, 'StripeFailed'])->name("failed");
 Route::post('trial', [SubscriptionController::class, 'processPayment'])->name('stripePayment');
 // Route::middleware('trial',function(){
-Route::get('/trial-dashboard', [SubscriptionController::class, 'trialDashboard'])->name("trial.dashboard");
 Route::get('/subscribe', [SubscriptionController::class, 'finishTrial']);
 Route::view('homepage', 'homepage');
 // });

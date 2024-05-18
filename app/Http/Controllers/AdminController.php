@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationRequest;
 use App\Http\Requests\IntakeFormRequest;
-use App\Mail\TrainingMailToSuperAdmin;
 use App\Models\Application;
 use App\Models\Company;
 use App\Models\Contact;
@@ -60,17 +59,23 @@ class AdminController extends Controller
     {
         $request->validate([
             'time' => 'required|in:09:00,10:00,11:00',
-        ],[
-            'time.required'=> 'This field is required'
+        ], [
+            'time.required' => 'This field is required',
         ]);
-    
         $user = Auth::user();
         $request['training'] = $user->training->start_date;
         $sub_controller = new SubscriptionController();
         $training = $sub_controller->userTraining($request, $user->id);
         if ($training) {
-            Mail::to("shaun@submitmymortgage.com")->send(new TrainingMailToSuperAdmin($request->time));
-            return back()->with('msg_success','Your Training Date & Time have been submitted');
+            $data = ['time' => $request->time];
+            Mail::mailer('super_admin')->send('notifications::traing-mail-to-super-admin', $data, function ($message) use ($user) {
+                $message->to('shaun@submitmymortgage.com');
+                $message->subject('Training Date & Time');
+                $message->from(env('SUPER_ADMIN_MAIL_FROM_ADDRESS'));
+            });
+            return back()->with('msg_success', 'Your Training Date & Time have been submitted');
+        } else {
+            return back()->with('msg_error', 'Something went wrong please try again');
         }
     }
 

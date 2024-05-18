@@ -55,10 +55,10 @@
             background-color: #991b1b;
             padding: 12px 0;
             padding-top: 8px;
-            width: 60%;
+            width: 80%;
             display: block;
-            justify-content: center;
             font-size: 20px;
+            border-radius: 5px;
             text-align: center;
             color: white;
             text-decoration: none;
@@ -408,64 +408,15 @@
                             </div>
                         </div>
                         @csrf
-                        <h4>Start Your 6 Week Free Trial!</h4>
+                        <h4>Start Your 14 Days Free Trial!</h4>
                         @if (session()->has('stripe_error'))
                             <div class="text-danger text-center my-3 fs-2">{{ session('stripe_error') }}</div>
                         @endif
-                        <div class="tab1">
-                            <div class="form-inp-sec d-flex flex-column">
-                                <div class="form-inp">
-                                    <label class="labels" for="">First Name</label>
-                                    <input type="text" class="inputs tab1-first_name" placeholder="First Name"
-                                        required name="name" id="">
-                                    <span class="error tab1-first_name_error"></span>
-
-                                </div>
-                                <div class="form-inp">
-                                    <label class="labels" for="">Last Name</label>
-                                    <input type="text" class="inputs tab1-last_name" placeholder="Last Name"
-                                        required name="name" id="">
-                                    <span class="error tab1-last_name_error"></span>
-                                </div>
-                                <div class="form-inp">
-                                    <label for="" class="labels">Email Address</label>
-                                    <input type="email" class="inputs tab1-email" placeholder="Email Adddress"
-                                        required name="email" id="">
-                                    <span class="error tab1-email_error"></span>
-                                </div>
-                                <div class="form-inp">
-                                    <label for="" class="labels">Company Name</label>
-                                    <input type="text" class="inputs tab1-company_name" placeholder="Company Name"
-                                        required name="company" id="">
-                                    <span class="error tab1-company_name_error"></span>
-                                </div>
-                                <div class="form-btn">
-                                    <button type="button" id="nextBtn"
-                                        class="btn btn-primary next w-100 d-flex justify-content-center align-items-center py-4 mt-3"
-                                        style="border-radius: 8px;">Next</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab2 d-none">
+                        <div class="tab2">
                             <div class="form-inp-sec d-flex flex-column">
                                 <div class="form-inp-div user-details">
-                                    <div class="form-inps">
-                                        <label class="label1" for="">Email</label>
-                                        <input type="email" class="input1 tab2email" name="email"
-                                            placeholder="example@example.com" id="">
-                                        <span class="error email_error"></span>
-                                    </div>
-                                    <div class="form-inps">
-                                        <div>
-                                            <input id="phone-main" name="phone" class="input1" type="tel">
-                                            {{-- <span id="valid-msg" class="hide">Valid</span>
-                                            <span id="error-msg" class="hide">Invalid number</span> --}}
-                                            <br>
-                                            <span class="error phone_error"></span>
-                                        </div>
-                                    </div>
-                                    <div class=" p-0">
-                                        <div class="row w-100 ">
+                                    <div class="form-inps p-0">
+                                        <div class="row w-100">
                                             <div class="col-lg-6 col-12 form-col">
                                                 <div class="form-inp-row">
                                                     <label class="label1" for="">First Name</label>
@@ -484,31 +435,72 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="position-relative">
-                                    <div class="d-flex flex-column align-items-center">
-                                        <h2 class="text-center red">
-                                            {{ session()->has('user_data') ? session('user_data')['team_size'] : 'What Size is Your Team?' }}
-                                        </h2>
-                                        <a type="button" class="team-size-button selectTeamSize"
-                                            data-bs-toggle="modal" data-bs-target="#exampleModal">Select Team
-                                            Size</a>
-                                        <span class="error team_size_error"></span>
-                                        <input type="hidden" name="team_size">
+                                    <div class="form-inps p-0">
+                                        <div class="row w-100">
+                                            <div class="col-lg-6 col-12 form-col">
+                                                <div class="form-inp-row">
+                                                    <label class="label1" for="">Email</label>
+                                                    <input type="email" class="input1 tab2email" name="email"
+                                                        placeholder="example@example.com" id="">
+                                                    <span class="error email_error"></span>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6 col-12 d-flex align-items-center">
+                                                <div class="form-inp-row">
+                                                    <label class="label1" for="phone-main">Phone</label>
+                                                    <div>
+                                                        <input id="phone-main" name="phone" class="input1"
+                                                            type="tel">
+                                                        {{-- <span id="valid-msg" class="hide">Valid</span>
+                                            <span id="error-msg" class="hide">Invalid number</span> --}}
+                                                        <br>
+                                                        <span class="error phone_error"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="d-flex flex-column align-items-center mt-4">
-                                        <h2 class="text-center red">When you want to Do your training?</h2>
-                                        <label for="training"
-                                            class="team-size-button text-white text-decoration-none">
-                                            <input autocomplete="off" onfocus="this.showPicker()"
-                                                min="{{ date('Y-m-d') }}" {{-- max="{{ date('Y-m-d', strtotime('next Thursday')) }}"  --}} type="text"
-                                                name="training" id="training" class="position-absolute"
-                                                style="z-index: -1">
-                                            <span class="training-label">
-                                                Select a Date
-                                            </span>
-                                        </label>
-                                        <span class="error training_error"></span>
+                                    <div class="form-inps border-bottom-0">
+                                        <label class="label1" for="">Company</label>
+                                        <input type="text" class="input1 company" name="company"
+                                            placeholder="Company Name" id="">
+                                        <span class="error company_error"></span>
+                                    </div>
+                                </div>
+                                <div class="position-relative my-5">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6 d-flex justify-content-start">
+                                            <h2 style="font-size: 18px" class="text-center red">
+                                                What size is your team?
+                                            </h2>
+                                        </div>
+                                        <div class="col-md-6 d-flex justify-content-end">
+                                            <a type="button" class="team-size-button selectTeamSize"
+                                                data-bs-toggle="modal" data-bs-target="#exampleModal">Select team
+                                                size</a>
+                                            <span class="error team_size_error"></span>
+                                            <input type="hidden" name="team_size">
+                                        </div>
+                                    </div>
+                                    <div class="row align-items-center mt-4">
+                                        <div class="col-md-6 d-flex justify-content-start">
+                                            <h2 style="font-size: 18px;" class=" text-center red">When do you want to
+                                                do your training?
+                                        </div>
+                                        </h2>
+                                        <div class="col-md-6 d-flex justify-content-end">
+                                            <label for="training" style="cursor:pointer;"
+                                                class="team-size-button text-white text-decoration-none">
+                                                <input autocomplete="off" onfocus="this.showPicker()"
+                                                    min="{{ date('Y-m-d') }}" {{-- max="{{ date('Y-m-d', strtotime('next Thursday')) }}"  --}} type="text"
+                                                    name="training" id="training" class="position-absolute"
+                                                    style="z-index: -1">
+                                                <span class="training-label">
+                                                    Select a Date
+                                                </span>
+                                            </label>
+                                            <span class="error training_error"></span>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="form-inp-div">
@@ -736,38 +728,6 @@
     <script src="https://js.stripe.com/v3/"></script>
     <script>
         $(document).ready(function() {
-            @if (session()->has('user_data'))
-                var country = {!! json_encode(session('user_data')['country'] ?? '') !!};
-                var state = {!! json_encode(session('user_data')['state'] ?? '') !!};
-
-                // Select the corresponding options in the country and state select elements
-                if (country) {
-                    updateSelectedOption('country', country);
-                }
-
-                function updateSelectedOption(selectName, value) {
-                    $(`select[name="${selectName}"]`).val(value).trigger('change');
-                    // $('#payment-form').submit();
-                }
-                if (state) {
-                    updateSelectedOption('state', state);
-                    triggerAjax();
-                }
-            @endif
-
-            $('.next').click(function(e) {
-                e.preventDefault();
-                validateFirstTab();
-                if (validateFirstTab()) {
-                    $('.tab1').addClass('d-none');
-                    $('.tab2').removeClass('d-none');
-                    $('.main-form input[name=last_name]').val($('.tab1-last_name').val());
-                    $('.main-form input[name=first_name]').val($('.tab1-first_name').val());
-                    $('.main-form input[name=email]').val($('.tab1-email').val());
-
-                }
-            });
-
             $('#phone-main').on('keyup change', function(e) {
                 if ($(this).val() !== '') {
                     $('.phone_error').empty();
@@ -924,33 +884,6 @@
                 });
             });
 
-            function validateFirstTab() {
-                var isValid = true;
-                $('.tab1-first_name_error').empty();
-                $('.tab1-last_name_error').empty();
-                $('.tab1-email_error').empty();
-                $('.tab1-company_name_error').empty();
-                if ($('.tab1-first_name').val() === '') {
-                    $('.tab1-first_name_error').text('This field is required.');
-                    isValid = false; // Set flag to false if validation fails
-                }
-                if ($('.tab1-last_name').val() === '') {
-                    $('.tab1-last_name_error').text('This field is required.');
-                    isValid = false; // Set flag to false if validation fails
-                }
-                if ($('.tab1-email').val() === '') {
-                    $('.tab1-email_error').text('This field is required.');
-                    isValid = false; // Set flag to false if validation fails
-                } else if (!isEmail($('.tab1-email').val())) {
-                    $('.tab1-email_error').text('Enter a valid email');
-                    isValid = false; // Set flag to false if validation fails
-                }
-                if ($('.tab1-company_name').val() === '') {
-                    $('.tab1-company_name_error').text('This field is required.');
-                    isValid = false; // Set flag to false if validation fails
-                }
-                return isValid;
-            }
             // stripe code 
             if (window.Stripe) {
                 var stripe = Stripe("{{ env('STRIPE_PK') }}");
@@ -1016,6 +949,7 @@
 
             function validateFields() {
                 $('.email_error').empty();
+                $('.company_error').empty();
                 $('.phone_error').empty();
                 $('.first_name_error').empty();
                 $('.last_name_error').empty();
@@ -1050,6 +984,10 @@
                 }
                 if ($('.main-form input[name=first_name]').val() === '') {
                     $('.first_name_error').text(msg);
+                    isValid = false;
+                }
+                if ($('.main-form input[name=company]').val() === '') {
+                    $('.company_error').text(msg);
                     isValid = false;
                 }
                 if ($('.main-form input[name=last_name]').val() === '') {

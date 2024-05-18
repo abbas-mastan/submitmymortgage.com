@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\SubscriptionHelper;
 use App\Mail\AdminMail;
+use App\Mail\CancelSubscriptionMail;
 use App\Mail\CustomQuoteMail;
 use App\Models\CardDetails;
 use App\Models\Company;
@@ -33,6 +34,16 @@ class SubscriptionController extends Controller
         $stripe = new StripeClient(env('STRIPE_SK'));
         $sub_id = $user->subscriptionDetails->stripe_subscription_id;
         $cus_id = $user->subscriptionDetails->stripe_customer_id;
+        $customer = $stripe->customers->retrieve($cus_id, []);
+
+        $session = $stripe->customerSessions->create([
+            'customer' => $cus_id,
+            'components' => ['pricing_table' => ['enabled' => true]],
+        ]);
+        dump(date('Y-m-d H:i:s',$session->expires_at));
+        dump("2024-05-18 07:06:28");
+        dump($session);
+        dd($customer);
         $price_id = $user->subscriptionDetails->subscription_plan_price_id;
         $subscription_old = $stripe->subscriptions->retrieve($sub_id, []);
         $subscription = $stripe->subscriptions->resume(
@@ -189,51 +200,44 @@ class SubscriptionController extends Controller
         return Auth::loginUsingId($id);
     }
 
-    public function trialCompleted($msg)
+    public function trialCompleted()
     {
-        return view('payment-page')->with('msg_error', $msg);
+        return view('payment-page');
     }
 
     public function continuePremium(Request $request)
     {
-        try {
-            $user = Auth::user()->subscriptionDetails;
-            $stripe = new StripeClient(env('STRIPE_SK'));
-            $stripe->subscriptions->create([
-                'customer' => $user->stripe_customer_id,
-                'items' => [['price' => $user->subscription_plan_price_id]],
-            ]);
-            return redirect('/dashboard')->with('msg_success', 'Subscription completed successfully.');
-        } catch (\Exception $e) {
-            $msg = $e->getMessage();
-            return view('payment-page')->with('msg_error', $msg);
-        }
-    }
-
-    public function processPaymentWithStripe(Request $request)
-    {
-
         $user = Auth::user();
         $stripe = new StripeClient(env('STRIPE_SK'));
         if ($request->stripeToken) {
             try {
-
                 $customer = $stripe->customers->create([
                     'description' => $user->name,
                     'email' => $user->email,
                     'source' => $request->stripeToken,
                 ]);
-                $stripe->charges->create([
-                    'amount' => 100 * 1000,
-                    "currency" => "USD",
-                    'customer' => $customer->id ?? $user->trial->customer_id,
-                    'description' => ' test desciption',
+                $price_id = $user->subscriptionDetails->subscription_plan_price_id;
+                $subscription = $stripe->subscriptions->create([
+                    'customer' => $customer->id,
+                    'items' => [['price' => $price_id]],
                 ]);
+                $stripedata = $stripe->subscriptions->retrieve($subscription->id, []);
+                $this->updateSubscriptionDetails($user, $stripedata->id, $customer->id);
+                return redirect('/dashboard')->with('msg_success', 'Subscription completed successfully.');
             } catch (\Exception $e) {
-
+                $msg = $e->getMessage();
+                return view('payment-page')->with('msg_error', $msg);
             }
         }
+    }
 
+    public function updateSubscriptionDetails($user, $subscription_id, $customer_id)
+    {
+        $user->subscriptionDetails->update([
+            'stripe_subscription_id' => $subscription_id,
+            'stripe_customer_id' => $customer_id,
+        ]);
+        $user->userSubscriptionInfo->update(['is_subscribed' => true]);
     }
 
     public function cancelSubscription()
@@ -243,6 +247,7 @@ class SubscriptionController extends Controller
         $stripe = new \Stripe\StripeClient('sk_test_51P6SBB09tId2vnnum7ibbbCIHgacCrrJc1G78LXEYK81LKH0lfMgmVcAzFQySdadJok5xnOwRvEVNqw9m1aiV0qi00Kihjo2GB');
         $stripe->subscriptions->cancel($sub_id, []);
         $user->userSubscriptionInfo->update(['is_subscribed' => false]);
+        Mail::to($user->email)->send(new CancelSubscriptionMail());
         return back()->with(['msg_success', 'Subscription cancled!']);
     }
 
@@ -251,7 +256,7 @@ class SubscriptionController extends Controller
         if (data_get($request, 'data.object.object') === 'charge' && data_get($request, 'type') !== 'charge.refunded') {
             $subscriptionDetails = SubscriptionDetails::where('stripe_customer_id', data_get($request, 'data.object.customer'))->first();
             $user = User::find($subscriptionDetails->user_id);
-            if (data_get($request, 'type') === 'charge.succeeded' && data_get($request, 'data.object.description') !== 'card-testing') {
+            if ($user && data_get($request, 'type') === 'charge.succeeded' && data_get($request, 'data.object.description') !== 'card-testing') {
                 PaymentDetail::create([
                     'user_id' => $user->id,
                     'amount' => data_get($request, 'data.object.amount_captured') / 100,

@@ -22,10 +22,10 @@ class SubscriptionMiddleware
             $stripe = new \Stripe\StripeClient(env('STRIPE_SK'));
             $sub_id = $user->subscriptionDetails->stripe_subscription_id;
             $stripedata = $stripe->subscriptions->retrieve($sub_id, []);
-            $data = $stripedata->jsonSerialize();
-            $period_end_at = date('Y-m-d H:i:s', $data['current_period_end']);
+            $subscription = $stripedata->jsonSerialize();
+            $period_end_at = date('Y-m-d H:i:s', $subscription['current_period_end']);
             if ($period_end_at < now()) {
-                return redirect('/continue-to-premium');
+                return redirect('premium-confirmation');
             }
         }
         return $next($request);

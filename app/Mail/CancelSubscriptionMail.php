@@ -6,14 +6,18 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class AdminMail extends Mailable
+class CancelSubscriptionMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $url;
-    public function __construct($url)
+    /**
+     * Create a new message instance.
+     *
+     * @return void
+     */
+    public function __construct()
     {
-        $this->url = $url;
+        //
     }
 
     /**
@@ -23,7 +27,6 @@ class AdminMail extends Mailable
      */
     public function build()
     {
-        $url = $this->url;
-        return $this->subject('Welcome to Your 14-Days Trial of Submit My Mortgage!')->view('notifications::admin-email',compact('url'));
+        return $this->subject('Subscription cancelled')->view('notifications::cancel-subscription-mail');
     }
 }
