@@ -643,7 +643,7 @@
             defaultCountry: "us",
             ipinfoToken: "yolo",
 
-            nationalMode: false,
+            nationalMode: true,
             numberType: "MOBILE",
             //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
             preferredCountries: ['sa', 'ae', 'qa', 'om', 'bh', 'kw', 'ma'],
@@ -668,7 +668,7 @@
             defaultCountry: "us",
             ipinfoToken: "yolo",
 
-            nationalMode: false,
+            nationalMode: true,
             numberType: "MOBILE",
             //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
             preferredCountries: ['sa', 'ae', 'qa', 'om', 'bh', 'kw', 'ma'],

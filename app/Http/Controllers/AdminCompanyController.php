@@ -34,20 +34,19 @@ class AdminCompanyController extends Controller
     }
     public function destroy(Company $company)
     {
-        $this->disableUsers($company->id, false);
-        $company->update(['enable' => false]);
+        $this->enableOrDisableUsers($company, false);
         return back()->with('msg_success', 'Company deleted successfully');
     }
     public function restore(Company $company)
     {
-        $this->disableUsers($company->id, true);
-        $company->update(['enable' => true]);
+        $this->enableOrDisableUsers($company, true);
         return back()->with('msg_success', 'Company restored successfully');
     }
-
-    private function disableUsers($company_id, $active)
+    
+    public function enableOrDisableUsers($company, $active)
     {
-        User::where('company_id', $company_id)->update(['active' => $active]);
+        User::where('company_id', $company->id)->update(['active' => $active]);
+        $company->update(['enable' => $active]);
     }
 
     public function getUsersByCompany(Company $company)

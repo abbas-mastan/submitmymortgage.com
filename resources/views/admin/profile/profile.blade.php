@@ -69,7 +69,7 @@
         </div>
 
     </div>
-    @if ($user->role === 'Admin')
+    @if ($user->role === 'Admin' && $user->subscriptionDetails)
         <div class="w-1/2 mt-3 p-10 mx-auto justify-center bg-white shadow-2xl">
             <div class="flex justify-center flex-col">
                 <h2 class="text-center text-lg font-semibold leading-8 text-gray-900">Subscription Details</h2>
@@ -104,6 +104,7 @@
             </div>
         </div>
 
+        @if(count($user->payments) > 0)
         <div class="w-1/2 mt-3 p-10 mx-auto justify-center bg-white shadow-2xl">
             <div class="flex justify-center flex-col">
                 <h2 class="text-center text-lg font-semibold leading-8 text-gray-900">Payment History</h2>
@@ -125,7 +126,8 @@
                                     {{ '$'.number_format($payment->amount,2) }}
                                 </td>
                                 <td class="border border-slate-700 p-2 text-center">
-                                    {{ $payment->payment_date }}
+                                        {{-- {{ \Carbon\Carbon::parse($payment->payment_date)->format('m/d/Y') }} --}}
+                                        {{ $payment->payment_date }}
                                 </td>
                             </tr>
                         @endforeach
@@ -133,6 +135,7 @@
                 </table>
             </div>
         </div>
+        @endif       
     @endif
 @endsection
 @section('foot')

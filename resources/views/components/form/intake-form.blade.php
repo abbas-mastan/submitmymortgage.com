@@ -102,7 +102,7 @@
                         ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                         sm:text-sm sm:leading-6"
                 name="is_it_rental_property" id="isItRentalProperty">
-                @foreach (['Yes', 'No'] as $rental)
+                @foreach (['No','Yes'] as $rental)
                     <option {{ old('isItRentalProperty', $intake->isItRentalProperty) === $rental ? 'selected' : '' }}
                         value="{{ $rental }}">{{ $rental }}</option>
                 @endforeach
@@ -153,7 +153,7 @@
     ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
     sm:text-sm sm:leading-6"
                 name="is_repair_finance_needed" id="isRepairFinanceNeeded">
-                @foreach (['Yes', 'No'] as $rental)
+                @foreach (['No','Yes'] as $rental)
                     <option
                         {{ old('isRepairFinanceNeeded', $intake->isRepairFinanceNeeded) === $rental ? 'selected' : '' }}
                         value="{{ $rental }}">{{ $rental }}</option>
@@ -200,10 +200,8 @@
     ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
     sm:text-sm sm:leading-6"
                 name="is_it_rental_property_refinance" id="isItRentalPropertyRefinance">
-                @foreach (['Yes', 'No'] as $rental)
-                    <option
-                        {{ old('is_it_rental_property_refinance', $intake->is_it_rental_property_refinance) === $rental ? 'selected' : '' }}
-                        value="{{ $rental }}">{{ $rental }}</option>
+                @foreach (['No','Yes'] as $rental)
+                    <option value="{{ $rental }}">{{ $rental }}</option>
                 @endforeach
             </select>
         </div>
@@ -219,6 +217,8 @@
 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
 sm:text-sm sm:leading-6"
             name="note" id="Note" cols="30" rows="3">{{ old('note', $intake->note) }}</textarea>
+        <span class="text-red-700" style="text-transform: none !important;" id="note_error"></span>
+
         <div class="flex justify-end">
             <button type="submit"
                 class="intakeFormSubmit w-1/4 py-2 mt-3 bg-red-800 text-white px-5 text-xs font-thin teamContinue">Continue</button>

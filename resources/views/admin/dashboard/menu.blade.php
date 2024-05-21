@@ -22,8 +22,8 @@
                 <form class="" action="{{ route('update.training.time') }}" method="post">
                     @csrf
                     <div class="mb-2">
-                        Training Date : 
-                        {{$trainingDate}}
+                        Training Date :
+                        {{ $trainingDate }}
                     </div>
                     <div class="flex items-center gap-3">
                         <select class="rounded-lg" name="time" id="">
@@ -157,8 +157,9 @@
                         @else
                             <div>
                                 <div>
-                                    Deal: <a class="textcolor"
-                                        href="{{ url(getRoutePrefix() . '/project-overview/' . $project->borrower->id) }}">
+                                    Deal:
+                                    <a class="textcolor"
+                                        @if ($project->borrower !== null && $project->borrower->id !== null) href="{{ url(getRoutePrefix() . '/project-overview/' . $project->borrower->id) }}" @endif>
                                         {{ $project->name ?? '' }}
                                     </a>
                                 </div>

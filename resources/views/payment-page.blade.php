@@ -54,7 +54,7 @@
     <script>
         $(document).ready(function() {
 
-            var stripe = Stripe("{{env(STRIPE_PK)}}");
+            var stripe = Stripe('pk_test_51P6SBB09tId2vnnuXxFipyFJCk9XyEXZCBEUVfdRAbL09wiReraeAoKNNk3SfOq8rvlxMoNJwCIw1diOzwWmapRU00hyZJU7QX');
             var elements = stripe.elements();
             // Custom styling can be passed to options when creating an Element.
             const style = {

@@ -20,10 +20,9 @@ use App\Services\UserService;
 use Faker\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
-use Illuminate\Support\Facades\File;
-
 
 class SuperAdminController extends Controller
 {
@@ -33,13 +32,13 @@ class SuperAdminController extends Controller
     {
         $this->faker = Factory::create();
     }
-    
+
     public function logoutAllUsers()
     {
-        abort_if(Auth::user()->role !== 'Super Admin',403,'You are not allowed to this part of the world');
+        abort_if(Auth::user()->role !== 'Super Admin', 403, 'You are not allowed to this part of the world');
         $sessionPath = storage_path('framework/sessions');
         File::cleanDirectory($sessionPath);
-        return redirect('dashboard')->with('msg_success','All users logged out successfully');
+        return redirect('dashboard')->with('msg_success', 'All users logged out successfully');
     }
 
     public function users(Request $request)
@@ -47,7 +46,7 @@ class SuperAdminController extends Controller
         $data = AdminService::users($request);
         return view('admin.user.users', $data);
     }
-    
+
     public function addUser(Request $request, $id)
     {
         $data = AdminService::addUser($request, $id);
@@ -394,7 +393,7 @@ class SuperAdminController extends Controller
         $data['assistants'] = [];
         $data['assistantsusers'] = $data['user']->assistants->load('assistant');
         foreach ($data['assistantsusers'] as $assistant) {
-            if ($assistant->assistant->active == 1) {
+            if ($assistant->assistant && $assistant->assistant->active == 1) {
                 $data['assistants'][] = $assistant->assistant;
             }
         }
@@ -431,7 +430,6 @@ class SuperAdminController extends Controller
                 'id' => $user->id,
             ];
         }
-
         // Pass the $associates array to a Blade view
         return response()->json($associates, 200);
     }
@@ -495,7 +493,6 @@ class SuperAdminController extends Controller
         } else {
             $team->update(['disable' => true]);
         }
-
         return back()->with('msg_success', " \"$team->name\" team has been " . ($team->disable ? "Disabled" : "Enabled") . "  Successfully");
     }
 
@@ -614,9 +611,9 @@ class SuperAdminController extends Controller
         return back()->with('msg_success', 'Connection deleted successfully');
     }
 
-    public function customQuotes() 
+    public function customQuotes()
     {
         $customQuotes = CustomQuote::with('user')->latest()->get();
-        return view('superadmin.custom-quotes',compact('customQuotes'));
+        return view('superadmin.custom-quotes', compact('customQuotes'));
     }
 }

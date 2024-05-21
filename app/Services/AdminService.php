@@ -659,7 +659,7 @@ class AdminService
                 'name' => "required",
                 'company' => (Auth::check() && Auth::user()->role === 'Super Admin' && $request->role !== 'Borrower') ? 'required' : '',
                 'sendemail' => '',
-                'password' => ($isNewUser && !$request->sendemail) || !Auth::check() || $request->password ? ['required', Password::min(12)
+                'password' => ($isNewUser && !$request->sendemail) || !Auth::check() || $request->password ? ['required', Password::min(8)
                         ->mixedCase()
                         ->letters()
                         ->numbers()

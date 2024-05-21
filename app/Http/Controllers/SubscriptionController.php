@@ -36,22 +36,19 @@ class SubscriptionController extends Controller
         $cus_id = $user->subscriptionDetails->stripe_customer_id;
         $customer = $stripe->customers->retrieve($cus_id, []);
 
-        $session = $stripe->customerSessions->create([
+        $session = $stripe->subscriptions->all([
             'customer' => $cus_id,
-            'components' => ['pricing_table' => ['enabled' => true]],
+            'status' => 'all',
         ]);
-        dump(date('Y-m-d H:i:s',$session->expires_at));
-        dump("2024-05-18 07:06:28");
-        dump($session);
-        dd($customer);
-        $price_id = $user->subscriptionDetails->subscription_plan_price_id;
-        $subscription_old = $stripe->subscriptions->retrieve($sub_id, []);
-        $subscription = $stripe->subscriptions->resume(
-            $sub_id,
-            ['billing_cycle_anchor' => 'now']
-        );
+        echo '<pre>';
+        var_dump($session->data);
+        echo '</pre>';
+        die;
 
-        dd($subscription->jsonSerialize());
+        $subscription = $stripe->subscriptions->retrieve($sub_id, []);
+        dump(date('Y-m-d H:i:s', $subscription->current_period_end));
+        dump($session);
+        dd($session->jsonSerialize());
     }
 
     public function processPayment(Request $request)
@@ -256,6 +253,7 @@ class SubscriptionController extends Controller
         if (data_get($request, 'data.object.object') === 'charge' && data_get($request, 'type') !== 'charge.refunded') {
             $subscriptionDetails = SubscriptionDetails::where('stripe_customer_id', data_get($request, 'data.object.customer'))->first();
             $user = User::find($subscriptionDetails->user_id);
+            $companyController = new AdminCompanyController();
             if ($user && data_get($request, 'type') === 'charge.succeeded' && data_get($request, 'data.object.description') !== 'card-testing') {
                 PaymentDetail::create([
                     'user_id' => $user->id,
@@ -263,15 +261,15 @@ class SubscriptionController extends Controller
                     'payment_date' => date('Y-m-d H:i:s', data_get($request, 'created')),
                 ]);
                 $user->userSubscriptionInfo->update(['is_subscribed' => true, 'trials_completed' => true]);
+                $company = Company::find($user->company_id);
+                $companyController->enableOrDisableUsers($company, true);
             }
-            if (data_get($request, 'type') === 'charge.failed' && data_get($request, 'data.object.description') !== 'card-testing') {
+            if ($user && data_get($request, 'type') === 'charge.failed' && data_get($request, 'data.object.description') !== 'card-testing') {
+                $company = Company::find($user->company_id);
+                $companyController->enableOrDisableUsers($company, false);
                 $user->userSubscriptionInfo->update(['is_subscribed' => false, 'trials_completed' => true]);
             }
         }
     }
 
-    public function paymentHistory()
-    {
-
-    }
 }
