@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ApplicationRequest;
-use App\Models\Contact;
-use App\Models\Project;
 use App\Models\User;
 use App\Services\CommonService;
 use App\Services\UserService;
@@ -150,7 +148,7 @@ class UserController extends Controller
 
     public function redirectTo($route, $message)
     {
-     return CommonService::redirectTo($route,$message);
+        return CommonService::redirectTo($route, $message);
     }
 
     private function validateFunction($request)
@@ -158,7 +156,7 @@ class UserController extends Controller
         return $request->validate([
             'b_fname' => 'required',
             'b_lname' => 'required',
-            'b_phone' => 'required',
+            'b_phone' => 'required|regex:/^\+1 \(\d{3}\) \d{3}-\d{4}$/',
             'b_email' => 'required',
             'b_address' => 'required',
             'b_suite' => '',
@@ -168,7 +166,7 @@ class UserController extends Controller
             // co borrwowers details
             'co_fname' => 'required',
             'co_lname' => 'required',
-            'co_phone' => 'required',
+            'co_phone' => 'required|regex:/^\+1 \(\d{3}\) \d{3}-\d{4}$/',
             'co_email' => 'required',
             'co_address' => 'required',
             'co_suite' => '',
@@ -180,6 +178,14 @@ class UserController extends Controller
             'p_city' => 'required',
             'p_state' => 'required',
             'p_zip' => 'required',
+        ], [
+            'b_email.required' => 'The borrower email is required.',
+            'b_address.required' => 'The borrower address is required.',
+            'co_email.required' => 'The co-borrower email is required.',
+            'b_phone.required' => 'The borrower phone is required.',
+            'co_phone.required' => 'The co-borrower phone is required.',
+            'b_phone.regex' => 'The borrower phone number format is invalid.',
+            'co_phone.regex' => 'The co-borrower phone number format is invalid.',
         ]);
     }
 

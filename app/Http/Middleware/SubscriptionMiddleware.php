@@ -24,7 +24,7 @@ class SubscriptionMiddleware
             $stripedata = $stripe->subscriptions->retrieve($sub_id, []);
             $subscription = $stripedata->jsonSerialize();
             $period_end_at = date('Y-m-d H:i:s', $subscription['current_period_end']);
-            if (!$user->userSubscriptionInfo->is_subscribed && $period_end_at < now()) {
+            if ($subscription['status'] != 'active' && $period_end_at < now()) {
                 return redirect('premium-confirmation');
             }
         }

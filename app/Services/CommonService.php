@@ -106,7 +106,7 @@ class CommonService
                 if ($project) {
                     self::storeNotification("$request->category", Auth::id(), $project->id, $request->category);
                 } else {
-                    self::storeNotification("$request->category", Auth::id(), $project->id, $request->category);
+                    self::storeNotification("$request->category", Auth::id(),$request->category);
                 }
                 return response()->json(['status' => "success", 'msg' => "File uploaded."]);
             }
@@ -490,7 +490,6 @@ class CommonService
             'how_much' => $request->repair_finance_amount ?? null,
             'note' => $request->note ?? null,
         ]);
-        // return redirect()->back()->with('msg_success','From submited succesfully');
         return response()->json('success', 200);
     }
 
@@ -580,7 +579,7 @@ class CommonService
     {
         $admin = Auth::user();
         $data['role'] = $admin->role;
-        $data['tables'] = ['Pending Applications', 'Completed Applications', 'Incomplete Applications', 'Deleted Applications'];
+        $data['tables'] = ['Pending Applications', 'Completed Applications', 'Rejected Applications', 'Deleted Applications'];
         if ($data['role'] == 'Super Admin') {
             $data['applications'] = Application::with(['user' => function ($query) {
                 $query->withTrashed();
@@ -626,7 +625,7 @@ class CommonService
     public static function validatePassword(Request $request)
     {
         $request->validate([
-            'password' => ['required', PasswordRule::min(12)
+            'password' => ['required', PasswordRule::min(8)
                     ->mixedCase()
                     ->letters()
                     ->numbers()
@@ -635,7 +634,7 @@ class CommonService
         ],[
             'password.required' => 'The password field is required.',
             'password.confirmed' => 'The password confirmation does not match.',
-            'password.*' => 'The password must be at least 12 characters long and contain a mix of uppercase and lowercase letters, numbers, and symbols.',
+            'password.*' => 'The password must be at least 8 characters long and contain a mix of uppercase and lowercase letters, numbers, and symbols.',
         ]);
     }
 }

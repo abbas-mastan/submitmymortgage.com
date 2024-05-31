@@ -1,8 +1,8 @@
 <script src="{{ asset('js/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-<script src="{{asset('js/intake.js')}}"></script>
+<script src="{{ asset('js/intake.js') }}"></script>
 <script>
-     function uploadToPHPServer(checkedValues = null) {
+    function uploadToPHPServer(checkedValues = null) {
         var formData = new FormData();
         if (file) {
             var blob = file instanceof Blob ? file : file.getBlob();
@@ -31,7 +31,7 @@
                 $("#file-name-percent").text(progress);
                 return;
             }
-        window.location.href = window.returnBack;            
+            window.location.href = window.returnBack;
         });
     }
 

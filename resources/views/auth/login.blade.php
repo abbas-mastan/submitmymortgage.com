@@ -15,7 +15,7 @@
         </div>
         <div class="text-center mt-5">
             <span class="text-lg xl:text-2xl text-white">
-                Sign up / Login
+                Login
             </span>
         </div>
         <form action="{{ url('/do-login') }}" method="post" class=" w-7/8">
@@ -41,54 +41,34 @@
                         name="password" id="password" placeholder="&nbsp;&nbsp;***********">
                 </div>
             </div>
-            <div class="mt-5 grid grid-cols-6">
-                <div class="col-span-2 text-right mr-12">
-                    &nbsp;
-                </div>
-                <div class="col-span-4">
-                    <input type="checkbox" class=" " name="remember" id="remember"> <label for="remember"
-                        class="text-white text-md xl:text-xl opacity-70">Remember me</label>
-                </div>
+            <div class="flex justify-center mt-5 align-center">
+                <input type="checkbox" class="mt-1" name="remember" id="remember"> <label for="remember"
+                    class="text-white text-md xl:text-xl opacity-70">Remember me</label>
             </div>
-            <div class="mt-2 grid grid-cols-6">
-                <div class="col-span-2 text-right mr-12">
-                    &nbsp;
-                </div>
-                <div class="col-span-4 pl-5">
-                    <a href="{{ url('/forgot-password') }}" class="text-white text-md xl:text-xl opacity-70 underline">
-                        Forgot Password?
-                    </a>
-                </div>
+            <div class="flex justify-center mt-3">
+                <a href="{{ url('/forgot-password') }}" class="text-white text-md xl:text-xl opacity-70 underline">
+                    Forgot Password?
+                </a>
             </div>
-            <div class="mt-5 grid grid-cols-6">
-                <div class="col-span-2 text-right mr-12">
-                    &nbsp;
-                </div>
-                <div class="col-span-4 ml-1 ">
-                    <button type="submit"
-                        class="  text-md xl:text-xl  border-2 border-white rounded-md bg-white px-10 xl:px-12 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                        Sign In
-                    </button>
-                </div>
+            <div class="mt-5 flex justify-center">
+                <button type="submit"
+                    class="  text-md xl:text-xl  border-2 border-white rounded-md bg-white px-10 xl:px-12 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
+                    Sign In
+                </button>
             </div>
-            <div class="mt-2  grid grid-cols-6">
-                <div class="col-span-2 text-right mr-12">
-                    &nbsp;
-                </div>
-                <div class="col-span-4 ml-1 ">
+            <div class="flex justify-center mt-3 ">
                     <a href="{{ url('/register') }}">
                         <button type="button"
                             class="  text-md  xl:text-xl text-white rounded-md bg-transparent border-2 border-white px-4 xl:px-4 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
                             Register Here
                         </button>
                     </a>
-                </div>
             </div>
         </form>
-        <footer style="margin-top:239px">
-            <a href="/privacy-policy" class="border p-2 bg-gray-300">Privacy Policy</a>
-            <button data-te-toggle="modal" data-te-target="#exampleModalCenter" data-te-ripple-init
-                data-te-ripple-color="light" type="button" class="border p-1 bg-gray-300">Demo Video</a>
+        <footer class="flex justify-center gap-4 mt-5">
+            <a href="/privacy-policy" class="text-[#44a7e7] p-2">Privacy Policy</a>
+            <button data-te-toggle="modal" data-te-target="#exampleModalCenter" data-te-ripple-init type="button"
+                class="text-[#44a7e7] p-1">Demo Video</button>
         </footer>
         <!--Verically centered modal-->
         <div data-te-modal-init
@@ -130,7 +110,7 @@
     <script src="https://cdn.jsdelivr.net/npm/tw-elements@1.0.0-beta2/dist/js/tw-elements.umd.min.js"></script>
     <script>
         $(document).ready(function() {
-            $('.body-first-div').addClass('bg-gradient-to-b from-gradientStart to-gradientEnd');
+            $('.body-first-div').addClass('bg-gradient-to-b from-gradientStart to-gradientEnd h-screen');
         });
     </script>
 @endsection

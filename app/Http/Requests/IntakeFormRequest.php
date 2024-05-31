@@ -30,7 +30,7 @@ class IntakeFormRequest extends FormRequest
             'first_name' => 'required',
             'last_name' => 'required',
             'address' => 'required',
-            'phone' => 'required',
+            'phone' => 'required|regex:/^\+1 \(\d{3}\) \d{3}-\d{4}$/',
             'note' => 'required',
             'purchase_price' => 'required_if:loan_type,Purchase',
             'property_value' => 'required_if:loan_type,Purchase',

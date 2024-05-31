@@ -50,7 +50,7 @@
                             name="b_email" id="b_email" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Borrower's Email Address">
                     </div>
                     @error('b_email')
-                        <span class="text-red-700">This field is required</span>
+                        <span class="text-red-700">{{ $message }}</span>
                     @enderror
                 </div>
                 <div class="">
@@ -58,11 +58,11 @@
                         <label for="b_phone" class="">Phone #</label>
                     </div>
                     <div class="mt-2">
-                        <input value="{{ old('b_phone', $info->b_phone) }}" type="text"
+                        <input value="{{ old('b_phone', $info->b_phone) }}" type="tel"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="b_phone" id="b_phone" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Borrower's Phone#">
                         @error('b_phone')
-                            <span class="text-red-700">This field is required</span>
+                            <span class="text-red-700">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>
@@ -124,7 +124,7 @@
                 </div>
                 <div class="">
                     <div class="mt-2">
-                        <input value="{{ old('b_zip', $info->b_zip) }}" type="text"
+                        <input value="{{ old('b_zip', $info->b_zip) }}" type="number"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="b_zip" id="b_zip" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Borrower's Zip">
                         @error('b_zip')
@@ -187,7 +187,7 @@
                         <label for="co_phone" class="">Phone #</label>
                     </div>
                     <div class="mt-2">
-                        <input value="{{ old('co_phone', $info->co_phone) }}" type="text"
+                        <input value="{{ old('co_phone', $info->co_phone) }}" type="tel"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="co_phone" id="co_phone" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Co Borrower's Phone#">
                         @error('co_phone')
@@ -254,7 +254,7 @@
                 </div>
                 <div class="">
                     <div class="mt-2">
-                        <input value="{{ old('co_zip', $info->co_zip) }}" type="text"
+                        <input value="{{ old('co_zip', $info->co_zip) }}" type="number"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="co_zip" id="co_zip" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Co Borrower's Zip">
                         @error('co_zip')
@@ -326,7 +326,7 @@
                 </div>
                 <div class="">
                     <div class="mt-2">
-                        <input value="{{ old('p_zip', $info->p_zip) }}" type="text"
+                        <input value="{{ old('p_zip', $info->p_zip) }}" type="number"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="p_zip" id="p_zip" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Zip">
                         @error('p_zip')
@@ -361,9 +361,9 @@
                             <label for="mortage1" class="">1st Mortgage</label>
                         </div>
                         <div class="mt-2">
-                            <input value="{{ old('mortage1', $info->mortage1) }}" type="number" min="0"
+                            <input value="{{ old('mortage1', $info->mortage1) }}" type="text" min="0"
                                 max="99999999"
-                                class="inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                                class="input_number inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                                 name="mortage1" id="mortage1" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;1st Mortgage">
                             <span class="inline -ml-12 z-10 opacity-50">$</span>
                         </div>
@@ -393,9 +393,9 @@
                             <label for="mortage2" class="">2nd Mortgage</label>
                         </div>
                         <div class="mt-2">
-                            <input value="{{ old('mortage2', $info->mortage2) }}" type="number" min="0"
+                            <input value="{{ old('mortage2', $info->mortage2) }}" type="text" min="0"
                                 max="99999999"
-                                class="inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                                class="input_number inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                                 name="mortage2" id="mortage2" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;2nd Mortgage">
                             <span class="inline -ml-12 z-10 opacity-50">$</span>
                         </div>
@@ -426,9 +426,9 @@
                         </div>
                         <div class="mt-2">
 
-                            <input value="{{ old('value', $info->value) }}" type="number" min="0"
+                            <input value="{{ old('value', $info->value) }}" type="text" min="0"
                                 max="99999999"
-                                class="inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                                class="input_number inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                                 name="value" id="value" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Home Value">
                             <span class="inline -ml-12 z-10 opacity-50">$</span>
                         </div>
@@ -458,9 +458,9 @@
                         <label for="cashout-amt" class="">How much cashout are you requesting?</label>
                     </div>
                     <div class="mt-2">
-                        <input value="{{ old('cashout_amount', $info->cashout_amount) }}" type="number" min="0"
+                        <input value="{{ old('cashout_amount', $info->cashout_amount) }}" type="text" min="0"
                             max="99999999"
-                            class="inline rounded-md py-2 w-1/2 focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            class="input_number inline rounded-md py-2 w-1/2 focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="cashout_amount" id="cashout-amt" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Cashout Amount">
                         <span class="inline -ml-12 z-10 opacity-50">$</span>
                     </div>
@@ -511,8 +511,8 @@
                             <label for="purchase_price" class="">Purchase Price</label>
                         </div>
                         <div class="mt-2">
-                            <input value="{{ old('purchase_price', $info->purchase_price) }}" type="number"
-                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            <input value="{{ old('purchase_price', $info->purchase_price) }}" type="text"
+                                class="input_number rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                                 name="purchase_price" id="purchase_price"
                                 placeholder="&nbsp;&nbsp;&nbsp;&nbsp; Purchase Price">
                         </div>
@@ -524,8 +524,8 @@
                         <div class="mt-2">
 
                             <div class="mt-2">
-                                <input value="{{ old('purchase_dp', $info->purchase_dp) }}" type="number"
-                                    class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                                <input value="{{ old('purchase_dp', $info->purchase_dp) }}" type="text"
+                                    class="input_number rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                                     name="purchase_dp" id="purchase_dp"
                                     placeholder="&nbsp;&nbsp;&nbsp;&nbsp; Down Payment Amount">
                             </div>
@@ -536,8 +536,8 @@
                             <label for="loan_amount" class="">Loan Amount</label>
                         </div>
                         <div class="mt-2">
-                            <input value="{{ old('loan_amount', $info->loan_amount) }}" type="number"
-                                class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            <input value="{{ old('loan_amount', $info->loan_amount) }}" type="text"
+                                class="input_number rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                                 name="loan_amount" id="loan_amount" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Loan Amount">
                         </div>
                     </div>

@@ -24,7 +24,7 @@
             <x-form.input name="first_name" label="First Name" class="mb-0 " />
             <x-form.input name="last_name" label="Last Name" class="mb-0" />
             <x-form.input name="email" label="Email" type="email" />
-            <x-form.input name="phone" type="number" label="Phone Number" />
+            <x-form.input name="phone" type="tel" label="Phone Number" value="+1" />
         </div>
     @endif
     <span class="block k mt-1 font-bold">Property Address</span>
@@ -33,7 +33,7 @@
         <x-form.input name="address_two" :value="$intake->address_two ?? ''" label="Street Address Line 2" class="mb-0" />
         <x-form.input name="city" :value="old('city', $intake->city) ?? ''" label="City" class="mb-0" />
         <x-form.input name="state" :value="$intake->state ?? ''" label="State / Province / Region" class="mb-0" />
-        <x-form.input name="zip" :value="$intake->zip ?? ''" label="Postal/Zip Code" />
+        <x-form.input name="zip" type="number" :value="$intake->zip ?? ''" label="Postal/Zip Code" />
     </div>
     <span class="block mt-1 font-bold">Loan Information</span>
     <div class="purchase grid grid-cols-2 gap-x-4">
@@ -51,19 +51,19 @@
             </select>
         </div>
         <div class="relative">
-            <x-form.input name="purchase_price" :value="$intake->purchase_price ?? ''" type="number" label="Purchase Price" class="mb-0"
+            <x-form.input name="purchase_price" :value="$intake->purchase_price ?? ''" label="Purchase Price" class="mb-0" inputClass="input_number"
                 sign="1" />
         </div>
         <div class="relative">
-            <x-form.input name="property_value" :value="$intake->property_value ?? ''" type="number" label="Property Value" class="mb-0"
+            <x-form.input name="property_value" :value="$intake->property_value ?? ''"  label="Property Value" class="mb-0" inputClass="input_number"
                 sign="1" />
         </div>
         <div class="relative">
-            <x-form.input name="down_payment" :value="$intake->down_payment ?? ''" type="number" label="Down Payment" class="mb-0"
+            <x-form.input name="down_payment" :value="$intake->down_payment ?? ''" inputClass="input_number" label="Down Payment" class="mb-0"
                 sign="1" />
         </div>
         <div class="relative">
-            <x-form.input name="current_loan_amount_purchase" :value="$intake->current_loan_amount ?? ''" type="number"
+            <x-form.input name="current_loan_amount_purchase" :value="$intake->current_loan_amount ?? ''" inputClass="input_number"
                 label="Current Loan Amount" class="mb-0" sign="1" />
         </div>
         <x-form.input name="closing_date_purchase" :value="$intake->closing_date ?? ''" type="date" class="mb-0"
@@ -84,14 +84,14 @@
             </select>
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->current_loan_amount ?? ''" name="current_loan_amount_cashout" type="number"
+            <x-form.input :value="$intake->current_loan_amount ?? ''" name="current_loan_amount_cashout" inputClass="input_number"
                 label="Current Loan Amount" class="mb-0" sign="1" />
         </div>
         <div class="relative">
             <x-form.input :value="$intake->current_lender ?? ''" name="current_lender_cashout" label="Current Lender" class="mb-0" />
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->rate ?? ''" name="rate_cashout" type="number" label="Rate" class="mb-0"
+            <x-form.input :value="$intake->rate ?? ''" name="rate_cashout" inputClass="input_number" label="Rate" class="mb-0"
                 sign="1" />
         </div>
         <div class="mt-3 ">
@@ -102,18 +102,18 @@
                         ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
                         sm:text-sm sm:leading-6"
                 name="is_it_rental_property" id="isItRentalProperty">
-                @foreach (['No','Yes'] as $rental)
+                @foreach (['Yes','No'] as $rental)
                     <option {{ old('isItRentalProperty', $intake->isItRentalProperty) === $rental ? 'selected' : '' }}
                         value="{{ $rental }}">{{ $rental }}</option>
                 @endforeach
             </select>
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->monthly_rental_income ?? ''" name="monthly_rental_income" type="number"
+            <x-form.input :value="$intake->monthly_rental_income ?? ''" name="monthly_rental_income" inputClass="input_number"
                 label="Monthly Rental Income" class="mb-0" sign="1" />
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->cashout_amount ?? ''" name="cashout_amount" type="number" label="Cash Out Amount"
+            <x-form.input :value="$intake->cashout_amount ?? ''" name="cashout_amount" inputClass="input_number" label="Cash Out Amount"
                 class="mb-0" sign="1" />
         </div>
     </div>
@@ -132,15 +132,15 @@
             </select>
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->purchase_price ?? ''" name="purchase_price_fix_flip" type="number" label="Purchase Price"
+            <x-form.input :value="$intake->purchase_price ?? ''" name="purchase_price_fix_flip" inputClass="input_number" label="Purchase Price"
                 class="mb-0" sign="1" />
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->property_value ?? ''" name="property_value_fix_flip" type="number" label="Property Value"
+            <x-form.input :value="$intake->property_value ?? ''" name="property_value_fix_flip" inputClass="input_number" label="Property Value"
                 class="mb-0" sign="1" />
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->down_payment ?? ''" name="down_payment_fix_flip" type="number" label="Down Payment"
+            <x-form.input :value="$intake->down_payment ?? ''" name="down_payment_fix_flip" inputClass="input_number" label="Down Payment"
                 class="mb-0" sign="1" />
         </div>
         <x-form.input name="closing_date_fix_flip" :value="$intake->closing_date ?? ''" type="date" class="mb-0"
@@ -153,7 +153,7 @@
     ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 
     sm:text-sm sm:leading-6"
                 name="is_repair_finance_needed" id="isRepairFinanceNeeded">
-                @foreach (['No','Yes'] as $rental)
+                @foreach (['Yes','No'] as $rental)
                     <option
                         {{ old('isRepairFinanceNeeded', $intake->isRepairFinanceNeeded) === $rental ? 'selected' : '' }}
                         value="{{ $rental }}">{{ $rental }}</option>
@@ -161,7 +161,7 @@
             </select>
         </div>
         <div class="relative repairfinanceamountdiv">
-            <x-form.input :value="$intake->how_much ?? ''" name="repair_finance_amount" type="number" label="How much?"
+            <x-form.input :value="$intake->how_much ?? ''" name="repair_finance_amount" inputClass="input_number" label="How much?"
                 class="mb-0" sign="1" />
         </div>
     </div>
@@ -180,7 +180,7 @@
             </select>
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->current_loan_amount ?? ''" name="current_loan_amount_refinance" type="number"
+            <x-form.input :value="$intake->current_loan_amount ?? ''" name="current_loan_amount_refinance" inputClass="input_number"
                 label="Current Loan Amount" class="mb-0" sign="1" />
         </div>
         <div class="relative">
@@ -188,7 +188,7 @@
                 class="mb-0" sign="1" />
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->rate ?? ''" name="rate_refinance" type="number" label="Rate" class="mb-0"
+            <x-form.input :value="$intake->rate ?? ''" name="rate_refinance" inputClass="input_number" label="Rate" class="mb-0"
                 sign="1" />
         </div>
         <div class="mt-3 ">
@@ -206,8 +206,8 @@
             </select>
         </div>
         <div class="relative">
-            <x-form.input :value="$intake->monthly_rental_income ?? ''" name="monthly_rental_income_refinance" type="number"
-                label="Monthly Rental Income" class="mb-0" sign="1" />
+            <x-form.input :value="$intake->monthly_rental_income ?? ''" name="monthly_rental_income_refinance" inputClass="input_number"
+                label="Monthly Rental Income" class="mb-0 hidden" sign="1" />
         </div>
     </div>
     <div class="mt-3 grid grid-cols-1">

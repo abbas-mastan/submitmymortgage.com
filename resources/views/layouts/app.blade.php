@@ -219,7 +219,7 @@
         $(document).ready(function() {
             $("#attachment-table_filter").attr("placeholder", "search");
             $("#attachment-table_filter > input").addClass('bg-red-800');
-            $("input[type=search]").addClass('serachinput');
+            // $("input[type=search]").addClass('serachinput');
             $("input[type=search]").attr("placeholder", "search");
             $("#attachment-table_filter > input").addClass('border-none text-white');
         });
@@ -236,10 +236,63 @@
         @endif
     </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     {{-- tooltip logic starts here --}}
     <script>
+        $(document).ready(function() {
+            $("#phone ,#b_phone ,#co_phone").on('keyup', function() {
+                var input = $(this).val();
+
+                var phoneError = $('#phone_error');
+                // Remove non-numeric characters except the leading +1
+                input = input.replace(/[^\d]/g, '');
+                if (input.startsWith('1')) {
+                    input = '+' + input;
+                } else {
+                    input = '+1' + input;
+                }
+                // Format the number as +1 (xxx) xxx-xxxx
+                if (input.length > 10) {
+                    input = input.replace(/^(\+1)(\d{3})(\d{3})(\d{4}).*/, '$1 ($2) $3-$4');
+                } else if (input.length > 6) {
+                    input = input.replace(/^(\+1)(\d{3})(\d{3})/, '$1 ($2) $3');
+                } else if (input.length > 3) {
+                    input = input.replace(/^(\+1)(\d{3})/, '$1 ($2)');
+                }
+
+                // Update the input value
+                $(this).val(input);
+
+                // Validate length
+                if (input.length > 17) {
+                    phoneError.text('characters exceeds');
+                    phoneError.css('display', 'block');
+                } else if (input.length < 17) {
+                    phoneError.text('incomplete number');
+                    phoneError.css('display', 'block');
+                } else {
+                    phoneError.hide();
+                    phoneError.css('display', 'none');
+                }
+            });
+
+
+            $('.input_number').on('keyup',function(event) {
+                if (event.which >= 37 && event.which <= 40) return;
+                $(this).val(function(index, value) {
+                    return value
+                        // Keep only digits and decimal points:
+                        .replace(/[^\d.]/g, "")
+                        // Remove duplicated decimal point, if one exists:
+                        .replace(/^(\d*\.)(.*)\.(.*)$/, '$1$2$3')
+                        // Keep only two digits past the decimal point:
+                        .replace(/\.(\d{2})\d+/, '.$1')
+                        // Add thousands separators:
+                        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                });
+            });
+        });
+
         $(".tooltip").on('mouseenter', function() {
             var tooltipText = $(this).attr('data');
 

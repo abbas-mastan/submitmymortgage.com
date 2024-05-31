@@ -21,7 +21,7 @@
             @endcan
             @can('isUser')
                 <div class="pl-10">
-                    <a href="{{ url(getRoutePrefix() . '/dashboard') }}">
+                    <a href="{{ url('/dashboard') }}">
                         Mortgage Application Dashboard
                         </span>
                     </a>

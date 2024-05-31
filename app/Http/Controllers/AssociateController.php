@@ -126,7 +126,7 @@ class AssociateController extends Controller
     public function deleteUser(Request $request, $id)
     {
         $msg = AdminService::deleteUser($request, $id);
-        return redirect('/dashboard')->with($msg['msg_type'], $msg['msg_value']);
+        return back()->with($msg['msg_type'], $msg['msg_value']);
     }
 
     public function fileUpload(Request $request)
@@ -443,6 +443,15 @@ class AssociateController extends Controller
     public function updateFileStatus(Request $request, $id)
     {
         $msg = AdminService::updateFileStatus($request, $id);
+        return back()->with($msg['msg_type'], $msg['msg_value']);
+    }
+
+    public function updateCatComments(Request $request, $cat)
+    {
+        $request->validate([
+            'user_id' => 'required',
+        ]);
+        $msg = AdminService::updateCatComments($request, $cat);
         return back()->with($msg['msg_type'], $msg['msg_value']);
     }
 

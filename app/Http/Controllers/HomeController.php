@@ -31,7 +31,6 @@ class HomeController extends Controller
     public function dashboard(Request $request)
     {
         if(Gate::allows('isAssistant')) return redirect(getRoutePrefix().'/submit-document');
-        
         $data = match (true) {
             Gate::allows('isSuperAdmin') => $this->getSuperAdminDashboard(),
             Gate::allows('isAdmin') => $this->getAdminDashboard(),

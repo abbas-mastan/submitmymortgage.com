@@ -26,7 +26,7 @@ class ApplicationRequest extends FormRequest
         return [
             'name' => 'required|min:4',
             'date' => 'required',
-            'phone' => 'required',
+            'phone' => 'required|regex:/^\+1 \(\d{3}\) \d{3}-\d{4}$/',
             'email' => 'required|email',
             'property_profile' => 'required',
             'address' => 'required',

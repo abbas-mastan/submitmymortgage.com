@@ -36,7 +36,7 @@ function getAssistantRoutePrefix()
 //Returns prefix for routes to be used by admin
 function getRoutePrefix()
 {
-    switch (session('role')) {
+    switch (Auth::user()->role) {
         case 'Super Admin':
             return getSuperAdminRoutePrefix();
             break;

@@ -14,7 +14,7 @@
                 <header
                     style="padding:0.3rem; color:white; border-top-left-radius:1rem; border-top-right-radius:1rem; background-color:#b91c1c;">
                     <h1 style="font-weight:600;font-size: 1.875rem;">
-                        You’ve Been Added on a Submit my Mortgage Deal
+                        You’ve been added on a Submit My Mortgage deal.
                     </h1>
                 </header>
                 <p style="font-size:1.5rem; line-height:2rem; font-weight:600; padding:2rem;">

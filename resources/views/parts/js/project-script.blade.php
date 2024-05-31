@@ -308,8 +308,8 @@
                         ${!data ? 'Login As This User': data+' this user'}
                         <div class="tooltip-arrow" data-popper-arrow></div></div>`
             );
-            }).on('mouseleave', '.loginBtn', function() {
-                $(this).find('div[role="tooltip"]').remove();
+        }).on('mouseleave', '.loginBtn', function() {
+            $(this).find('div[role="tooltip"]').remove();
         });
     });
 

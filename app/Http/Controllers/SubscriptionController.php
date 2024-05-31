@@ -34,18 +34,39 @@ class SubscriptionController extends Controller
         $stripe = new StripeClient(env('STRIPE_SK'));
         $sub_id = $user->subscriptionDetails->stripe_subscription_id;
         $cus_id = $user->subscriptionDetails->stripe_customer_id;
+        $price_id = $user->subscriptionDetails->subscription_plan_price_id;
+        dump(date('Y-m-d H:i:s',1718022239));
+        dump(date('Y-m-d H:i:s',1716811898));
         $customer = $stripe->customers->retrieve($cus_id, []);
 
         $session = $stripe->subscriptions->all([
             'customer' => $cus_id,
             'status' => 'all',
         ]);
+
+        $subscription = $stripe->subscriptions->retrieve($sub_id, []);
+        $schedule = $stripe->subscriptionSchedules->create([
+            'customer' => $cus_id,
+            'start_date' => $subscription->current_period_end,
+            'end_behavior' => 'release',
+            'phases' => [
+                [
+                    'items' => [
+                        [
+                            'price' => $price_id,
+                            'quantity' => 1,
+                        ],
+                    ],
+                    'iterations' => 12,
+                ],
+            ],
+        ]);
+        dump($schedule);
         echo '<pre>';
         var_dump($session->data);
         echo '</pre>';
         die;
 
-        $subscription = $stripe->subscriptions->retrieve($sub_id, []);
         dump(date('Y-m-d H:i:s', $subscription->current_period_end));
         dump($session);
         dd($session->jsonSerialize());
@@ -88,7 +109,6 @@ class SubscriptionController extends Controller
             }
         }
     }
-
     public function userTraining($request, $user_id)
     {
         return UserTraining::updateOrCreate(
@@ -170,7 +190,7 @@ class SubscriptionController extends Controller
         };
         return Validator::make($request->all(), [
             'email' => 'required|email:rfc|unique:users,email',
-            'phone' => 'required',
+            'phone' => 'required|regex:/^\+1 \(\d{3}\) \d{3}-\d{4}$/',
             'first_name' => 'required',
             'last_name' => 'required',
             'company' => 'required',
@@ -253,23 +273,27 @@ class SubscriptionController extends Controller
         if (data_get($request, 'data.object.object') === 'charge' && data_get($request, 'type') !== 'charge.refunded') {
             $subscriptionDetails = SubscriptionDetails::where('stripe_customer_id', data_get($request, 'data.object.customer'))->first();
             $user = User::find($subscriptionDetails->user_id);
-            $companyController = new AdminCompanyController();
             if ($user && data_get($request, 'type') === 'charge.succeeded' && data_get($request, 'data.object.description') !== 'card-testing') {
-                PaymentDetail::create([
-                    'user_id' => $user->id,
-                    'amount' => data_get($request, 'data.object.amount_captured') / 100,
-                    'payment_date' => date('Y-m-d H:i:s', data_get($request, 'created')),
-                ]);
-                $user->userSubscriptionInfo->update(['is_subscribed' => true, 'trials_completed' => true]);
-                $company = Company::find($user->company_id);
-                $companyController->enableOrDisableUsers($company, true);
+                $old_payment = $user->payments()->orderby('created_at', 'desc')->first();
+                $current_payment_date = date('Y-m-d H:i:s', data_get($request, 'created'));
+                if ($old_payment->payment_date !== $current_payment_date) {
+                    PaymentDetail::create([
+                        'user_id' => $user->id,
+                        'amount' => data_get($request, 'data.object.amount_captured') / 100,
+                        'payment_date' => $current_payment_date,
+                    ]);
+                    $user->userSubscriptionInfo->update(['is_subscribed' => true, 'trials_completed' => true]);
+                    $company = Company::find($user->company_id);
+                    User::where('company_id', $company->id)->update(['active' => true]);
+                    $company->update(['enable' => true]);
+                }
             }
             if ($user && data_get($request, 'type') === 'charge.failed' && data_get($request, 'data.object.description') !== 'card-testing') {
                 $company = Company::find($user->company_id);
-                $companyController->enableOrDisableUsers($company, false);
+                User::where('company_id', $company->id)->update(['active' => false]);
+                $company->update(['enable' => false]);
                 $user->userSubscriptionInfo->update(['is_subscribed' => false, 'trials_completed' => true]);
             }
         }
     }
-
 }

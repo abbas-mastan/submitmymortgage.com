@@ -19,7 +19,6 @@
                             <span class="tracking-wide sm:block  capitalize text-white">Companies</span>
                         </a>
                     </li>
-                    <x-tab href="custom-quote" title="Custom Quote" />
                     <li class="-mt-4 hidden sm:block">
                         <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
                             &nbsp;
@@ -76,6 +75,9 @@
                 </li>
                 @if (session('role') === 'Processor')
                     <x-tab href="application/-1" title="Loan Application" />
+                @endif
+                @if (isSuperAdmin())
+                    <x-tab href="custom-quote" title="Custom Quote" />
                 @endif
                 @if ($currentrole === 'Admin' || Gate::check('isSuperAdmin'))
                     <x-tab href="connections" title="Connections" />
@@ -185,12 +187,12 @@
                 @endforeach
                 <!-- Sidebar for user ends -->
             @endcan
-            <li class="-mt-4 hidden sm:block">
+            {{-- <li class="-mt-4 hidden sm:block">
                 <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
                     &nbsp;
                 </span>
-            </li>
-            <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
+            </li> --}}
+            {{-- <li class="mt-10 py-3 sm:px-24 flex flex-row sm:-mt-3">
                 <span
                     class="hidden h-6 sm:block border-4 {{ Auth::user()->accessToken ? 'border-themegreen' : 'border-white border-opacity-20' }}  rounded-full text-xs  -ml-16">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -206,7 +208,7 @@
                             <span class="mt-1 mr-3 ml-2 text-md">
                                 Link to Gmail
                             </span>
-                            {{-- <svg class="" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
+                            <svg class="" xmlns="http://www.w3.org/2000/svg" width="32" height="32"
                                 data-name="Layer 1" viewBox="0 0 32 32" id="gmail">
                                 <path fill="#ea4435"
                                     d="M16.58,19.1068l-12.69-8.0757A3,3,0,0,1,7.1109,5.97l9.31,5.9243L24.78,6.0428A3,3,0,0,1,28.22,10.9579Z">
@@ -223,11 +225,11 @@
                                 <path fill="#c52528"
                                     d="M2.5439,8.0656c.0088-.06.0081-.1213.0206-.1812.0192-.0918.0549-.1766.0823-.2652A2.9312,2.9312,0,0,1,2.7426,7.32c.02-.0475.0508-.0892.0736-.1354A2.9719,2.9719,0,0,1,3.0316,6.8c.04-.0581.09-.1076.1342-.1626a3.0272,3.0272,0,0,1,.2454-.2849c.0665-.0647.1423-.1188.2147-.1771a3.0005,3.0005,0,0,1,.24-.1857c.0793-.0518.1661-.0917.25-.1359A2.9747,2.9747,0,0,1,4.3829,5.72c.089-.0358.1838-.0586.2766-.0859s.1853-.06.2807-.0777a3.0565,3.0565,0,0,1,.357-.036c.076-.0053.1511-.0186.2273-.018a2.9763,2.9763,0,0,1,.4219.0425c.0563.0084.113.0077.169.0193a2.9056,2.9056,0,0,1,.286.0888,2.9157,2.9157,0,0,1,.2785.0892c.0514.022.0965.0547.1465.0795a2.9745,2.9745,0,0,1,.3742.21A2.9943,2.9943,0,0,1,8.5,8.5v5.762L3.78,10.9579A2.8891,2.8891,0,0,1,2.5439,8.0656Z">
                                 </path>
-                            </svg> --}}
+                            </svg> 
                         </div>
                     @endif
                 </a>
-            </li>
+            </li> --}}
         </ul>
     </div>
 </div>

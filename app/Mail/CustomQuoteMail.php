@@ -28,6 +28,6 @@ class CustomQuoteMail extends Mailable
      */
     public function build()
     {
-        return $this->subject('Custom Quote Request')->view('notifications::custocancel-subscription-mailm-quote-mail');
+        return $this->subject('Custom Quote Request')->view('notifications::custom-quote-mail');
     }
 }

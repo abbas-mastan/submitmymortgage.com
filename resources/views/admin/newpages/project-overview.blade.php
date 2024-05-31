@@ -232,10 +232,10 @@
                                 class="dropdownMenu w-[28%] hidden absolute right-0 ring-1 ring-blue-700 z-10 mt-8 shadow bg-white">
                                 <div class="py-1">
                                     <a href="{{ url(getRoutePrefix() . '/project/disable/' . $user->project->id) }}"
-                                        class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'disable' ? 'bg-red-800 text-white' : '' }}"
+                                        class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'disable' ? 'hidden' : '' }}"
                                         role="menuitem" tabindex="-1" id="menu-item-0">Disable Deal</a>
                                     <a href="{{ url(getRoutePrefix() . '/project/close/' . $user->project->id) }}"
-                                        class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'close' ? 'bg-red-800 text-white' : '' }}"
+                                        class="text-gray-700 block px-4 py-2 text-sm {{ $user->project->status === 'close' ? 'hidden' : '' }}"
                                         role="menuitem" tabindex="-1" id="menu-item-1">Close Deal</a>
                                 </div>
                             </div>

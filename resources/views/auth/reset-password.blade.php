@@ -90,7 +90,7 @@
                                     </g>
                                 </svg>
                                 <p class="text-sm font-bold text-white pb-1">Tip!</p>
-                                <p class="text-xs leading-4 text-white pb-3">Your password must be 12 characters long.
+                                <p class="text-xs leading-4 text-white pb-3">Your password must be 8 characters long.
                                     Should
                                     contain at-least 1 uppercase 1 lowercase 1 Numeric and 1 special character.</p>
 

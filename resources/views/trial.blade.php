@@ -201,7 +201,7 @@
                                     <span class="error email_error"></span>
                                 </div>
                                 <div class="form-inps">
-                                    <input id="phone" name="phone" class="input1" type="tel">
+                                    <input id="phone" name="phone" class="input1 phone" type="tel">
                                     {{-- <span id="valid-msg" class="hide">Valid</span>
                                 <span id="error-msg" class="hide">Invalid number</span> --}}
                                     <span class="error phone_error"></span>
@@ -448,14 +448,15 @@
                                             <div class="col-lg-6 col-12 d-flex align-items-center">
                                                 <div class="form-inp-row">
                                                     <label class="label1" for="phone-main">Phone</label>
-                                                    <div>
-                                                        <input id="phone-main" name="phone" class="input1"
-                                                            type="tel">
-                                                        {{-- <span id="valid-msg" class="hide">Valid</span>
-                                            <span id="error-msg" class="hide">Invalid number</span> --}}
+                                                    <div class="d-flex">
+                                                        <img width="8%" height="5%" class="me-2 mt-2"
+                                                            src="{{ asset('icons/united-states.png') }}"
+                                                            alt="">
+                                                        <input id="phone-main" value="+1" name="phone"
+                                                            class="phone input1" type="tel">
                                                         <br>
-                                                        <span class="error phone_error"></span>
                                                     </div>
+                                                    <span class="error phone_error"></span>
                                                 </div>
                                             </div>
                                         </div>
@@ -478,9 +479,9 @@
                                             <a type="button" class="team-size-button selectTeamSize"
                                                 data-bs-toggle="modal" data-bs-target="#exampleModal">Select team
                                                 size</a>
-                                            <span class="error team_size_error"></span>
-                                            <input type="hidden" name="team_size">
-                                        </div>
+                                                <input type="hidden" name="team_size">
+                                            </div>
+                                            <span class="d-flex justify-content-end pe-5 error team_size_error"></span>
                                     </div>
                                     <div class="row align-items-center mt-4">
                                         <div class="col-md-6 d-flex justify-content-start">
@@ -499,8 +500,8 @@
                                                     Select a Date
                                                 </span>
                                             </label>
-                                            <span class="error training_error"></span>
                                         </div>
+                                        <span class="d-flex justify-content-end pe-5 error training_error"></span>
                                     </div>
                                 </div>
                                 <div class="form-inp-div">
@@ -622,112 +623,12 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
         integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V" crossorigin="anonymous">
     </script>
+    <script src="{{ asset('js/country_with_state.js') }}"></script>
     <!-- jquery -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/intlTelInput.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"></script>
-    {{-- <script src="{{ asset('assets/trial/trial.js') }}"></script> --}}
-    <script>
-        var telInput = $("#phone");
-        var telInputmain = $("#phone-main");
-        errorMsg = $("#error-msg");
-        validMsg = $("#valid-msg");
-
-        // initialise plugin
-        telInput.intlTelInput({
-
-            allowExtensions: true,
-            formatOnDisplay: true,
-            autoFormat: true,
-            autoHideDialCode: true,
-            autoPlaceholder: true,
-            defaultCountry: "us",
-            ipinfoToken: "yolo",
-
-            nationalMode: true,
-            numberType: "MOBILE",
-            //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-            preferredCountries: ['sa', 'ae', 'qa', 'om', 'bh', 'kw', 'ma'],
-            preventInvalidNumbers: true,
-            separateDialCode: false,
-            initialCountry: "us",
-            geoIpLookup: function(callback) {
-                $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
-                    var countryCode = (resp && resp.country) ? resp.country : "";
-                    callback(countryCode);
-                });
-            },
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"
-        });
-        telInputmain.intlTelInput({
-
-            allowExtensions: true,
-            formatOnDisplay: true,
-            autoFormat: true,
-            autoHideDialCode: true,
-            autoPlaceholder: true,
-            defaultCountry: "us",
-            ipinfoToken: "yolo",
-
-            nationalMode: true,
-            numberType: "MOBILE",
-            //onlyCountries: ['us', 'gb', 'ch', 'ca', 'do'],
-            preferredCountries: ['sa', 'ae', 'qa', 'om', 'bh', 'kw', 'ma'],
-            preventInvalidNumbers: true,
-            separateDialCode: false,
-            initialCountry: "us",
-            geoIpLookup: function(callback) {
-                $.get("http://ipinfo.io", function() {}, "jsonp").always(function(resp) {
-                    var countryCode = (resp && resp.country) ? resp.country : "";
-                    callback(countryCode);
-                });
-            },
-            utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/11.0.9/js/utils.js"
-        });
-
-        var reset = function() {
-            telInput.removeClass("error");
-            errorMsg.addClass("hide");
-            validMsg.addClass("hide");
-        };
-
-        // on blur: validate
-        telInput.blur(function() {
-            reset();
-            if ($.trim(telInput.val())) {
-                if (telInput.intlTelInput("isValidNumber")) {
-                    validMsg.removeClass("hide");
-                } else {
-                    telInput.addClass("error");
-                    errorMsg.addClass("text-danger");
-                    errorMsg.removeClass("hide");
-                }
-            }
-        });
-
-        // on keyup / change flag: reset
-        telInput.on("keyup change", reset);
-
-
-        telInputmain.blur(function() {
-            reset();
-            if ($.trim(telInputmain.val())) {
-                if (telInputmain.intlTelInput("isValidNumber")) {
-                    validMsg.removeClass("hide");
-                } else {
-                    telInputmain.addClass("error");
-                    errorMsg.addClass("text-danger");
-                    errorMsg.removeClass("hide");
-                }
-            }
-        });
-
-        // on keyup / change flag: reset
-        telInputmain.on("keyup change", reset);
-    </script>
-
     <script src="https://js.stripe.com/v3/"></script>
     <script>
         $(document).ready(function() {
+
             $('#phone-main').on('keyup change', function(e) {
                 if ($(this).val() !== '') {
                     $('.phone_error').empty();
@@ -844,16 +745,14 @@
                     url: paymentForm.attr('action'),
                     data: paymentForm.serialize(),
                     success: function(response) {
+                        console.log(response);
                         $('.custom-quote-submit-btn-text').removeClass('d-none');
                         $('.custom-quote-loader').addClass('d-none');
-                        console.log(response);
                         if (response == 'redirect') {
                             $('.custom-quote-form')[0].reset();
                             $('#payment-form')[0].reset();
                             $('.customQuoteModal').removeClass('secondModalHeightIncrease');
                             $('.btn-close').click();
-                            $('.tab1').removeClass('d-none');
-                            $('.tab2').addClass('d-none');
                             $('.text-success').html(
                                 '<span>Your Request for Custom Quote has been submitted.<br> Please check your email inbox! </span>'
                             );
@@ -978,7 +877,7 @@
                     $('.email_error').text('Enter a valid email');
                     isValid = false; // Set flag to false if validation fails
                 }
-                if ($('.main-form input[name=phone]').val() === '') {
+                if ($('.main-form input[name=phone]').val() === '' ||$('.main-form input[name=phone]').val() == '+1') {
                     $('.phone_error').text(msg);
                     isValid = false; // Set flag to false if validation fails
                 }
@@ -1061,9 +960,44 @@
                     }
                 });
             }
+
+            $(".phone").on('keyup', function() {
+                var input = $(this).val();
+                var phoneError = $(this).closest().find('.phone_error');
+                // Remove non-numeric characters except the leading +1
+                input = input.replace(/[^\d]/g, '');
+                if (input.startsWith('1')) {
+                    input = '+' + input;
+                } else {
+                    input = '+1' + input;
+                }
+                // Format the number as +1 (xxx) xxx-xxxx
+                if (input.length > 10) {
+                    input = input.replace(/^(\+1)(\d{3})(\d{3})(\d{4}).*/, '$1 ($2) $3-$4');
+                } else if (input.length > 6) {
+                    input = input.replace(/^(\+1)(\d{3})(\d{3})/, '$1 ($2) $3');
+                } else if (input.length > 3) {
+                    input = input.replace(/^(\+1)(\d{3})/, '$1 ($2)');
+                }
+
+                // Update the input value
+                $(this).val(input);
+
+                // Validate length
+                if (input.length > 17) {
+                    phoneError.text('characters exceeds');
+                    phoneError.css('display', 'block');
+                } else if (input.length < 17) {
+                    phoneError.text('incomplete number');
+                    phoneError.css('display', 'block');
+                } else {
+                    phoneError.hide();
+                    phoneError.css('display', 'none');
+                }
+            });
         });
     </script>
-    <script src="{{ asset('js/country_with_state.js') }}"></script>
+
 </body>
 
 </html>

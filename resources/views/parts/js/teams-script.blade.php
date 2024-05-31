@@ -65,11 +65,12 @@
             }
         @endif
 
-        $('.addNewAssociate ,.backToAssociate ,.closeModal',).click(function(e) {
+        $('.addNewAssociate ,.backToAssociate ,.closeModal', ).click(function(e) {
             e.preventDefault();
             handleNewAssociate();
         });
         var companyid = null;
+
         $('.addMembers').click(function(e) {
             e.preventDefault();
             $('#newProjectModal').toggleClass('hidden');
@@ -79,13 +80,20 @@
             $('#teamForm').attr('action', `{{ url(getRoutePrefix() . '/teams') }}/${EditTeamId}`);
             $('input[name="name"]').val($(this).attr('name'));
             $('.modalTitle').text('Add Members');
+            $('.backToCreateTeam').addClass('hidden');
+            $('.jrAssociateContinue').addClass('py-2');
+            $('.jrAssociateContinue').parent().addClass('justify-end');
+            $('.jrAssociateContinue').parent().removeClass('justify-between');
             $('.createTeam').addClass('hidden');
+            $('.associateForm').addClass('hidden');
             $('.processor').removeClass('hidden');
             companyid = $(this).attr('company');
             fetchCompanyUsers(companyid);
         });
+
         $('.newProject, .closeModal').click(function(e) {
             e.preventDefault();
+            $('.associateForm').addClass('hidden');
             $('.jrAssociateButton').val('Select jrAssociate');
             $('input[name="name"]').val('');
             $('#teamForm').attr('action', `{{ url(getRoutePrefix() . '/teams/-1') }}`);
@@ -96,6 +104,7 @@
             $('.processor').addClass('hidden');
 
         });
+
         $('#company').change(function(e) {
             e.preventDefault();
             if ($('#company').find(':checked').html() !== "Select Company") {
@@ -124,6 +133,7 @@
                             processors.push(associate);
                         }
                     });
+
                     function appendEmptyText(dropdown) {
                         $("." + dropdown).append(
                             `<span class="text-red-700 text-sm text-center p-1">No data available</span>`
@@ -191,12 +201,13 @@
             $('.associateForm').toggleClass('hidden');
             $('.createTeam').addClass('hidden');
             $('.processor').addClass('hidden');
-            
+
             if ($('.associateForm').hasClass('hidden')) {
                 $('.processor').removeClass('hidden');
                 $('.modalTitle').text('Add an Members');
             } else {
                 @if (Auth::user()->role === 'Super Admin')
+                    $(`#company option[value=${companyid}]`).prop('selected', true);
                     companyid = ($('#company').find(':checked').val());
                     $('.associateForm').append(`<input type="hidden" name="company" value="${companyid}">`);
                 @endif
@@ -225,8 +236,10 @@
                 success: function(response) {
                     $('.jq-loader-for-ajax').addClass('hidden');
                     console.log(response);
-                    if(response.maximum_users){
-                        $('.modalTitle').after(`<div class="max_user_error text-red-700 mt-2 text-center">${response.maximum_users}!</div>`);
+                    if (response.maximum_users) {
+                        $('.modalTitle').after(
+                            `<div class="max_user_error text-red-700 mt-2 text-center">${response.maximum_users}!</div>`
+                        );
                     }
                     if (response === 'success') {
                         handleNewAssociate();
@@ -312,8 +325,6 @@
         });
 
         var teamsData = {!! json_encode($teams) !!};
-
-
 
         var teamid = 0;
         $('.teamContinue').click(function(e) {
@@ -427,11 +438,6 @@
             $('.disableTeamsHeader').addClass('hidden');
         }
 
-
-        // $('#user-table').DataTable({
-        //     pageLength: 30,
-        //     lengthMenu: [10, 20, 30, 50, 100, 200],
-        // });
         $('#unverified').html($('.unverifiedSerial:last').html());
         $('#verified').html($('.verifiedSerial:last').html());
         $('#deleted').html($('.deletedSerial:last').html());

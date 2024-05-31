@@ -20,7 +20,7 @@ class PasswordExpiredMiddleware
         
         $user = $request->user();
         $password_chaged_at = new Carbon(($user->password_changed_at) ? $user->password_changed_at : $user->email_verified_at);
-        if ($user->role !== 'Super Admin' && Carbon::now()->diffInDays($password_chaged_at) >= config('auth.password_expires_days')) {
+        if ($user->role !== 'Super Admin' && !session()->has('reLogin') && Carbon::now()->diffInDays($password_chaged_at) >= config('auth.password_expires_days')) {
             return redirect()->route('password.expired');
         }
         return $next($request);

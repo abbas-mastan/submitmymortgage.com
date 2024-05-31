@@ -4,9 +4,11 @@
         input[type=text]:focus {
             margin-bottom: 2px;
         }
+
         textarea:focus {
             margin-bottom: 2px;
         }
+
         .text-red-700 {
             font-size: 14px;
         }
@@ -31,11 +33,17 @@
                             {{ session('role') == 'Borrower' ? 'Name' : 'Email' }}</label>
                     </div>
                     <div class="mt-2">
-                        <input value="{{ old(session('role') === 'Borrower' ? 'name':'email',
-                        (session('role') === 'Borrower' ? $application->name:$application->email)) }}" type="{{session('role') == 'Borrower' ? 'text':'email'}}"
+                        <input
+                            value="{{ old(
+                                session('role') === 'Borrower' ? 'name' : 'email',
+                                session('role') === 'Borrower' ? $application->name : $application->email,
+                            ) }}"
+                            type="{{ session('role') == 'Borrower' ? 'text' : 'email' }}"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                            name="{{session('role') == 'Borrower' ? 'name':'email'}}" id="{{session('role') == 'Borrower' ? 'name':'email'}}" placeholder="&nbsp;&nbsp;&nbsp;&nbsp; {{ session('role') == 'Borrower' ? 'Client\'s Name' : 'Email Address' }}">
-                        @error(session('role') == 'Borrower' ? 'name':'email')
+                            name="{{ session('role') == 'Borrower' ? 'name' : 'email' }}"
+                            id="{{ session('role') == 'Borrower' ? 'name' : 'email' }}"
+                            placeholder="&nbsp;&nbsp;&nbsp;&nbsp; {{ session('role') == 'Borrower' ? 'Client\'s Name' : 'Email Address' }}">
+                        @error(session('role') == 'Borrower' ? 'name' : 'email')
                             <span class="text-red-700">
                                 {{ $message }}
                             </span>
@@ -65,11 +73,17 @@
                             class="">{{ session('role') === 'Borrower' ? 'Email' : 'Name' }}</label>
                     </div>
                     <div class="mt-2">
-                        <input value="{{ old(session('role') === 'Borrower' ? 'email':'name',
-                        (session('role') === 'Borrower' ? $application->email:$application->name)) }}" type="text"
+                        <input
+                            value="{{ old(
+                                session('role') === 'Borrower' ? 'email' : 'name',
+                                session('role') === 'Borrower' ? $application->email : $application->name,
+                            ) }}"
+                            type="text"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
-                            name="{{session('role') === 'Borrower' ? 'email':'name'}}" id="{{session('role') === 'Borrower' ? 'email':'name'}}" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;{{ session('role') === 'Borrower' ? 'Email Address' : 'Client\'s Name' }}">
-                        @error(session('role') === 'Borrower' ? 'email':'name')
+                            name="{{ session('role') === 'Borrower' ? 'email' : 'name' }}"
+                            id="{{ session('role') === 'Borrower' ? 'email' : 'name' }}"
+                            placeholder="&nbsp;&nbsp;&nbsp;&nbsp;{{ session('role') === 'Borrower' ? 'Email Address' : 'Client\'s Name' }}">
+                        @error(session('role') === 'Borrower' ? 'email' : 'name')
                             <span class="text-red-700">
                                 {{ $message }}
                             </span>
@@ -193,7 +207,7 @@
                         <label for="zip" class="">Zip Code</label>
                     </div>
                     <div class="mt-2">
-                        <input value="{{ old('zip', $application->zip) }}" type="text"
+                        <input value="{{ old('zip', $application->zip) }}" type="number"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="zip" id="zip" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Zip">
                         @error('zip')
@@ -210,7 +224,7 @@
                     <div class="mt-1">
                         <input value="{{ old('property_value', $application->property_value) }}" type="text"
                             min="0" max="99999999"
-                            class="inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            class="input_number inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="property_value" id="property_value"
                             placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Property Value">
                         @error('property_value')
@@ -241,7 +255,7 @@
                     </div>
                     <div class="mt-1">
                         <input value="{{ old('purchase_value', $application->purchase_value) }}" type="text"
-                            class="inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            class="input_number inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Purchase Value" name="purchase_value"
                             id="purchase_value">
                         @error('purchase_value')
@@ -383,7 +397,7 @@
                     </div>
                     <div class="mt-2">
                         <input value="{{ old('seek_loan_amount', $application->seek_loan_amount) }}" type="text"
-                            class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            class="input_number rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="seek_loan_amount" id="seekloanamount"
                             placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Seeking Loan Amount">
                         @error('seek_loan_amount')
@@ -452,7 +466,7 @@
                         <label class="pt-3" for="montyrentalincome">Monthly Rental Income:</label>
                         <input value="{{ old('monthly_rental_income', $application->monthly_rental_income) }}"
                             type="text"
-                            class="inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            class="input_number inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Monthly Rental Income" name="monthly_rental_income"
                             id="montyrentalincome">
                         @error('monthly_rental_income')
@@ -514,7 +528,7 @@
                     <div class="mt-2">
                         <input value="{{ old('first_loan', $application->first_loan) }}" type="text" min="0"
                             max="99999999"
-                            class="inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            class="input_number inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="first_loan" id="mortage1" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;1st Loan Amount">
                         <span class="inline -ml-12 z-10 opacity-50">$</span>
                     </div>
@@ -534,12 +548,12 @@
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="first_loan_rate" id="interest1" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Rate">
                         <span class="inline -ml-12 z-10 opacity-50">%</span>
-                        @error('first_loan_rate')
-                            <span class="text-red-700">
-                                {{ $message }}
-                            </span>
-                        @enderror
                     </div>
+                    @error('first_loan_rate')
+                        <span class="text-red-700">
+                            {{ $message }}
+                        </span>
+                    @enderror
                 </div>
                 <div class="">
                     <div class=" text-left mr-12">
@@ -550,12 +564,12 @@
                             min="0" max="100"
                             class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="first_loan_lender" id="first_loan_lender" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Lender">
-                        @error('first_loan_lender')
-                            <span class="text-red-700">
-                                {{ $message }}
-                            </span>
-                        @enderror
                     </div>
+                    @error('first_loan_lender')
+                        <span class="text-red-700">
+                            {{ $message }}
+                        </span>
+                    @enderror
                 </div>
             </div>
             <div class="mt-2 grid grid-cols-3 gap-8">
@@ -566,7 +580,7 @@
                     <div class="mt-2">
                         <input value="{{ old('second_loan', $application->second_loan) }}" type="text" min="0"
                             max="99999999"
-                            class="inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            class="input_number inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="second_loan" id="mortage2" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;2nd Loan Amount">
                         <span class="inline -ml-12 z-10 opacity-50">$</span>
                     </div>
@@ -620,7 +634,7 @@
                     <div class="mt-2">
                         <input value="{{ old('late_payments', $application->late_payments) }}" type="text"
                             min="0" max="99999999"
-                            class="inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            class="input_number inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="late_payments" id="late_payments" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Late Payments">
                         <span class="inline -ml-12 z-10 opacity-50">$</span>
                     </div>
@@ -637,7 +651,7 @@
                     <div class="mt-2">
                         <input value="{{ old('foreclosure', $application->foreclosure) }}" type="text" min="0"
                             max="99999999"
-                            class="inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
+                            class="input_number inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             name="foreclosure" id="foreclosure" placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Foreclosure">
                         <span class="inline -ml-12 z-10 opacity-50">$</span>
                     </div>
@@ -827,7 +841,8 @@ $val = $application->employement_status;
                         <label for="Additional Property" class="">Additional Property</label>
                     </div>
                     <div class="mt-1">
-                        <input value="{{ old('additional_property', $application->additional_property) }}" type="text"
+                        <input value="{{ old('additional_property', $application->additional_property) }}"
+                            type="text"
                             class="inline rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400"
                             placeholder="&nbsp;&nbsp;&nbsp;&nbsp;Additional Property" name="additional_property"
                             id="Additional Property">

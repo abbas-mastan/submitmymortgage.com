@@ -112,9 +112,8 @@
                                     </g>
                                 </svg>
                                 <p class="text-sm font-bold pb-1">Tip!</p>
-                                <p class="text-xs leading-4 pb-3">Your password must be 12 characters long.
+                                <p class="text-xs leading-4 pb-3">Your password must be 8 characters long.
                                     Should contain at-least 1 uppercase 1 lowercase 1 Numeric and 1 special character.</p>
-
                             </div>
                         </a>
                     </label>
@@ -150,16 +149,14 @@
             <div class="mt-3 mx-auto">
                 <div class="g-recaptcha" data-sitekey="6Lf-upQfAAAAAImPKfTMmHctYc6WaAAN9GEFMnzw"></div>
             </div>
-            <div class="mt-5 grid grid-cols-6">
-                <div class="col-span-2 text-right mr-12">
-                    &nbsp;
-                </div>
-                <div class="col-span-4 ml-1 ">
-                    <button type="submit"
-                        class=" border-2 border-white rounded-md bg-white px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
-                        Sign Up
-                    </button>
-                </div>
+            <div class="mt-3 flex justify-center">
+                <button type="submit"
+                    class="w-1/3 border-2 border-white rounded-md bg-white px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
+                    Sign Up
+                </button>
+            </div>
+            <div class="mt-3 text-center">
+                Already have an account? <a class="border-1 border-b text-white" href="/login">Sign In</a>
             </div>
         </form>
     </div>

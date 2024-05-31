@@ -10,13 +10,18 @@ class SubscriptionHelper
 {
     public static function startTrialSubscription($customer_id, $user_id, $subscription_plan)
     {
+        
         try {
             $date = date('Y-m-d H:i:s');
-            $trial_days = strtotime($date . '+' . 7 . ' days');
+            $trial_days = strtotime($date . '+' . env('SUBSCRIPTION_TRIAL_DAYS') . ' days');
             $stripe = new StripeClient(env('STRIPE_SK'));
             $subscription = $stripe->subscriptions->create([
                 'customer' => $customer_id,
-                'items' => [['price' => $subscription_plan->stripe_price_id]],
+                'items' => [
+                    ['price' => $subscription_plan->stripe_price_id,
+                        /*'price_1PHQb709tId2vnnu5137rCcH'*/
+                    ],
+                ],
                 'trial_end' => $trial_days,
             ]);
             $plan = $stripe->plans->retrieve($subscription_plan->stripe_price_id, []);

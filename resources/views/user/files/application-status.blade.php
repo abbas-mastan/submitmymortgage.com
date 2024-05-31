@@ -99,7 +99,7 @@
                                         </div>
                                         <div class=" my-0.5">
                                             <button title="Add comments" type="submit"
-                                                class="bg-gradient-to-b from-gradientStart to-gradientEnd capitalize rounded-md px-3 py-0.5  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400 tas[i]-white">
+                                                class="text-white bg-gradient-to-b from-gradientStart to-gradientEnd capitalize rounded-md px-3 py-0.5  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400 tas[i]-white">
                                                 Save
                                             </button>
                                         </div>
@@ -122,19 +122,19 @@
             document.getElementById("my-textarea").value = document.getElementById("my-content").innerHTML;
         }
         //Textarea resizing partially solved
-        (function() {
-            let textarea = document.querySelectorAll(".cat_comments");
-            for (let i = 0; i < textarea.length; i++) {
-                textarea[i].addEventListener("click", () => {
-                    textarea[i].setAttribute("rows", 5);
-                });
-                textarea[i].addEventListener("focusin", () => {
-                    textarea[i].setAttribute("rows", 5);
-                });
-                textarea[i].addEventListener("focusout", () => {
-                    textarea[i].setAttribute("rows", 1);
-                });
-            }
-        })();
+        // (function() {
+        //     let textarea = document.querySelectorAll(".cat_comments");
+        //     for (let i = 0; i < textarea.length; i++) {
+        //         textarea[i].addEventListener("click", () => {
+        //             textarea[i].setAttribute("rows", 5);
+        //         });
+        //         textarea[i].addEventListener("focusin", () => {
+        //             textarea[i].setAttribute("rows", 5);
+        //         });
+        //         textarea[i].addEventListener("focusout", () => {
+        //             textarea[i].setAttribute("rows", 1);
+        //         });
+        //     }
+        // })();
     </script>
 @endsection

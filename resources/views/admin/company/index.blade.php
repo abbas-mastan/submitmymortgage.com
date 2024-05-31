@@ -16,7 +16,7 @@
 @section('content')
 @include('parts.company-modal-form')
     <div class="flex-wrap flex-shrink-0 w-full">
-        <x-flex-card title="Companies" titlecounts="{{ count($companies) }}" iconurl="{{ asset('icons/Marketing.svg') }}" />
+        <x-flex-card title="Companies" titlecounts="{{ count($companies) }}" iconurl="{{ asset('icons/company.svg') }}" />
         <button class="{{ count($companies) > 10 ? 'absolute':'mb-5'}} z-10 py-2 text-white bg-red-800 px-8 newProject">
             Add New Company
         </button>

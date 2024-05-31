@@ -130,23 +130,17 @@ class AdminService
         $user->email_verified_at = !$request->sendemail ? now() : null;
         if ($user->save() && $request->sendemail) {
             if (session('role') != null && $isNewUser) {
-                // Password::sendResetLink($request->only('email'));
-                // Password::RESET_LINK_SENT;
                 $id = Crypt::encryptString($user->id);
                 DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
                 $url = function () use ($id) {return Url::signedRoute('user.register', ['user' => $id], now()->addMinutes(10));};
-                if ($request->role === 'Borrower') {
-                    Mail::to($request->email)->send(new AssistantMail($url()));
-                } else {
-                    Mail::to($request->email)->send(new UserMail($url()));
-                }
+                $mailClass = $request->role === 'Borrower' ? new AssistantMail($url()) : new UserMail($url());
+                Mail::to($request->email)->send($mailClass);
             } else {
                 $id = Crypt::encryptString($user->id);
                 DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
                 $url = function () use ($id) {return Url::signedRoute('borrower.register', ['user' => $id], now()->addMinutes(10));};
                 Mail::to($request->email)->send(new AssistantMail($url()));
                 // event(new Registered($user));
-
             }
         }
         if (Auth::check() && $request->role !== 'Borrower' && $user->teams) {
@@ -493,6 +487,7 @@ class AdminService
 
     public static function shareItemWithAssistant($request, $id = -1)
     {
+
         if ($id != -1) {
             $user = User::find($id);
             $assitant = Assistant::where('assistant_id', $user->id)->delete();
@@ -501,8 +496,10 @@ class AdminService
         }
         $assitant = new Assistant;
         $admin = Auth::user();
+        $prevRouteName = app('router')->getRoutes()->match(app('request')->create(url()->previous()))->getName();
         $user->email_verified_at = $admin->role === 'Super Admin' || $admin->role === 'Admin' ? now() : null;
         $validator = Validator::make($request->all(), [
+            'name' => $prevRouteName === 'add-user' ? 'required' : '',
             'email' => -1 == $id ? 'required|unique:users,email' : '',
             'items' => 'required|sometimes',
             'company' =>
@@ -510,17 +507,15 @@ class AdminService
             && Route::current()->getName() !== 'share-items'
             ? '' : 'required',
             'company' => (Auth::check() && Auth::user()->role === 'Super Admin' && $request->role !== 'Borrower' && Route::current()->getName() !== 'share-items') ? 'required' : '',
-
-            'deal' => Route::current()->getName() !== 'share-items' ? 'required' : '',
+            'deal' => $prevRouteName === 'add-user' ? 'required' : '',
         ]);
 
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
-
         if ($request->deal) {
             $deal = Project::find($request->deal);
-            $request->userId = $deal->borrower->id;
+            $request->userId = $deal->borrower_id;
             $categories = array_values(array_diff(config('smm.file_category'), ['Credit Report']));
         }
 
@@ -578,7 +573,7 @@ class AdminService
                 'processor' => 'sometimes:required',
                 'associate' => 'sometimes:required',
                 'juniorAssociate' => 'sometimes:required',
-            ], [
+            ],[
                 'email.required_with' => 'This field is required',
                 'borroweraddress.required' => 'This field is required',
             ]);
@@ -673,7 +668,7 @@ class AdminService
             ], [
                 'password.required' => 'The password field is required.',
                 'password.confirmed' => 'The password confirmation does not match.',
-                'password.*' => 'The password must be at least 12 characters long and contain a mix of uppercase and lowercase letters, numbers, and symbols.',
+                'password.*' => 'The password must be at least 8 characters long and contain a mix of uppercase and lowercase letters, numbers, and symbols.',
             ]);
         }
     }
@@ -683,11 +678,12 @@ class AdminService
         $AuthUser = Auth::user();
         $company = Company::find($AuthUser->company_id);
         $company_users = $company->users;
+        // currunt users company limit count
         $count = $company_users->where('role', '!=', 'Borrower')->where('role', '!==', 'Assistant')->count();
-        if ($id == -1 && $request->role !== 'Borrower' && $request->role !== 'Assistant' && $count >= $company->max_users) {
-            return true;
+        if ($id == -1 && $request->role !== 'Borrower' && $request->role !== 'Assistant' && $company->max_users != null &&$count >= $company->max_users) {
+            return true; // users limit completed
         } else {
-            return false;
+            return false; // users limit not completed
         }
     }
 

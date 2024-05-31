@@ -182,20 +182,20 @@
         });
     });
 
-    (function() {
-        let textarea = document.querySelectorAll(".comments");
-        for (let i = 0; i < textarea.length; i++) {
-            textarea[i].addEventListener("click", () => {
-                textarea[i].setAttribute("rows", 5);
-            });
-            textarea[i].addEventListener("focusin", () => {
-                textarea[i].setAttribute("rows", 5);
-            });
-            textarea[i].addEventListener("focusout", () => {
-                textarea[i].setAttribute("rows", 1);
-            });
-        }
-    })();
+    // (function() {
+    //     let textarea = document.querySelectorAll(".comments");
+    //     for (let i = 0; i < textarea.length; i++) {
+    //         textarea[i].addEventListener("click", () => {
+    //             textarea[i].setAttribute("rows", 5);
+    //         });
+    //         textarea[i].addEventListener("focusin", () => {
+    //             textarea[i].setAttribute("rows", 5);
+    //         });
+    //         textarea[i].addEventListener("focusout", () => {
+    //             textarea[i].setAttribute("rows", 1);
+    //         });
+    //     }
+    // })();
 
     $(document).ready(function() {
         @if ($user->finance_type == 'Purchase')

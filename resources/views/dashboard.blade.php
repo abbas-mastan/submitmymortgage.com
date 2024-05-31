@@ -49,10 +49,10 @@
 @endsection
 @section('foot')
     <script>
-        var routePrefix = "{{ url(getRoutePrefix()) }}";
-        var uploadUrl = '{{ url(getUserRoutePrefix() . '/file-upload') }}';
+        var routePrefix = @json(url(getRoutePrefix()));
+        var uploadUrl = @json(url(getUserRoutePrefix())) + '/file-upload';
         var userId = {{ Auth::id() }};
-        window.returnBack = "{{ url(getRoutePrefix() . '/redirect/back/file-uploaded-successfully') }}";
+        window.returnBack = @json(url(getRoutePrefix()).'/redirect/back/file-uploaded-successfully');
     </script>
     @include('parts.js.dashboard-script')
 @endsection

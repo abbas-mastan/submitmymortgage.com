@@ -355,6 +355,18 @@ class AdminController extends Controller
             $data['projects'] = Project::whereIn('team_id', $teamIds)
                 ->with(['team', 'users.createdBy', 'borrower.createdBy'])
                 ->get();
+            $data['enableProjects'] = Project::whereIn('team_id', $teamIds)
+                ->with(['team', 'users.createdBy', 'borrower.createdBy'])
+                ->where('status','enable')
+                ->get();
+            $data['disableProjects'] = Project::whereIn('team_id', $teamIds)
+                ->with(['team', 'users.createdBy', 'borrower.createdBy'])
+                ->where('status','disable')
+                ->get();
+            $data['closeProjects'] = Project::whereIn('team_id', $teamIds)
+                ->with(['team', 'users.createdBy', 'borrower.createdBy'])
+                ->where('status','close')
+                ->get();
             $data['borrowers'] = User::where('role', 'Borrower')->where('company_id', $admin->company_id)->get(['id', 'name']);
         } else {
             $data['teams'] = Team::where('owner_id', $admin->id)
@@ -362,7 +374,6 @@ class AdminController extends Controller
                     $query->where('user_id', $admin->id);
                 })
                 ->get();
-
             $data['borrowers'] = User::where('role', 'Borrower')->get(['id', 'name']);
             $data['projects'] = Project::with('creater')->where('created_by', $admin->id)
                 ->orWhereHas('users', function ($query) use ($admin) {
@@ -370,8 +381,14 @@ class AdminController extends Controller
                 })
                 ->with(['team', 'users.createdBy', 'borrower.createdBy'])
                 ->get();
+            $data['enableProjects'] = Project::with('creater')->where('created_by', $admin->id)
+                ->orWhereHas('users', function ($query) use ($admin) {
+                    $query->where('users.id', $admin->id);
+                })
+                ->with(['team', 'users.createdBy', 'borrower.createdBy'])
+                ->where('status','enable')
+                ->get();
         }
-        $data['enableProjects'] = $data['projects'];
         return view('admin.newpages.projects', $data);
     }
 
@@ -511,12 +528,12 @@ class AdminController extends Controller
             $data['enableTeams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->Where('disable', false)->get();
             $data['teams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->get();
         } else {
-            $data['disableTeams'] = $admin->teamsOwnend()
-                ->with('users')
-                ->where('disable', true)
-                ->orWhereHas('users', function ($query) use ($admin) {
-                    $query->where('user_id', $admin->id);
-                })->get();
+            // $data['disableTeams'] = $admin->teamsOwnend()
+            //     ->with('users')
+            //     ->where('disable', true)
+            //     ->orWhereHas('users', function ($query) use ($admin) {
+            //         $query->where('user_id', $admin->id);
+            //     })->get();
 
             $data['enableTeams'] = $admin->teamsOwnend()
                 ->with('users.createdBy')
@@ -544,7 +561,7 @@ class AdminController extends Controller
     public function storeteam(Request $request, $id = 0)
     {
         AdminService::StoreTeam($request, $id);
-        return back()->with('msg_success', 'Team created successfully');
+        return back()->with('msg_success', $id ? 'Team members added successfully':'Team created successfully');
     }
 
     public function deleteProjectUser(Project $project, $id)

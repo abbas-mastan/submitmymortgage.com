@@ -56,7 +56,7 @@ class SuperAdminController extends Controller
     //Saves the record of a newly inserted teacher in database
     public function doUser(Request $request, $id)
     {
-        $msg = AdminService::doUser($request, $id);
+       $msg = AdminService::doUser($request, $id);
         return redirect('/dashboard')->with($msg['msg_type'], $msg['msg_value']);
     }
 
@@ -471,7 +471,7 @@ class SuperAdminController extends Controller
     public function storeteam(Request $request, $id = 0)
     {
         AdminService::StoreTeam($request, $id);
-        return back()->with('msg_success', 'Team created successfully');
+        return back()->with('msg_success', $id ? 'Team members added successfully':'Team created successfully');
     }
 
     public function deleteProjectUser(Project $project, $id)
@@ -572,7 +572,7 @@ class SuperAdminController extends Controller
             }
             return response()->json($response);
         }
-
+        
         $request->merge([
             'email' => $request->AssociateEmail,
             'role' => 'Associate',

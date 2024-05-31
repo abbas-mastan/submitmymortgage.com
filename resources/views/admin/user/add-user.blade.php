@@ -69,7 +69,7 @@
                 </div>
             </div>
             <div class="flex justify-between company">
-                @if (Auth::user()->role === 'Super Admin')
+                @if (isSuperAdmin())
                     <div class="mt-3 w-[49%]">
                         <div class=" text-left mr-12">
                             <label for="company" class="">Company Name</label>
@@ -123,13 +123,13 @@
                         </select>
                     </div>
                 </div>
-                @if (Auth::user()->role !== 'Super Admin')
+                @if (!isSuperAdmin())
                     <div class="mt-3 w-[49%] borrowerDiv {{ old('role', $user->role) !== 'Assistant' ? 'hidden' : '' }}">
                         <div class=" text-left mr-12">
                             <label for="role" class="">Select Deal</label>
                         </div>
                         <div class="mt-2">
-                            <select name="deal" id="deal" required
+                            <select name="deal" id="deal" 
                                 class="rounded-md py-2 w-full focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
                                 <option value="">Select Deal</option>
                                 @foreach ($teams as $team)
@@ -152,7 +152,7 @@
                 @endif
             </div>
 
-            @if (Auth::user()->role !== 'Super Admin')
+            @if (!isSuperAdmin())
                 @php
                     $hiddenClass =
                         old('role', $user->role) === 'Borrower' ||
@@ -265,7 +265,7 @@
                                             </g>
                                         </svg>
                                         <p class="text-sm font-bold text-white pb-1">Tip!</p>
-                                        <p class="text-xs leading-4 text-white pb-3">Your password must be 12 characters
+                                        <p class="text-xs leading-4 text-white pb-3">Your password must be 8 characters
                                             long. Should contain at-least 1 uppercase 1 lowercase 1 Numeric and 1 special
                                             character.</p>
 
