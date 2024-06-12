@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddCreatedByColumnToCompaniesTable extends Migration
+class AddSubscriptionIdToCompanyTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,7 @@ class AddCreatedByColumnToCompaniesTable extends Migration
     public function up()
     {
         Schema::table('companies', function (Blueprint $table) {
-            $table->bigInteger('created_by')->nullable();
+            $table->string('subscription_id')->nullable();
         });
     }
     
@@ -26,7 +26,7 @@ class AddCreatedByColumnToCompaniesTable extends Migration
     public function down()
     {
         Schema::table('companies', function (Blueprint $table) {
-            $table->bigInteger('created_by')->nullable();
+            $table->string('subscription_id')->nullable();
         });
     }
 }

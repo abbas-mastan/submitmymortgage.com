@@ -521,7 +521,7 @@
                 function ajaxCompanyTeams(companyid) {
                     $('.jq-loader-for-ajax').removeClass('hidden');
                     $.ajax({
-                        url: `{{ getRoutePrefix() }}/get-company-teams/${companyid}`, // Replace with the actual URL for retrieving users by team
+                        url: `{{ getRoutePrefix() }}/get-company-teams/${companyid}`,  
                         type: 'GET',
                         success: function(data) {
                             removeDivs();

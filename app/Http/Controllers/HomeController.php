@@ -49,6 +49,7 @@ class HomeController extends Controller
     private function getSuperAdminDashboard()
     {
         if (session('role') == 'Super Admin') {
+            $data['enableTeams'] = null;
             $data['users'] = User::whereNotIn("role", ["Admin","Super Admin"])->get();
             $data['usersCount'] = User::whereNotIn("role", ["Admin","Super Admin"])->count();
             $data['teams'] = Team::where('disable', false)->get();
@@ -62,6 +63,8 @@ class HomeController extends Controller
         $data['teams'] = Team::whereHas('users', function ($query) {
             $query->where('user_id', Auth::id());
         })->get();
+        $adminController = new AdminController();
+        $data['enableTeams'] = $adminController->enableTeams(Auth::id());
         $user = Auth::user();
         $data['usersCount'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->count();
         $data['users'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
@@ -81,6 +84,8 @@ class HomeController extends Controller
         $data['teams'] = Team::whereHas('users', function ($query) use ($user) {
             $query->where('user_id', $user->id);   
         })->get();
+        $associateController = new AssociateController();
+        $data['enableTeams'] = $associateController->enableTeams($user->id);
         $data['usersCount'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->count();
         $data['users'] = $user->createdUsers()->whereIn('role', ['Processor', 'Associate', 'Junior Associate', 'Borrower'])->with('createdUsers')->get();
         $data['projects'] = Project::where('created_by', $user->id)

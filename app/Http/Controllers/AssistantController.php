@@ -32,7 +32,7 @@ class AssistantController extends Controller
     {
         $data = $request->validate([
             'name' => 'required',
-            'phone' => 'required',
+            'phone' => 'required|regex:/^\+1 \(\d{3}\) \d{3}-\d{4}$/',
             'password' => 'required:confirmed|min:8',
         ]);
         $data['password'] = bcrypt($data['password']);

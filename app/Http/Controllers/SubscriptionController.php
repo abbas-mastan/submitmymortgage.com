@@ -35,8 +35,8 @@ class SubscriptionController extends Controller
         $sub_id = $user->subscriptionDetails->stripe_subscription_id;
         $cus_id = $user->subscriptionDetails->stripe_customer_id;
         $price_id = $user->subscriptionDetails->subscription_plan_price_id;
-        dump(date('Y-m-d H:i:s',1718022239));
-        dump(date('Y-m-d H:i:s',1716811898));
+        dump(date('Y-m-d H:i:s', 1718022239));
+        dump(date('Y-m-d H:i:s', 1716811898));
         $customer = $stripe->customers->retrieve($cus_id, []);
 
         $session = $stripe->subscriptions->all([
@@ -74,10 +74,12 @@ class SubscriptionController extends Controller
 
     public function processPayment(Request $request)
     {
+     
         $validator = $this->ValidateUser($request);
         if ($validator->fails()) {
             return response()->json($validator->errors());
         } else {
+            DB::beginTransaction();
             try {
                 $customer = SubscriptionHelper::charge($request);
                 if ($customer instanceof \Stripe\Customer) {
@@ -96,8 +98,13 @@ class SubscriptionController extends Controller
                     $this->insertSubscriptionInfo($user_id);
                     if ($subscriptionPlan) {
                         $subscriptionData = SubscriptionHelper::startTrialSubscription($customer_id, $user_id, $subscriptionPlan);
+                        $company = $user->company;
+                        $company->created_by = $user_id;
+                        $company->subscription_id = $user->subscriptionDetails->stripe_subscription_id;
+                        $company->save();
                     }
                     if ($user->email_verified_at == null && $subscriptionData) {
+                        DB::commit();
                         $this->loginwithid($user->id);
                         return response()->json('redirect');
                     }
@@ -105,24 +112,18 @@ class SubscriptionController extends Controller
                     return $customer;
                 }
             } catch (\Exception $e) {
-                return response()->json(['type' => 'stripe_error', 'message' => $e->getMessage() . 'asdfasdf']);
+                DB::rollback();
+                return response()->json(['type' => 'stripe_error', 'message' => $e->getMessage()]);
             }
         }
     }
-    public function userTraining($request, $user_id)
-    {
-        return UserTraining::updateOrCreate(
-            ['user_id' => $user_id],
-            [
-                'user_id' => $user_id,
-                'start_date' => $request->training,
-                'start_time' => $request->time ?? null,
-            ]
-        );
-    }
+    
     protected function createUserWithCompany($request, $max_users)
     {
-        $company = Company::create(['name' => $request->company, 'max_users' => $max_users]);
+        $company = Company::create([
+            'name' => $request->company,
+            'max_users' => $max_users,
+        ]);
         $user = new User();
         $user->email = $request->email;
         $user->phone = $request->phone ?? null;
@@ -134,6 +135,19 @@ class SubscriptionController extends Controller
         $user->save();
         return $user;
     }
+
+    public function userTraining($request, $user_id)
+    {
+        return UserTraining::updateOrCreate(
+            ['user_id' => $user_id],
+            [
+                'user_id' => $user_id,
+                'start_date' => $request->training,
+                'start_time' => $request->time ?? null,
+            ]
+        );
+    }
+
     protected function insertCardDetails($request, $customer_id, $user_id)
     {
         CardDetails::updateOrCreate(
@@ -240,6 +254,9 @@ class SubscriptionController extends Controller
                 ]);
                 $stripedata = $stripe->subscriptions->retrieve($subscription->id, []);
                 $this->updateSubscriptionDetails($user, $stripedata->id, $customer->id);
+                $user->company->update([
+                    'subscription_id'=> $subscription->id
+                ]);
                 return redirect('/dashboard')->with('msg_success', 'Subscription completed successfully.');
             } catch (\Exception $e) {
                 $msg = $e->getMessage();

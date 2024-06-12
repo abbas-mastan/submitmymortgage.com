@@ -70,8 +70,9 @@
             filter: invert(1);
         }
 
-       
-
+        #newProjectModal>div {
+            margin-top: 205px;
+        }
     </style>
 @endsection
 @section('content')
@@ -114,9 +115,19 @@
                     @endforeach
                 </tbody>
             </table>
+
+            <form class="assistantForm hidden" action="{{url(getRoutePrefix().'/update-share-items/')}}">
+                <select class="mt-3 w-full rounded assistant" name="assistant">
+                    <option value="">Select Assistant</option>
+                    @foreach ($assistants as $assistant)
+                        <option value="{{ $assistant->id }}">{{ $assistant->email }}</option>
+                    @endforeach
+                </select>
+            </form>
             <div class="firstTableButtonsParent flex justify-between items-center mt-3">
                 <button class="requestButton underline text-xl text-themered capitalize font-bold">Request Another Item</button>
                 <button class="nextButton bg-red-700 text-white py-2 rounded-full px-5">Next</button>
+                <button class="updateButton hidden bg-red-700 text-white py-2 rounded-full px-5">Update</button>
             </div>
         </div>
         <div class="secondTable hidden">
@@ -212,7 +223,7 @@
                 @endisset
             </div>
             <div class="inline-block">
-                @if ($currentrole === $superadminrole || $user->project->created_by === Auth::id())
+                @if ($currentrole === $superadminrole || $user->project->created_by === $user->id)
                     <div class="relative dropdownButton flex justify-end">
                         <button class=" bg-red-800 px-5 py-2 text-white flex" id="menu-button" aria-expanded="true"
                             aria-haspopup="true">Move To
@@ -223,8 +234,8 @@
                                     <g>
                                         <path style="fill:#ffffff;"
                                             d="M92.672,144.373c-2.752,0-5.493-1.044-7.593-3.138L3.145,59.301c-4.194-4.199-4.194-10.992,0-15.18
-                                                                            c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
-                                                                            c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
+                                                                                                c4.194-4.199,10.987-4.199,15.18,0l74.347,74.341l74.347-74.341c4.194-4.199,10.987-4.199,15.18,0
+                                                                                                c4.194,4.194,4.194,10.981,0,15.18l-81.939,81.934C98.166,143.329,95.419,144.373,92.672,144.373z" />
                                     </g>
                                 </g>
                             </svg>

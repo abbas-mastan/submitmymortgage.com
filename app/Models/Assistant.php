@@ -9,6 +9,8 @@ class Assistant extends Model
 {
     use HasFactory;
 
+    protected $guarded = [];
+
     public function borrower()
     {
         return $this->belongsTo(User::class);

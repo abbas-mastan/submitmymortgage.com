@@ -201,20 +201,7 @@ class AssociateController extends Controller
 
     public function addCategoryToUser(Request $request, User $user)
     {
-        if (in_array(ucwords($request->name), config('smm.file_category')) || $request->name == "id/driver's license") {
-            return response()->json(["error" => "This Category \" $request->name\" already exists"]);
-        }
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:user_categories,name,user_id' . $user->id,
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->all()]);
-        }
-        UserCategory::create([
-            'name' => $request->name,
-            'user_id' => $user->id,
-        ]);
-        return response()->json(['success' => 'Added new records.']);
+        return CommonService::addCategoryToUser($request,$user);
     }
 
     private function validateFunction($request)
@@ -293,6 +280,11 @@ class AssociateController extends Controller
     public function shareItemWithAssistant(Request $request, $id)
     {
         return AdminService::shareItemWithAssistant($request, $id);
+    }
+
+    public function updateShareItemWithAssistant(Request $request,$id) 
+    {
+        return AdminService::updateShareItemWithAssistant($request, $id);
     }
 
     public function storeProject(Request $request, $id = -1)
@@ -376,13 +368,7 @@ class AssociateController extends Controller
     public function teams($id = null): View
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
-        $data['teams'] = Team::where('owner_id', $admin->id)
-            ->with('users.createdBy')
-            ->where('disable', false)
-            ->orWhereHas('users', function ($query) use ($admin) {
-                $query->where('user_id', $admin->id);
-            })
-            ->get();
+        $data['teams'] = $this->enableTeams($admin);
         $data['disableTeams'] = Team::where('owner_id', $admin->id)
             ->with('users.createdBy')
             ->where('disable', true)
@@ -396,6 +382,17 @@ class AssociateController extends Controller
         return view('admin.newpages.teams', $data);
     }
 
+    public function enableTeams($id)
+    {
+        $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
+        return Team::where('owner_id', $admin->id)
+        ->with('users.createdBy')
+        ->where('disable', false)
+        ->orWhereHas('users', function ($query) use ($admin) {
+            $query->where('user_id', $admin->id);
+        })
+        ->get();
+    }
     public static function markAsRead($id)
     {
         Auth::user()->notifications->where('id', $id)->markAsRead();

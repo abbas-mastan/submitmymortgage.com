@@ -293,22 +293,10 @@ class AdminController extends Controller
         $msg = AdminService::deleteAttachment($request, $id);
         return back()->with($msg['msg_type'], $msg['msg_value']);
     }
+    
     public function addCategoryToUser(Request $request, User $user)
     {
-        if (in_array(ucwords($request->name), config('smm.file_category')) || $request->name == "id/driver's license") {
-            return response()->json(["error" => "This Category \" $request->name\" already exists"]);
-        }
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:user_categories,name,user_id' . $user->id,
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->all()]);
-        }
-        UserCategory::create([
-            'name' => $request->name,
-            'user_id' => $user->id,
-        ]);
-        return response()->json(['success' => 'Added new records.']);
+        return CommonService::addCategoryToUser($request,$user);
     }
 
     public function uploadFilesView()
@@ -357,15 +345,15 @@ class AdminController extends Controller
                 ->get();
             $data['enableProjects'] = Project::whereIn('team_id', $teamIds)
                 ->with(['team', 'users.createdBy', 'borrower.createdBy'])
-                ->where('status','enable')
+                ->where('status', 'enable')
                 ->get();
             $data['disableProjects'] = Project::whereIn('team_id', $teamIds)
                 ->with(['team', 'users.createdBy', 'borrower.createdBy'])
-                ->where('status','disable')
+                ->where('status', 'disable')
                 ->get();
             $data['closeProjects'] = Project::whereIn('team_id', $teamIds)
                 ->with(['team', 'users.createdBy', 'borrower.createdBy'])
-                ->where('status','close')
+                ->where('status', 'close')
                 ->get();
             $data['borrowers'] = User::where('role', 'Borrower')->where('company_id', $admin->company_id)->get(['id', 'name']);
         } else {
@@ -386,7 +374,7 @@ class AdminController extends Controller
                     $query->where('users.id', $admin->id);
                 })
                 ->with(['team', 'users.createdBy', 'borrower.createdBy'])
-                ->where('status','enable')
+                ->where('status', 'enable')
                 ->get();
         }
         return view('admin.newpages.projects', $data);
@@ -525,22 +513,10 @@ class AdminController extends Controller
 
         if ($admin->role === 'Admin') {
             $data['disableTeams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->Where('disable', true)->get();
-            $data['enableTeams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->Where('disable', false)->get();
+            $data['enableTeams'] = $this->enableTeams($id);
             $data['teams'] = Team::with(['users.createdBy'])->where('company_id', $admin->company_id)->get();
         } else {
-            // $data['disableTeams'] = $admin->teamsOwnend()
-            //     ->with('users')
-            //     ->where('disable', true)
-            //     ->orWhereHas('users', function ($query) use ($admin) {
-            //         $query->where('user_id', $admin->id);
-            //     })->get();
-
-            $data['enableTeams'] = $admin->teamsOwnend()
-                ->with('users.createdBy')
-                ->where('disable', false)
-                ->orWhereHas('users', function ($query) use ($admin) {
-                    $query->where('user_id', $admin->id);
-                })->get();
+            $data['enableTeams'] = $this->enableTeams($id);
 
             $data['teams'] = $admin->teamsOwnend()
                 ->with('users')
@@ -558,10 +534,28 @@ class AdminController extends Controller
         return view('admin.newpages.teams', $data);
     }
 
+    public function enableTeams($id)
+    {
+        $admin = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
+        if ($admin->role === 'Admin') {
+            $enableTeams = Team::with(['users.createdBy'])
+            ->where('company_id', $admin->company_id)
+            ->Where('disable', false)->get();
+        } else {
+            $enableTeams = $admin->teamsOwnend()
+                ->with('users.createdBy')
+                ->where('disable', false)
+                ->orWhereHas('users', function ($query) use ($admin) {
+                    $query->where('user_id', $admin->id);
+                })->get();
+        }
+        return $enableTeams;
+    }
+
     public function storeteam(Request $request, $id = 0)
     {
         AdminService::StoreTeam($request, $id);
-        return back()->with('msg_success', $id ? 'Team members added successfully':'Team created successfully');
+        return back()->with('msg_success', $id ? 'Team members added successfully' : 'Team created successfully');
     }
 
     public function deleteProjectUser(Project $project, $id)
@@ -609,6 +603,11 @@ class AdminController extends Controller
         return AdminService::shareItemWithAssistant($request, $id);
     }
 
+    public function updateShareItemWithAssistant(Request $request,$id) 
+    {
+        return AdminService::updateShareItemWithAssistant($request, $id);
+    }
+    
     public function removeAcess(Request $request, User $user)
     {
         $user->active = 2;

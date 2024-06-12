@@ -485,6 +485,19 @@ class AdminService
         return $associates;
     }
 
+    public static function updateShareItemWithAssistant($request, $id)
+    {
+        $assistant = User::find($id);
+        $cats = $assistant->assistantCategories->categories;
+        foreach ($request->items as $cat) {
+            if(!in_array($cat,json_decode($cats))){
+                $assistant->assistantCategories->update([
+                    'categories' => json_encode(array_merge(json_decode($assistant->assistantCategories->categories, true), [$cat]))
+                ]);
+            }
+        }
+        return response()->json('success');
+    }
     public static function shareItemWithAssistant($request, $id = -1)
     {
 
@@ -573,7 +586,7 @@ class AdminService
                 'processor' => 'sometimes:required',
                 'associate' => 'sometimes:required',
                 'juniorAssociate' => 'sometimes:required',
-            ],[
+            ], [
                 'email.required_with' => 'This field is required',
                 'borroweraddress.required' => 'This field is required',
             ]);
@@ -680,7 +693,7 @@ class AdminService
         $company_users = $company->users;
         // currunt users company limit count
         $count = $company_users->where('role', '!=', 'Borrower')->where('role', '!==', 'Assistant')->count();
-        if ($id == -1 && $request->role !== 'Borrower' && $request->role !== 'Assistant' && $company->max_users != null &&$count >= $company->max_users) {
+        if ($id == -1 && $request->role !== 'Borrower' && $request->role !== 'Assistant' && $company->max_users != null && $count >= $company->max_users) {
             return true; // users limit completed
         } else {
             return false; // users limit not completed

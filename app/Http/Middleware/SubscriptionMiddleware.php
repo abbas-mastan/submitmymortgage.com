@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\SubscriptionHelper;
+use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,14 +19,19 @@ class SubscriptionMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $user = Auth::user();
+        $user = Auth::user() ?? null;
+        if ($user && $user->role !== 'Super Admin' && $user->role !== 'Admin' && $user->company() && $user->company->subscription_id) {
+            if (SubscriptionHelper::isExpired($user)) {
+                return redirect('/logout');
+            }
+        }
+
         if ($user && $user->role === 'Admin' && $user->subscriptionDetails) {
-            $stripe = new \Stripe\StripeClient(env('STRIPE_SK'));
-            $sub_id = $user->subscriptionDetails->stripe_subscription_id;
-            $stripedata = $stripe->subscriptions->retrieve($sub_id, []);
-            $subscription = $stripedata->jsonSerialize();
-            $period_end_at = date('Y-m-d H:i:s', $subscription['current_period_end']);
-            if ($subscription['status'] != 'active' && $period_end_at < now()) {
+            try {
+                if (SubscriptionHelper::isExpired($user)) {
+                    return redirect('premium-confirmation');
+                }
+            } catch (\Exception $e) {
                 return redirect('premium-confirmation');
             }
         }

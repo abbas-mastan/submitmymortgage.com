@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\SubscriptionHelper;
 use App\Mail\AdminMail;
 use App\Mail\AssistantMail;
 use App\Mail\UserMail;
@@ -78,6 +79,12 @@ class AuthController extends Controller
 
     public function doLogin(Request $request)
     {
+        $user = User::where('email', $request->email)->first();
+        if ($user && $user->role !== 'Super Admin' && $user->role !== 'Admin' && $user->company() && $user->company->subscription_id) {
+            if (SubscriptionHelper::isExpired($user)) {
+                return redirect('/login')->with('msg_error', "Username or password is incorrect. Or your account might be disabled.");
+            }
+        }
         if (Auth::attempt(['email' => $request->email, 'password' => $request->password, 'active' => 1], $request->input('remember'))) {
             // Authentication passed...
             $user = Auth::user();
@@ -91,7 +98,6 @@ class AuthController extends Controller
                 return redirect()->intended('/dashboard')->with('msg_success', 'Your 14 days trial
                  period started successfully!');
             }
-
             return redirect()->intended('/dashboard');
         }
         return redirect('/login')->with('msg_error', "Username or password is incorrect. Or your account might be disabled.");

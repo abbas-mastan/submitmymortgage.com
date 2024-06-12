@@ -308,20 +308,7 @@ class SuperAdminController extends Controller
 
     public function addCategoryToUser(Request $request, User $user)
     {
-        if (in_array(ucwords($request->name), config('smm.file_category')) || $request->name == "id/driver's license") {
-            return response()->json(["error" => "This Category \" $request->name\" already exists"]);
-        }
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|unique:user_categories,name,user_id' . $user->id,
-        ]);
-        if ($validator->fails()) {
-            return response()->json(['error' => $validator->errors()->all()]);
-        }
-        UserCategory::create([
-            'name' => $request->name,
-            'user_id' => $user->id,
-        ]);
-        return response()->json(['success' => 'Added new records.']);
+        return CommonService::addCategoryToUser($request,$user);
     }
 
     public function uploadFilesView()
@@ -516,6 +503,11 @@ class SuperAdminController extends Controller
     public function shareItemWithAssistant(Request $request, $id)
     {
         return AdminService::shareItemWithAssistant($request, $id);
+    }
+    
+    public function updateShareItemWithAssistant(Request $request,$id) 
+    {
+        return AdminService::updateShareItemWithAssistant($request, $id);
     }
 
     public function removeAcess(Request $request, User $user)

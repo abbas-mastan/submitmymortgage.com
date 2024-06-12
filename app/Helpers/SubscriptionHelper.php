@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\SubscriptionDetails;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Stripe\StripeClient;
 
@@ -10,7 +11,7 @@ class SubscriptionHelper
 {
     public static function startTrialSubscription($customer_id, $user_id, $subscription_plan)
     {
-        
+        DB::beginTransaction();
         try {
             $date = date('Y-m-d H:i:s');
             $trial_days = strtotime($date . '+' . env('SUBSCRIPTION_TRIAL_DAYS') . ' days');
@@ -43,8 +44,10 @@ class SubscriptionHelper
                 'created_at' => $date,
                 'updated_at' => $date,
             ]);
+            DB::commit();
             return $subsription_details_data;
         } catch (\Exception $e) {
+            DB::rollback();
             Log::info($e->getMessage());
             return response()->json(['type' => 'stripe_error', 'message' => $e->getMessage()]);
         }
@@ -72,4 +75,21 @@ class SubscriptionHelper
         }
     }
 
+    public static function isExpired($user)
+    {
+        try {
+            $stripe = new \Stripe\StripeClient(env('STRIPE_SK'));
+            $sub_id = $user->company->subscription_id;
+            $stripedata = $stripe->subscriptions->retrieve($sub_id, []);
+            $subscription = $stripedata->jsonSerialize();
+            $period_end_at = date('Y-m-d H:i:s', $subscription['current_period_end']);
+            if ($subscription['status'] != 'active' && $period_end_at < now()) {
+                return true;
+            } else {
+                return false;
+            }
+        } catch (\Exception $ex) {
+          return true;
+        }
+    }
 }

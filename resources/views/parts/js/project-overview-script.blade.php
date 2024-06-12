@@ -1,6 +1,6 @@
 <script src="{{ asset('js/jquery-3.3.1.min.js') }}"></script>
 <script>
-    window.returnBack = "{{url(getRoutePrefix().'/redirect/back/file-uploaded-successfully')}}";
+    window.returnBack = "{{ url(getRoutePrefix() . '/redirect/back/file-uploaded-successfully') }}";
 </script>
 <script src="{{ asset('js/upload.js') }}"></script>
 <script src="//cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
@@ -54,12 +54,72 @@
         }
     });
 
+    var isAssistantAvailable = @json(count($assistants));
+    $('.assistant').on('change', function() {
+        var selected = $('.assistant').val();
+        if (selected !== '') {
+            var text = $('.itemsToShare td').text();
+            textArray = text.split('\n').map(function(item) {
+                return item.trim();
+            }).filter(function(item) {
+                return item !== '';
+            });
+            var formUrl = $('.assistantForm').attr('action');
+            $('.assistantForm').attr('action', formUrl + '/' + selected);
+            console.log($('.assistantForm').attr('action'));
+            $('.firstTableButtonsParent .updateButton').removeClass('hidden');
+            $('.firstTableButtonsParent .nextButton').addClass('hidden');
+        } else {
+            $('.firstTableButtonsParent .updateButton').addClass('hidden');
+            $('.firstTableButtonsParent .nextButton').removeClass('hidden');
+        }
+    });
+
+    $('.updateButton').click(function(e) {
+        e.preventDefault();
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+        $.ajax({
+            type: 'POST',
+            url: $('.assistantForm').attr('action'),
+            data: {
+                items: textArray,
+            }, // Send data as an object
+            success: function(response) {
+                console.log(response);
+                $('.jq-loader-for-ajax').addClass('hidden');
+                if (response === 'success') {
+                    $('#newProjectModal').toggleClass('hidden');
+                    window.location.href =
+                        "{{ url(getRoutePrefix() . '/redirect/back/assistant-updated-successfully') }}";
+                }
+                $.each(response.error, function(index, message) {
+                    $('.submitPart .errors').append(
+                        `<li class="text-red-700">${message}</li>`);
+                });
+            },
+            error: function(data) {
+                console.log(data);
+                $('.jq-loader-for-ajax').addClass('hidden');
+            }
+        });
+    });
+
     $(document).on('change', '.secondTable input[type="checkbox"]', function() {
         if ($('.secondTable input[type="checkbox"]:checked').length > 0) {
             $('.backButton').addClass('hidden');
+            if (isAssistantAvailable > 0) {
+                $('.assistantForm').removeClass('hidden');
+            }
             $('.secondTableButtonsParent').removeClass('justify-between');
             $('.secondTableButtonsParent').addClass('justify-end');
         } else {
+            if (isAssistantAvailable > 0) {
+                $('.assistantForm').addClass('hidden');
+            }
             $('.backButton').removeClass('hidden');
             $('.secondTableButtonsParent').removeClass('justify-end');
             $('.secondTableButtonsParent').addClass('justify-between');
@@ -105,6 +165,7 @@
 
     $('.submitPart form').submit(function(e) {
         e.preventDefault();
+
         $('.jq-loader-for-ajax').removeClass('hidden');
         $('.errors').empty();
         var inputs = $('.submitPart form input[name="email"]').val();
@@ -264,7 +325,7 @@
         var id = $span.attr('data-id');
         $.ajax({
             type: "get",
-            url: "{{url(getRoutePrefix())}}"+`/remove-access/${id}`,
+            url: "{{ url(getRoutePrefix()) }}" + `/remove-access/${id}`,
             data: $span
                 .serialize(), // Note: serialize() is typically used with forms, so this may not be necessary
             success: function(response) {

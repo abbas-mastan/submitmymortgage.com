@@ -27,7 +27,8 @@
             </div>
             <div class="flex flex-col w-full">
                 <label for="phone" class="py-3 text-xl font-bold">Phone</label>
-                <input type="text" class="rounded" value="{{old('phone')}}" name="phone" placeholder="Enter your phone address" id="phone">
+                <input type="text" class="rounded phone" value="{{old('phone','+1')}}" name="phone" placeholder="Enter your phone address" id="phone">
+                <span class="phone_error"></span>
                 @error('phone')
                     <span class="text-red-700">{{ $message }}</span>
                 @enderror

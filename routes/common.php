@@ -61,6 +61,7 @@ Route::post('/submit-intake-form', 'submitIntakeForm');
 Route::get('/loan-intake', 'loanIntake');
 Route::get('sortby/{id?}/{sortby?}', 'projectOverview');
 Route::post('/share-items/{id?}', 'shareItemWithAssistant')->name('share-items');
+Route::post('/update-share-items/{id}', 'updateShareItemWithAssistant')->name('update-share-items');
 Route::get('project-overview/{id?}', 'projectOverview');
 Route::post('/do-contact/{id?}', 'doContact');
 Route::get('/delete-contact/{contact}', 'deleteContact');

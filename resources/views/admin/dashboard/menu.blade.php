@@ -1,5 +1,5 @@
 {{-- @if ($currentrole === $superadminrole || $currentrole === 'Admin') --}}
-<x-form.intake-modal-form :intake="$intake" />
+<x-form.intake-modal-form :intake="$intake" :enableTeams="$enableTeams"/>
 {{-- @endif --}}
 <div class="flex justify-evenly gap-8 align-center">
     <div class="sm:w-2/3 w-full">
@@ -16,7 +16,6 @@
                     // Format the date as "DayOfWeek, Month Year"
                     $trainingDate = $date->format('l, F j, Y');
                 }
-
             @endphp
             <div class="shadow-lg p-5 mt-2">
                 <form class="" action="{{ route('update.training.time') }}" method="post">

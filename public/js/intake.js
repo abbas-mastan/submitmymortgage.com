@@ -1,12 +1,12 @@
-$('.intakeForm').submit(function(e) {
+$('.intakeForm').submit(function (e) {
     e.preventDefault();
     $('[id$="_error"]').text('');
     $('.jq-loader-for-ajax').removeClass('hidden');
     errors = ['email', 'first_name', 'last_name', 'address', 'phone', 'loantype'];
-    $.each(errors, function(indexInArray, error_tag) {
+    $.each(errors, function (indexInArray, error_tag) {
         $(`#${error_tag}`).empty();
     });
-    
+
     $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -16,19 +16,20 @@ $('.intakeForm').submit(function(e) {
         type: "post",
         url: $(this).attr('action'),
         data: $(this).serialize(),
-        success: function(response) {
+        success: function (response) {
             console.log(response);
             $('.jq-loader-for-ajax').addClass('hidden');
             if (response === 'success') {
                 $('#newProjectModal').toggleClass('hidden');
-                window.location.href = routePrefix + '/redirect/dashboard/form-submitted-successfully';            }
-            $.each(response.error, function(index, error) {
+                window.location.href = routePrefix + '/redirect/dashboard/form-submitted-successfully';
+            }
+            $.each(response.error, function (index, error) {
                 var fieldId = `#${error.field}_error`;
                 var errorMessage = error.message;
                 $(fieldId).text(errorMessage);
             });
         },
-        error: function(error) {
+        error: function (error) {
             console.log(error);
         }
     });
@@ -37,7 +38,7 @@ $('.intakeForm').submit(function(e) {
 $('.personalinfo input').attr('required', true);
 $('input[name=address]').attr('required', true);
 
-$('.newProject, .closeModal').click(function(e) {
+$('.newProject, .closeModal').click(function (e) {
     e.preventDefault();
     $('#newProjectModal').toggleClass('hidden');
     $('#newProjectModal div:first').removeClass('md:top-44');
@@ -45,12 +46,12 @@ $('.newProject, .closeModal').click(function(e) {
 });
 
 // this code is the shorter version of below commented code
-$('.loantype').change(function(e) {
+$('.loantype').change(function (e) {
     e.preventDefault();
     changeLoantype($(this).val());
 });
 
-function changeLoantype(loanType){
+function changeLoantype(loanType) {
     const selectedValue = loanType;
     const sections = {
         'Purchase': 'purchase',
@@ -71,10 +72,10 @@ function changeLoantype(loanType){
             $(`.${sections[section]} input`).attr('disabled', true);
         }
     }
-    $('select[name=loan_type]').val(selectedValue);
+    $('select[name=finance_type]').val(selectedValue);
 }
 
-$('#isItRentalProperty').change(function(e) {
+$('#isItRentalProperty').change(function (e) {
     e.preventDefault();
     if ($(this).val() === 'Yes') {
         $('#monthly_rental_income').parent().parent().parent().removeClass('hidden');
@@ -85,7 +86,7 @@ $('#isItRentalProperty').change(function(e) {
     }
 });
 
-$('#isItRentalPropertyRefinance').change(function(e) {
+$('#isItRentalPropertyRefinance').change(function (e) {
     e.preventDefault();
     if ($(this).val() === 'Yes') {
         $('#monthly_rental_income_refinance').parent().parent().parent().removeClass('hidden');
@@ -96,7 +97,7 @@ $('#isItRentalPropertyRefinance').change(function(e) {
     }
 });
 
-$('#isRepairFinanceNeeded').change(function(e) {
+$('#isRepairFinanceNeeded').change(function (e) {
     e.preventDefault();
     if ($(this).val() === 'Yes') {
         $('.repairfinanceamountdiv').removeClass('hidden');
@@ -105,11 +106,11 @@ $('#isRepairFinanceNeeded').change(function(e) {
     }
 });
 
-$("#start-upload-btn").click(function(e) {
+$("#start-upload-btn").click(function (e) {
     e.preventDefault();
     if ($('input[name="attachment[]"]').length > 0) {
         var checkedBoxes = $('input[name="attachment[]"]:checked');
-        var checkedValues = checkedBoxes.map(function() {
+        var checkedValues = checkedBoxes.map(function () {
             return $(this).val();
         }).get();
         if ($('#category').val() === "") {
@@ -138,4 +139,24 @@ $("#start-upload-btn").click(function(e) {
         $("#file-name-progress").text(file.name);
         uploadToPHPServer();
     }
+});
+
+$('.company').change(function (e) {
+    e.preventDefault();
+    $('.teams').empty();
+    $(".teams").append(`
+    <option value="">Select Team</option>
+    `);
+    console.log($(this).val());
+    $.ajax({
+        url: `/superadmin/get-company-teams/${$(this).val()}`,
+        type: 'GET',
+        success: function (data) {
+            $.each(data, function (index, associate) {
+                $(".teams").append(`
+                <option value="${associate.id}">${associate.name}</option>
+                `);
+            });
+        }
+    });
 });

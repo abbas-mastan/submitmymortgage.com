@@ -34,6 +34,43 @@
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
     @yield('foot')
     <script>
+
+        $(".phone").on('keyup', function() {
+                var input = $(this).val();
+
+                var phoneError = $('.phone_error');
+                // Remove non-numeric characters except the leading +1
+                input = input.replace(/[^\d]/g, '');
+                if (input.startsWith('1')) {
+                    input = '+' + input;
+                } else {
+                    input = '+1' + input;
+                }
+                // Format the number as +1 (xxx) xxx-xxxx
+                if (input.length > 10) {
+                    input = input.replace(/^(\+1)(\d{3})(\d{3})(\d{4}).*/, '$1 ($2) $3-$4');
+                } else if (input.length > 6) {
+                    input = input.replace(/^(\+1)(\d{3})(\d{3})/, '$1 ($2) $3');
+                } else if (input.length > 3) {
+                    input = input.replace(/^(\+1)(\d{3})/, '$1 ($2)');
+                }
+
+                // Update the input value
+                $(this).val(input);
+
+                // Validate length
+                if (input.length > 17) {
+                    phoneError.text('characters exceeds');
+                    phoneError.css('display', 'block');
+                } else if (input.length < 17) {
+                    phoneError.text('incomplete number');
+                    phoneError.css('display', 'block');
+                } else {
+                    phoneError.hide();
+                    phoneError.css('display', 'none');
+                }
+            });
+
         function showTooltip(flag) {
             switch (flag) {
                 case 1:

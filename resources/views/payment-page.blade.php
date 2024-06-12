@@ -18,8 +18,8 @@
                 <div class=" text-left mr-12">
                     <label class="text-black text-md xl:text-xl opacity-70">Enter Card Number</label>
                 </div>
-                <div class="border rounded-lg">
-                    <div class="ps-2 " id="card-element">
+                <div class="border rounded-lg py-2">
+                    <div class="ps-2  " id="card-element">
                         <!-- A Stripe Element will be inserted here. -->
                     </div>
 
@@ -52,63 +52,71 @@
     </script>
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-        $(document).ready(function() {
-
-            var stripe = Stripe('pk_test_51P6SBB09tId2vnnuXxFipyFJCk9XyEXZCBEUVfdRAbL09wiReraeAoKNNk3SfOq8rvlxMoNJwCIw1diOzwWmapRU00hyZJU7QX');
+        if (window.Stripe) {
+            var stripe = Stripe("{{ env('STRIPE_PK') }}");
             var elements = stripe.elements();
-            // Custom styling can be passed to options when creating an Element.
-            const style = {
+            var card = elements.create('card', {
                 hidePostalCode: true,
-                base: {
-                    // Add your base input styles here. For example:
-                    fontSize: '16px',
-                    color: '#32325d',
-                    lineHeight: '50px',
-                    padding: '60px',
-                },
-            };
-
-            // Create an instance of the card Element.
-            const card = elements.create('card', {
-                style
-            });
-
-            // Add an instance of the card Element into the `card-element` <div>.
-            card.mount('#card-element');
-            // Create a token or display an error when the form is submitted.
-            // Create a token or display an error when the form is submitted.
-            const form = document.getElementById('payment-form');
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault();
-
-                const {
-                    token,
-                    error
-                } = await stripe.createToken(card);
-
-                if (error) {
-                    // Inform the customer that there was an error.
-                    const errorElement = document.getElementById(
-                        'card-errors');
-                    errorElement.textContent = error.message;
-                } else {
-                    // Send the token to your server.
-                    stripeTokenHandler(token);
+                style: {
+                    base: {
+                        fontWeight: '500',
+                        fontSize: '17px',
+                        fontFamily: 'Lexend, sans-serif',
+                        '::placeholder': {
+                            color: '#c7bbbb',
+                        },
+                    }
                 }
             });
+            card.mount('#card-element');
+            card.addEventListener('change', function(event) {
+                var displayError = document.getElementById('card-errors')
+                displayError.textContent = event.error ? event.error.message : '';
+            });
+            const form = document.getElementById('payment-form');
+            form.addEventListener('submit', function(ev) {
+                ev.preventDefault();
+                $('.loader').removeClass('d-none');
+                stripe.createToken(card).then(function(result) {
+                    $('.loader').addClass('d-none');
+                    validateFields();
+                    if (result.error) {
+                        var errorElement = document.getElementById('card-errors');
+                        errorElement.textContent = result.error.message;
+                    } else {
+                        if (validateFields()) {
+                            // console.log(result.token);
+                            $('#payment-form').append(
+                                `<input type="hidden" value="${result.token.card.id}" name="card">`
+                            );
+                            $('#payment-form').append(
+                                `<input type="hidden" value="${result.token.id}" name="stripeToken">`
+                            );
+                            $('#payment-form').append(
+                                `<input type="hidden" value="${result.token.card.last4}" name="card_no">`
+                            );
+                            $('#payment-form').append(
+                                `<input type="hidden" value="${result.token.card.brand}" name="brand">`
+                            );
+                            $('#payment-form').append(
+                                `<input type="hidden" value="${result.token.card.exp_month}" name="month">`
+                            );
+                            $('#payment-form').append(
+                                `<input type="hidden" value="${result.token.card.exp_year}" name="year">`
+                            );
+                            $('#payment-form').append(
+                                `<input type="hidden" value="${result.token.card.name}" name="name">`
+                            );
+                            form.submit();
+                        }
+                    }
+                });
+            });
 
-            const stripeTokenHandler = (token) => {
-                // Insert the token ID into the form so it gets submitted to the server
-                const form = document.getElementById('payment-form');
-                const hiddenInput = document.createElement('input');
-                hiddenInput.setAttribute('type', 'hidden');
-                hiddenInput.setAttribute('name', 'stripeToken');
-                hiddenInput.setAttribute('value', token.id);
-                form.appendChild(hiddenInput);
-
-                // Submit the form
-                form.submit();
+            function validateFields() {
+                
+                return true; //
             }
-        });
+        }
     </script>
 @endsection

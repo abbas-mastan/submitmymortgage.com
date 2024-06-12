@@ -425,6 +425,7 @@
                 url: url,
                 data: $("input[name='name']"),
                 success: function(response) {
+                    console.log(response);
                     if (response.error)
                         $("input[name='name']").next("span").text(response.error);
                     if (response.success) {
