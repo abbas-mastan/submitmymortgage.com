@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\SubscriptionHelper;
 use App\Http\Requests\ApplicationRequest;
 use App\Http\Requests\IntakeFormRequest;
 use App\Models\Application;
@@ -12,7 +13,6 @@ use App\Models\IntakeForm;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
-use App\Models\UserCategory;
 use App\Services\AdminService;
 use App\Services\CommonService;
 use App\Services\UserService;
@@ -64,8 +64,7 @@ class AdminController extends Controller
         ]);
         $user = Auth::user();
         $request['training'] = $user->training->start_date;
-        $sub_controller = new SubscriptionController();
-        $training = $sub_controller->userTraining($request, $user->id);
+        $training = SubscriptionHelper::userTraining($request, $user->id);
         if ($training) {
             $data = ['time' => $request->time];
             Mail::mailer('super_admin')->send('notifications::traing-mail-to-super-admin', $data, function ($message) use ($user) {
@@ -135,9 +134,11 @@ class AdminController extends Controller
         if ($cat == "Loan Application") {
             $user = User::find($id)->application()->first();
             if ($user != null) {
-                return redirect(getAssociateRoutePrefix() . "/application-show/" . $user->id);
+                return redirect(getRoutePrefix() . "/application-show/" . $user->application->id);
             } else {
-                return redirect(getAssociateRoutePrefix() . "/application/" . $id);
+                $data['id'] = $id;
+                $data['application'] = new Application;
+                return view('user.loan.application', $data);
             }
         } else {
             $data = AdminService::docs($request, $id, $cat);
@@ -293,10 +294,10 @@ class AdminController extends Controller
         $msg = AdminService::deleteAttachment($request, $id);
         return back()->with($msg['msg_type'], $msg['msg_value']);
     }
-    
+
     public function addCategoryToUser(Request $request, User $user)
     {
-        return CommonService::addCategoryToUser($request,$user);
+        return CommonService::addCategoryToUser($request, $user);
     }
 
     public function uploadFilesView()
@@ -539,8 +540,8 @@ class AdminController extends Controller
         $admin = $id ? User::find($id) : Auth::user(); // Assuming you have authenticated the admin
         if ($admin->role === 'Admin') {
             $enableTeams = Team::with(['users.createdBy'])
-            ->where('company_id', $admin->company_id)
-            ->Where('disable', false)->get();
+                ->where('company_id', $admin->company_id)
+                ->Where('disable', false)->get();
         } else {
             $enableTeams = $admin->teamsOwnend()
                 ->with('users.createdBy')
@@ -603,11 +604,11 @@ class AdminController extends Controller
         return AdminService::shareItemWithAssistant($request, $id);
     }
 
-    public function updateShareItemWithAssistant(Request $request,$id) 
+    public function updateShareItemWithAssistant(Request $request, $id)
     {
         return AdminService::updateShareItemWithAssistant($request, $id);
     }
-    
+
     public function removeAcess(Request $request, User $user)
     {
         $user->active = 2;

@@ -83,8 +83,8 @@ class AssociateController extends Controller
     public function docs(Request $request, $id, $cat)
     {
         if ($cat == "Loan Application") {
-            $user = User::find($id)->application()->first();
-            return redirect(getAssociateRoutePrefix() . ($user ? "/application-show/$user->id" : "/application/$id"));
+            $application = User::find($id)->application()->first();
+            return redirect(getAssociateRoutePrefix() . ($application ? "/application-show/$application->id" : "/application/$id"));
         }
         $data = AdminService::docs($request, $id, $cat);
         return view("admin.file.single-cat-docs", $data);
@@ -93,7 +93,8 @@ class AssociateController extends Controller
 
     public function applicationShow(Application $application)
     {
-        return view('admin.applications.show', $application);
+        $data['application'] = $application;
+        return view('admin.applications.show', $data);
     }
 
     public function applicationEdit(Application $application)

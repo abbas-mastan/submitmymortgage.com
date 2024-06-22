@@ -22,7 +22,7 @@
             <thead class="bg-gray-300 text-left" style="height: 40px;">
                 <tr>
                     <th class=" pl-2 tracking-wide">
-                        Sr.NO
+                        Sr.No
                     </th>
                     <th class="">
                         User Email
@@ -42,9 +42,9 @@
                     <th class="">
                         Created at
                     </th>
-                    {{-- <th class="">
+                    <th class="">
                         Actions
-                    </th> --}}
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -79,16 +79,15 @@
                         <td class=" pl-2 tracking-wide border border-l-0">
                             {{ date('d/m/y', strtotime($quote->created_at)) }}
                         </td>
-                        {{-- <td class=" pl-2 tracking-wide border border-r-0">
-                            <a data="Disable" class="delete"
-                                href="{{ url(getRoutePrefix() . '/delete-company/' . $quote->id) }}">
+                        <td class=" pl-2 tracking-wide border border-r-0">
+                            <a href="{{ url(getRoutePrefix() . '/custom-plan/' . $quote->user->id) }}">
                                 <button title="temporary delete"
-                                    class="bg-themered  tracking-wide capitalize text-white px-2"> --}}
+                                    class="bg-themered  tracking-wide capitalize text-white px-2"> 
                                     {{-- <img src="{{ asset('icons/trash.svg') }}" alt="" class="p-1 w-7"> --}}
-                                    {{-- Disable
+                                    Create Plan
                                 </button>
                             </a>
-                        </td> --}}
+                        </td>
                     </tr>
                 @endforeach
             </tbody>

@@ -39,8 +39,8 @@
             action="{{ empty($user->id) ? url(getRoutePrefix() . (old('role', $user->role) == 'Assistant' ? '/share-items/' : '/do-user/') . '-1') : url(getRoutePrefix() . (old('role', $user->role) == 'Assistant' ? '/share-items/' : '/do-user/') . $user->id) }}"
             method="post" class="userForm w-7/8">
             @csrf
-            <div class="flex justify-between">
-                <div class="mt-3 w-[49%]">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-x-8 gap-y-4">
+                <div class="">
                     <div class="text-left mr-12">
                         <label for="name" class="">Enter Full Name</label>
                     </div>
@@ -53,7 +53,7 @@
                         <span class="text-red-700">{{ $message }}</span>
                     @enderror
                 </div>
-                <div class="mt-3 w-[49%]">
+                <div class="">
                     <div class="text-left mr-12">
                         <label for="email" class="">Email Address</label>
                     </div>

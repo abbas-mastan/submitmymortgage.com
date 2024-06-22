@@ -6,7 +6,6 @@ use App\Helpers\SubscriptionHelper;
 use App\Mail\AdminMail;
 use App\Mail\CancelSubscriptionMail;
 use App\Mail\CustomQuoteMail;
-use App\Models\CardDetails;
 use App\Models\Company;
 use App\Models\CustomQuote;
 use App\Models\PaymentDetail;
@@ -30,8 +29,22 @@ class SubscriptionController extends Controller
 
     public function finishTrial()
     {
-        $user = Auth::user();
+
         $stripe = new StripeClient(env('STRIPE_SK'));
+        // $product = $stripe->products->create([
+        //     'name' => 'Gold Plan',
+        // ]);
+
+        $product = $stripe->prices->create([
+            'currency' => 'usd',
+            'unit_amount' => 1000,
+            'recurring' => ['interval' => 'month'],
+            'product_data' => ['name' => 'test plan'],
+        ]);
+        dd($product);
+
+        die;
+        $user = Auth::user();
         $sub_id = $user->subscriptionDetails->stripe_subscription_id;
         $cus_id = $user->subscriptionDetails->stripe_customer_id;
         $price_id = $user->subscriptionDetails->subscription_plan_price_id;
@@ -74,7 +87,6 @@ class SubscriptionController extends Controller
 
     public function processPayment(Request $request)
     {
-     
         $validator = $this->ValidateUser($request);
         if ($validator->fails()) {
             return response()->json($validator->errors());
@@ -89,13 +101,14 @@ class SubscriptionController extends Controller
                     // create company with users end
                     $customer_id = $customer->id;
                     $user_id = $user->id;
-                    $this->userTraining($request, $user_id);
+                    SubscriptionHelper::userTraining($request, $user_id);
                     $id = Crypt::encryptString($user_id);
                     DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
                     $url = function () use ($id) {return URL::signedRoute('user.register', ['user' => $id], now()->addMinutes(10));};
                     Mail::to($request->email)->send(new AdminMail($url()));
-                    $this->insertCardDetails($request, $customer_id, $user_id);
-                    $this->insertSubscriptionInfo($user_id);
+                    SubscriptionHelper::insertCardDetails($request, $customer_id, $user_id);
+                    SubscriptionHelper::insertSubscriptionInfo($user_id);
+                    SubscriptionHelper::insertPersonalInfo($request, $user);
                     if ($subscriptionPlan) {
                         $subscriptionData = SubscriptionHelper::startTrialSubscription($customer_id, $user_id, $subscriptionPlan);
                         $company = $user->company;
@@ -117,7 +130,7 @@ class SubscriptionController extends Controller
             }
         }
     }
-    
+
     protected function createUserWithCompany($request, $max_users)
     {
         $company = Company::create([
@@ -134,39 +147,6 @@ class SubscriptionController extends Controller
         $user->pic = 'img/profile-default.svg';
         $user->save();
         return $user;
-    }
-
-    public function userTraining($request, $user_id)
-    {
-        return UserTraining::updateOrCreate(
-            ['user_id' => $user_id],
-            [
-                'user_id' => $user_id,
-                'start_date' => $request->training,
-                'start_time' => $request->time ?? null,
-            ]
-        );
-    }
-
-    protected function insertCardDetails($request, $customer_id, $user_id)
-    {
-        CardDetails::updateOrCreate(
-            [
-                'user_id' => $user_id,
-                'card_no' => $request->card_no,
-            ],
-            [
-                'user_id' => $user_id,
-                'customer_id' => $customer_id,
-                'card_id' => $request->card,
-                'brand' => $request->brand,
-                'month' => $request->month,
-                'year' => $request->year,
-                'card_no' => $request->card_no,
-                'name' => $request->name ?? '',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
     }
 
     protected function insertSubscriptionInfo($user_id)
@@ -255,7 +235,7 @@ class SubscriptionController extends Controller
                 $stripedata = $stripe->subscriptions->retrieve($subscription->id, []);
                 $this->updateSubscriptionDetails($user, $stripedata->id, $customer->id);
                 $user->company->update([
-                    'subscription_id'=> $subscription->id
+                    'subscription_id' => $subscription->id,
                 ]);
                 return redirect('/dashboard')->with('msg_success', 'Subscription completed successfully.');
             } catch (\Exception $e) {
@@ -278,11 +258,15 @@ class SubscriptionController extends Controller
     {
         $user = Auth::user();
         $sub_id = $user->subscriptionDetails->stripe_subscription_id;
-        $stripe = new \Stripe\StripeClient('sk_test_51P6SBB09tId2vnnum7ibbbCIHgacCrrJc1G78LXEYK81LKH0lfMgmVcAzFQySdadJok5xnOwRvEVNqw9m1aiV0qi00Kihjo2GB');
-        $stripe->subscriptions->cancel($sub_id, []);
-        $user->userSubscriptionInfo->update(['is_subscribed' => false]);
-        Mail::to($user->email)->send(new CancelSubscriptionMail());
-        return back()->with(['msg_success', 'Subscription cancled!']);
+        $stripe = new \Stripe\StripeClient(env('STRIPE_SK'));
+        try {
+            $stripe->subscriptions->cancel($sub_id, []);
+            $user->userSubscriptionInfo->update(['is_subscribed' => false]);
+            Mail::to($user->email)->send(new CancelSubscriptionMail());
+            return back()->with(['msg_success', 'Subscription cancled!']);
+        } catch (\Exception $ex) {
+            return back()->with('msg_error','An error occured:'.$ex->getMessage());
+        }
     }
 
     public function storeWebhookData(Request $request)

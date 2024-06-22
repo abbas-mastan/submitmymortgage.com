@@ -2,10 +2,14 @@
 
 namespace App\Helpers;
 
-use App\Models\SubscriptionDetails;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
+use App\Models\User;
 use Stripe\StripeClient;
+use App\Models\CardDetails;
+use App\Models\UserTraining;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\SubscriptionDetails;
+use Illuminate\Support\Facades\Log;
 
 class SubscriptionHelper
 {
@@ -57,17 +61,20 @@ class SubscriptionHelper
     {
         try {
             $stripe = new StripeClient(env('STRIPE_SK'));
+            // creates customer in stripe
             $customer = $stripe->customers->create([
                 'description' => $request->email,
                 'email' => $request->email,
                 'source' => $request->stripeToken,
             ]);
+            // charge only one dollar
             $charge = $stripe->charges->create([
                 'amount' => (1 * 100),
                 "currency" => "USD",
                 'customer' => $customer->id,
                 'description' => 'card-testing',
             ]);
+            // charge only one dollar and instantly refunds it
             $stripe->refunds->create(['charge' => $charge->id]);
             return $customer;
         } catch (\Exception $e) {
@@ -89,7 +96,64 @@ class SubscriptionHelper
                 return false;
             }
         } catch (\Exception $ex) {
-          return true;
+            return true;
         }
+    }
+
+    public static function insertPersonalInfo(Request $request, User $user)
+    {
+        $user->personalInfo()->updateOrCreate(
+            ['user_id' => $user->id],
+            [
+                'country' => $request->country,
+                'state' => $request->state,
+                'city' => $request->city,
+                'postal_code' => $request->postal_code,
+            ]);
+    }
+
+    public static function insertCardDetails($request, $customer_id, $user_id)
+    {
+        CardDetails::updateOrCreate(
+            [
+                'user_id' => $user_id,
+                'card_no' => $request->card_no,
+            ],
+            [
+                'user_id' => $user_id,
+                'customer_id' => $customer_id,
+                'card_id' => $request->card,
+                'brand' => $request->brand,
+                'month' => $request->month,
+                'year' => $request->year,
+                'card_no' => $request->card_no,
+                'name' => $request->name ?? '',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+    }
+
+    public  static function insertSubscriptionInfo($user_id)
+    {
+        DB::table('user_subscription_infos')->insert([
+            'user_id' => $user_id,
+            'is_subscribed' => true,
+            'trials_completed' => false,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+    }
+
+
+    public  static function userTraining($request, $user_id)
+    {
+        return UserTraining::updateOrCreate(
+            ['user_id' => $user_id],
+            [
+                'user_id' => $user_id,
+                'start_date' => $request->training,
+                'start_time' => $request->time ?? null,
+            ]
+        );
     }
 }

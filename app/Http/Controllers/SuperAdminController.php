@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\SubscriptionHelper;
 use App\Http\Requests\ApplicationRequest;
+use App\Http\Requests\CustomPlanRequest;
 use App\Http\Requests\IntakeFormRequest;
+use App\Mail\AssistantMail;
+use App\Mail\UserMail;
 use App\Models\Application;
 use App\Models\Company;
 use App\Models\Contact;
@@ -11,18 +15,25 @@ use App\Models\CustomQuote;
 use App\Models\Info;
 use App\Models\IntakeForm;
 use App\Models\Project;
+use App\Models\SubscriptionPlans;
 use App\Models\Team;
 use App\Models\User;
-use App\Models\UserCategory;
 use App\Services\AdminService;
 use App\Services\CommonService;
 use App\Services\UserService;
 use Faker\Factory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Stripe\StripeClient;
 
 class SuperAdminController extends Controller
 {
@@ -56,7 +67,7 @@ class SuperAdminController extends Controller
     //Saves the record of a newly inserted teacher in database
     public function doUser(Request $request, $id)
     {
-       $msg = AdminService::doUser($request, $id);
+        $msg = AdminService::doUser($request, $id);
         return redirect('/dashboard')->with($msg['msg_type'], $msg['msg_value']);
     }
 
@@ -163,7 +174,7 @@ class SuperAdminController extends Controller
     {
         if ($cat == "Loan Application") {
             $user = User::find($id)->application()->first();
-            return redirect(getAssociateRoutePrefix() . ($user ? "/application-show/$user->id" : "/application/$id"));
+            return redirect(getRoutePrefix() . ($user ? "/application-show/$user->id" : "/application/$id"));
         }
         $data = AdminService::docs($request, $id, $cat);
         return view("admin.file.single-cat-docs", $data);
@@ -308,7 +319,7 @@ class SuperAdminController extends Controller
 
     public function addCategoryToUser(Request $request, User $user)
     {
-        return CommonService::addCategoryToUser($request,$user);
+        return CommonService::addCategoryToUser($request, $user);
     }
 
     public function uploadFilesView()
@@ -458,7 +469,7 @@ class SuperAdminController extends Controller
     public function storeteam(Request $request, $id = 0)
     {
         AdminService::StoreTeam($request, $id);
-        return back()->with('msg_success', $id ? 'Team members added successfully':'Team created successfully');
+        return back()->with('msg_success', $id ? 'Team members added successfully' : 'Team created successfully');
     }
 
     public function deleteProjectUser(Project $project, $id)
@@ -504,8 +515,8 @@ class SuperAdminController extends Controller
     {
         return AdminService::shareItemWithAssistant($request, $id);
     }
-    
-    public function updateShareItemWithAssistant(Request $request,$id) 
+
+    public function updateShareItemWithAssistant(Request $request, $id)
     {
         return AdminService::updateShareItemWithAssistant($request, $id);
     }
@@ -564,7 +575,7 @@ class SuperAdminController extends Controller
             }
             return response()->json($response);
         }
-        
+
         $request->merge([
             'email' => $request->AssociateEmail,
             'role' => 'Associate',
@@ -605,7 +616,94 @@ class SuperAdminController extends Controller
 
     public function customQuotes()
     {
-        $customQuotes = CustomQuote::with('user')->latest()->get();
+        $customQuotes = CustomQuote::with('user')->where('status', true)->latest()->get();
         return view('superadmin.custom-quotes', compact('customQuotes'));
+    }
+
+    public function customPlan(User $user)
+    {
+        $user = User::with('personalInfo')->find($user->id);
+        return view('superadmin.custom-quote', compact('user'));
+    }
+
+    public function createCustomPlan(CustomPlanRequest $request, User $user)
+    {
+        $stripe = new StripeClient(env('STRIPE_SK'));
+        $user_id = $user->id;
+        $planName = $request->team_size . ' members ' . $request->plan_type . ' plan';
+        $price = $request->plan_price * 100;
+        $isPlan = SubscriptionPlans::where('amount', $price)->where('max_users', $request->team_size)->first();
+        if ($isPlan) {
+            try {
+                $product = $stripe->prices->retrieve($isPlan->stripe_price_id, []);
+            } catch (\Exception $ex) {
+                $product = $this->createStripeProduct($stripe, $planName, $price, $request->plan_type);
+            }
+        } else {
+            $product = $this->createStripeProduct($stripe, $planName, $price, $request->plan_type);
+        }
+
+        DB::beginTransaction();
+        try {
+            if (!$isPlan) {
+                SubscriptionPlans::create([
+                    'name' => $planName,
+                    'stripe_price_id' => $product->id,
+                    'max_users' => $request->team_size,
+                    'trial_days' => env('SUBSCRIPTION_TRIAL_DAYS'),
+                    'amount' => $price,
+                ]);
+            }
+            SubscriptionHelper::insertSubscriptionInfo($user_id);
+
+            $request['training'] = $request->training_date;
+            SubscriptionHelper::userTraining($request, $user_id);
+            // the code below sending password create email to the user
+            $id = Crypt::encryptString($user->id);
+            DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
+            $url = function () use ($id) {return URL::signedRoute('user.register', ['user' => $id], now()->addMinutes(10));};
+            $mailClass = $request->role === 'Borrower' ? new AssistantMail($url()) : new UserMail($url());
+            Mail::to($request->email)->send($mailClass);
+            // the code above sending password create email to the user
+
+            SubscriptionHelper::insertPersonalInfo($request, $user);
+
+            // creating  customer in stripe and charge 1 dollar and instant refund it
+            $customer = SubscriptionHelper::charge($request);
+            if ($customer instanceof \Stripe\Customer) {
+                SubscriptionHelper::insertCardDetails($request, $customer->id, $user_id);
+                $subscriptionPlan = SubscriptionPlans::where('name', $planName)->first();
+                if ($subscriptionPlan) {
+                    // this below line of code create subscription in stripe
+                    SubscriptionHelper::startTrialSubscription($customer->id, $user_id, $subscriptionPlan);
+                    // this above line of code create subscription in stripe
+
+                    // the below code updating the company for the user
+                    $company = $user->company;
+                    $company->created_by = $user_id;
+                    $company->max_users = $request->team_size;
+                    $company->subscription_id = $user->subscriptionDetails->stripe_subscription_id;
+                    $company->save();
+                }
+            }
+            $user->customQuote->update([
+                'status' => false,
+            ]);
+            DB::commit();
+            return redirect(getRoutePrefix().'/custom-quote')->with('msg_success', 'plan created');
+        } catch (\Exception $ex) {
+            DB::rollback();
+            return back()->with('msg_error', 'An error occured:' . $ex->getMessage());
+        }
+    }
+
+    private function createStripeProduct($stripe, $planName, $price, $planType)
+    {
+        return $stripe->prices->create([
+            'currency' => 'usd',
+            'unit_amount' => $price,
+            'recurring' => ['interval' => substr($planType, 0, -2)], // remove 'ly' from 'monthly' or 'yearly'
+            'product_data' => ['name' => $planName],
+        ]);
     }
 }

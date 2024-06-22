@@ -48,6 +48,8 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
         Route::get('/get-company-teams/{company}', 'getCompanyTeams');
         Route::get('/get-company-borrowers/{company}', 'getCompanyBorrowers');
         Route::get('/custom-quote', 'customQuotes');
+        Route::post('/create-plan/{user}', 'createCustomPlan')->name('create-plan');
+        Route::get('/custom-plan/{user}', 'customPlan');
 
     });
 
