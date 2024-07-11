@@ -166,5 +166,4 @@
         </button>
     </div>
 </div>
-@section('')
-@endsection
+

@@ -48,6 +48,9 @@ Route::middleware(['auth', 'superadmin'])->prefix(getSuperAdminRoutePrefix())->g
         Route::get('/get-company-teams/{company}', 'getCompanyTeams');
         Route::get('/get-company-borrowers/{company}', 'getCompanyBorrowers');
         Route::get('/custom-quote', 'customQuotes');
+        Route::get('/discount-codes', 'discountCodes')->name('discount.codes');
+        Route::post('/generate-code', 'createDiscountCode')->name('create.discount-code');
+        Route::get('/delete-code/{id}', 'deleteCode')->name('delete.code');
         Route::post('/create-plan/{user}', 'createCustomPlan')->name('create-plan');
         Route::get('/custom-plan/{user}', 'customPlan');
 

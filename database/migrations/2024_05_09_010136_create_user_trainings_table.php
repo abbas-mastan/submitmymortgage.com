@@ -15,7 +15,7 @@ class CreateUserTrainingsTable extends Migration
     {
         Schema::create('user_trainings', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('start_date');
             $table->string('start_time')->nullable();
             $table->string('status')->default(false);

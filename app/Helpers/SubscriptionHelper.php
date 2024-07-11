@@ -66,6 +66,7 @@ class SubscriptionHelper
                 'description' => $request->email,
                 'email' => $request->email,
                 'source' => $request->stripeToken,
+                'coupon' => $request->coupon ?? '',
             ]);
             // charge only one dollar
             $charge = $stripe->charges->create([
@@ -155,5 +156,16 @@ class SubscriptionHelper
                 'start_time' => $request->time ?? null,
             ]
         );
+    }
+
+
+    public static function createStripeProduct($stripe, $planName, $price, $planType)
+    {
+        return $stripe->prices->create([
+            'currency' => 'usd',
+            'unit_amount' => $price,
+            'recurring' => ['interval' => substr($planType, 0, -2)], // remove 'ly' from 'monthly' or 'yearly'
+            'product_data' => ['name' => $planName],
+        ]);
     }
 }

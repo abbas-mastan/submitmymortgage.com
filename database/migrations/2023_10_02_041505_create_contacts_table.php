@@ -15,11 +15,11 @@ class CreateContactsTable extends Migration
     {
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('email')->unique();
-            $table->bigInteger('loanamount');
-            $table->string('loantype');
+            $table->bigInteger('loanamount')->nullable();
+            $table->string('loantype')->nullable();
             $table->timestamps();
         });
     }

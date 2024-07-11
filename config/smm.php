@@ -3,6 +3,18 @@ return[
     'roles'=> ["Processor","Associate","Junior Associate","Assistant","Borrower"],
     'file_category' => ["Credit Report","Loan Application","Bank Statements",
     "Pay Stubs","Tax Returns","ID/Driver's License","1003 Form","Mortgage Statement","Evidence of Insurance","Purchase Agreement","Miscellaneous"],
+    "subscription_plans" => [
+        'monthly-plan-1' => ['amount' => '500','max_users' => 2],
+        'monthly-plan-2' => ['amount' => '1000','max_users' => 5],
+        'monthly-plan-3' => ['amount' => '1500','max_users' => 10],
+        'monthly-plan-4' => ['amount' => '2000','max_users' => 15],
+        'monthly-plan-5' => ['amount' => '2500','max_users' => 20],
+        'yearly-plan-1' => ['amount' => '4500','max_users' => 2],
+        'yearly-plan-2' => ['amount' => '9000','max_users' => 5],
+        'yearly-plan-3' => ['amount' => '13500','max_users' => 10],
+        'yearly-plan-4' => ['amount' => '18000','max_users' => 15],
+        'yearly-plan-5' => ['amount' => '22500','max_users' => 20],
+    ],
     'states' => [
         'AL'=>"Alabama",  
         'AK'=>"Alaska",  

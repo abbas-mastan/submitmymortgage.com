@@ -15,7 +15,7 @@ class CreateSubscriptionDetailsTable extends Migration
     {
         Schema::create('subscription_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('stripe_subscription_id')->nullable();
             $table->string('stripe_subscription_schedule_id')->nullable();
             $table->string('stripe_customer_id')->nullable();

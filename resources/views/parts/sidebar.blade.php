@@ -78,6 +78,7 @@
                 @endif
                 @if (isSuperAdmin())
                     <x-tab href="custom-quote" title="Custom Quote" />
+                    <x-tab href="discount-codes" title="Discount Codes" />
                 @endif
                 @if ($currentrole === 'Admin' || Gate::check('isSuperAdmin'))
                     <x-tab href="connections" title="Connections" />

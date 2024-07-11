@@ -129,12 +129,22 @@ class AdminController extends Controller
         return redirect('/dashboard')->with($data['msg_type'], $data['msg_value']);
     }
 
+    public function docss(Request $request, $id, $cat)
+    {
+        if ($cat == "Loan Application") {
+            $user = User::find($id)->application()->first();
+            return redirect(getRoutePrefix() . ($user ? "/application-show/$user->id" : "/application/$id"));
+        }
+        $data = AdminService::docs($request, $id, $cat);
+        return view("admin.file.single-cat-docs", $data);
+    }
+
     public function docs(Request $request, $id, $cat)
     {
         if ($cat == "Loan Application") {
             $user = User::find($id)->application()->first();
             if ($user != null) {
-                return redirect(getRoutePrefix() . "/application-show/" . $user->application->id);
+                return redirect(getRoutePrefix() . ($user ? "/application-show/$user->id" : "/application/$id"));
             } else {
                 $data['id'] = $id;
                 $data['application'] = new Application;

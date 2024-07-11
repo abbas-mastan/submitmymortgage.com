@@ -74,7 +74,7 @@
                             {{ $contact->loantype }}
                         </td>
                         <td class=" pl-2 tracking-wide border border-l-0">
-                            {{ $contact->user->name }} | {{$contact->user->role}}
+                            {{ $contact->user->name ?? '' }} | {{$contact->user->role ?? ''}}
                         </td>
                         <td class=" pl-2 tracking-wide border border-r-0">
                             <a data="Delete" class="delete"

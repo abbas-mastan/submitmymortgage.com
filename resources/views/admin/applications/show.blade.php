@@ -13,13 +13,13 @@
             font-size: 14px;
         }
 
-        @if('/'.Request::path() === (getRoutePrefix()."/application-show/$application->id"))
+        /* @if('/'.Request::path() === (getRoutePrefix()."/application-show/$application->id"))
         input,
         select,
         textarea {
             border: none !important;
         }
-        @endif
+        @endif */
     </style>
 @endsection
 @section('content')
@@ -874,10 +874,7 @@ $val = $application->employement_status;
                     </div>
                 </div>
             </div>
-            <div class="my-5 grid grid-cols-7 text-center">
-                <div class="col-span-3 text-right mr-12">
-                    &nbsp;
-                </div>
+            <div class="my-5 flex justify-center">
                 <div class="col-span-3">
                     <button type="submit"
                         class="text-white bg-gradient-to-b from-gradientStart to-gradientEnd capitalize rounded-md px-10 py-2  focus:outline-none focus:border-none  focus:ring-1 focus:ring-blue-400">
@@ -927,10 +924,10 @@ $val = $application->employement_status;
     </script>
     <script src="{{ asset('js/jquery-3.3.1.min.js') }}" type="text/javascript"></script>
     <script>
-        @if('/'.Request::path() === (getRoutePrefix()."/application-show/$application->id"))
-                    $('#info-form input').attr('disabled','disabled');
-                    $('#info-form textarea').attr('disabled','disabled');
-        @endif
+        // @if('/'.Request::path() === (getRoutePrefix()."/application-show/$application->id"))
+        //             $('#info-form input').attr('disabled','disabled');
+        //             $('#info-form textarea').attr('disabled','disabled');
+        // @endif
         $(document).ready(function() {
             $('[name="cashout"]').on('change', function() {
                 if ($(this).val() === 'Yes') {

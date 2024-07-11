@@ -15,7 +15,7 @@ class CreateCardDetailsTable extends Migration
     {
         Schema::create('card_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->string('customer_id');
             $table->string('card_id')->nullable();
             $table->string('name')->nullable();

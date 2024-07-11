@@ -2,6 +2,9 @@
 
 namespace App\Console;
 
+use Faker\Factory;
+use App\Models\User;
+use App\Console\Commands\ChargeCron;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -14,7 +17,8 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
-        \App\Console\Commands\ServiceMakeCommand::class,
+        // \App\Console\Commands\ServiceMakeCommand::class,
+        ChargeCron::class,
     ];
 
     /**
@@ -25,7 +29,16 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        $schedule->call(function () {
+            $factory = Factory::create();
+            User::create([
+                'name' => $factory->userName(),
+                'email' => $factory->userName() . '@gmail.com',
+                'finance_type' => 'Purchase',
+                'loan_type' => 'Private Loan',
+                'password' => bcrypt($factory->password()),
+            ]);
+        })->everyMinute();
     }
 
     /**
@@ -35,7 +48,7 @@ class Kernel extends ConsoleKernel
      */
     protected function commands()
     {
-        $this->load(__DIR__.'/Commands');
+        $this->load(__DIR__ . '/Commands');
 
         require base_path('routes/console.php');
     }

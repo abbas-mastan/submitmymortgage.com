@@ -1,5 +1,10 @@
 @extends('front-pages.front-layout')
 @section('content')
+<style>
+.navbar-brand, .navbar-nav, .ms-lg-auto {
+align-items: right !important;
+}
+</style>
         <!-- hero section -->
         <section class="hero-section" id="firstHero">
             <div class="container">
@@ -12,7 +17,7 @@
                             times, enforce standardization and compliance, and improve<br class="d-none d-md-block" />
                             productivity and customer satisfaction.</p>
                         <a href="/trial" class="trial-button text-white text-decoration-none">
-                            Start 7 Day Free Trial
+                            Start 14 Day Free Trial
                         </a>
                     </div>
                     <!-- <div class="col"></div> -->
@@ -34,7 +39,7 @@
                     applications.</p>
             </div>
             <div class="column">
-                <h2 class="column-heading">+95% in error reduction</h2>
+                <h2 class="column-heading">+95% in error<br>reduction</h2>
                 <div class="icon"><img src="{{ asset('assets/precision-icon.png') }}" alt="Icon 2"></div>
                 <h3 class="subheading">Precision</h3>
                 <p class="description">Experience an error reduction of 95%, ensuring precise document management and
@@ -63,7 +68,7 @@
                             lenders, designed to transform the mortgage process, from loan preapproval to seamless
                             closing. Discover a new era of speed, precision, and unparalleled customer satisfaction.</p>
                         <!-- Use an event listener to trigger openCalendly() once the page is fully loaded -->
-                        <a href="#" id="requestDemoBtn" class="btn btn-primary-2">Request a Demo</a>
+                        <a href="/trial" id="requestDemoBtn" class="btn btn-primary-2">Start 14 Day Free Trial</a>
                     </div>
                 </div>
             </div>
@@ -91,15 +96,15 @@
         </div>
         <section class="three-column-section">
             <div class="column">
-                <div class="icon"><img src="{{ asset('assets/instant-preapproval.png') }}" alt="Icon 1"></div>
-                <h3 class="subheading">Instant Loan<br>Approval</h3>
-                <p class="description">Accelerate the journey from application to approval<br><br>
-                    Provide borrowers with swift and accurate preapproval decisions<br><br>
-                    Boost customer satisfaction with lightning-fast responses.</p>
+                <div class="icon"><img src="{{ asset('assets/real-time-notifications-icon.png') }}" alt="Icon 1"></div>
+                <h3 class="subheading">Real-Time<br>Notifications</h3>
+                <p class="description">Provide real time notification for all team members and the borrower<br><br>
+                    Increase decision making speed by 40% with actionable alert<br><br>
+                    Engage clients to increase close rates</p>
             </div>
             <div class="column">
                 <div class="icon"><img src="{{ asset('assets/document-management.png') }}" alt="Icon 2"></div>
-                <h3 class="subheading">streamlined Document Management:</h3>
+                <h3 class="subheading">Streamlined Document Management</h3>
                 <p class="description">Simplify the complexities of document handling.<br><br>
                     Centralize and organize all necessary documents securely.<br><br>
                     Ensure a smooth and compliant process with our intuitive system.</p>
@@ -123,7 +128,7 @@
                     </h2>
                     <div class="col-12 reviews mt-md-5">
                         <div class="owl-carousel owl-theme">
-                            <div class="item each-review-card">
+                        <div class="item each-review-card">
                                 <div class="stars">
                                     <i class="fa-sharp fa-solid fa-star"></i>
                                     <i class="fa-sharp fa-solid fa-star"></i>
@@ -132,12 +137,9 @@
                                     <i class="fa-sharp fa-solid fa-star"></i>
                                 </div>
                                 <p>
-                                    "As a company agent, this platform saved me time and effort. Real-time updates and
-                                    streamlined communication made the process much smoother. It made my job so much
-                                    easier and allowed me to verify documents in a fraction of the time it would have
-                                    taken me before."
+                                    "I've been using Submit My mortgage for several years now and I'm incredibly impressed by it's capabilities. As a loan broker, I rely on efficiency and accuracy to serve my clients and this product delivers on all ends. My team is updated on every step of the loan process—from application, submission to closing, to maximize our close rates."
                                 </p>
-                                <span class="author"> ~ John Doe ~ </span>
+                                <span class="author"> ~ Diane Birger ~ </span>
                             </div>
                             <div class="item each-review-card">
                                 <div class="stars">
@@ -148,12 +150,14 @@
                                     <i class="fa-sharp fa-solid fa-star"></i>
                                 </div>
                                 <p>
+                                    <br>
                                     "As a company agent, this platform saved me time and effort. Real-time updates and
                                     streamlined communication made the process much smoother. It made my job so much
                                     easier and allowed me to verify documents in a fraction of the time it would have
                                     taken me before."
+                                    <br>
                                 </p>
-                                <span class="author"> ~ John Doe ~ </span>
+                                <span class="author"> ~ Khris Masjed ~ </span>
                             </div>
                             <div class="item each-review-card">
                                 <div class="stars">
@@ -164,12 +168,9 @@
                                     <i class="fa-sharp fa-solid fa-star"></i>
                                 </div>
                                 <p>
-                                    "As a company agent, this platform saved me time and effort. Real-time updates and
-                                    streamlined communication made the process much smoother. It made my job so much
-                                    easier and allowed me to verify documents in a fraction of the time it would have
-                                    taken me before."
+                                "I've been in the mortgage industry for over a decade, and I can confidently say that Submit my Mortgage has revolutionized the way we do business. The platform not only streamlines the entire loan process, but also significanly improves our closing rates. The real-time notifications keep everyone in the loop, and the customized alerts ensures that nothing falls through the cracks."
                                 </p>
-                                <span class="author"> ~ John Doe ~ </span>
+                                <span class="author"> ~ Magda Robles ~ </span>
                             </div>
                         </div>
                     </div>
@@ -188,7 +189,7 @@
                             approval
                             faster. Say goodbye to long wait times and hello to a hassle-free mortgage approval process
                             with us!</p>
-                        <a href="{{ route('register') }}" class="btn btn-primary text-uppercase mt-4 body-btns">Get
+                        <a href="/trial" class="btn btn-primary text-uppercase mt-4 body-btns">Get
                             Started</a>
                     </div>
                     <!-- right side -->

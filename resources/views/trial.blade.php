@@ -33,8 +33,13 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <style>
         .hero-section {
-            background: url("{{ asset('assets/trialhero.jpg') }}") no-repeat;
+            /* background: url("{{ asset('assets/trialhero.jpg') }}") no-repeat; */
+            background: #5d85ea !important;
             background-size: cover;
+            color: white;
+            padding: 50px 0;
+            position: relative;
+            box-shadow: none !important;
         }
 
         .error {
@@ -48,7 +53,7 @@
 
         .team-size-button,
         .team-size-button:hover {
-            background-color: #991b1b;
+            background-color: #5d85ea !important;
             padding: 12px 0;
             padding-top: 8px;
             width: 80%;
@@ -100,7 +105,7 @@
         }
 
         .red {
-            color: #991b1b;
+            color: #5d85ea !important;
         }
 
         .secondModal {
@@ -126,6 +131,65 @@
         .custom-quote-btn:hover {
             background-color: #CA7A1D;
             border: 0;
+        }
+
+
+        .hero-title {
+            font-size: 25px;
+            font-size: 3rem !important;
+            text-shadow: none !important;
+        }
+
+
+        .key-features {
+            padding-bottom: 1%;
+            border-bottom: 3px solid white;
+            padding-top: 1%;
+            border-top: 3px solid white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .key-feature {
+            text-align: center;
+            flex: 1;
+        }
+
+        .key-feature h1 {
+            margin-top: 10px;
+        }
+
+        .banner-container {
+            max-width: 1400px;
+        }
+
+        .hero-row {
+            padding-top: 0px !important;
+            padding-bottom: 0px !important;
+        }
+
+        .trial-form {
+            background: white !important;
+            background-size: cover;
+            box-shadow: none !important;
+            background-position: center;
+            padding: 4rem;
+        }
+
+        .left-feature {
+            border-right: 3px solid white;
+        }
+
+        .right-feature {
+            border-left: 3px solid white;
+        }
+
+
+        .blue-border {
+            border: 2px solid #5d85ea !important
         }
     </style>
 </head>
@@ -250,47 +314,38 @@
 
         <!-- hero section -->
         <section class="hero-section">
-            <div class="container">
+            <div class="container banner-container">
                 <div class="row hero-row">
-                    <div class="col-12">
-                        <p class="hero-title text-white mb-4 fw-normal lh-sm">Submit My Mortgage helps you compete
-                            with<br> big banks
-                            without having a big bank team.</p>
+                    <div style="margin: auto;">
+                        <p class="hero-title fw-normal lh-sm" style="text-align: center !important;">
+                            Submit My Mortgage helps you compete with<br> big banks without having a big bank team.
+                        </p>
                     </div>
-                    <!-- <div class="col"></div> -->
-                </div>
-            </div>
-        </section>
-        <!-- our key features -->
-        <section class="container-fluid bg-red">
-            <div class="container py-5 ">
-                <div class="row text-center text-white gap-5 gap-md-0">
-                    <div class="col-md-4">
-                        <h4>
-                            Increase in deal<br> closes:
-                        </h4>
-                        <h1>Up to 75%</h1>
-                    </div>
-                    <div class="col-md-4">
-                        <h4>
-                            Acceleration in loan <br>approval speed:
-                        </h4>
-                        <h1>Up to 50%</h1>
-                    </div>
-                    <div class="col-md-4">
-                        <h4>
-                            Enhance productivity <br>and efficiency:
-                        </h4>
-                        <h1>Guaranteed</h1>
+                    <div class="key-features">
+                        <div class="key-feature left-feature">
+                            <h4>Increase in deal<br> closes:</h4>
+                            <br>
+                            <h1>Up to 75%</h1>
+                        </div>
+                        <div class="key-feature">
+                            <h4>Acceleration in loan<br> approval speed:</h4>
+                            <br>
+                            <h1>Up to 50%</h1>
+                        </div>
+                        <div class="key-feature right-feature">
+                            <h4>Enhance productivity<br> and efficiency:</h4>
+                            <br>
+                            <h1>Guaranteed</h1>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- get mortgage approval faster! -->
-        <section id="trial-form" class="containter-fluid trial-form" style="padding: 250px 0px">
+        <section id="trial-form" class="containter-fluid trial-form" style="padding: 50px 0px">
             <div class="container align-content-center" style="height: 100%">
-                <div class="multi-form bg-white shadow-sm">
+                <div class="multi-form bg-white shadow-sm blue-border">
                     <div id="text-success" class="d-block text-success text-center"></div>
                     <form id="payment-form" class="main-form require-validation"
                         action="{{ route('stripePayment') }}" method="post">
@@ -475,9 +530,9 @@
                                             <a type="button" class="team-size-button selectTeamSize"
                                                 data-bs-toggle="modal" data-bs-target="#exampleModal">Select team
                                                 size</a>
-                                                <input type="hidden" name="team_size">
-                                            </div>
-                                            <span class="d-flex justify-content-end pe-5 error team_size_error"></span>
+                                            <input type="hidden" name="team_size">
+                                        </div>
+                                        <span class="d-flex justify-content-end pe-5 error team_size_error"></span>
                                     </div>
                                     <div class="row align-items-center mt-4">
                                         <div class="col-md-6 d-flex justify-content-start">
@@ -540,6 +595,27 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                                <div>
+                                    <input id="discount_code" name="have_discount_code" class="h-25"
+                                        style="width:20px" type="checkbox">
+                                    <label for="discount_code">I have discount code</label>
+                                </div>
+                                <div class="d-none discount justify-content-between align-items-center">
+                                    <div class="border-bottom-0">
+                                        <label for="discount-code-input">
+                                            Discount Code<br>
+                                            <input id="discount-code-input" placeholder="" class="rounded d-inline"
+                                                name="discount_code" type="text">
+                                            <button class="apply-discount rounded px-3 py-1"
+                                                style="background-color: #5d85ea;">Apply</button>
+                                        </label><br>
+                                        <span class="error pb-2 discount_code_error"></span>
+                                    </div>
+                                    <div class="me-3">
+                                        <div>Discount: <span class="discount_value"></span></div>
+                                        <div>Total: <span class="total"></span></div>
                                     </div>
                                 </div>
                                 <div class="form-inp-div stripe-div py-3">
@@ -624,6 +700,120 @@
     <script>
         $(document).ready(function() {
 
+            var price = '';
+            $('input[name=monthly-plan] ,input[name=yearly-plan]').click(function() {
+                switch ($(this).val()) {
+                    case 'monthly-plan-1':
+                        price = '500';
+                        break;
+                    case 'monthly-plan-2':
+                        price = '1000';
+                        break;
+                    case 'monthly-plan-3':
+                        price = '1500';
+                        break;
+                    case 'monthly-plan-4':
+                        price = '2000';
+                        break;
+                    case 'monthly-plan-5':
+                        price = '2500';
+                        break;
+                    case 'yearly-plan-1':
+                        price = '4500';
+                        break;
+                    case 'yearly-plan-2':
+                        price = '9000';
+                        break;
+                    case 'yearly-plan-3':
+                        price = '13500';
+                        break;
+                    case 'yearly-plan-4':
+                        price = '18000';
+                        break;
+                    case 'yearly-plan-5':
+                        price = '22500';
+                        break;
+                    default:
+                        break;
+                }
+
+
+
+                if ($('.discount_value').html()) {
+                    var discountValue =  $('.discount_value').text();
+                    if (discountValue.indexOf('%') !== -1) {
+                        var discountValue = discountValue.replace('%', '');
+                        $('.total').text(' $' + (price - (price * discountValue /
+                        100)));
+                    } else {
+                        var discountValue = $('.discount_value').text().replace('$', '');
+                        var totalPrice = (discountValue - price);
+                        $('.total').text('$' + totalPrice.toString().replace('-', ''));
+                    }
+                } else {
+                    $('.total').text(price);
+                }
+            });
+
+
+            $('.apply-discount').click(function(e) {
+                e.preventDefault();
+                var code = $('input[name=discount_code]').val();
+                if (code < 1) {
+                    $('.discount_code_error').text('This field is required');
+                    return;
+                }
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+                $('.discount_code_error').text('');
+                $.ajax({
+                    type: 'GET',
+                    url: '/get-discount/' + code,
+                    success: function(response) {
+                        if (response !== 'code-not-found') {
+                            if (response.discount_type === 'percent') {
+
+                            }
+                            $('.discount_value').text(' ' + (response.discount_type ===
+                                'fixed_amount' ?
+                                '$' : '') + response.discount + (response
+                                .discount_type !==
+                                'fixed_amount' ? '%' : ''));
+                            if (price && response.discount_type === 'fixed_amount') {
+                                $('.total').text(' $' + (price - response.discount));
+                            }
+                            if (price && response.discount_type === 'percent') {
+                                console.log((500 - 500 * 20 / 100));
+                                $('.total').text(' $' + (price - (price * response.discount /
+                                    100)));
+                            }
+                        } else {
+                            $('.discount_value').text('');
+                            $('.discount_code_error').text(response);
+                        }
+                    },
+                    error: function(jqXHR, excption) {
+                        console.log(excption);
+                    }
+                });
+            });
+            $('#discount_code').change(function() {
+                // Check if the input is checked
+                if ($(this).is(':checked')) {
+                    // Show the additional input field
+                    $('.discount').removeClass('d-none');
+                    $('.discount').addClass('d-flex');
+                } else {
+                    // Hide the additional input field
+                    $('.discount').removeClass('d-flex');
+                    $('.discount').addClass('d-none');
+                }
+            });
+
+
             $('#phone-main').on('keyup change', function(e) {
                 if ($(this).val() !== '') {
                     $('.phone_error').empty();
@@ -703,14 +893,15 @@
 
             $('.yearly-btn').addClass('border-bottom-0');
             $('.yearly').addClass('d-none');
-            $('.yearly-btn').click(function(e) {
-                e.preventDefault();
-                $('.yearly-btn').removeClass('border-bottom-0');
-                $('.monthly-btn').addClass('border-bottom-0');
-                $('.monthly').addClass('d-none');
-                $('.yearly').removeClass('d-none');
+            $('.yearly-btn').click(
+                function(e) {
+                    e.preventDefault();
+                    $('.yearly-btn').removeClass('border-bottom-0');
+                    $('.monthly-btn').addClass('border-bottom-0');
+                    $('.monthly').addClass('d-none');
+                    $('.yearly').removeClass('d-none');
 
-            });
+                });
 
             $('.monthly-btn').click(function(e) {
                 e.preventDefault();
@@ -855,6 +1046,7 @@
                 $('.postal_code_error').empty();
                 $('.team_size_error').empty();
                 $('.training_error').empty();
+                $('.discount_error').empty();
                 var isValid = true; // Set a flag to track validation status
                 var msg = 'This field is required';
                 if ($('input[name=team_size]').val() === '') {
@@ -872,7 +1064,8 @@
                     $('.email_error').text('Enter a valid email');
                     isValid = false; // Set flag to false if validation fails
                 }
-                if ($('.main-form input[name=phone]').val() === '' ||$('.main-form input[name=phone]').val() == '+1') {
+                if ($('.main-form input[name=phone]').val() === '' || $('.main-form input[name=phone]').val() ==
+                    '+1') {
                     $('.phone_error').text(msg);
                     isValid = false; // Set flag to false if validation fails
                 }
@@ -906,6 +1099,10 @@
                 }
                 if ($('input[name=postal_code]').val() === '') {
                     $('.postal_code_error').text(msg);
+                    isValid = false;
+                }
+                if ($('#discount_code').is(':checked') && $('#discount-code-input').val() === '') {
+                    $('.discount_code_error').text(msg);
                     isValid = false;
                 }
                 return isValid; //
@@ -992,4 +1189,5 @@
         });
     </script>
 </body>
+
 </html>

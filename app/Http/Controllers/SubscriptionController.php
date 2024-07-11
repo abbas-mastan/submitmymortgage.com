@@ -8,6 +8,7 @@ use App\Mail\CancelSubscriptionMail;
 use App\Mail\CustomQuoteMail;
 use App\Models\Company;
 use App\Models\CustomQuote;
+use App\Models\DiscountCode;
 use App\Models\PaymentDetail;
 use App\Models\SubscriptionDetails;
 use App\Models\SubscriptionPlans;
@@ -31,62 +32,20 @@ class SubscriptionController extends Controller
     {
 
         $stripe = new StripeClient(env('STRIPE_SK'));
-        // $product = $stripe->products->create([
-        //     'name' => 'Gold Plan',
-        // ]);
 
-        $product = $stripe->prices->create([
-            'currency' => 'usd',
-            'unit_amount' => 1000,
-            'recurring' => ['interval' => 'month'],
-            'product_data' => ['name' => 'test plan'],
+        $coupen = $stripe->coupons->create([
+            'duration' => 'forever',
+            // 'duration_in_months' => 3,
+            'percent_off' => 20,
         ]);
-        dd($product);
-
-        die;
-        $user = Auth::user();
-        $sub_id = $user->subscriptionDetails->stripe_subscription_id;
-        $cus_id = $user->subscriptionDetails->stripe_customer_id;
-        $price_id = $user->subscriptionDetails->subscription_plan_price_id;
-        dump(date('Y-m-d H:i:s', 1718022239));
-        dump(date('Y-m-d H:i:s', 1716811898));
-        $customer = $stripe->customers->retrieve($cus_id, []);
-
-        $session = $stripe->subscriptions->all([
-            'customer' => $cus_id,
-            'status' => 'all',
-        ]);
-
-        $subscription = $stripe->subscriptions->retrieve($sub_id, []);
-        $schedule = $stripe->subscriptionSchedules->create([
-            'customer' => $cus_id,
-            'start_date' => $subscription->current_period_end,
-            'end_behavior' => 'release',
-            'phases' => [
-                [
-                    'items' => [
-                        [
-                            'price' => $price_id,
-                            'quantity' => 1,
-                        ],
-                    ],
-                    'iterations' => 12,
-                ],
-            ],
-        ]);
-        dump($schedule);
-        echo '<pre>';
-        var_dump($session->data);
-        echo '</pre>';
+        dd($coupen);
         die;
 
-        dump(date('Y-m-d H:i:s', $subscription->current_period_end));
-        dump($session);
-        dd($session->jsonSerialize());
     }
 
     public function processPayment(Request $request)
     {
+        $stripe = new StripeClient(env('STRIPE_SK'));
         $validator = $this->ValidateUser($request);
         if ($validator->fails()) {
             return response()->json($validator->errors());
@@ -95,7 +54,49 @@ class SubscriptionController extends Controller
             try {
                 $customer = SubscriptionHelper::charge($request);
                 if ($customer instanceof \Stripe\Customer) {
+                    if($request->coupon > 0){
+                        $discountCode = DiscountCode::where('code',$request->discount_code)->first();
+                        $discountCode->is_used =true;
+                        $discountCode->save();
+                    }
                     $subscriptionPlan = SubscriptionPlans::where('name', $request->team_size)->first();
+                    $webHook = $stripe->webhookEndpoints->all(['limit' => 3]);
+                    if (empty($webHook->data)) {
+                        $stripe = new \Stripe\StripeClient('sk_test_51P6SBB09tId2vnnum7ibbbCIHgacCrrJc1G78LXEYK81LKH0lfMgmVcAzFQySdadJok5xnOwRvEVNqw9m1aiV0qi00Kihjo2GB');
+                        $stripe->webhookEndpoints->create([
+                            'enabled_events' => ['charge.succeeded', 'charge.failed', 'charge.refunded'],
+                            'url' => 'https://submitmymortgage.com/charge-webhook',
+                        ]);
+                    }
+
+                    if ($subscriptionPlan) {
+                        try {
+                            $product = $stripe->prices->retrieve($subscriptionPlan->stripe_price_id, []);
+                        } catch (\Exception $ex) {
+                            $product = SubscriptionHelper::createStripeProduct($stripe, $subscriptionPlan->name, ($subscriptionPlan->amount * 100), $subscriptionPlan->id > 5 ? 'yearly' : 'monthly');
+                            $subscriptionPlan->update([
+                                'stripe_price_id' => $product->id,
+                            ]);
+                        }
+                    } else {
+                        $configPlan = config('smm.subscription_plans');
+                        $subscriptionPlan = SubscriptionPlans::create([
+                            'name' => $request->team_size,
+                            'stripe_price_id' => rand(15, 100),
+                            'trial_days' => env('SUBSCRIPTION_TRIAL_DAYS'),
+                            'amount' => $configPlan[$request->team_size]['amount'],
+                            'max_users' => $configPlan[$request->team_size]['max_users'],
+                        ]);
+                        try {
+                            $product = $stripe->prices->retrieve($subscriptionPlan->stripe_price_id, []);
+                        } catch (\Exception $ex) {
+                            $product = SubscriptionHelper::createStripeProduct($stripe, $subscriptionPlan->name, ($subscriptionPlan->amount * 100), $subscriptionPlan->id > 5 ? 'yearly' : 'monthly');
+                            $subscriptionPlan->update([
+                                'stripe_price_id' => $product->id,
+                            ]);
+                        }
+                    }
+
                     // create company with users starts
                     $user = $this->createUserWithCompany($request, $subscriptionPlan->max_users);
                     // create company with users end
@@ -169,7 +170,7 @@ class SubscriptionController extends Controller
         }
         $user = $this->createUserWithCompany($request, 0);
         Mail::to($user->email)->send(new CustomQuoteMail());
-        CustomQuote::create(['plan_type' => $request->team_size === 'yearly-plan-6' ? 'year' : 'monthly', 'user_id' => $user->id]);
+        CustomQuote::create(['plan_type' => $request->team_size === 'yearly-plan-6' ? 'yearly' : 'monthly', 'user_id' => $user->id]);
         return response()->json('redirect');
     }
 
@@ -182,12 +183,25 @@ class SubscriptionController extends Controller
                 }
             }
         };
+        $code = DiscountCode::where('code', $request->discount_code)->where('is_used', false)->first();
+        $discountCodeValidation = function ($attribute, $value, $fail) use ($request, $code) {
+            if ($request->have_discount_code != '') {
+                if (!$code) {
+                    $fail('The discount code is not available.');
+                } else {
+                    $request['coupon'] = $code->coupon_code;
+                }
+            }
+        };
+
         return Validator::make($request->all(), [
             'email' => 'required|email:rfc|unique:users,email',
             'phone' => 'required|regex:/^\+1 \(\d{3}\) \d{3}-\d{4}$/',
             'first_name' => 'required',
             'last_name' => 'required',
             'company' => 'required',
+            'have_discount_code' => '',
+            'discount_code' => [$discountCodeValidation],
             'team_size' => 'required',
             'training' => [$customValidation, 'date'],
             'address' => $customValidation,
@@ -265,7 +279,7 @@ class SubscriptionController extends Controller
             Mail::to($user->email)->send(new CancelSubscriptionMail());
             return back()->with(['msg_success', 'Subscription cancled!']);
         } catch (\Exception $ex) {
-            return back()->with('msg_error','An error occured:'.$ex->getMessage());
+            return back()->with('msg_error', 'An error occured:' . $ex->getMessage());
         }
     }
 
@@ -297,4 +311,11 @@ class SubscriptionController extends Controller
             }
         }
     }
+
+    public function getDiscount($code)
+    {
+        $discount = DiscountCode::where('code',$code)->where('is_used',false)->first(['code','discount_type','discount']);
+        return response()->json($discount ?? 'code-not-found');
+    }
+
 }

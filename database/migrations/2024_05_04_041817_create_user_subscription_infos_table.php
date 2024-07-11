@@ -15,7 +15,7 @@ class CreateUserSubscriptionInfosTable extends Migration
     {
         Schema::create('user_subscription_infos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->nullable()->constrained();
+            $table->foreignId('user_id')->nullable()->constrained()->cascadeOnDelete();
             $table->boolean('is_subscribed')->default(false)->nullable();
             $table->boolean('trials_completed')->default(false)->nullable();
             $table->timestamps();

@@ -38,7 +38,8 @@ Route::get('/migrate', function () {
 Route::group(['middleware' => 'guest'], function () {
     Route::view('/terms-and-condition', 'terms-and-condition');
     Route::view('/privacy-policy', 'privacy-policy');
-    Route::view('/', 'front-pages/homepage')->name("index");
+    // Route::view('/', 'front-pages/homepage')->name("index");
+    Route::view('/', 'front-pages/second-homepage')->name("index");
     Route::view('/about', 'front-pages/about')->name("about");
     Route::view('/verification', 'front-pages/verification')->name("verification");
     Route::view('/origination', 'front-pages/originations')->name("origination");
@@ -53,6 +54,7 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/password/reset/{token}', [AuthController::class, 'resetPassword'])->name('password.reset');
     Route::get('/set-password/{token}', [AuthController::class, 'sePassword'])->name('set.password');
     Route::get('/user-register', [AuthController::class, 'userRegister'])->name('user.register');
+    Route::get('/get-discount/{code}',[SubscriptionController::class,'getDiscount'])->name('get.discount');
 });
 Route::post('/reset-password', [AuthController::class, 'updatePassword'])->name('password.update');
 Route::post('/set-password-new-user', [AuthController::class, 'setPasswordForNewUsers']);
@@ -94,7 +96,7 @@ Route::post('/charge-webhook',[SubscriptionController::class,'storeWebhookData']
 Route::get('payment-history',[SubscriptionController::class,'paymentHistory']);
 Route::view('/trial', 'trial')->name("trial");
 Route::get('/payment-success', [SubscriptionController::class, 'StripeSuccess'])->name("success");
-Route::post('/custome-quote', [SubscriptionController::class, 'CustomQuote'])->name("custom.quote");
+Route::post('/custom-quote', [SubscriptionController::class, 'CustomQuote'])->name("custom.quote");
 Route::get('/payment-failed', [SubscriptionController::class, 'StripeFailed'])->name("failed");
 Route::post('trial', [SubscriptionController::class, 'processPayment'])->name('stripePayment');
 // Route::middleware('trial',function(){

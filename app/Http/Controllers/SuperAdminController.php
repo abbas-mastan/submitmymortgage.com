@@ -12,6 +12,7 @@ use App\Models\Application;
 use App\Models\Company;
 use App\Models\Contact;
 use App\Models\CustomQuote;
+use App\Models\DiscountCode;
 use App\Models\Info;
 use App\Models\IntakeForm;
 use App\Models\Project;
@@ -559,6 +560,7 @@ class SuperAdminController extends Controller
 
     public function doAssociate(Request $request)
     {
+
         $validator = Validator::make($request->only(['AssociateName', 'AssociateEmail']), [
             'AssociateEmail' => 'required|email:rfc,dns|unique:users,email',
         ]);
@@ -637,10 +639,10 @@ class SuperAdminController extends Controller
             try {
                 $product = $stripe->prices->retrieve($isPlan->stripe_price_id, []);
             } catch (\Exception $ex) {
-                $product = $this->createStripeProduct($stripe, $planName, $price, $request->plan_type);
+                $product = SubscriptionHelper::createStripeProduct($stripe, $planName, $price, $request->plan_type);
             }
         } else {
-            $product = $this->createStripeProduct($stripe, $planName, $price, $request->plan_type);
+            $product = SubscriptionHelper::createStripeProduct($stripe, $planName, $price, $request->plan_type);
         }
 
         DB::beginTransaction();
@@ -674,9 +676,9 @@ class SuperAdminController extends Controller
                 SubscriptionHelper::insertCardDetails($request, $customer->id, $user_id);
                 $subscriptionPlan = SubscriptionPlans::where('name', $planName)->first();
                 if ($subscriptionPlan) {
-                    // this below line of code create subscription in stripe
+                    // the below line of code create subscription in stripe
                     SubscriptionHelper::startTrialSubscription($customer->id, $user_id, $subscriptionPlan);
-                    // this above line of code create subscription in stripe
+                    // the above line of code create subscription in stripe
 
                     // the below code updating the company for the user
                     $company = $user->company;
@@ -690,20 +692,83 @@ class SuperAdminController extends Controller
                 'status' => false,
             ]);
             DB::commit();
-            return redirect(getRoutePrefix().'/custom-quote')->with('msg_success', 'plan created');
+            return redirect(getRoutePrefix() . '/custom-quote')->with('msg_success', 'plan created');
         } catch (\Exception $ex) {
             DB::rollback();
             return back()->with('msg_error', 'An error occured:' . $ex->getMessage());
         }
     }
 
-    private function createStripeProduct($stripe, $planName, $price, $planType)
+    public function discountCodes()
     {
-        return $stripe->prices->create([
-            'currency' => 'usd',
-            'unit_amount' => $price,
-            'recurring' => ['interval' => substr($planType, 0, -2)], // remove 'ly' from 'monthly' or 'yearly'
-            'product_data' => ['name' => $planName],
-        ]);
+        $discountCodes = DiscountCode::where('is_used', false)->latest()->get();
+        return view('superadmin.discount-codes', compact('discountCodes'));
     }
+
+    public function createDiscountCode(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'discount_type' => 'required',
+            'fixed_amount' => 'required_if:discount_type,fixed_amount',
+            'percent' => 'required_if:discount_type,percent',
+        ],[
+         'fixed_amount:required_if' => 'This field is required',   
+         'percent:required_if' => 'This field is required',   
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors());
+        }
+
+        $stripe = new StripeClient(env('STRIPE_SK'));
+        $discountCode = DiscountCode::where('discount_type', $request->discount_type)->where('discount', $request->percent ?? $request->fixed_amount)->first();
+        $oldCouponCode = $discountCode->coupon_code ?? 'null';
+        if ($request->discount_type === 'percent') {
+            try {
+                $newCoupen = $stripe->coupons->retrieve($oldCouponCode, []);
+            } catch (\Exception $ex) {
+                $newCoupen = $stripe->coupons->create([
+                    'duration' => 'forever',
+                    'percent_off' => $request->percent,
+                ]);
+            }
+        } else {
+            try {
+                $newCoupen = $stripe->coupons->retrieve($oldCouponCode, []);
+            } catch (\Exception $ex) {
+                $newCoupen = $stripe->coupons->create([
+                    'duration' => 'forever',
+                    'currency' => 'usd',
+                    'amount_off' => $request->fixed_amount,
+                ]);
+            }
+        }
+
+        if ($request->discount_type === 'percent' || $request->discount_type === 'fixed_amount') {
+            DiscountCode::create([
+                'code' => $this->getUniqueCode(),
+                'discount_type' => $request->discount_type,
+                'discount' => $request->percent ?? $request->fixed_amount,
+                'coupon_code' => $newCoupen->id,
+            ]);
+        }
+        return response()->json('success');
+        // return back()->with('msg_success', 'Discount code generated.');
+    }
+
+    private function getUniqueCode()
+    {
+        $code = Str::random(15);
+        if (DiscountCode::where("code", $code)->exists()) {
+            $this->getUniqueCode();
+        }
+        return $code;
+    }
+
+    public function deleteCode($id)
+    {
+        $code = DiscountCode::find($id)->delete();
+        return back()->with('msg_success', 'Discount code deleted.');
+    }
+
 }

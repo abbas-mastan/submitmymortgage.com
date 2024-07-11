@@ -497,6 +497,15 @@ class CommonService
             ]);
             $request['borroweraddress'] = $request->address;
             self::storeProject($request, $user->id);
+            Application::create([
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'name' => $request->first_name.' '. $request->last_name,
+                'city' => $request->city,
+                'address' => $request->address,
+                'zip' => $request->zip,
+                'user_id' => $user->id,
+            ]); 
             DB::commit();
             return response()->json('success', 200);
         } catch (\Exception $e) {
