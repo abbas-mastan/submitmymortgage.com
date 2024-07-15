@@ -97,7 +97,7 @@ class SubscriptionHelper
                 return false;
             }
         } catch (\Exception $ex) {
-            return true;
+            return false;
         }
     }
 

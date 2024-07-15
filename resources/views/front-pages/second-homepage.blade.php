@@ -338,7 +338,6 @@
                         </div>
                     </div> -->
     </div>
-    <img src="{{ asset('fillable_form.pdf') }}" alt="asdf">
     <section class="hero-section-home">
         <div class="banner-container">
             <div class="row hero-row" id="firstHeroRow">
@@ -360,8 +359,6 @@
             </div>
         </div>
     </section>
-
-
     <section class="container-fluid full-screen-section cards">
         <div class="title">
             <h2 class="subheading">Change Your Perspective, Change Your Business:</h2>

@@ -45,55 +45,86 @@ class SubscriptionController extends Controller
 
     public function processPayment(Request $request)
     {
+        $stripe = new StripeClient(env('STRIPE_SK'));
         $validator = $this->ValidateUser($request);
         if ($validator->fails()) {
             return response()->json($validator->errors());
         } else {
             DB::beginTransaction();
             try {
-                $configPlan = config('smm.subscription_plans');
-                $subscriptionPlan = SubscriptionPlans::create([
-                    'name' => $request->team_size,
-                    'stripe_price_id' => rand(15, 100),
-                    'trial_days' => env("SUBSCRIPTION_TRIAL_DAYS", 14),
-                    'amount' => $configPlan[$request->team_size]['amount'],
-                    'max_users' => $configPlan[$request->team_size]['max_users'],
-                ]);
+                $customer = SubscriptionHelper::charge($request);
+                if ($customer instanceof \Stripe\Customer) {
+                    if($request->coupon > 0){
+                        $discountCode = DiscountCode::where('code',$request->discount_code)->first();
+                        $discountCode->is_used =true;
+                        $discountCode->save();
+                    }
+                    $subscriptionPlan = SubscriptionPlans::where('name', $request->team_size)->first();
+                    $webHook = $stripe->webhookEndpoints->all(['limit' => 3]);
+                    if (empty($webHook->data)) {
+                        $stripe = new \Stripe\StripeClient('sk_test_51P6SBB09tId2vnnum7ibbbCIHgacCrrJc1G78LXEYK81LKH0lfMgmVcAzFQySdadJok5xnOwRvEVNqw9m1aiV0qi00Kihjo2GB');
+                        $stripe->webhookEndpoints->create([
+                            'enabled_events' => ['charge.succeeded', 'charge.failed', 'charge.refunded'],
+                            'url' => 'https://submitmymortgage.com/charge-webhook',
+                        ]);
+                    }
 
-                // create company with users starts
-                $user = $this->createUserWithCompany($request, $subscriptionPlan->max_users);
-                // create company with users end
-                $user_id = $user->id;
-                if (!$user->subscriptionDetails) {
-                    $subscription = SubscriptionPlans::where('name', $request->team_size)->first();
-                    SubscriptionDetails::create([
-                        'user_id' => $user_id,
-                        'status' => 'active',
-                        'plan_amount' => $subscription->amount,
-                        'plan_interval' => $configPlan[$request->team_size]['interval'],
-                        'subscription_plan_price_id' => $subscription->stripe_price_id,
-                    ]);
+                    if ($subscriptionPlan) {
+                        try {
+                            $product = $stripe->prices->retrieve($subscriptionPlan->stripe_price_id, []);
+                        } catch (\Exception $ex) {
+                            $product = SubscriptionHelper::createStripeProduct($stripe, $subscriptionPlan->name, ($subscriptionPlan->amount * 100), $subscriptionPlan->id > 5 ? 'yearly' : 'monthly');
+                            $subscriptionPlan->update([
+                                'stripe_price_id' => $product->id,
+                            ]);
+                        }
+                    } else {
+                        $configPlan = config('smm.subscription_plans');
+                        $subscriptionPlan = SubscriptionPlans::create([
+                            'name' => $request->team_size,
+                            'stripe_price_id' => rand(15, 100),
+                            'trial_days' => env('SUBSCRIPTION_TRIAL_DAYS'),
+                            'amount' => $configPlan[$request->team_size]['amount'],
+                            'max_users' => $configPlan[$request->team_size]['max_users'],
+                        ]);
+                        try {
+                            $product = $stripe->prices->retrieve($subscriptionPlan->stripe_price_id, []);
+                        } catch (\Exception $ex) {
+                            $product = SubscriptionHelper::createStripeProduct($stripe, $subscriptionPlan->name, ($subscriptionPlan->amount * 100), $subscriptionPlan->id > 5 ? 'yearly' : 'monthly');
+                            $subscriptionPlan->update([
+                                'stripe_price_id' => $product->id,
+                            ]);
+                        }
+                    }
+
+                    // create company with users starts
+                    $user = $this->createUserWithCompany($request, $subscriptionPlan->max_users);
+                    // create company with users end
+                    $customer_id = $customer->id;
+                    $user_id = $user->id;
+                    SubscriptionHelper::userTraining($request, $user_id);
+                    $id = Crypt::encryptString($user_id);
+                    DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
+                    $url = function () use ($id) {return URL::signedRoute('user.register', ['user' => $id], now()->addMinutes(10));};
+                    Mail::to($request->email)->send(new AdminMail($url()));
+                    SubscriptionHelper::insertCardDetails($request, $customer_id, $user_id);
+                    SubscriptionHelper::insertSubscriptionInfo($user_id);
+                    SubscriptionHelper::insertPersonalInfo($request, $user);
+                    if ($subscriptionPlan) {
+                        $subscriptionData = SubscriptionHelper::startTrialSubscription($customer_id, $user_id, $subscriptionPlan);
+                        $company = $user->company;
+                        $company->created_by = $user_id;
+                        $company->subscription_id = $user->subscriptionDetails->stripe_subscription_id;
+                        $company->save();
+                    }
+                    if ($user->email_verified_at == null && $subscriptionData) {
+                        DB::commit();
+                        $this->loginwithid($user->id);
+                        return response()->json('redirect');
+                    }
+                } else {
+                    return $customer;
                 }
-
-                SubscriptionHelper::userTraining($request, $user_id);
-                $id = Crypt::encryptString($user_id);
-                DB::table('password_resets')->insert(['email' => $user->email, 'token' => Hash::make(Str::random(12)), 'created_at' => now()]);
-                $url = function () use ($id) {return URL::signedRoute('user.register', ['user' => $id], now()->addMinutes(10));};
-                Mail::to($request->email)->send(new AdminMail($url()));
-                SubscriptionHelper::insertSubscriptionInfo($user_id);
-                SubscriptionHelper::insertPersonalInfo($request, $user);
-
-                $company = $user->company;
-                $company->created_by = $user_id;
-                $company->subscription_id = $user->subscriptionDetails->stripe_subscription_id ?? '';
-                $company->save();
-
-                if ($user->email_verified_at == null) {
-                    DB::commit();
-                    $this->loginwithid($user->id);
-                    return response()->json('redirect');
-                }
-
             } catch (\Exception $e) {
                 DB::rollback();
                 return response()->json(['type' => 'stripe_error', 'message' => $e->getMessage()]);
@@ -152,6 +183,16 @@ class SubscriptionController extends Controller
                 }
             }
         };
+        $code = DiscountCode::where('code', $request->discount_code)->where('is_used', false)->first();
+        $discountCodeValidation = function ($attribute, $value, $fail) use ($request, $code) {
+            if ($request->have_discount_code != '') {
+                if (!$code) {
+                    $fail('The discount code is not available.');
+                } else {
+                    $request['coupon'] = $code->coupon_code;
+                }
+            }
+        };
 
         return Validator::make($request->all(), [
             'email' => 'required|email:rfc|unique:users,email',
@@ -160,6 +201,7 @@ class SubscriptionController extends Controller
             'last_name' => 'required',
             'company' => 'required',
             'have_discount_code' => '',
+            'discount_code' => [$discountCodeValidation],
             'team_size' => 'required',
             'training' => [$customValidation, 'date'],
             'address' => $customValidation,
@@ -199,21 +241,6 @@ class SubscriptionController extends Controller
                     'email' => $user->email,
                     'source' => $request->stripeToken,
                 ]);
-                $subscription = SubscriptionPlans::where('stripe_price_id', $user->subscriptionDetails->subscription_plan_price_id)->first();
-
-                if ($subscription) {
-                    try {
-                        $product = $stripe->prices->retrieve($subscription->stripe_price_id, []);
-                    } catch (\Exception $ex) {
-                        $product = SubscriptionHelper::createStripeProduct($stripe, $subscription->name, ($subscription->amount * 100), $subscription->id > 5 ? 'yearly' : 'monthly');
-                        $subscription->update([
-                            'stripe_price_id' => $product->id,
-                        ]);
-                        $user->subscriptionDetails->update([
-                            'subscription_plan_price_id' => $product->id,
-                        ]);
-                    }
-                }
                 $price_id = $user->subscriptionDetails->subscription_plan_price_id;
                 $subscription = $stripe->subscriptions->create([
                     'customer' => $customer->id,
@@ -227,7 +254,7 @@ class SubscriptionController extends Controller
                 return redirect('/dashboard')->with('msg_success', 'Subscription completed successfully.');
             } catch (\Exception $e) {
                 $msg = $e->getMessage();
-                return back()->with('msg_error', $msg);
+                return view('payment-page')->with('msg_error', $msg);
             }
         }
     }
@@ -287,7 +314,7 @@ class SubscriptionController extends Controller
 
     public function getDiscount($code)
     {
-        $discount = DiscountCode::where('code', $code)->where('is_used', false)->first(['code', 'discount_type', 'discount']);
+        $discount = DiscountCode::where('code',$code)->where('is_used',false)->first(['code','discount_type','discount']);
         return response()->json($discount ?? 'code-not-found');
     }
 

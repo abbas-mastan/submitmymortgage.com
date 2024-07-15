@@ -597,7 +597,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                {{-- <div>
+                                <div>
                                     <input id="discount_code" name="have_discount_code" class="h-25"
                                         style="width:20px" type="checkbox">
                                     <label for="discount_code">I have discount code</label>
@@ -629,7 +629,7 @@
                                     <p>Why? We ask for a payment method so that your subscription and business
                                         can continue without
                                         interruption after your trial ends.</p>
-                                </div> --}}
+                                </div>
                                 <div class="form-last-btn-2">
                                     <button class="start-trial-button" type="submit">Start My Free Trial
                                         <img class="loader d-none" src="{{ asset('assets/trial/loader.svg') }}"
@@ -740,11 +740,11 @@
 
 
                 if ($('.discount_value').html()) {
-                    var discountValue = $('.discount_value').text();
+                    var discountValue =  $('.discount_value').text();
                     if (discountValue.indexOf('%') !== -1) {
                         var discountValue = discountValue.replace('%', '');
                         $('.total').text(' $' + (price - (price * discountValue /
-                            100)));
+                        100)));
                     } else {
                         var discountValue = $('.discount_value').text().replace('$', '');
                         var totalPrice = (discountValue - price);
@@ -754,6 +754,7 @@
                     $('.total').text(price);
                 }
             });
+
             $('.apply-discount').click(function(e) {
                 e.preventDefault();
                 var code = $('input[name=discount_code]').val();
@@ -967,12 +968,68 @@
                 });
             });
 
-            $('#payment-form').submit(function(e) {
-                e.preventDefault();
-                if (validateFields()) {
-                   triggerAjax();
-                }
-            });
+            // stripe code 
+            if (window.Stripe) {
+                var stripe = Stripe("{{ env('STRIPE_PK') }}");
+                var elements = stripe.elements();
+                var card = elements.create('card', {
+                    hidePostalCode: true,
+                    style: {
+                        base: {
+                            fontWeight: '500',
+                            fontSize: '17px',
+                            fontFamily: 'Lexend, sans-serif',
+                            '::placeholder': {
+                                color: '#c7bbbb',
+                            },
+                        }
+                    }
+                });
+                card.mount('#card-element');
+                card.addEventListener('change', function(event) {
+                    var displayError = document.getElementById('card-errors')
+                    displayError.textContent = event.error ? event.error.message : '';
+                });
+                const form = document.getElementById('payment-form');
+                form.addEventListener('submit', function(ev) {
+                    ev.preventDefault();
+                    $('.loader').removeClass('d-none');
+                    stripe.createToken(card).then(function(result) {
+                        $('.loader').addClass('d-none');
+                        validateFields();
+                        if (result.error) {
+                            var errorElement = document.getElementById('card-errors');
+                            errorElement.textContent = result.error.message;
+                        } else {
+                            if (validateFields()) {
+                                // console.log(result.token);
+                                $('#payment-form').append(
+                                    `<input type="hidden" value="${result.token.card.id}" name="card">`
+                                );
+                                $('#payment-form').append(
+                                    `<input type="hidden" value="${result.token.id}" name="stripeToken">`
+                                );
+                                $('#payment-form').append(
+                                    `<input type="hidden" value="${result.token.card.last4}" name="card_no">`
+                                );
+                                $('#payment-form').append(
+                                    `<input type="hidden" value="${result.token.card.brand}" name="brand">`
+                                );
+                                $('#payment-form').append(
+                                    `<input type="hidden" value="${result.token.card.exp_month}" name="month">`
+                                );
+                                $('#payment-form').append(
+                                    `<input type="hidden" value="${result.token.card.exp_year}" name="year">`
+                                );
+                                $('#payment-form').append(
+                                    `<input type="hidden" value="${result.token.card.name}" name="name">`
+                                );
+                                triggerAjax();
+                            }
+                        }
+                    });
+                });
+            }
 
             function validateFields() {
                 $('.email_error').empty();
@@ -1054,6 +1111,7 @@
                 $('.loader').removeClass('d-none');
                 $('.start-trial-button').attr('disabled', true);
                 $('.start-trial-button').css('cursor', 'not-allowed');
+                $('#card-errors').text('');
                 var paymentForm = $('#payment-form');
                 $.ajaxSetup({
                     headers: {
@@ -1088,7 +1146,6 @@
                         }
                     },
                     error: function(jqXHR, excption) {
-                        
                         console.log(excption);
                     }
                 });
@@ -1131,4 +1188,5 @@
         });
     </script>
 </body>
+
 </html>

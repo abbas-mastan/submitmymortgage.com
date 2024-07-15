@@ -130,4 +130,13 @@
     function dragOverHandler(ev) {
         ev.preventDefault();
     }
+
+    $('.completeSignupProcess ,.closeTrialModal').click(function(e) {
+        e.preventDefault();
+        trialModal();
+    });
+
+    function trialModal() {
+        $('.trialModal').toggleClass('hidden');
+    }
 </script>

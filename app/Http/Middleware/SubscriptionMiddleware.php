@@ -32,6 +32,7 @@ class SubscriptionMiddleware
                     return redirect('premium-confirmation');
                 }
             } catch (\Exception $e) {
+                dd($e->getMessage());
                 return redirect('premium-confirmation');
             }
         }

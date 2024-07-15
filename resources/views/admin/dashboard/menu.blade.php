@@ -1,9 +1,15 @@
 {{-- @if ($currentrole === $superadminrole || $currentrole === 'Admin') --}}
-<x-form.intake-modal-form :intake="$intake" :enableTeams="$enableTeams"/>
+<x-form.intake-modal-form :intake="$intake" :enableTeams="$enableTeams" />
 {{-- @endif --}}
 <div class="flex justify-evenly gap-8 align-center">
     <div class="sm:w-2/3 w-full">
-        @php $user = Auth::user(); @endphp
+        @php
+            $user = Auth::user();
+            if ($user->role === 'Admin') {
+                $daysLeft = env('SUBSCRIPTION_TRIAL_DAYS') - $user->created_at->diffInDays(now());
+            }
+        @endphp
+        {{--         
         @if ($user->training && $user->training->start_time === null)
             @php
                 // Convert the date string to a Unix timestamp
@@ -42,8 +48,35 @@
                     @enderror
                 </form>
             </div>
+        @endif  --}}
+        @if ($user->role === 'Admin')
+            <div class="trialModal hidden absolute bg-black bg-opacity-40 flex h-[100vh] justify-center right-0 top-0 w-full">
+                <div class=" bg-white block h-56 mt-28 w-1/2">
+                    <button class="closeTrialModal block me-3 ms-auto rotate-45 text-3xl text-red-800">+</button>
+                    <div class="text-center mt-5">
+                        <div class="font-bold text-xl">
+                            You have {{ $daysLeft }} days left of your free trial!<br>
+                            Complete the sign up process to keep your subscription active!
+                        </div>
+                        <div class="flex justify-center mt-10">
+                            <a href="/premium-confirmation" class="bg-red-800 flex justify-between px-3 py-2 text-white">Continue Sign up
+                                Process</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bg-red-800 mt-3 rounded">
+                <div class="p-2 rounded-t text-white">You have
+                    {{ $daysLeft }} days left of your 14 day
+                    free
+                    trial.
+                </div>
+                <div class="bg-white border border-1 border-black p-2 rounded text-red-800">
+                    <button class="cursor-pointer border-b border-red-800 completeSignupProcess">Click here to complete sign up and not lose
+                        access.</button>
+                </div>
+            </div>
         @endif
-
         <div @class([
             'flex',
             'flex-col',
