@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Faker\Factory;
 use App\Models\User;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Mail;
 
 class ChargeCron extends Command
 {
@@ -39,13 +40,9 @@ class ChargeCron extends Command
      */
     public function handle()
     {
-        $factory = Factory::create();
-        User::create([
-            'name' => $factory->userName(),
-            'email' => $factory->userName().'@gmail.com',
-            'finance_type' => 'Purchase',
-            'loan_type' => 'Private Loan',
-            'password' => bcrypt($factory->password()),
-        ]);
+        $subject = ['data'=> 'test mail'];
+        Mail::send('notifications::cancel-subscription-mail',$subject,function($message){
+            $message->to('miyodet783@vasomly.com')->subject('test cron');
+        });
     }
 }

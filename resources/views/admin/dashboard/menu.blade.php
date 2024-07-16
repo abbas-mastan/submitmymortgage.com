@@ -49,7 +49,7 @@
                 </form>
             </div>
         @endif  --}}
-        @if ($user->role === 'Admin')
+        @if ($user->role === 'Admin' && !$user->subscriptionDetails->stripe_subscription_id)
             <div class="trialModal hidden absolute bg-black bg-opacity-40 flex h-[100vh] justify-center right-0 top-0 w-full">
                 <div class=" bg-white block h-56 mt-28 w-1/2">
                     <button class="closeTrialModal block me-3 ms-auto rotate-45 text-3xl text-red-800">+</button>
@@ -59,7 +59,7 @@
                             Complete the sign up process to keep your subscription active!
                         </div>
                         <div class="flex justify-center mt-10">
-                            <a href="/premium-confirmation" class="bg-red-800 flex justify-between px-3 py-2 text-white">Continue Sign up
+                            <a href="/continue-signup" class="bg-red-800 flex justify-between px-3 py-2 text-white">Continue Sign up
                                 Process</a>
                         </div>
                     </div>

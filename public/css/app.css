@@ -1457,6 +1457,9 @@ select {
 .border-b {
   border-bottom-width: 1px;
 }
+.border-b-0 {
+  border-bottom-width: 0px;
+}
 .border-e-2 {
   border-inline-end-width: 2px;
 }
@@ -1477,6 +1480,10 @@ select {
 }
 .border-none {
   border-style: none;
+}
+.border-\[\#5d85ea\] {
+  --tw-border-opacity: 1;
+  border-color: rgb(93 133 234 / var(--tw-border-opacity));
 }
 .border-black {
   --tw-border-opacity: 1;
@@ -1540,6 +1547,10 @@ select {
 }
 .border-opacity-20 {
   --tw-border-opacity: 0.2;
+}
+.bg-\[\#5d85ea\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(93 133 234 / var(--tw-bg-opacity));
 }
 .bg-black {
   --tw-bg-opacity: 1;

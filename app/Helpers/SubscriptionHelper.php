@@ -2,14 +2,14 @@
 
 namespace App\Helpers;
 
-use App\Models\User;
-use Stripe\StripeClient;
 use App\Models\CardDetails;
+use App\Models\SubscriptionDetails;
+use App\Models\User;
 use App\Models\UserTraining;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\SubscriptionDetails;
 use Illuminate\Support\Facades\Log;
+use Stripe\StripeClient;
 
 class SubscriptionHelper
 {
@@ -85,19 +85,20 @@ class SubscriptionHelper
 
     public static function isExpired($user)
     {
+        // dd($user->created_at->addDays(env('SUBSCRIPTION_TRIAL_DAYS')));
         try {
             $stripe = new \Stripe\StripeClient(env('STRIPE_SK'));
             $sub_id = $user->company->subscription_id;
             $stripedata = $stripe->subscriptions->retrieve($sub_id, []);
             $subscription = $stripedata->jsonSerialize();
             $period_end_at = date('Y-m-d H:i:s', $subscription['current_period_end']);
-            if ($subscription['status'] != 'active' && $period_end_at < now()) {
-                return true;
-            } else {
-                return false;
-            }
+            // dd($subscription['status']);
+            $subscriptionStatus = $subscription['status'] != 'active' && $period_end_at < now();
+            return $subscriptionStatus ? true : false;
         } catch (\Exception $ex) {
-            return false;
+            if ($user->created_at->addDays(env('SUBSCRIPTION_TRIAL_DAYS')) < now()) {
+                return true;
+            }
         }
     }
 
@@ -134,7 +135,7 @@ class SubscriptionHelper
             ]);
     }
 
-    public  static function insertSubscriptionInfo($user_id)
+    public static function insertSubscriptionInfo($user_id)
     {
         DB::table('user_subscription_infos')->insert([
             'user_id' => $user_id,
@@ -145,8 +146,7 @@ class SubscriptionHelper
         ]);
     }
 
-
-    public  static function userTraining($request, $user_id)
+    public static function userTraining($request, $user_id)
     {
         return UserTraining::updateOrCreate(
             ['user_id' => $user_id],
@@ -157,7 +157,6 @@ class SubscriptionHelper
             ]
         );
     }
-
 
     public static function createStripeProduct($stripe, $planName, $price, $planType)
     {

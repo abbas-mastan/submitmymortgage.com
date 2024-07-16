@@ -25,14 +25,21 @@ use Illuminate\Support\Facades\Route;
 |
  */
 
-Route::get('/migrate', function () {
-    Artisan::call('migrate', [
-        // '--path' => '/database/migrations/2024_04_06_020733_create_customers_table.php',
-        '--force' => true,
-        // '--seed' => true,
-    ]);
-    // Artisan::call('cache:clear');
-    dd('migrate!');
+Route::get('/schedule', function () {
+    // Artisan::call('migrate', [
+    //     // '--path' => '/database/migrations/2024_04_06_020733_create_customers_table.php',
+    //     '--force' => true,
+    //     // '--seed' => true,
+    // ]);
+    // // Artisan::call('cache:clear');
+    // dd('migrate!');
+
+    try {
+        Artisan::call('schedule:work');
+    } catch (\Exception $ex) {
+        dd($ex->getMessage());
+    }
+    dd('success');
 });
 
 Route::group(['middleware' => 'guest'], function () {
@@ -83,6 +90,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/gmail/download/{messageId}/attachments/{attachmentId}/{attachmentIndexId}', [GmailController::class, 'downloadAttachment'])->name('download');
     });
     Route::get('premium-confirmation', [SubscriptionController::class, 'trialCompleted']);
+    Route::get('continue-signup', [SubscriptionController::class, 'continueSignup']);
     Route::post('continue-to-premium', [SubscriptionController::class, 'continuePremium']);
     Route::post('continue-stripe-payment', [SubscriptionController::class, 'processPaymentWithStripe']);
 });

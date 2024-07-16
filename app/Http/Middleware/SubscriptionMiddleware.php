@@ -20,7 +20,7 @@ class SubscriptionMiddleware
     public function handle(Request $request, Closure $next)
     {
         $user = Auth::user() ?? null;
-        if ($user && $user->role !== 'Super Admin' && $user->role !== 'Admin' && $user->company() && $user->company->subscription_id) {
+        if ($user && $user->role !== 'Super Admin' && $user->role !== 'Admin' && $user->company && $user->company->subscription_id) {
             if (SubscriptionHelper::isExpired($user)) {
                 return redirect('/logout');
             }
@@ -32,7 +32,6 @@ class SubscriptionMiddleware
                     return redirect('premium-confirmation');
                 }
             } catch (\Exception $e) {
-                dd($e->getMessage());
                 return redirect('premium-confirmation');
             }
         }

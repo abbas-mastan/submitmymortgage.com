@@ -187,6 +187,11 @@ class SubscriptionController extends Controller
     {
         return view('payment-page');
     }
+   
+    public function continueSignup()
+    {
+        return view('continue-signup');
+    }
 
     public function continuePremium(Request $request)
     {
@@ -200,6 +205,8 @@ class SubscriptionController extends Controller
                     'source' => $request->stripeToken,
                 ]);
                 $subscription = SubscriptionPlans::where('stripe_price_id', $user->subscriptionDetails->subscription_plan_price_id)->first();
+
+                SubscriptionHelper::insertCardDetails($request, $customer->id, $user->id);
 
                 if ($subscription) {
                     try {
@@ -215,6 +222,8 @@ class SubscriptionController extends Controller
                     }
                 }
                 $price_id = $user->subscriptionDetails->subscription_plan_price_id;
+                
+                
                 $subscription = $stripe->subscriptions->create([
                     'customer' => $customer->id,
                     'items' => [['price' => $price_id]],

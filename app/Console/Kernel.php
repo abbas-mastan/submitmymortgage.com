@@ -5,6 +5,7 @@ namespace App\Console;
 use Faker\Factory;
 use App\Models\User;
 use App\Console\Commands\ChargeCron;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -29,16 +30,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->call(function () {
-            $factory = Factory::create();
-            User::create([
-                'name' => $factory->userName(),
-                'email' => $factory->userName() . '@gmail.com',
-                'finance_type' => 'Purchase',
-                'loan_type' => 'Private Loan',
-                'password' => bcrypt($factory->password()),
-            ]);
-        })->everyMinute();
+        $schedule->command('charge:cron')->everyMinute()->runInBackground();
     }
 
     /**

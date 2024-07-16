@@ -69,7 +69,7 @@
         </div>
 
     </div>
-    @if ($user->role === 'Admin' && $user->subscriptionDetails)
+    @if ($user->role === 'Admin' && $user->subscriptionDetails && $card)
         <div class="w-1/2 mt-3 p-10 mx-auto justify-center bg-white shadow-2xl">
             <div class="flex justify-center flex-col">
                 <h2 class="text-center text-lg font-semibold leading-8 text-gray-900">Subscription Details</h2>
