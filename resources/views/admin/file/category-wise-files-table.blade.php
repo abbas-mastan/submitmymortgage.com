@@ -78,7 +78,7 @@
                         @endif
                     </div>
                 </td>
-                <td class="border-r-1 pl-2 tracking-wide border capitalize ">
+                <td class="border-r-1 pl-2 tracking-wide border capitalize">
                     <div
                         class="flex flex-col xxl:flex-row justify-center items-center xxl:space-x-4 space-y-2 xxl:space-y-0">
                         @if (fileCatVerified($cat, $user->id))

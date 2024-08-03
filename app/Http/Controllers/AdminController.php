@@ -132,8 +132,9 @@ class AdminController extends Controller
     public function docss(Request $request, $id, $cat)
     {
         if ($cat == "Loan Application") {
-            $user = User::find($id)->application()->first();
-            return redirect(getRoutePrefix() . ($user ? "/application-show/$user->id" : "/application/$id"));
+            // $user = User::find($id)->applica
+            $intake = IntakeForm::where('user_id', $id)->first();
+            return redirect(getRoutePrefix() . "/loan-intake/$intake->id");
         }
         $data = AdminService::docs($request, $id, $cat);
         return view("admin.file.single-cat-docs", $data);
@@ -142,14 +143,16 @@ class AdminController extends Controller
     public function docs(Request $request, $id, $cat)
     {
         if ($cat == "Loan Application") {
-            $user = User::find($id)->application()->first();
-            if ($user != null) {
-                return redirect(getRoutePrefix() . ($user ? "/application-show/$user->id" : "/application/$id"));
-            } else {
-                $data['id'] = $id;
-                $data['application'] = new Application;
-                return view('user.loan.application', $data);
-            }
+            // $user = User::find($id)->application()->first();
+            // if ($user != null) {
+            //     return redirect(getRoutePrefix() . ($user ? "/application-show/$user->id" : "/application/$id"));
+            // } else {
+            //     $data['id'] = $id;
+            //     $data['application'] = new Application;
+            //     return view('user.loan.application', $data);
+            // }
+            $intake = IntakeForm::where('user_id', $id)->first();
+            return redirect(getRoutePrefix() . "/loan-intake/$intake->id");
         } else {
             $data = AdminService::docs($request, $id, $cat);
             return view("admin.file.single-cat-docs", $data);
@@ -278,6 +281,7 @@ class AdminController extends Controller
 
     public function allUsers($id = null)
     {
+        abort_if(auth()->user()->role !== 'Admin', 403, 'You are not allowed');
         $data = CommonService::getUsers();
         return view('admin.user.all-users', $data);
     }
@@ -642,8 +646,7 @@ class AdminController extends Controller
     }
     public function loanIntakeShow($id)
     {
-        $data['intake'] = IntakeForm::find($id);
-        return view('admin.intakes.show', $data);
+        return CommonService::loanIntakeShow($id);
     }
     public function updateIntakeStatus(IntakeForm $intake, $status)
     {

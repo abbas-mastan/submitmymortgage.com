@@ -9,6 +9,7 @@ use App\Models\Attachment;
 use App\Models\Company;
 use App\Models\Contact;
 use App\Models\Info;
+use App\Models\IntakeForm;
 use App\Models\Media;
 use App\Models\Project;
 use App\Models\Team;
@@ -309,6 +310,11 @@ class AdminService
     //Saves the record of a newly inserted user in database
     public static function updateCategoryStatus($request)
     {
+        if ($request->category === 'Loan Application') {
+            IntakeForm::where('user_id', $request->user_id)->update(['verified' => true]);
+            return ['msg_type' => 'msg_success', 'msg_value' => 'Status updated.'];
+        }
+
         if (Media::where('user_id', $request->user_id)
             ->where('category', $request->category)
             ->update([
@@ -490,9 +496,9 @@ class AdminService
         $assistant = User::find($id);
         $cats = $assistant->assistantCategories->categories;
         foreach ($request->items as $cat) {
-            if(!in_array($cat,json_decode($cats))){
+            if (!in_array($cat, json_decode($cats))) {
                 $assistant->assistantCategories->update([
-                    'categories' => json_encode(array_merge(json_decode($assistant->assistantCategories->categories, true), [$cat]))
+                    'categories' => json_encode(array_merge(json_decode($assistant->assistantCategories->categories, true), [$cat])),
                 ]);
             }
         }

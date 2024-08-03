@@ -8,14 +8,15 @@
 @endsection
 @section('content')
     <div class="mx-auto w-full flex justify-center">
-        <form id="payment-form" class="border border-1 border-[#5d85ea] w-1/2 bg-white p-10" action="{{ url('continue-to-premium') }}" method="post">
+        <form id="payment-form" class="border border-2 border-[#5d85ea] w-1/2 bg-white p-10"
+            action="{{ url('continue-to-premium') }}" method="post">
             {{-- <div class="">
                 <h3 class="text-center text-2xl">Your membership is expired!</h3>
             </div> --}}
             @include('parts.alerts')
             @csrf
             <div>
-                <input id="discount_code" name="have_discount_code" class="h-25" style="width:20px" type="checkbox">
+                <input id="discount_code" name="have_discount_code" class="h-25 me-2" style="width:20px" type="checkbox">
                 <label for="discount_code">I have discount code</label>
             </div>
             <div class="hidden mt-3 discount justify-between items-center">
@@ -25,14 +26,14 @@
                             Discount Code
                         </span>
                         <input id="discount-code-input" placeholder="" class="rounded inline mb-3" name="discount_code"
-                            type="text">
-                        <button class="apply-discount rounded px-3 py-1 bg-[#5d85ea] text-white">Apply</button>
+                            type="text" value="{{ old('discount_code') }}">
+                        <button class="apply-discount rounded px-5 py-1 bg-[#5d85ea] text-white h-10">Apply</button>
                     </label><br>
-                    <span class="error pb-2 discount_code_error"></span>
+                    <span class="text-red-700 pb-2 discount_code_error"></span>
                 </div>
                 <div class="me-3">
                     <div>Discount: <span class="discount_value"></span></div>
-                    <div>Total: <span class="total"></span></div>
+                    <div>Total: <span class="total">{{ auth()->user()->subscriptionDetails->plan_amount }}</span></div>
                 </div>
             </div>
             <div class="mt-3 mx-auto ">
@@ -48,9 +49,11 @@
                     <div class="ps-2 text-red-700" id="card-errors" role="alert"></div>
                 </div>
             </div>
+            <p class="my-5">Why? We ask for a payment method so that your subscription and business can continue without
+                interruption after your trial ends.</p>
             <div class="mt-5 flex justify-center">
                 <button type="submit"
-                    class="w-full bg-[#5d85ea]  text-white text-md xl:text-xl  border-2 rounded-lg bg-white px-10 xl:px-12 py-2 focus:outline-none focus:border-none focus:ring-1 focus:ring-blue-400">
+                    class="w-full bg-[#5d85ea] text-white text-md xl:text-xl border-2 rounded-lg  px-10 xl:px-12 py-2 focus:outline-none focus:border-none focus:ring-1 focus:ring-blue-400">
                     Proceed
                 </button>
             </div>
@@ -61,11 +64,12 @@
 @section('foot')
     <script>
         $(document).ready(function() {
-            $('.body-first-div').addClass('bg-gray-300 h-screen');
+            $('.body-first-div').addClass('bg-gradient-to-b from-gradientStart to-gradientEnd h-screen');
         });
     </script>
     <script src="https://js.stripe.com/v3/"></script>
     <script>
+        var price = "{{ auth()->user()->subscriptionDetails->plan_amount }}";
         $('.apply-discount').click(function(e) {
             e.preventDefault();
             var code = $('input[name=discount_code]').val();
@@ -84,9 +88,6 @@
                 url: '/get-discount/' + code,
                 success: function(response) {
                     if (response !== 'code-not-found') {
-                        if (response.discount_type === 'percent') {
-
-                        }
                         $('.discount_value').text(' ' + (response.discount_type ===
                             'fixed_amount' ?
                             '$' : '') + response.discount + (response
@@ -96,13 +97,12 @@
                             $('.total').text(' $' + (price - response.discount));
                         }
                         if (price && response.discount_type === 'percent') {
-                            console.log((500 - 500 * 20 / 100));
                             $('.total').text(' $' + (price - (price * response.discount /
                                 100)));
                         }
                     } else {
                         $('.discount_value').text('');
-                        $('.discount_code_error').text(response);
+                        $('.discount_code_error').text('Discount code not found.');
                     }
                 },
                 error: function(jqXHR, excption) {
@@ -111,7 +111,6 @@
             });
         });
         $('#discount_code').change(function() {
-            // Check if the input is checked
             if ($(this).is(':checked')) {
                 // Show the additional input field
                 $('.discount').removeClass('hidden');
@@ -122,6 +121,11 @@
                 $('.discount').addClass('hidden');
             }
         });
+
+        if('{{old("have_discount_code")}}'){
+            $('#discount_code').prop('checked', true).change();
+        }
+
         if (window.Stripe) {
             var stripe = Stripe("{{ env('STRIPE_PK') }}");
             var elements = stripe.elements();
@@ -133,7 +137,7 @@
                         fontSize: '17px',
                         fontFamily: 'Lexend, sans-serif',
                         '::placeholder': {
-                            color: '#c7bbbb',
+                            color: 'gray',
                         },
                     }
                 }
@@ -184,7 +188,15 @@
             });
 
             function validateFields() {
-                return true; //
+                var isValid = true;
+                if ($('#discount_code').is(':checked') && $('#discount-code-input').val() === '') {
+                    $('.discount_code_error').text('This field is required');
+                    isValid = false;
+                }
+                if ($('#discount_code').is(':checked') && $('.discount_code_error').text().length > 0) {
+                    isValid = false;
+                };
+                return isValid; //
             }
         }
     </script>

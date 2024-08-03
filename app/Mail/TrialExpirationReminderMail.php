@@ -3,10 +3,11 @@
 namespace App\Mail;
 
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class AssistantMail extends Mailable
+class TrialExpirationReminderMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -19,6 +20,6 @@ class AssistantMail extends Mailable
     public function build()
     {
         $url = $this->url;
-        return $this->subject('You have been added to SubmitMyMortgage!')->view('notifications::deal-email',compact('url'));
+        return $this->subject('Trial Expiration Reminder - Take Action to Continue Your Subscription.')->view('notifications::expiration-reminder-mail',compact('url'));
     }
 }

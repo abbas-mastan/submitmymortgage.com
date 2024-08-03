@@ -6,9 +6,6 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\SubscriptionController;
 use App\Http\Controllers\SuperAdminController;
 use App\Http\Controllers\TestController;
-use App\Models\PaymentDetail;
-use App\Models\SubscriptionDetails;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log;
@@ -26,20 +23,21 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::get('/schedule', function () {
-    // Artisan::call('migrate', [
-    //     // '--path' => '/database/migrations/2024_04_06_020733_create_customers_table.php',
-    //     '--force' => true,
-    //     // '--seed' => true,
-    // ]);
-    // // Artisan::call('cache:clear');
-    // dd('migrate!');
-
     try {
-        Artisan::call('schedule:work');
+        Artisan::call('charge:cron');
     } catch (\Exception $ex) {
-        dd($ex->getMessage());
+        Log::info($ex->getMessage());
     }
-    dd('success');
+});
+
+Route::get('/migrate', function () {
+    Artisan::call('migrate', [
+        //     // '--path' => '/database/migrations/2024_04_06_020733_create_customers_table.php',
+        '--force' => true,
+        // '--seed' => true,
+    ]);
+    // Artisan::call('cache:clear');
+    dd('migrate!');
 });
 
 Route::group(['middleware' => 'guest'], function () {
@@ -61,7 +59,15 @@ Route::group(['middleware' => 'guest'], function () {
     Route::get('/password/reset/{token}', [AuthController::class, 'resetPassword'])->name('password.reset');
     Route::get('/set-password/{token}', [AuthController::class, 'sePassword'])->name('set.password');
     Route::get('/user-register', [AuthController::class, 'userRegister'])->name('user.register');
-    Route::get('/get-discount/{code}',[SubscriptionController::class,'getDiscount'])->name('get.discount');
+    Route::get('/get-discount/{code}', [SubscriptionController::class, 'getDiscount'])->name('get.discount');
+    Route::view('/pdf', 'pdf');
+    Route::post('/save-pdf', function (Request $request) {
+        $pdfBytes = $request->getContent();
+        $path = public_path('filled_pdf.pdf');
+        file_put_contents($path, $pdfBytes);
+
+        return response()->json(['message' => 'PDF saved successfully!']);
+    })->name('pdf.save');
 });
 Route::post('/reset-password', [AuthController::class, 'updatePassword'])->name('password.update');
 Route::post('/set-password-new-user', [AuthController::class, 'setPasswordForNewUsers']);
@@ -77,7 +83,9 @@ Route::post('/email/verification-notification', [AuthController::class, 'emailVe
 //Authentication required roots
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::redirect('/user/dashboard', '/dashboard', 301);
     Route::post('/logout-from-this-user', [SuperAdminController::class, 'ReLoginFrom']);
+    Route::get('/get-discount/{code}', [SubscriptionController::class, 'getDiscount'])->name('get.discount');
     Route::middleware(['isPasswordExpired', 'subscription'])->group(function () {
         Route::view('email', 'deal-email');
         Route::get('/dashboard', [HomeController::class, 'dashboard']);
@@ -90,7 +98,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/gmail/download/{messageId}/attachments/{attachmentId}/{attachmentIndexId}', [GmailController::class, 'downloadAttachment'])->name('download');
     });
     Route::get('premium-confirmation', [SubscriptionController::class, 'trialCompleted']);
-    Route::get('continue-signup', [SubscriptionController::class, 'continueSignup']);
+    Route::get('continue-signup', [SubscriptionController::class, 'continueSignup'])->name('continue.signup');
     Route::post('continue-to-premium', [SubscriptionController::class, 'continuePremium']);
     Route::post('continue-stripe-payment', [SubscriptionController::class, 'processPaymentWithStripe']);
 });
@@ -100,8 +108,8 @@ Route::post('password-expired', [AuthController::class, 'expiredPasswordUpdate']
     ->name('password.post_expired');
 //=====================Test Routes==================
 Route::get('/test', [TestController::class, 'test']);
-Route::post('/charge-webhook',[SubscriptionController::class,'storeWebhookData']);
-Route::get('payment-history',[SubscriptionController::class,'paymentHistory']);
+Route::post('/charge-webhook', [SubscriptionController::class, 'storeWebhookData']);
+Route::get('payment-history', [SubscriptionController::class, 'paymentHistory']);
 Route::view('/trial', 'trial')->name("trial");
 Route::get('/payment-success', [SubscriptionController::class, 'StripeSuccess'])->name("success");
 Route::post('/custom-quote', [SubscriptionController::class, 'CustomQuote'])->name("custom.quote");

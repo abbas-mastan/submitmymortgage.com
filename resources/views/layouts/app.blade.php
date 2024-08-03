@@ -240,10 +240,9 @@
     {{-- tooltip logic starts here --}}
     <script>
         $(document).ready(function() {
-            $("#phone ,#b_phone ,#co_phone").on('keyup', function() {
+            $("#phone ,#b_phone ,#co_phone,.phone").on('keyup', function() {
                 var input = $(this).val();
-
-                var phoneError = $('#phone_error');
+                var phoneError = $("#"+$(this).attr('name')+'_error');
                 // Remove non-numeric characters except the leading +1
                 input = input.replace(/[^\d]/g, '');
                 if (input.startsWith('1')) {

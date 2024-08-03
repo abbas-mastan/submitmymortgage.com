@@ -80,7 +80,7 @@ class AuthController extends Controller
     public function doLogin(Request $request)
     {
         $user = User::where('email', $request->email)->first();
-        if ($user && $user->role !== 'Super Admin' && $user->role !== 'Admin' && $user->company() && $user->company->subscription_id) {
+        if ($user && $user->role !== 'Super Admin' && $user->role !== 'Admin' && $user->company()) {
             if (SubscriptionHelper::isExpired($user)) {
                 return redirect('/login')->with('msg_error', "Username or password is incorrect. Or your account might be disabled.");
             }

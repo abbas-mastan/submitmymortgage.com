@@ -2,10 +2,7 @@
 
 namespace App\Console;
 
-use Faker\Factory;
-use App\Models\User;
 use App\Console\Commands\ChargeCron;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -30,7 +27,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        $schedule->command('charge:cron')->everyMinute()->runInBackground();
+        $schedule->command('charge:cron')
+            ->twiceDaily()
+            ->runInBackground()
+            ->appendOutputTo(storage_path('logs/charge-cron.log'));
     }
 
     /**

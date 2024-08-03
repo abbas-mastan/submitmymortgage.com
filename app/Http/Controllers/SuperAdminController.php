@@ -174,8 +174,10 @@ class SuperAdminController extends Controller
     public function docs(Request $request, $id, $cat)
     {
         if ($cat == "Loan Application") {
-            $user = User::find($id)->application()->first();
-            return redirect(getRoutePrefix() . ($user ? "/application-show/$user->id" : "/application/$id"));
+            // $user = User::find($id)->application()->first();
+            // return redirect(getRoutePrefix() . ($user ? "/application-show/$user->id" : "/application/$id"));
+            $intake = IntakeForm::where('user_id', $id)->first();
+            return redirect(getRoutePrefix() . "/loan-intake/$intake->id");
         }
         $data = AdminService::docs($request, $id, $cat);
         return view("admin.file.single-cat-docs", $data);
@@ -542,10 +544,10 @@ class SuperAdminController extends Controller
     {
         return CommonService::loanIntake();
     }
-    public function loanIntakeShow($id)
+
+    public static function loanIntakeShow($id)
     {
-        $data['intake'] = IntakeForm::find($id);
-        return view('admin.intakes.show', $data);
+        return CommonService::loanIntakeShow($id);
     }
     public function updateIntakeStatus(IntakeForm $intake, $status)
     {
@@ -711,9 +713,9 @@ class SuperAdminController extends Controller
             'discount_type' => 'required',
             'fixed_amount' => 'required_if:discount_type,fixed_amount',
             'percent' => 'required_if:discount_type,percent',
-        ],[
-         'fixed_amount:required_if' => 'This field is required',   
-         'percent:required_if' => 'This field is required',   
+        ], [
+            'fixed_amount:required_if' => 'This field is required',
+            'percent:required_if' => 'This field is required',
         ]);
 
         if ($validator->fails()) {

@@ -1,12 +1,13 @@
 <?php
 
+use App\Models\IntakeForm;
+use App\Models\Media;
 use Carbon\Carbon;
-use App\Models\{Media};
-use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
-/* 
+/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
@@ -40,7 +41,7 @@ function getRoutePrefix()
         case 'Super Admin':
             return getSuperAdminRoutePrefix();
             break;
-            
+
         case 'Admin':
             return getAdminRoutePrefix();
             break;
@@ -66,7 +67,8 @@ function getRoutePrefix()
     }
 }
 
-function isSuperAdmin(){
+function isSuperAdmin()
+{
     return auth()->check() && auth()->user()->role === 'Super Admin';
 }
 
@@ -133,7 +135,7 @@ function getVariable($var)
             ->exists();
     }
     if ($var == 'Miscellaneous') {
-        return  Auth::user()
+        return Auth::user()
             ->media()
             ->where('category', 'Miscellaneous')
             ->exists();
@@ -143,15 +145,15 @@ function getVariable($var)
             ->user()
             ->application()
             ->exists();
-    }else{
-        return Auth::user()->media()->where('category',$var)->exists();
+    } else {
+        return Auth::user()->media()->where('category', $var)->exists();
     }
 }
 
-// applications index blade tables ids 
+// applications index blade tables ids
 function getTableId($key)
 {
-    $table = [0 => 'user-table', 1 => 'completed-table', 2 => 'incomplete-table' ,3 => 'deleted-table'];
+    $table = [0 => 'user-table', 1 => 'completed-table', 2 => 'incomplete-table', 3 => 'deleted-table'];
     return $table[$key] ?? null;
 }
 
@@ -203,6 +205,14 @@ function fileCatSubmittedByClient($cat, $userId)
 //Returns carbon date with
 function fileCatVerified($cat, $userId)
 {
+    if ($cat === 'Loan Application') {
+        $intake = IntakeForm::where('user_id', $userId)->first();
+        if ($intake && $intake->verified) {
+            return true;
+        }
+        return false;
+    }
+
     $cat = str_replace('-', '/', $cat);
     $verfied = Media::where('user_id', $userId)
         ->where('category', $cat)
@@ -244,8 +254,11 @@ function getUserCatComments($cat, $userId)
 //Returns carbon date with
 function fileCatCount($cat, $userId)
 {
+    if($cat === 'Loan Application'){
+        return DB::table('intake_forms')->where('user_id',$userId)->count();
+    }
     $cat = str_replace('-', '/', $cat);
-    return DB::table('media')->where('user_id',$userId)->where('category',$cat)->count();
+    return DB::table('media')->where('user_id', $userId)->where('category', $cat)->count();
 }
 //Returns link for the category
 function getCatLink($cat)
@@ -264,7 +277,7 @@ function getCatLink($cat)
         "Loan Application" => "application",
         "Credit Report" => "credit-report",
         "Basic Info" => "basic-info",
-        // default => "category/".Str::of($cat)->slug('-'),
-        default => "category/".str_replace(' ','-',$cat),
+    // default => "category/".Str::of($cat)->slug('-'),
+        default => "category/" . str_replace(' ', '-', $cat),
     };
 }

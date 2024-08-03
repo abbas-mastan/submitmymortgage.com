@@ -24,7 +24,7 @@ $('.intakeForm').submit(function (e) {
                 window.location.href = routePrefix + '/redirect/dashboard/form-submitted-successfully';
             }
             $.each(response.error, function (index, error) {
-                var fieldId = `#${error.field}_error`;
+                var fieldId = `.${error.field}_error`;
                 var errorMessage = error.message;
                 $(fieldId).text(errorMessage);
             });
@@ -33,6 +33,18 @@ $('.intakeForm').submit(function (e) {
             console.log(error);
         }
     });
+});
+
+
+$('.textInput').on('keyup', function() {
+    // Get the current value of the input
+    var input = $(this).val();
+
+    // Use a regular expression to remove numbers and special characters
+    var filteredInput = input.replace(/[^a-zA-Z\s]/g, '');
+
+    // Set the filtered value back to the input
+    $(this).val(filteredInput);
 });
 
 $('.personalinfo input').attr('required', true);
@@ -46,7 +58,7 @@ $('.newProject, .closeModal').click(function (e) {
 });
 
 // this code is the shorter version of below commented code
-$('.loantype').change(function (e) {
+$('.finance_type').change(function (e) {
     e.preventDefault();
     changeLoantype($(this).val());
 });
@@ -74,6 +86,49 @@ function changeLoantype(loanType) {
     }
     $('select[name=finance_type]').val(selectedValue);
 }
+
+$('#is_there_co_borrower').change(function (e) {
+    e.preventDefault();
+    borrowerPresent();
+});
+
+function borrowerPresent() {
+    if ($("#is_there_co_borrower").val() === 'Yes') {
+        $('.there_is_co_borrower').removeClass('hidden');
+        // Enable inputs and selects when "Yes" is selected
+        $('.there_is_co_borrower input, .there_is_co_borrower select').prop('disabled', false);
+    } else {
+        $('.there_is_co_borrower').addClass('hidden');
+        // Disable inputs and selects when not "Yes"
+        $('.there_is_co_borrower input, .there_is_co_borrower select').prop('disabled', true);
+    }
+}
+
+$('.property_type').change(function (e) {
+    e.preventDefault();
+    // Get the selected value from the changed select
+    const selectedValue = $(this).val();
+    // Change all other property_type selects to the selected value
+    $('.property_type').not(this).val(selectedValue);
+});
+
+$('.loan_type').change(function (e) {
+    e.preventDefault();
+    // Get the selected value from the changed select
+    const selectedValue = $(this).val();
+    // Change all other loan_type selects to the selected value
+    $('.loan_type').not(this).val(selectedValue);
+});
+
+$('.property_profile').change(function (e) {
+    e.preventDefault();
+    // Get the selected value from the changed select
+    const selectedValue = $(this).val();
+    // Change all other property_profile selects to the selected value
+    $('.property_profile').not(this).val(selectedValue);
+});
+
+
 
 $('#isItRentalProperty').change(function (e) {
     e.preventDefault();

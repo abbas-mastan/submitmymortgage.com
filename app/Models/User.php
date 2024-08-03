@@ -161,7 +161,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function intakes()       
     {
-        return $this->hasMany(IntakeForm::class);
+        return $this->hasMany(IntakeForm::class,'created_by');
     }
     
     public function subscriptionDetails()       
@@ -191,5 +191,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function personalInfo()
     {
         return $this->hasOne(UserPersonalInfo::class,'user_id');
+    }
+
+   
+    public function metas()
+    {
+        return $this->hasMany(UserMeta::class);
     }
 }

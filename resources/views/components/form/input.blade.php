@@ -11,5 +11,5 @@
               sm:text-sm sm:leading-6"
             placeholder="{{ $label }}" value="{{ $value }}">
     </div>
-    <span class="text-red-700" style="text-transform: none !important;" id="{{ $name }}_error"></span>
+    <span class="text-red-700 {{ $name }}_error" style="text-transform: none !important;" id="{{ $name }}_error"></span>
 </div>

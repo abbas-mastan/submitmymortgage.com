@@ -33,7 +33,9 @@
                         <span class="tracking-wide sm:block  capitalize text-white">Create New User</span>
                     </a>
                 </li>
-                <x-tab href="all-users" title="All Users" />
+                @if ($currentrole === $superadminrole || $currentrole === 'Admin')
+                    <x-tab href="all-users" title="All Users" />
+                @endif
                 <x-tab href="teams" title="Teams" />
                 <li class="-mt-4 hidden sm:block">
                     <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
@@ -83,8 +85,8 @@
                 @if ($currentrole === 'Admin' || Gate::check('isSuperAdmin'))
                     <x-tab href="connections" title="Connections" />
                 @endif
-                <x-tab href="applications" title="Loan Pipeline" />
-                <x-tab href="upload-files" title="Upload Files" />
+                {{-- <x-tab href="applications" title="Loan Pipeline" /> --}}
+                {{-- <x-tab href="upload-files" title="Upload Files" /> --}}
                 <x-tab href="files" title="Files Uploaded" />
                 <!-- Sidebar for Admin ends -->
             @endif
@@ -97,9 +99,9 @@
                         <span class="tracking-wide sm:block  capitalize text-white">Create New User</span>
                     </a>
                 </li>
-                <x-tab href="application/-1" title="Loan Application" />
-                <x-tab href="all-users" title="All Users" />
-                <x-tab href="teams" title="Teams" />
+                {{-- <x-tab href="application/-1" title="Loan Application" /> --}}
+                {{-- <x-tab href="all-users" title="All Users" /> --}}
+                {{-- <x-tab href="teams" title="Teams" /> --}}
                 <ul class="deals">
                     <li class="-mt-4 line sm:block">
                         <span class="border-l-4 border-l-white  border-opacity-20 h-14  vertical-line-m">
@@ -136,9 +138,9 @@
                         <span class="tracking-wide sm:block  capitalize text-white">Contacts</span>
                     </a>
                 </li>
-                <x-tab href="upload-files" title="Upload Files" />
+                {{-- <x-tab href="upload-files" title="Upload Files" /> --}}
                 <x-tab href="files" title="Files Uploaded" />
-                <x-tab href="applications" title="Loan Pipeline" />
+                {{-- <x-tab href="applications" title="Loan Pipeline" /> --}}
             @endcan
             @can('isUser')
                 <!-- Sidebar for Admin starts -->

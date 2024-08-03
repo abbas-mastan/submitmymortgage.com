@@ -9,74 +9,87 @@
                 $daysLeft = env('SUBSCRIPTION_TRIAL_DAYS') - $user->created_at->diffInDays(now());
             }
         @endphp
-        {{--         
-        @if ($user->training && $user->training->start_time === null)
-            @php
-                // Convert the date string to a Unix timestamp
-                $timestamp = strtotime($user->training->start_date);
-                // Check if the conversion was successful
-                if ($timestamp) {
-                    // Create a DateTime object from the timestamp
-                    $date = new DateTime();
-                    $date->setTimestamp($timestamp);
-                    // Format the date as "DayOfWeek, Month Year"
-                    $trainingDate = $date->format('l, F j, Y');
-                }
-            @endphp
-            <div class="shadow-lg p-5 mt-2">
-                <form class="" action="{{ route('update.training.time') }}" method="post">
-                    @csrf
-                    <div class="mb-2">
-                        Training Date :
-                        {{ $trainingDate }}
-                    </div>
-                    <div class="flex items-center gap-3">
-                        <select class="rounded-lg" name="time" id="">
-                            <option value="">Select Training Time</option>
-                            <option value="09:00">09:00 AM PST</option>
-                            <option value="10:00">10:00 AM PST</option>
-                            <option value="11:00">11:00 AM PST
-                            </option>
-                        </select>
-                        <button type="submit"
-                            class="block tracking-wide rounded-lg text-white px-7 py-2 text-xl capitalize bg-gradient-to-b from-gradientStart to-gradientEnd">
-                            Submit
-                        </button>
-                    </div>
-                    @error('time')
-                        <span class="text-red-700">{{ $message }}</span>
-                    @enderror
-                </form>
-            </div>
-        @endif  --}}
-        @if ($user->role === 'Admin' && !$user->subscriptionDetails->stripe_subscription_id)
-            <div class="trialModal hidden absolute bg-black bg-opacity-40 flex h-[100vh] justify-center right-0 top-0 w-full">
-                <div class=" bg-white block h-56 mt-28 w-1/2">
-                    <button class="closeTrialModal block me-3 ms-auto rotate-45 text-3xl text-red-800">+</button>
-                    <div class="text-center mt-5">
-                        <div class="font-bold text-xl">
-                            You have {{ $daysLeft }} days left of your free trial!<br>
-                            Complete the sign up process to keep your subscription active!
-                        </div>
-                        <div class="flex justify-center mt-10">
-                            <a href="/continue-signup" class="bg-red-800 flex justify-between px-3 py-2 text-white">Continue Sign up
-                                Process</a>
+
+        <div
+            class="grid {{ $user->training &&
+            $user->training->start_time === null &&
+            ($user->role === 'Admin' && !$user->subscriptionDetails->stripe_subscription_id)
+                ? 'grid-cols-2'
+                : ' ' }}  gap-2">
+            @if ($user->role === 'Admin' && $user->created_by === null && !$user->subscriptionDetails->stripe_subscription_id)
+                <div
+                    class="trialModal hidden absolute bg-black bg-opacity-40 flex h-[100vh] justify-center right-0 top-0 w-full">
+                    <div class=" bg-white block h-56 mt-28 w-1/2">
+                        <button class="closeTrialModal block me-3 ms-auto rotate-45 text-3xl text-red-800">+</button>
+                        <div class="text-center mt-5">
+                            <div class="font-bold text-xl">
+                                You have {{ $daysLeft }} days left of your free trial!<br>
+                                Complete the sign up process to keep your subscription active!
+                            </div>
+                            <div class="flex justify-center mt-10">
+                                <a href="/continue-signup"
+                                    class="bg-red-800 flex justify-between px-3 py-2 text-white">Continue Sign up
+                                    Process</a>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="bg-red-800 mt-3 rounded">
-                <div class="p-2 rounded-t text-white">You have
-                    {{ $daysLeft }} days left of your 14 day
-                    free
-                    trial.
+                <div class="h-fit bg-red-800 mt-3 rounded">
+                    <div class="p-2 rounded-t text-white">You have
+                        {{ $daysLeft }} days left of your 14 day
+                        free
+                        trial.
+                    </div>
+                    <div class="bg-white pb-5 border border-1 border-black p-2 rounded text-red-800">
+                        <button class="cursor-pointer border-b border-red-800 completeSignupProcess">Click here to
+                            complete
+                            sign up and not lose
+                            access.</button>
+                    </div>
                 </div>
-                <div class="bg-white border border-1 border-black p-2 rounded text-red-800">
-                    <button class="cursor-pointer border-b border-red-800 completeSignupProcess">Click here to complete sign up and not lose
-                        access.</button>
+            @endif
+            @if ($user->training && $user->training->start_time === null)
+                @php
+                    // Convert the date string to a Unix timestamp
+                    $timestamp = strtotime($user->training->start_date);
+                    // Check if the conversion was successful
+                    if ($timestamp) {
+                        // Create a DateTime object from the timestamp
+                        $date = new DateTime();
+                        $date->setTimestamp($timestamp);
+                        // Format the date as "DayOfWeek, Month Year"
+                        $trainingDate = $date->format('l, F j, Y');
+                    }
+                @endphp
+                <div class="shadow-lg p-5 mt-2">
+                    <form class="" action="{{ route('update.training.time') }}" method="post">
+                        @csrf
+                        <div class="mb-2">
+                            Training Date :
+                            {{ $trainingDate }}
+                        </div>
+                        <div class="flex gap-2 ">
+                            <select class="rounded-lg" name="time" id="">
+                                <option value="">Select Training Time</option>
+                                <option value="09:00">09:00 AM PST</option>
+                                <option value="10:00">10:00 AM PST</option>
+                                <option value="11:00">11:00 AM PST
+                                </option>
+                            </select>
+
+                            <button type="submit"
+                                class="block tracking-wide rounded-lg text-white px-7 py-2  capitalize bg-gradient-to-b from-gradientStart to-gradientEnd">
+                                Submit
+                            </button>
+                        </div>
+                        @error('time')
+                            <span class="text-red-700">{{ $message }}</span>
+                        @enderror
+                    </form>
                 </div>
-            </div>
-        @endif
+            @endif
+        </div>
+
         <div @class([
             'flex',
             'flex-col',
@@ -148,7 +161,7 @@
         {{-- @if ($currentrole === $superadminrole || $currentrole === 'Admin') --}}
         <div class="mt-8">
             <button class="newProject underline text-2xl mt-5 text-red-700 capitalize font-bold">
-                intake form submission
+                start loan application
             </button>
         </div>
         {{-- @endif --}}

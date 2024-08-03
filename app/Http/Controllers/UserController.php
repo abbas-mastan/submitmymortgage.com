@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ApplicationRequest;
 use App\Models\User;
-use App\Services\CommonService;
-use App\Services\UserService;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\IntakeForm;
+use Illuminate\Http\Request;
+use App\Services\UserService;
+use App\Services\CommonService;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\IntakeFormRequest;
+use App\Http\Requests\ApplicationRequest;
 
 class UserController extends Controller
 {
@@ -122,8 +124,11 @@ class UserController extends Controller
 
     public function application(Request $request)
     {
-        $data = UserService::application($request);
-        return view('user.loan.application', $data);
+        // dd(auth()->id());
+        $data['intake'] = IntakeForm::where('user_id',auth()->id())->first();
+        $data['enableTeams'] = [];
+        return view('admin.intakes.show',$data);
+        // return view('user.loan.application', $data);
     }
 
     public function doApplication(ApplicationRequest $request)
@@ -187,6 +192,11 @@ class UserController extends Controller
             'b_phone.regex' => 'The borrower phone number format is invalid.',
             'co_phone.regex' => 'The co-borrower phone number format is invalid.',
         ]);
+    }
+
+    public function submitIntakeForm(IntakeFormRequest $request)
+    {
+        return CommonService::submitIntakeForm($request);
     }
 
 }

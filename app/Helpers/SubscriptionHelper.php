@@ -15,10 +15,16 @@ class SubscriptionHelper
 {
     public static function startTrialSubscription($customer_id, $user_id, $subscription_plan)
     {
+        $user = User::find($user_id);
         DB::beginTransaction();
         try {
             $date = date('Y-m-d H:i:s');
-            $trial_days = strtotime($date . '+' . env('SUBSCRIPTION_TRIAL_DAYS') . ' days');
+            // $trial_days = strtotime($date . '+' . env('SUBSCRIPTION_TRIAL_DAYS') . ' days');
+            $trialDays = env('SUBSCRIPTION_TRIAL_DAYS', 14);
+            $createdAt = $user->created_at;
+            $trialEndDate = $createdAt->addDays($trialDays);
+            $trialEndDate = $trialEndDate->addSeconds($createdAt->format('s'));
+            $trialEndDate = $trialEndDate->addMinutes($createdAt->format('i'));
             $stripe = new StripeClient(env('STRIPE_SK'));
             $subscription = $stripe->subscriptions->create([
                 'customer' => $customer_id,
@@ -27,10 +33,12 @@ class SubscriptionHelper
                         /*'price_1PHQb709tId2vnnu5137rCcH'*/
                     ],
                 ],
-                'trial_end' => $trial_days,
+                'trial_end' => $trialEndDate->timestamp,
             ]);
             $plan = $stripe->plans->retrieve($subscription_plan->stripe_price_id, []);
-            $subsription_details_data = SubscriptionDetails::insert([
+            $subsription_details_data = SubscriptionDetails::updateOrCreate(
+                ['user_id' => $user->id],
+                [
                 'user_id' => $user_id,
                 'stripe_subscription_id' => $subscription->id,
                 'stripe_subscription_schedule_id' => '',
@@ -43,13 +51,13 @@ class SubscriptionHelper
                 'plan_starts_at' => $date,
                 'plan_end_at' => date('Y-m-d H:i:s', strtotime('+1 month', strtotime($date))),
                 'created' => date('Y-m-d H:i:s', $plan->created),
-                'trial_end' => $trial_days,
+                'trial_end' => $trialEndDate,
                 'status' => 'active',
                 'created_at' => $date,
                 'updated_at' => $date,
             ]);
             DB::commit();
-            return $subsription_details_data;
+            return $subscription;
         } catch (\Exception $e) {
             DB::rollback();
             Log::info($e->getMessage());
@@ -79,6 +87,7 @@ class SubscriptionHelper
             $stripe->refunds->create(['charge' => $charge->id]);
             return $customer;
         } catch (\Exception $e) {
+            Log::info($e->getMessage());
             return response()->json(["type" => "stripe_error", "message" => $e->getMessage()]);
         }
     }

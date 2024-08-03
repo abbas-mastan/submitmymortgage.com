@@ -4,7 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['auth', 'user', 'verified','subscription'])->prefix(getUserRoutePrefix())->group(function () {
+Route::middleware(['auth', 'user', 'verified', 'subscription'])->prefix(getUserRoutePrefix())->group(function () {
     //==============================
     //==========Files related routes
     //==============================
@@ -21,6 +21,7 @@ Route::middleware(['auth', 'user', 'verified','subscription'])->prefix(getUserRo
     Route::get('/purchase-agreement', [UserController::class, 'purchaseAgreement']);
     Route::get('/delete-file/{id}', [AdminController::class, 'deleteFile']);
     Route::get('/basic-info', [UserController::class, 'basicInfo']);
+    Route::post('/submit-intake-form', [UserController::class, 'submitIntakeForm']);
 
     Route::get('/category/{cat}', [UserController::class, 'category']);
 
@@ -44,7 +45,6 @@ Route::middleware(['auth', 'user', 'verified','subscription'])->prefix(getUserRo
     Route::get('contacts', [UserController::class, 'contacts']);
     Route::post('/do-contact', [UserController::class, 'doContact']);
     Route::get('/redirect/{route}/{message}', [UserController::class, 'redirectTo']);
-
 
 });
 //================================

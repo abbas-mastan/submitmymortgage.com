@@ -152,7 +152,7 @@
             var hasErrors = false;
             ['name'].forEach(inputName => {
                     var input = $(this).find('input[name=' + inputName + ']');
-                    var errorSelector = '#' + inputName + '_error';
+                    var errorSelector = '.' + inputName + '_error';
                     if (input.val() === '') {
                         $(errorSelector).text(inputName + " field is required");
                         hasErrors = true; // Set the flag to true

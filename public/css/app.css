@@ -1090,6 +1090,9 @@ select {
 .h-\[100vh\] {
   height: 100vh;
 }
+.h-\[90vh\] {
+  height: 90vh;
+}
 .h-fit {
   height: -moz-fit-content;
   height: fit-content;

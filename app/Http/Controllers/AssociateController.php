@@ -11,7 +11,6 @@ use App\Models\IntakeForm;
 use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
-use App\Models\UserCategory;
 use App\Services\AdminService;
 use App\Services\CommonService;
 use App\Services\UserService;
@@ -19,7 +18,6 @@ use Faker\Factory;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 
 class AssociateController extends Controller
@@ -83,8 +81,8 @@ class AssociateController extends Controller
     public function docs(Request $request, $id, $cat)
     {
         if ($cat == "Loan Application") {
-            $application = User::find($id)->application()->first();
-            return redirect(getAssociateRoutePrefix() . ($application ? "/application-show/$application->id" : "/application/$id"));
+            $intake = IntakeForm::where('user_id', $id)->first();
+            return redirect(getRoutePrefix() . "/loan-intake/$intake->id");
         }
         $data = AdminService::docs($request, $id, $cat);
         return view("admin.file.single-cat-docs", $data);
@@ -113,8 +111,9 @@ class AssociateController extends Controller
         return back()->with($msg['msg_type'], $msg['msg_value']);
     }
 
-    public function allUsers($id = null)
+    public function allUsers()
     {
+        abort_if(auth()->user()->role !== 'Admin', 403, 'You are not allowed');
         $data = CommonService::getUsers();
         return view('admin.user.all-users', $data);
     }
@@ -202,7 +201,7 @@ class AssociateController extends Controller
 
     public function addCategoryToUser(Request $request, User $user)
     {
-        return CommonService::addCategoryToUser($request,$user);
+        return CommonService::addCategoryToUser($request, $user);
     }
 
     private function validateFunction($request)
@@ -283,7 +282,7 @@ class AssociateController extends Controller
         return AdminService::shareItemWithAssistant($request, $id);
     }
 
-    public function updateShareItemWithAssistant(Request $request,$id) 
+    public function updateShareItemWithAssistant(Request $request, $id)
     {
         return AdminService::updateShareItemWithAssistant($request, $id);
     }
@@ -368,6 +367,7 @@ class AssociateController extends Controller
 
     public function teams($id = null): View
     {
+        abort_if(auth()->user()->role !== 'Admin', 403, 'You are not allowed!');
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
         $data['teams'] = $this->enableTeams($admin);
         $data['disableTeams'] = Team::where('owner_id', $admin->id)
@@ -387,12 +387,12 @@ class AssociateController extends Controller
     {
         $admin = $id ? User::where('id', $id)->first() : Auth::user(); // Assuming you have authenticated the admin
         return Team::where('owner_id', $admin->id)
-        ->with('users.createdBy')
-        ->where('disable', false)
-        ->orWhereHas('users', function ($query) use ($admin) {
-            $query->where('user_id', $admin->id);
-        })
-        ->get();
+            ->with('users.createdBy')
+            ->where('disable', false)
+            ->orWhereHas('users', function ($query) use ($admin) {
+                $query->where('user_id', $admin->id);
+            })
+            ->get();
     }
     public static function markAsRead($id)
     {
@@ -412,6 +412,7 @@ class AssociateController extends Controller
     public function loanIntakeShow($id)
     {
         $data['intake'] = IntakeForm::find($id);
+        $data['enableTeams'] = [];
         return view('admin.intakes.show', $data);
     }
     public function updateIntakeStatus(IntakeForm $intake, $status)

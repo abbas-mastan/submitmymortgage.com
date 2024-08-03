@@ -2,31 +2,31 @@
 
 namespace App\Services;
 
-use Faker\Factory;
-use App\Models\Info;
-use App\Models\User;
-use App\Models\Media;
+use App\Models\Application;
+use App\Models\Attachment;
 use App\Models\Company;
 use App\Models\Contact;
-use App\Models\Project;
-use App\Models\Attachment;
+use App\Models\Info;
 use App\Models\IntakeForm;
-use App\Models\Application;
-use Illuminate\Support\Arr;
+use App\Models\Media;
+use App\Models\Project;
+use App\Models\User;
 use App\Models\UserCategory;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Storage;
-use PhpOffice\PhpSpreadsheet\IOFactory;
-use Illuminate\Support\Facades\Password;
-use PhpOffice\PhpSpreadsheet\Writer\Xls;
-use Illuminate\Support\Facades\Validator;
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use App\Notifications\FileUploadNotification;
-use Illuminate\Validation\ValidationException;
+use Faker\Factory;
+use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rules\Password as PasswordRule;
+use Illuminate\Validation\ValidationException;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xls;
 
 class CommonService
 {
@@ -452,60 +452,85 @@ class CommonService
 
     public static function submitIntakeForm(Request $request)
     {
-        $user = new User;
-        $admin = Auth::user();
+        if (!$request->user_id) {
+            $admin = Auth::user();
+            $user = new User;
+            $intakeForm = new IntakeForm();
+        } else {
+            $user = User::where('id',$request->user_id)->first();
+            $intakeForm = IntakeForm::where('user_id', $request->user_id)->first();
+            $admin = User::where('created_by', $user->created_by)->first();
+        }
         $faker = Factory::create();
         DB::beginTransaction();
         try {
-            $user->name = $request->first_name . ' ' . $request->last_name;
-            $user->email = $request->email;
-            $user->role = 'Borrower';
-            $user->created_by = $admin->id;
-            $user->company_id = $request->company ?? $admin->company_id ?? null;
-            $user->password = bcrypt($faker->password(8));
-            if ($user->save()) {
-                Password::sendResetLink($request->only('email'));
-                Password::RESET_LINK_SENT;
+
+            if (!$request->user_id) {
+                $user->name = $request->first_name . ' ' . $request->last_name;
+                $user->email = $request->email;
+                $user->role = 'Borrower';
+                $user->created_by = $admin->id;
+                $user->company_id = $request->company ?? $admin->company_id ?? null;
+                $user->password = bcrypt($faker->password(8));
+                if ($user->save()) {
+                    Password::sendResetLink($request->only('email'));
+                    Password::RESET_LINK_SENT;
+                }
             }
 
-            IntakeForm::create([
-                'user_id' => $user->id,
-                'name' => $request->first_name ?? null . '' . $request->last_name,
-                'email' => $request->email ?? null,
-                'address' => $request->address ?? null,
-                'phone' => $request->phone ?? null,
-                'address' => $request->address . ' ' . $request->address_two ?? null,
-                'city' => $request->city ?? null,
-                'state' => $request->state ?? null,
-                'zip' => $request->zip ?? null,
-                'loan_type' => $request->loan_type ?? null,
-                'purchase_price' => $request->purchase_price ?? $request->purchase_price_fix_flip ?? null,
-                'property_value' => $request->property_value ?? $request->property_value_fix_flip ?? null,
-                'down_payment' => $request->down_payment ?? $request->down_payment_fix_flip ?? null,
-                'current_loan_amount' => $request->current_loan_amount_purchase ??
-                $request->current_loan_amount_cashout ??
-                $request->current_loan_amount_refinance ?? null,
-                'closing_date' => $request->closing_date_purchase ?? $request->closing_date_fix_flip ?? null,
-                'current_lender' => $request->current_lender_cashout ?? $request->current_lender_refinance ?? null,
-                'rate' => $request->rate_refinance ?? $request->rate_cashout ?? null,
-                'is_it_rental_property' => $request->is_it_rental_property ?? null,
-                'monthly_rental_income' => $request->monthly_rental_income ?? $request->monthly_rental_income_refinance ?? null,
-                'cashout_amount' => $request->cashout_amount ?? null,
-                'is_repair_finance_needed' => $request->is_repair_finance_needed ?? null,
-                'how_much' => $request->repair_finance_amount ?? null,
-                'note' => $request->note ?? null,
-            ]);
+            $intakeForm->user_id = $user->id;
+            $intakeForm->created_by = $admin->id;
+            $intakeForm->name = $request->first_name ?? null . '' . $request->last_name;
+            $intakeForm->email = $request->email;
+            $intakeForm->phone = $request->phone;
+            $intakeForm->borrower_employment = $request->borrower_employment;
+            $intakeForm->borrower_yearly_income = $request->borrower_yearly_income;
+            $intakeForm->borrower_credit_score = $request->borrower_credit_score;
+            $intakeForm->address = $request->address;
+            $intakeForm->address_two = $request->address_two ?? null;
+            $intakeForm->co_borrower_name = $request->is_there_co_borrower == 'Yes' ? $request->co_borrower_first_name . ' ' . $request->co_borrower_last_name : null;
+            $intakeForm->co_borrower_email = $request->is_there_co_borrower == 'Yes' ? $request->co_borrower_email : null;
+            $intakeForm->co_borrower_phone = $request->is_there_co_borrower == 'Yes' ? $request->co_borrower_phone : null;
+            $intakeForm->co_borrower_employment = $request->is_there_co_borrower == 'Yes' ? $request->co_borrower_employment : null;
+            $intakeForm->co_borrower_yearly_income = $request->is_there_co_borrower == 'Yes' ? $request->co_borrower_yearly_income : null;
+            $intakeForm->co_borrower_credit_score = $request->is_there_co_borrower == 'Yes' ? $request->co_borrower_credit_score : null;
+            $intakeForm->city = $request->city ?? null;
+            $intakeForm->state = $request->state ?? null;
+            $intakeForm->zip = $request->zip ?? null;
+            $intakeForm->finance_type = $request->finance_type;
+            $intakeForm->loan_type = $request->loan_type;
+            $intakeForm->property_type = $request->property_type;
+            $intakeForm->property_profile = $request->property_profile;
+            $intakeForm->purchase_price = $request->purchase_price ?? $request->purchase_price_fix_flip ?? null;
+            $intakeForm->property_value = $request->property_value_cashout ?? $request->property_value_fix_flip ?? null;
+            $intakeForm->down_payment = $request->down_payment ?? $request->down_payment_fix_flip ?? null;
+            $intakeForm->current_loan_amount = $request->current_loan_amount_purchase ??
+            $request->current_loan_amount_cashout ??
+            $request->current_loan_amount_refinance ?? null;
+            $intakeForm->closing_date = $request->closing_date_purchase ?? $request->closing_date_fix_flip ?? null;
+            $intakeForm->current_lender = $request->current_lender_cashout ?? $request->current_lender_refinance ?? null;
+            $intakeForm->rate = $request->rate_refinance ?? $request->rate_cashout ?? null;
+            $intakeForm->is_it_rental_property = $request->finance_type === 'Cash Out' ? $request->is_it_rental_property : null;
+            $intakeForm->monthly_rental_income = $request->monthly_rental_income ?? $request->monthly_rental_income_refinance ?? null;
+            $intakeForm->cashout_amount = $request->cashout_amount ?? null;
+            $intakeForm->is_repair_finance_needed = $request->finance_type == 'Fix & Flip' ? $request->is_repair_finance_needed : null;
+            $intakeForm->how_much = $request->repair_finance_amount ?? null;
+            $intakeForm->note = $request->note ?? null;
+            $intakeForm->save();
+
             $request['borroweraddress'] = $request->address;
-            self::storeProject($request, $user->id);
+            if (!$request->user_id) {
+                self::storeProject($request, $user->id);
+            }
             Application::create([
                 'email' => $request->email,
                 'phone' => $request->phone,
-                'name' => $request->first_name.' '. $request->last_name,
+                'name' => $request->first_name . ' ' . $request->last_name,
                 'city' => $request->city,
                 'address' => $request->address,
                 'zip' => $request->zip,
                 'user_id' => $user->id,
-            ]); 
+            ]);
             DB::commit();
             return response()->json('success', 200);
         } catch (\Exception $e) {
@@ -535,6 +560,13 @@ class CommonService
             })->latest()->get();
         }
         return view('admin.intakes.index', $data);
+    }
+
+    public static function loanIntakeShow($id)
+    {
+        $data['intake'] = IntakeForm::find($id);
+        $data['enableTeams'] = [];
+        return view('admin.intakes.show', $data);
     }
 
     public static function storeProject(Request $request, $user)
@@ -659,20 +691,20 @@ class CommonService
         ]);
     }
 
-    public  static function addCategoryToUser(Request $request,User $user)
+    public static function addCategoryToUser(Request $request, User $user)
     {
         if (in_array(ucwords($request->name), config('smm.file_category')) || $request->name == "id/driver's license") {
             return response()->json(["error" => "This Category \" $request->name\" already exists"]);
         }
         $validator = Validator::make($request->all(), [
-            'name' => 'required'
+            'name' => 'required',
         ]);
         if ($validator->fails()) {
             return response()->json(['error' => $validator->errors()->all()]);
         }
         $cate = $user->categories()->get('name');
-        if(in_array($request->name, array_column($cate->toArray(), 'name'), true)){
-            return response()->json(['error'=>'The name has already been taken']);
+        if (in_array($request->name, array_column($cate->toArray(), 'name'), true)) {
+            return response()->json(['error' => 'The name has already been taken']);
         }
 
         UserCategory::create([
